@@ -1,0 +1,82 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Ardita.Models.LoginModel;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ardita</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="~/css/animate.css" />
+        <link rel="stylesheet" href="~/css/login-style.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" asp-append-version="true" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="~/css/animate.css" />
+        <link rel="stylesheet" href="~/css/login-style.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/lib/sweetalert/dist/sweetalert.css" asp-append-version="true" />
+    </environment>
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="~/img/Login-Background.svg" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 contents login-content">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <h3>Sign In</h3>
+                            <p class="mb-4">Welcome to ARDITA</p>
+                        </div>
+                        <form class="m-t" role="form" asp-controller="Authentication" asp-action="ValidateLogin" method="post">
+                            <div class="form-group first">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
+                            </div>
+                            <div class="form-group last mb-4">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="">
+                            </div>
+                         
+                            <button type="submit" class="btn btn-info btn-block" id="btn-login">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (TempData["ValidateErrorMessage"] != null)
+    {               
+        <script type="text/javascript">
+            window.onload = function () {
+                swal("Error!", '@TempData["ValidateErrorMessage"]', "error");
+            };
+        </script>
+    }
+</body>
+
+</html>
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/sweetalert/dist/sweetalert.min.js" asp-append-version="true"></script>
+
+ </environment>
+<environment exclude="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/sweetalert/dist/sweetalert.min.js" asp-append-version="true"></script>
+
+ </environment>

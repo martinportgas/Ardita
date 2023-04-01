@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\General\Data\" />
+    <Folder Include="Areas\General\Models\" />
+    <Folder Include="Areas\User\Data\" />
+    <Folder Include="Views\Shared\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ardita.Extensions\Ardita.Extensions.csproj" />
+    <ProjectReference Include="..\Ardita.Models\Ardita.Models.csproj" />
+    <ProjectReference Include="..\Ardita.Repositories\Ardita.Repositories.csproj" />
+    <ProjectReference Include="..\Ardita.Services\Ardita.Services.csproj" />
+  </ItemGroup>
+
+</Project>

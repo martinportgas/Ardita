@@ -1,0 +1,36 @@
+﻿@using Ardita.Globals;
+
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <img alt="image" class="rounded-circle" src="~/img/img-profile.png" />
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="block m-t-xs font-bold">@User.FindFirst("Name").Value</span>
+                        <span class="text-muted text-xs block">Art Director</span>
+                    </a>
+                   
+                </div>
+                <div class="logo-element">
+                    AR
+                </div>
+            </li>
+           
+            <li>
+                <a href="#"><i class="fa fa-sitemap"></i> <span class="nav-label" data-i18n="nav.menulevels">User Management </span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    
+                    <li><a href="@Url.Action("Index", "User", new { Area = "User" })">User</a></li>
+                    <li>
+                        <a href="#">Role</a>
+                    </li>
+                    <li>
+                        <a href="#">Position</a>
+                    </li>
+                </ul>
+            </li>
+           
+        </ul>
+    </div>
+</nav>
