@@ -35,9 +35,9 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstUserRole> MstUserRoles { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,20 +81,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("address");
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("created_by");
+            entity.Property(e => e.CompanyId).HasColumnName("company_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.DateOfBirth)
                 .HasColumnType("datetime")
                 .HasColumnName("date_of_birth");
-            entity.Property(e => e.Dept)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("dept");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -116,10 +110,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("nik");
-            entity.Property(e => e.Org)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("org");
             entity.Property(e => e.Phone)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -133,10 +123,8 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("profile_picture");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("update_by");
+            entity.Property(e => e.UnitArchiveId).HasColumnName("unit_archive_id");
+            entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
@@ -260,10 +248,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("code");
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
@@ -272,10 +257,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("name");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("update_by");
+            entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
@@ -321,10 +303,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.SubmenuId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("submenu_id");
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
@@ -339,10 +318,7 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("path");
             entity.Property(e => e.Sort).HasColumnName("sort");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("update_by");
+            entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
@@ -364,10 +340,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("user_id");
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
@@ -390,10 +363,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.PasswordLastChanged)
                 .HasColumnType("datetime")
                 .HasColumnName("password_last_changed");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("update_by");
+            entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
@@ -417,18 +387,12 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UserRoleId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("user_role_id");
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
-            entity.Property(e => e.UpdateBy)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("update_by");
+            entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");

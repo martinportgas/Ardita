@@ -16,10 +16,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Employee\Data\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
+    <Folder Include="Areas\Page\Data\" />
+    <Folder Include="Areas\Page\Models\" />
+    <Folder Include="Areas\Position\Data\" />
+    <Folder Include="Areas\Position\Models\" />
+    <Folder Include="Areas\RolePage\Data\" />
+    <Folder Include="Areas\RolePage\Models\" />
+    <Folder Include="Areas\Role\Data\" />
+    <Folder Include="Areas\Role\Models\" />
+    <Folder Include="Areas\UserRole\Data\" />
+    <Folder Include="Areas\UserRole\Models\" />
     <Folder Include="Areas\User\Data\" />
-    <Folder Include="Views\Shared\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,6 +21,12 @@ namespace Ardita.Services
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<IPositionService, PositionService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<ISubMenuService, SubMenuService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
+            services.AddScoped<IPageService, PageService>();
+            services.AddScoped<IRolePageService, RolePageService>();
 
             return services;
         }

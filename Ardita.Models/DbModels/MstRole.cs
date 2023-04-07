@@ -13,11 +13,11 @@ public partial class MstRole
 
     public bool IsActive { get; set; }
 
-    public string? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public string? UpdateBy { get; set; }
+    public Guid? UpdateBy { get; set; }
 
     public DateTime? UpdateDate { get; set; }
 

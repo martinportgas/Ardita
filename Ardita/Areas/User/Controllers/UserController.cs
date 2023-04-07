@@ -1,5 +1,6 @@
 ﻿using Ardita.Areas.User.Models;
 using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,42 +34,42 @@ namespace Ardita.Areas.User.Controllers
             _employeeService = employeeService;
             _positionService = positionService;
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
-        [HttpGet]
+        [HttpPost]
         public async Task<JsonResult> GetData()
         {
-            var userResult = await _userService.GetAll();
-            var usersList = userResult.ToList();
+            try
+            {
+                var model = new DataTableModel();
 
-            var employeeResult = await _employeeService.GetAll();
-            var employeeList = employeeResult.ToList();
+                model.draw = Request.Form["draw"].FirstOrDefault();
+                model.start = Request.Form["start"].FirstOrDefault();
+                model.length = Request.Form["length"].FirstOrDefault();
+                model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
+                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
+                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
+                model.recordsTotal = 0;
 
-            var positionResult = await _positionService.GetAll();
-            var positionList = positionResult.ToList();
+                var result = await _userService.GetListUsers(model);
 
-
-            var data = (from user in userResult
-                        join employee in employeeList on user.EmployeeId equals employee.EmployeeId
-                        join position in positionList on employee.PositionId equals position.PosittionId
-                        select new
-                        {
-                            UserId = user.UserId,
-                            UserName = user.Username,
-                            EmployeeName = employee.Name,
-                            EmployeePosition = position.Name,
-                            IsActive = user.IsActive
-                        }).ToList();
-
-            var JsonResults = JsonConvert.SerializeObject(data);
-
-            return Json(new { data = data });
+                var jsonResult = new { 
+                    draw = result.draw, 
+                    recordsFiltered = result.recordsFiltered, 
+                    recordsTotal = result.recordsTotal,
+                    data = result.data 
+                };
+                return Json(jsonResult);
+            } 
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
-
         public async Task<IActionResult> Add()
         {
             InsertViewModels viewModels = new InsertViewModels();
@@ -81,7 +82,6 @@ namespace Ardita.Areas.User.Controllers
 
             return View(viewModels);
         }
-
         public async Task<IActionResult> Update(Guid Id)
         {
             InsertViewModels viewModels = new InsertViewModels();
@@ -133,7 +133,6 @@ namespace Ardita.Areas.User.Controllers
 
             return RedirectToAction("Index", "User", new { Area = "user" });
         }
-
         public ActionResult Upload() 
         {
             IFormFile file = Request.Form.Files[0];

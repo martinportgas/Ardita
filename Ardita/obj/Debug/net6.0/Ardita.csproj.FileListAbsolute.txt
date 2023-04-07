@@ -16,6 +16,10 @@ D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\Ardita.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\Ardita.pdb
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\Azure.Core.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\Azure.Identity.dll
+D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OOXML.dll
+D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.dll
+D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OpenXml4Net.dll
+D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OpenXmlFormats.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\Humanizer.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\MessagePack.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\MessagePack.Annotations.dll
@@ -92,6 +96,7 @@ D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NuGet.Packa
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NuGet.ProjectModel.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NuGet.Protocol.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NuGet.Versioning.dll
+D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\ICSharpCode.SharpZipLib.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\System.CodeDom.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\System.Composition.AttributedModel.dll
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\System.Composition.Convention.dll
@@ -300,8 +305,3 @@ D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\obj\Debug\net6.0\refint\Ardi
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\obj\Debug\net6.0\Ardita.pdb
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\obj\Debug\net6.0\Ardita.genruntimeconfig.cache
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\obj\Debug\net6.0\ref\Ardita.dll
-D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OOXML.dll
-D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.dll
-D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OpenXml4Net.dll
-D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\NPOI.OpenXmlFormats.dll
-D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita\bin\Debug\net6.0\ICSharpCode.SharpZipLib.dll
