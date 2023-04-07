@@ -25,9 +25,9 @@ public partial class MstEmployee
 
     public string? ProfilePicture { get; set; }
 
-    public string? Org { get; set; }
+    public Guid? CompanyId { get; set; }
 
-    public string? Dept { get; set; }
+    public Guid? UnitArchiveId { get; set; }
 
     public Guid PositionId { get; set; }
 
@@ -35,11 +35,11 @@ public partial class MstEmployee
 
     public bool IsActive { get; set; }
 
-    public string? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public string? UpdateBy { get; set; }
+    public Guid? UpdateBy { get; set; }
 
     public DateTime? UpdateDate { get; set; }
 

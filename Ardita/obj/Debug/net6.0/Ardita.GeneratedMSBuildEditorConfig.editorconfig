@@ -16,8 +16,52 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Employee/Views/Employee/Add.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcRW1wbG95ZWVcVmlld3NcRW1wbG95ZWVcQWRkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Employee/Views/Employee/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcRW1wbG95ZWVcVmlld3NcRW1wbG95ZWVcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/General/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcR2VuZXJhbFxWaWV3c1xIb21lXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Page/Views/Page/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFnZVxWaWV3c1xQYWdlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Position/Views/Position/Add.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUG9zaXRpb25cVmlld3NcUG9zaXRpb25cQWRkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Position/Views/Position/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUG9zaXRpb25cVmlld3NcUG9zaXRpb25cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/RolePage/Views/RolePage/Detail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUm9sZVBhZ2VcVmlld3NcUm9sZVBhZ2VcRGV0YWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/RolePage/Views/RolePage/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUm9sZVBhZ2VcVmlld3NcUm9sZVBhZ2VcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Role/Views/Role/Add.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUm9sZVxWaWV3c1xSb2xlXEFkZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/Role/Views/Role/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUm9sZVxWaWV3c1xSb2xlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/UserRole/Views/UserRole/Detail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcVXNlclJvbGVcVmlld3NcVXNlclJvbGVcRGV0YWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/UserRole/Views/UserRole/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcVXNlclJvbGVcVmlld3NcVXNlclJvbGVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Areas/User/Views/User/Add.cshtml]
@@ -38,6 +82,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Views/Authentication/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aGVudGljYXRpb25cTG9naW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Views/Shared/Components/Menu/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcTWVudVxEZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/DATA-Martin/Martin/Side/Ardita/App/Ardita/Ardita/Views/Shared/_Footer.cshtml]

@@ -9,15 +9,15 @@ public partial class MstMenu
 
     public string Name { get; set; } = null!;
 
-    public string Icon { get; set; } = null!;
+    public string? Icon { get; set; }
 
     public bool IsActive { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public int? UpdateBy { get; set; }
+    public Guid? UpdateBy { get; set; }
 
     public DateTime? UpdateDate { get; set; }
 

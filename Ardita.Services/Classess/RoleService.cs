@@ -1,4 +1,8 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Positions;
+using Ardita.Models.ViewModels.Roles;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
@@ -30,6 +34,38 @@ namespace Ardita.Services.Classess
         public async Task<IEnumerable<MstRole>> GetById(Guid id)
         {
             return await _roleRepository.GetById(id);
+        }
+
+        public async Task<RoleListViewModel> GetListRole(DataTableModel tableModel)
+        {
+            var roleListViewModel = new RoleListViewModel();
+
+            var roleResult = await _roleRepository.GetAll();
+            var results = (from role in roleResult
+                           select new RoleListViewDetailModel
+                           {
+                               RoleId = role.RoleId,
+                               RoleCode = role.Code,
+                               RoleName = role.Name,
+                               IsActive = role.IsActive
+                           });
+
+            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            {
+                results = results.Where(
+                    x => x.RoleCode.Contains(tableModel.searchValue)
+                    || x.RoleName.Contains(tableModel.searchValue)
+                );
+            }
+            tableModel.recordsTotal = results.Count();
+            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
+
+            roleListViewModel.draw = tableModel.draw;
+            roleListViewModel.recordsFiltered = tableModel.recordsTotal;
+            roleListViewModel.recordsTotal = tableModel.recordsTotal;
+            roleListViewModel.data = data;
+
+            return roleListViewModel;
         }
 
         public async Task<int> Insert(MstRole model)

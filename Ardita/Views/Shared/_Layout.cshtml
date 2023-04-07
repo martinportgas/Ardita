@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/plugins/select2/select2.min.css">
         <link rel="stylesheet" href="~/css/plugins/select2/select2-bootstrap4.min.css">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
 
     </environment>
     <environment exclude="Development">
@@ -29,6 +30,8 @@
         <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/plugins/select2/select2.min.css">
         <link rel="stylesheet" href="~/css/plugins/select2/select2-bootstrap4.min.css">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
+
     </environment>
 
 
@@ -42,7 +45,7 @@
     <div id="wrapper">
 
         <!-- Navigation -->
-        @Html.Partial("~/Views/Shared/_Navigation.cshtml")
+        @await Component.InvokeAsync("Menu");
 
         <!-- Page wraper -->
         <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
@@ -69,6 +72,8 @@
         <!--Datatable-->
         <script src="~/lib/dataTables/datatables.min.js"></script>
         <script src="~/lib/dataTables/dataTables.bootstrap4.min.js"></script>
+        <!--Moment-->
+        <script src="~/lib/moment/min/moment.min.js"></script>
 
         <script src="~/lib/metisMenu/dist/jquery.metisMenu.js"></script>
         <script src="~/lib/slimScroll/jquery.slimscroll.js"></script>
@@ -76,6 +81,8 @@
         <script src="~/js/script.js" asp-append-version="true"></script>
         <!-- Select2 -->
         <script src="~/lib/select2/select2.full.min.js"></script>
+        <!-- Date Picker -->
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
         <!-- BS custom file -->
         <script src="~/lib/bs-custom-file/bs-custom-file-input.min.js"></script>
         <!-- Only for demo purpose -->
@@ -88,13 +95,16 @@
         <!--Datatable-->
         <script src="~/lib/dataTables/datatables.min.js"></script>
         <script src="~/lib/dataTables/dataTables.bootstrap4.min.js"></script>
-
+        <!--Moment-->
+        <script src="~/lib/moment/min/moment.min.js"></script>
         <script src="~/lib/metisMenu/dist/jquery.metisMenu.js"></script>
         <script src="~/lib/pace/pace.min.js"></script>
         <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
         <script src="~/js/script.js" asp-append-version="true"></script>
         <!-- Select2 -->
         <script src="~/lib/select2/select2.full.min.js"></script>
+        <!-- Date Picker -->
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
         <!-- BS custom file -->
         <script src="~/lib/bs-custom-file/bs-custom-file-input.min.js"></script>
     </environment>

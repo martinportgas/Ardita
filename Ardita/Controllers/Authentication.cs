@@ -9,11 +9,14 @@ namespace Ardita.Controllers
 {
     public class Authentication : Controller
     {
-        private readonly IUserService _service;
+        private readonly IUserService _userService;
 
-        public Authentication(IUserService service)
+
+        public Authentication(
+            IUserService userService
+            )
         {
-            _service = service;
+            _userService = userService;
         }
         public async Task<IActionResult> Index()
         {
@@ -44,28 +47,18 @@ namespace Ardita.Controllers
         }
         public async Task<IActionResult> ValidateLogin(LoginModel model)
         {
-            var data = _service.GetAll().Result.ToList().Where(
-                x => x.Username == model.Username && 
-                x.Password == Extensions.Global.Encode(model.Password)
-               );
+            var username = model.Username;
+            var password = Extensions.Global.Encode(model.Password);
+            var claims = await _userService.GetLogin(username, password);
 
             //Validate
-            if (data.Count() > 0)
+            if (claims != null)
             {
-                //Add Claim Here
-                List<Claim> claims = new List<Claim>()
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "Test Identity"),
-                    new Claim("Name", "Test")
-                };
-
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
                 AuthenticationProperties authenticationProperties = new AuthenticationProperties()
                 {
                     AllowRefresh = true,
                     IsPersistent = model.KeepLoggedIn
-
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -73,10 +66,9 @@ namespace Ardita.Controllers
 
                 return RedirectToAction("Index", "Home", new { area = "General" });
             }
-
             TempData["ValidateErrorMessage"] = "User Not Found";
-
             return RedirectToAction("Login", "Authentication");
         }
+        
     }
 }

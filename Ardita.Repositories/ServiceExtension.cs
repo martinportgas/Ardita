@@ -22,6 +22,11 @@ namespace Ardita.Repositories
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IPositionRepository, PositionRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<ISubMenuRepository, SubMenuRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            services.AddScoped<IPageRepository, PageRepository>();
+            services.AddScoped<IRolePageRepository, RolePageRepository>();
 
             return services;
         }
