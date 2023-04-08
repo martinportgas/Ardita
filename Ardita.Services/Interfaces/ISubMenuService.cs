@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Ardita.Services.Interfaces
         Task<int> Insert(MstSubmenu model);
         Task<int> Delete(MstSubmenu model);
         Task<int> Update(MstSubmenu model);
+        Task<List<SubMenuTypes>> GetSubMenuTypeToLookUp();
+        Task<List<SubMenuTypes>> GetSubMenuTypeToLookUp(Guid id);
     }
 }

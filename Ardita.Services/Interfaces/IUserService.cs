@@ -18,6 +18,7 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<MstUser>> GetAll();
         Task<UserListViewModel> GetListUsers(DataTableModel tableModel);
         Task<List<Claim>> GetLogin(string username, string password);
+        Task<List<UserMenuListViewModel>> GetUserMenu(Guid id);
         Task<int> Insert(MstUser model);
         Task<int> Delete(MstUser model);
         Task<int> Update(MstUser model);

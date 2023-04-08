@@ -6,7 +6,7 @@ using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Dynamic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,12 +48,16 @@ namespace Ardita.Services.Classess
                             PositionName = position.Name,
                             IsActive = position.IsActive
                           });
+            //if (!(string.IsNullOrEmpty(tableModel.sortColumn) && string.IsNullOrEmpty(tableModel.sortColumnDirection)))
+            //{
+            //    results = results.OrderBy(tableModel.sortColumn + " " + tableModel.sortColumnDirection);
+            //}
 
             if (!string.IsNullOrEmpty(tableModel.searchValue))
             {
                 results = results.Where(
-                    x => x.PositionCode.Contains(tableModel.searchValue)
-                    || x.PositionName.Contains(tableModel.searchValue)
+                    x => x.PositionCode.ToUpper().Contains(tableModel.searchValue.ToUpper())
+                    || x.PositionName.ToUpper().Contains(tableModel.searchValue.ToUpper())
                 );
             }
             tableModel.recordsTotal = results.Count();

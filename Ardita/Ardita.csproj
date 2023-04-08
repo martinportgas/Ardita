@@ -20,7 +20,6 @@
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\Page\Data\" />
-    <Folder Include="Areas\Page\Models\" />
     <Folder Include="Areas\Position\Data\" />
     <Folder Include="Areas\Position\Models\" />
     <Folder Include="Areas\RolePage\Data\" />
