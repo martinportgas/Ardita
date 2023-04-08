@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
+using Ardita.Areas.Page.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Ardita.Models.DbModels;
+using Ardita.Services.Classess;
 
 namespace Ardita.Areas.Page.Controllers
 {
@@ -10,9 +14,18 @@ namespace Ardita.Areas.Page.Controllers
     public class PageController : Controller
     {
         private readonly IPageService _pageService;
-        public PageController(IPageService pageService)
+        private readonly IMenuService _menuService;
+        private readonly ISubMenuService _subMenuService;
+
+        public PageController(
+            IPageService pageService,
+            ISubMenuService subMenuService,
+            IMenuService menuService
+            )
         {
             _pageService = pageService;
+            _menuService = menuService;
+            _subMenuService = subMenuService;
         }
         public IActionResult Index()
         {
@@ -50,6 +63,30 @@ namespace Ardita.Areas.Page.Controllers
             {
                 throw;
             }
+        }
+        public async Task<IActionResult> Add()
+        {
+
+            var MenuResult = await _menuService.GetMenuToLookUp();
+            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
+            var viewModel = new PageInsertViewModel();
+            viewModel.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+            viewModel.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+
+            return View(viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Save(PageInsertViewModel model)
+        {
+            int result = 0;
+            if (model.page != null)
+            {
+                model.page.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                model.page.CreatedDate = DateTime.Now;
+                result = await _pageService.Insert(model.page);
+            }
+            return RedirectToAction("Index", "Page", new { Area = "Page" });
         }
     }
 }

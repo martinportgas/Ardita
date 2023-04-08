@@ -27,14 +27,12 @@
                      </div>
                 </div>
                 <div class="ibox-content">
-                    <table id="tblPosition" class="table table-striped table-bordered table-hover dataTables-example">
+                    <table id="tblPosition" class="table table-striped table-bordered table-hover dataTables-example" style="width:100%">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Position Code</th>
                                 <th>Position Name</th>
-                                <th>Is Active</th>
-                                <th></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -53,41 +51,48 @@
             var table = $('#tblPosition').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
                 filter: true,
                 ajax: {
                     "url": '@Url.Action("GetData", "Position", new { Area = "Position"})',
                     "type": "POST",
                     "datatype": "json"
                 },
+                columnDefs: [
+                    { 
+                        width: 50, targets: 0 
+                    }
+                ],
+                fixedColumns: true,
                 columns: [
-                    { "data": "positionCode", "name": "Position Code", "autoWidth": true },
-                    { "data": "positionName", "name": "Position Name", "autoWidth": true },
-                    { "data": "isActive", "name": "Is Actice", "autoWidth": true },
-                  
                     {
                         "data": "positionId",
                         "render": function (data, type, row, meta) {
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Position", new { Area = "Position", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.positionId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Position", new { Area = "Position", Id = -1 })">Edit</a>`;
-                            edit = edit.replace("-1", row.userId);
-                            return edit;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Position", new { Area = "Position", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.positionId);
+
+                            var JoinButton = edit.concat(" ", remove);
+                            return JoinButton;
                         }
                     },
-                    {
-                        "data": "positionId",
-                        "render": function (data, type, row, meta) {
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Position", new { Area = "Position", Id = -1 })">Remove</a>`;
-                            remove = remove.replace("-1", row.userId);
-                            return remove;
-                        }
-                    }
+                    { "data": "positionCode", "name": "positionCode", "autoWidth": true },
+                    { "data": "positionName", "name": "positionName", "autoWidth": true },
+                    //{ 
+                    //    "data": "isActive",
+                    //    "render": function (data, type, row, meta) {
+                    //        var isActive = `<label><input type="checkbox" ${row.isActive == true ? "checked" : ""} class="i-checks" disabled=""></label>`;
+
+                    //        return isActive;
+                    //    }
+                    //}
                 ],
                 buttons: [
                     { extend: 'excel', title: 'user-data' },
                 ]
             });
-
-
         });
     </script>
 }

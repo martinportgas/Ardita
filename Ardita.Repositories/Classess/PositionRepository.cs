@@ -17,20 +17,32 @@ namespace Ardita.Repositories.Classess
             _context = context;
         }
 
-        public Task<int> Delete(MstPosition model)
+        public async Task<int> Delete(MstPosition model)
         {
-            throw new NotImplementedException();
+            int result = 0;
+
+            if (model != null && model.PosittionId != Guid.Empty)
+            {
+                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == model.PosittionId).ToListAsync();
+                if (data.Count > 0)
+                {
+                    model.IsActive = false;
+                    _context.MstPositions.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
         }
 
         public async Task<IEnumerable<MstPosition>> GetAll()
         {
-            var results = await _context.MstPositions.ToListAsync();
+            var results = await _context.MstPositions.Where(x=>x.IsActive == true).ToListAsync();
             return results;
         }
 
         public async Task<IEnumerable<MstPosition>> GetById(Guid id)
         {
-            var result = await _context.MstPositions.Where(x => x.PosittionId == id).ToListAsync();
+            var result = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == id).ToListAsync();
             return result;
         }
 
@@ -38,9 +50,19 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            if (model != null)
+            if (model.PosittionId == Guid.Empty)
             {
-                _context.MstPositions.Add(model);
+                var data = await _context.MstPositions.AsNoTracking().Where(x => x.Code.ToUpper() == model.Code.ToUpper()).ToListAsync();
+                model.IsActive = true;
+                if (data.Count > 0)
+                {
+                    model.PosittionId = data.FirstOrDefault().PosittionId;
+                    _context.MstPositions.Update(model);
+                }
+                else 
+                {
+                    _context.MstPositions.Add(model);
+                }
                 result = await _context.SaveChangesAsync();
             }
             return result;
@@ -52,9 +74,10 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.PosittionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.Where(x => x.PosittionId == model.PosittionId).ToListAsync();
+                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == model.PosittionId).ToListAsync();
                 if (data != null)
                 {
+                    model.IsActive = true;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

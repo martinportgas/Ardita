@@ -48,20 +48,21 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="Position" asp-area="Position" asp-action="Save">
+                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="Position" asp-area="Position" asp-action="Delete">
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Position Code</label>
-                                        <input type="text" placeholder="" id="txtPositionCode" class="form-control" asp-for="Code">
+                                        <input type="hidden" asp-for="PosittionId" value="@Model.PosittionId">
+                                        <input type="text" placeholder="" id="txtPositionCode" class="form-control" asp-for="Code" value="@Model.Code" readonly="">
                                     </div>
                                     <div class="form-group">
                                         <label>Position Name</label>
-                                        <input type="text" placeholder="" id="txtPositionName" class="form-control" asp-for="Name">
+                                        <input type="text" placeholder="" id="txtPositionName" class="form-control" asp-for="Name" value="@Model.Name" readonly="">
                                     </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action("Index", "Position", new { Area = "Position" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" onclick="onSubmit(this, event);">Submit</button>
+                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" onclick="onSubmit(this, event);">Remove</button>
                                 </div>
                             </form>
                         </div>
@@ -74,38 +75,24 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-        function validate() {
-            if ($('#txtPositionCode').val() == "") {
-                swal("Please enter Position Code !");
-                return false;
-            } else if ($('#txtPositionName').val() == "") {
-                swal("Please enter Position Name !");
-                return false;
-            } else{
-                return true;
-            }
-        }
-
-        function onSubmit(ctl, event){
+        function onSubmit(ctl, event) {
             event.preventDefault();
             swal({
-                title: "Do you want to save it?",
-                text: "Please check Information before Submiting!",
+                title: "Do you want to Remove it?",
+                text: "Please check Information before Removing!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Save",
+                confirmButtonText: "Remove",
                 cancelButtonText: "Cancel",
                 closeOnConfirm: false,
                 closeOnCancel: false
             },
                 function (isConfirm) {
                     if (isConfirm) {
-                        if (validate() == true) {
-                            $("#frmPosition").submit();
-                        }
+                        $("#frmPosition").submit();
                     } else {
-                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        swal("Cancelled", "You have Cancelled Form Deletion!", "error");
                     }
                 });
         }

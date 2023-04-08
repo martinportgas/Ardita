@@ -22,12 +22,20 @@ namespace Ardita.Services.Classess
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IPositionRepository _positionRepository;
+        private readonly IMenuRepository _menuRepository;
+        private readonly ISubMenuRepository _subMenuRepository;
+        private readonly IPageRepository _pageRepository;
+        private readonly IRolePageRepository _rolePageRepository;
 
         public UserService(IUserRepository userRepository, 
             IRoleRepository roleRepository, 
             IUserRoleRepository userRoleRepository, 
             IEmployeeRepository employeeRepository,
-            IPositionRepository positionRepository
+            IPositionRepository positionRepository,
+            IMenuRepository menuRepository,
+            ISubMenuRepository subMenuRepository,
+            IPageRepository pageRepository,
+            IRolePageRepository rolePageRepository
             )
         {
             _userRepository = userRepository;
@@ -35,6 +43,10 @@ namespace Ardita.Services.Classess
             _userRoleRepository = userRoleRepository;
             _employeeRepository = employeeRepository;
             _positionRepository = positionRepository;
+            _menuRepository = menuRepository;
+            _subMenuRepository = subMenuRepository;
+            _pageRepository = pageRepository;
+            _rolePageRepository = rolePageRepository;
         }
         public async Task<int> Delete(MstUser model)
         {
@@ -131,6 +143,41 @@ namespace Ardita.Services.Classess
             }
        
             return claims;
+        }
+
+        public async Task<List<UserMenuListViewModel>> GetUserMenu(Guid id)
+        {
+            var menuResults = await _menuRepository.GetAll();
+            var subMenuResults = await _subMenuRepository.GetAll();
+            var pageResults = await _pageRepository.GetAll();
+            var rolePageResults = await _rolePageRepository.GetAll();
+            var roleResults = await _roleRepository.GetAll();
+        
+
+            var results = (from menu in menuResults
+                          join subMenu in subMenuResults on menu.MenuId equals subMenu.MenuId
+                          join page in pageResults on subMenu.SubmenuId equals page.SubmenuId
+                          join rolePage in rolePageResults on page.PageId equals rolePage.PageId
+                          join role in roleResults on rolePage.RoleId equals role.RoleId
+                          where role.RoleId == id
+                          select new UserMenuListViewModel
+                          {
+                             MenuId = menu.MenuId,
+                             MenuName = menu.Name,
+                             SubMenuId = subMenu.SubmenuId,
+                             SubMenuName = subMenu.Name,
+                             SubMenuPath = subMenu.Path,
+                             SubMenuSort = subMenu.Sort,
+                             PageId = page.PageId,
+                             PageName = page.Name,
+                             PagePath = page.Path,
+                             RoleId = role.RoleId,
+                             RoleName = role.Name
+                          }
+                ).ToList();
+            
+
+            return results;
         }
 
         public async Task<int> Insert(MstUser model)
