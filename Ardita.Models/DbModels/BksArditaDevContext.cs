@@ -157,6 +157,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("name");
+            entity.Property(e => e.Path)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("path");
             entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")

@@ -7,6 +7,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Page\**" />
+    <Compile Remove="Areas\Position\**" />
+    <Compile Remove="Areas\RolePage\**" />
+    <Compile Remove="Areas\Role\**" />
+    <Compile Remove="Areas\UserRole\**" />
+    <Compile Remove="Areas\User\**" />
+    <Content Remove="Areas\Page\**" />
+    <Content Remove="Areas\Position\**" />
+    <Content Remove="Areas\RolePage\**" />
+    <Content Remove="Areas\Role\**" />
+    <Content Remove="Areas\UserRole\**" />
+    <Content Remove="Areas\User\**" />
+    <EmbeddedResource Remove="Areas\Page\**" />
+    <EmbeddedResource Remove="Areas\Position\**" />
+    <EmbeddedResource Remove="Areas\RolePage\**" />
+    <EmbeddedResource Remove="Areas\Role\**" />
+    <EmbeddedResource Remove="Areas\UserRole\**" />
+    <EmbeddedResource Remove="Areas\User\**" />
+    <None Remove="Areas\Page\**" />
+    <None Remove="Areas\Position\**" />
+    <None Remove="Areas\RolePage\**" />
+    <None Remove="Areas\Role\**" />
+    <None Remove="Areas\UserRole\**" />
+    <None Remove="Areas\User\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
@@ -16,19 +43,44 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Employee\Data\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
-    <Folder Include="Areas\Page\Data\" />
-    <Folder Include="Areas\Position\Data\" />
-    <Folder Include="Areas\Position\Models\" />
-    <Folder Include="Areas\RolePage\Data\" />
-    <Folder Include="Areas\RolePage\Models\" />
-    <Folder Include="Areas\Role\Data\" />
-    <Folder Include="Areas\Role\Models\" />
-    <Folder Include="Areas\UserRole\Data\" />
-    <Folder Include="Areas\UserRole\Models\" />
-    <Folder Include="Areas\User\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\fonts\font-awesome\less\animated.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\bordered-pulled.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\core.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\fixed-width.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\font-awesome.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\icons.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\larger.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\list.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\mixins.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\path.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\rotated-flipped.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\screen-reader.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\stacked.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\variables.less" />
+    <None Include="wwwroot\fonts\font-awesome\less\_icons.less" />
+    <None Include="wwwroot\fonts\font-awesome\scss\font-awesome.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_animated.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_bordered-pulled.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_core.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_fixed-width.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_icons.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_larger.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_list.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_mixins.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_path.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_rotated-flipped.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_screen-reader.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_stacked.scss" />
+    <None Include="wwwroot\fonts\font-awesome\scss\_variables.scss" />
+    <None Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +88,105 @@
     <ProjectReference Include="..\Ardita.Models\Ardita.Models.csproj" />
     <ProjectReference Include="..\Ardita.Repositories\Ardita.Repositories.csproj" />
     <ProjectReference Include="..\Ardita.Services\Ardita.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Areas\UserManage\Views\Employee\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Employee\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Employee\Remove.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Employee\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Page\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Page\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Page\Remove.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Page\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Position\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Position\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Position\Remove.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Position\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\RolePage\Detail.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\RolePage\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Role\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Role\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Role\Remove.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\Role\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\UserRole\Detail.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\UserRole\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\User\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\User\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\User\Remove.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\UserManage\Views\User\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

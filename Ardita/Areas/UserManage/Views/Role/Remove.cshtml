@@ -1,0 +1,101 @@
+﻿@model Ardita.Models.DbModels.MstRole
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Data</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Role", new {Area = "UserManage"})">Role</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Data</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Role</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="Role" asp-area="Role" asp-action="Delete">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Role Code</label>
+                                        <input type="hidden" asp-for="RoleId" value="@Model.RoleId" />
+                                        <input type="text" placeholder="" id="txtRoleCode" class="form-control" asp-for="Code" value="@Model.Code" readonly="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role Name</label>
+                                        <input type="text" placeholder="" id="txtRoleName" class="form-control" asp-for="Name" value="@Model.Name" readonly="">
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("Index", "Role", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do you want to remove it?",
+                text: "Please check Information before Removing!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $("#frmRole").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Deletion!", "error");
+                    }
+                });
+        }
+    </script>
+}

@@ -26,7 +26,7 @@ namespace Ardita.Views.ViewComponents
             Guid guid = new Guid(role);
 
             var getMenu = await _userService.GetUserMenu(guid);
-            var menu = getMenu.GroupBy(x=> x.MenuId).Select(x => new MstMenu { MenuId = x.Key, Name = x.FirstOrDefault().MenuName }).ToList();
+            var menu = getMenu.GroupBy(x=> x.MenuId).Select(x => new MstMenu { MenuId = x.Key, Name = x.FirstOrDefault().MenuName, Path = x.FirstOrDefault().MenuPath }).ToList();
 
             var getSubMenu = await _userService.GetUserMenu(guid);
             var subMenu = getSubMenu.GroupBy(g=>g.SubMenuId).Select(x => 

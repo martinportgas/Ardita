@@ -1,14 +1,35 @@
-﻿<div class="row border-bottom">
+﻿@using System.Security.Claims;
+@{
+    var claimsIdentity = User.Identity as ClaimsIdentity;
+}
+<div class="row border-bottom">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
-            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-success tombol" href="#"><i class="fa fa-bars"></i> </a>
+            <span class="m-r-sm text-muted welcome-message welcomeman" style="margin: 20px 2px 7px 7px !important;display:inline-block;position:relative;" data-i18n="topnav.welcometext">Hello <strong>@claimsIdentity.FindFirst("EmployeeName").Value - @claimsIdentity.FindFirst("RoleName").Value</strong></span>
+
         </div>
-        <ul class="nav navbar-top-links navbar-right">
-            <li>
-                <a href="/Authentication/Logout">
-                    <i class="fa fa-sign-out"></i> Log out
-                </a>
-            </li>
-        </ul>
+
+        <div style="display:flex;flex-direction:column" class="nav navbar-top-links navbar-right">
+            <ul style="padding: 5px 0px 0px 40px; font-size: 11px !important;margin-bottom:5px !important;">
+                <li style="display: flex;justify-content: space-around;">
+                    <span style="color: #000000">@DateTime.Now.ToString("dddd, dd MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("id-ID")) </span>
+                    <span style="color: #000000" id="clockbox"></span>
+                </li>
+            </ul>
+
+            <ul style="margin-top: -5px !important; margin-bottom: 5px;" class="topbutton">
+                <li>
+                    <a href="@Url.Action("ChangePassword", "Authentication", new { Area = "" } )" style="font-size:11px !important;color:#000000;">
+                        <i class="fa fa-key"></i> Change Password
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Authentication", new { Area = "" } )" style="font-size:11px !important;color:#000000">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+        </div>
     </nav>
 </div>

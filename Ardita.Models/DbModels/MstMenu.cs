@@ -9,6 +9,8 @@ public partial class MstMenu
 
     public string Name { get; set; } = null!;
 
+    public string? Path { get; set; }
+
     public string? Icon { get; set; }
 
     public bool IsActive { get; set; }

@@ -1,0 +1,123 @@
+﻿@model Ardita.Models.ViewModels.UserRoles.UserRoleListViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Role</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "UserRole")">Detail User Roles</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Data</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Roles</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserRole" asp-action="Save">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input type="hidden" asp-for="UserRole.UserId" value="@(Model.Users == null ? string.Empty : Model.Users.UserId)" />
+                                    <input type="text" placeholder="" class="form-control" value="@(Model.Users == null ? string.Empty : Model.Users.Username)" disabled="">
+                                </div>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select asp-for="UserRole.RoleId" id="RoleId" class="select2_demo_1 form-control">
+                                        @foreach (var item in Model.Roles)
+                                        {
+                                            <option value="@item.RoleId">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit"><i class="fa fa-pencil">Add</i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-6 b-r">
+                            <table id="tblRole" class="table table-striped table-hover dataTables-example" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Role Code</th>
+                                        <th>Role Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.UserRoles)
+                                    {
+                                        <tr>
+                                            <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
+                                            <td>@item.RoleCode</td>
+                                            <td>@item.RoleName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#tblRole').DataTable({
+                searching: false,
+                filter: false,
+                lengthChange: false,
+                columnDefs: [
+                    {
+                        width: 20, targets: 0
+                    }
+                ],
+            });
+
+            $("#RoleId").select2({
+                theme: 'bootstrap4',
+            });
+
+            
+        });
+
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do you want to save it?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $("#frmRole").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+    </script>
+}

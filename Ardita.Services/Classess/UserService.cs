@@ -165,6 +165,7 @@ namespace Ardita.Services.Classess
                           {
                              MenuId = menu.MenuId,
                              MenuName = menu.Name,
+                             MenuPath = menu.Path,
                              SubMenuId = subMenu.SubmenuId,
                              SubMenuName = subMenu.Name,
                              SubMenuPath = subMenu.Path,
