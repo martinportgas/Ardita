@@ -27,14 +27,12 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <table id="tblRole" class="table table-striped table-bordered table-hover dataTables-example">
+                    <table id="tblRole" class="table table-striped table-bordered table-hover dataTables-example" style="width: 100%">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Role Code</th>
                                 <th>Role Name</th>
-                                <th>Is Active</th>
-                                <th></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -53,41 +51,36 @@
             var table = $('#tblRole').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
                 filter: true,
                 ajax: {
                     "url": '@Url.Action("GetData", "Role", new { Area = "Role"})',
                     "type": "POST",
                     "datatype": "json"
                 },
-                columns: [
-                    { "data": "roleCode", "name": "Role Code", "autoWidth": true },
-                    { "data": "roleName", "name": "Role Name", "autoWidth": true },
-                    { "data": "isActive", "name": "Is Actice", "autoWidth": true },
-
+                columnDefs: [
                     {
-                        "data": "roleId",
-                        "render": function (data, type, row, meta) {
-
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Position", new { Area = "Position", Id = -1 })">Edit</a>`;
-                            edit = edit.replace("-1", row.userId);
-                            return edit;
-                        }
-                    },
-                    {
-                        "data": "roleId",
-                        "render": function (data, type, row, meta) {
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Position", new { Area = "Position", Id = -1 })">Remove</a>`;
-                            remove = remove.replace("-1", row.userId);
-                            return remove;
-                        }
+                        width: 50, targets: 0
                     }
                 ],
-                buttons: [
-                    { extend: 'excel', title: 'user-data' },
+                columns: [
+                    {
+                        "data": "userId",
+                        "render": function (data, type, row, meta) {
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Role", new { Area = "Role", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.roleId);
+
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Role", new { Area = "Role", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.roleId);
+
+                            var JoinButton = edit.concat(" ", remove);
+                            return JoinButton;
+                        }
+                    },
+                    { "data": "roleCode", "name": "Role Code", "autoWidth": true },
+                    { "data": "roleName", "name": "Role Name", "autoWidth": true }
                 ]
             });
-
-
         });
     </script>
 }

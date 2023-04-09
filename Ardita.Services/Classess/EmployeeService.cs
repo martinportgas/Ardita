@@ -52,7 +52,7 @@ namespace Ardita.Services.Classess
                                EmployeeName = employee.Name,
                                EmployeeEmail = employee.Email,
                                EmployeeGender = employee.Gender,
-                               EmployePlaceOfBirth = employee.PlaceOfBirth,
+                               EmployeePlaceOfBirth = employee.PlaceOfBirth,
                                EmployeeDateOfBirth = employee.DateOfBirth,
                                EmployeeAddress = employee.Address,
                                EmployeePhone = employee.Phone,
@@ -70,7 +70,7 @@ namespace Ardita.Services.Classess
                     || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()): false)
                     || (x.EmployeeEmail != null ? x.EmployeeEmail.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                     || (x.EmployeeGender != null ? x.EmployeeGender.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployePlaceOfBirth != null ? x.EmployePlaceOfBirth.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.EmployeePlaceOfBirth != null ? x.EmployeePlaceOfBirth.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                     || (x.PositionName != null ? x.PositionName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                 );
             }
@@ -89,6 +89,11 @@ namespace Ardita.Services.Classess
         public async Task<int> Insert(MstEmployee model)
         {
             return await _employeeRepository.Insert(model);
+        }
+
+        public async Task<bool> InsertBulk(List<MstEmployee> employees)
+        {
+            return await _employeeRepository.InsertBulk(employees);
         }
 
         public async Task<int> Update(MstEmployee model)

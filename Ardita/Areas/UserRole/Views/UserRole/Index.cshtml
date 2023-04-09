@@ -26,14 +26,13 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <table id="tblUser" class="table table-striped table-bordered table-hover dataTables-example">
+                    <table id="tblUser" class="table table-striped table-bordered table-hover dataTables-example" style="width: 100%">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th>Username</th>
                                 <th>Name</th>
                                 <th>Position</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -50,26 +49,31 @@
             var table = $('#tblUser').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollX: true,
                 filter: true,
                 ajax: {
                     "url": '@Url.Action("GetUsers", "UserRole", new { Area = "UserRole"})',
                     "type": "POST",
                     "datatype": "json"
                 },
+                columnDefs: [
+                    {
+                        width: 30, targets: 0
+                    }
+                ],
                 columns: [
-                    { "data": "userId", "name": "User ID", "visible": false, "autoWidth": true },
-                    { "data": "userName", "name": "Username", "autoWidth": true },
-                    { "data": "employeeName", "name": "Name", "autoWidth": true },
-                    { "data": "employeePosition", "name": "Position", "autoWidth": true },
                     {
                         "data": "UserId",
                         "render": function (data, type, row, meta) {
-
                             var view = `<a class="btn btn-sm btn-default" href="@Url.Action("Detail", "UserRole", new { Area = "UserRole", Id = -1 })"><i class="fa fa-eye"></i></a>`;
                             view = view.replace("-1", row.userId);
                             return view;
                         }
-                    }
+                    },
+                    { "data": "userName", "name": "Username", "autoWidth": true },
+                    { "data": "employeeName", "name": "Name", "autoWidth": true },
+                    { "data": "employeePosition", "name": "Position", "autoWidth": true },
+                    
                 ]
             });
         });

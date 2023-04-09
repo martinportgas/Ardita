@@ -15,6 +15,7 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<MstEmployee>> GetAll();
         Task<EmployeeListViewModel> GetListEmployee(DataTableModel tableModel);
         Task<int> Insert(MstEmployee model);
+        Task<bool> InsertBulk(List<MstEmployee> employees);
         Task<int> Delete(MstEmployee model);
         Task<int> Update(MstEmployee model);
     }

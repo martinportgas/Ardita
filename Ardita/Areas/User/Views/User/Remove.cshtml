@@ -47,7 +47,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="User" asp-action="Save">
+                            <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="User" asp-action="Delete">
                                 <input type="hidden" asp-for="User.UserId" value="@Model.User.UserId" />
                                 <div class="form-group">
                                     <label>Employee</label>
@@ -59,16 +59,17 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Username</label> 
-                                    <input type="text" placeholder="" id="txtUserName" value="@Model.User.Username" class="form-control" asp-for="User.Username">
+                                    <label>Username</label>
+                                    <input type="text" placeholder="" id="txtUserName" value="@Model.User.Username" class="form-control" asp-for="User.Username" readonly="">
                                 </div>
                                 <div class="form-group">
-                                    <label>Password</label> 
-                                    <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="User.Password"></div>
+                                    <label>Password</label>
+                                    <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="User.Password" readonly="">
+                                </div>
                                 <div>
                                     <a href="@Url.Action("Index", "User", new { Area = "User" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
-                                   
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Remove</button>
+
                                 </div>
                             </form>
                         </div>
@@ -87,26 +88,12 @@
             }).select2("val", @Model.User.EmployeeId);
         });
 
-        function validate() {
-            if ($('#txtUserName').val() == "") {
-                swal("Please enter Username !");
-                return false;
-            } else if ($('#txtUserPassword').val() == "") {
-                swal("Please enter Employee Name !");
-                return false;
-            } else if ($('#txtEmployeeId').val() == "") {
-                swal("Please enter Employee!");
-                return false;
-            } else {
-                return true;
-            }
-        }
 
         function onSubmit(ctl, event) {
             event.preventDefault();
             swal({
-                title: "Do you want to save it?",
-                text: "Please check Information before Submiting!",
+                title: "Do you want to remove it?",
+                text: "Please check Information before removing!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
@@ -117,11 +104,9 @@
             },
                 function (isConfirm) {
                     if (isConfirm) {
-                        if (validate() == true) {
-                            $("#frmUser").submit();
-                        }
+                        $("#frmUser").submit();
                     } else {
-                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        swal("Cancelled", "You have Cancelled Form Deletion!", "error");
                     }
                 });
         }

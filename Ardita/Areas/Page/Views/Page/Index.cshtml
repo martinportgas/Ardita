@@ -27,16 +27,14 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <table id="tblPage" class="table table-striped table-bordered table-hover dataTables-example">
+                    <table id="tblPage" class="table table-striped table-bordered table-hover dataTables-example" style="width: 100%">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Page Name</th>
                                 <th>Page Path</th>
                                 <th>Sub Menu</th>
                                 <th>Sub Menu Path</th>
-                                <th>Is Active</th>
-                                <th></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -62,29 +60,23 @@
                     "datatype": "json"
                 },
                 columns: [
-                    { "data": "pageName", "name": "Page Name", "autoWidth": true },
-                    { "data": "pagePath", "name": "Page Path", "autoWidth": true },
-                    { "data": "subMenuName", "name": "Sub Menu", "autoWidth": true },
-                    { "data": "subMenuPath", "name": "Sub Menu Path", "autoWidth": true },
-                    { "data": "pageIsActive", "name": "Is Actice", "autoWidth": true },
-
                     {
                         "data": "pageId",
                         "render": function (data, type, row, meta) {
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Page", new { Area = "Page", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.pageId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Page", new { Area = "Page", Id = -1 })">Edit</a>`;
-                            edit = edit.replace("-1", row.userId);
-                            return edit;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Page", new { Area = "Page", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.pageId);
+
+                            var JoinButton = edit.concat(" ", remove);
+                            return JoinButton;
                         }
                     },
-                    {
-                        "data": "pageId",
-                        "render": function (data, type, row, meta) {
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Page", new { Area = "Page", Id = -1 })">Remove</a>`;
-                            remove = remove.replace("-1", row.userId);
-                            return remove;
-                        }
-                    }
+                    { "data": "pageName", "name": "PageName", "autoWidth": true },
+                    { "data": "pagePath", "name": "PagePath", "autoWidth": true },
+                    { "data": "subMenuName", "name": "SubMenu", "autoWidth": true },
+                    { "data": "subMenuPath", "name": "SubMenuPath", "autoWidth": true }
                 ]
             });
 

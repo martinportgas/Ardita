@@ -49,10 +49,11 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="Page" asp-area="Page" asp-action="Save">
+                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="Page" asp-area="Page" asp-action="Delete">
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Page Name</label>
+                                        <input type="hidden" asp-for="page.PageId" value="@Model.page.PageId" />
                                         <select id="txtPageName" asp-for="page.Name" asp-for="page.Name" class="select2_demo_1 form-control">
                                             <option value="Index">Index</option>
                                             <option value="Create">Create</option>
@@ -72,7 +73,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>Sub Menu</label>
+                                        <label>Menu</label>
                                         <select id="txtMenu" class="select2_demo_1 form-control" asp-items="Model.MenuTypes"></select>
                                     </div>
                                     <div class="form-group">
@@ -82,7 +83,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action("Index", "Page", new { Area = "Page" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Remove</button>
                                 </div>
                             </form>
                         </div>
@@ -97,17 +98,21 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#txtMenu").select2({
-                theme: 'bootstrap4',
-            }); 
+                theme: 'bootstrap4'
+            }).val('@Model.page.SubmenuId').trigger('change');
+
             $("#txtSubMenu").select2({
                 theme: 'bootstrap4',
-            });
+            }).val('@Model.page.SubmenuId').trigger('change');
+
             $("#txtPageName").select2({
-                theme: 'bootstrap4',
-            });
+                theme: 'bootstrap4'
+            }).val('@Model.page.Name').trigger('change');
+
             $("#txtPagePath").select2({
-                theme: 'bootstrap4',
-            });
+                theme: 'bootstrap4'
+               
+            }).val('@Model.page.Path').trigger('change');
         });
     </script>
 }

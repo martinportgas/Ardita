@@ -29,11 +29,9 @@
                     <table id="tblRole" class="table table-striped table-bordered table-hover dataTables-example" style="width: 100%">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Role Code</th>
                                 <th>Role Name</th>
-                                <th>Is Active</th>
-                                <th></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -49,18 +47,21 @@
         $(document).ready(function () {
             bsCustomFileInput.init();
             var table = $('#tblRole').DataTable({
-                processing: true,
-                serverSide: true,
-                filter: true,
-                ajax: {
-                    "url": '@Url.Action("GetData", "RolePage", new { Area = "RolePage"})',
-                    "type": "POST",
-                    "datatype": "json"
-                },
+                    processing: true,
+                    serverSide: true,
+                    filter: true,
+                    scrollX: true,
+                    columnDefs: [
+                        {
+                            width: 30, targets: 0
+                        }
+                    ],
+                    ajax: {
+                        "url": '@Url.Action("GetData", "RolePage", new { Area = "RolePage"})',
+                        "type": "POST",
+                        "datatype": "json"
+                    },
                     columns: [
-                        { "data": "roleCode", "name": "Role Code", "autoWidth": true },
-                        { "data": "roleName", "name": "Role Name", "autoWidth": true },
-                        { "data": "isActive", "name": "Is Actice", "autoWidth": true },
                         {
                             "data": "UserId",
                             "render": function (data, type, row, meta) {
@@ -69,8 +70,9 @@
                                 view = view.replace("-1", row.roleId);
                                 return view;
                             }
-                        }
-
+                        },
+                        { "data": "roleCode", "name": "Role Code", "autoWidth": true },
+                        { "data": "roleName", "name": "Role Name", "autoWidth": true }
                     ]
             });
 

@@ -4,6 +4,7 @@ using Ardita.Services.Interfaces;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Models.DbModels;
+using Ardita.Areas.User.Models;
 
 namespace Ardita.Areas.Role.Controllers
 {
@@ -12,7 +13,6 @@ namespace Ardita.Areas.Role.Controllers
     public class RoleController : Controller
     {
         private readonly IRoleService _roleService;
-
         public RoleController(IRoleService roleService)
         {
             _roleService = roleService;
@@ -54,10 +54,39 @@ namespace Ardita.Areas.Role.Controllers
                 throw;
             }
         }
-
         public IActionResult Add()
         {
             return View();
+        }
+        public async Task<IActionResult> Update(Guid Id)
+        {
+            MstRole role = new();
+
+            var roles = await _roleService.GetById(Id);
+            if (roles.Count() > 0)
+            {
+                role = roles.FirstOrDefault();
+                return View(role);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Role", new { Area = "Role" });
+            }
+        }
+        public async Task<IActionResult> Remove(Guid Id)
+        {
+            MstRole role = new();
+
+            var roles = await _roleService.GetById(Id);
+            if (roles.Count() > 0)
+            {
+                role = roles.FirstOrDefault();
+                return View(role);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Role", new { Area = "Role" });
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -66,12 +95,33 @@ namespace Ardita.Areas.Role.Controllers
             int result = 0;
             if (model != null)
             {
-
                 if (model.RoleId != Guid.Empty)
+                {
+                    model.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.UpdateDate = DateTime.Now;
                     result = await _roleService.Update(model);
+                }
                 else
+                {
+                    model.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                    model.CreatedDate = DateTime.Now;
                     result = await _roleService.Insert(model);
+                }
 
+            }
+            return RedirectToAction("Index", "Role", new { Area = "Role" });
+        }
+        public async Task<IActionResult> Delete(MstRole model)
+        {
+            int result = 0;
+            if (model != null)
+            {
+                if (model.RoleId != Guid.Empty)
+                {
+                    model.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.UpdateDate = DateTime.Now;
+                    result = await _roleService.Delete(model);
+                }
             }
             return RedirectToAction("Index", "Role", new { Area = "Role" });
         }

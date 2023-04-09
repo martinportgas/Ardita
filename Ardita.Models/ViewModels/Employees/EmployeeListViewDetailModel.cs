@@ -13,7 +13,7 @@ namespace Ardita.Models.ViewModels.Employees
         public string EmployeeName { get; set; }
         public string EmployeeEmail { get; set; }
         public string EmployeeGender { get; set; }
-        public string EmployePlaceOfBirth { get; set; }
+        public string EmployeePlaceOfBirth { get; set; }
         public DateTime? EmployeeDateOfBirth { get; set; }
         public string EmployeeAddress { get; set; }
         public string EmployeePhone { get; set; }

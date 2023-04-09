@@ -66,8 +66,9 @@ namespace Ardita.Services.Classess
             if (!string.IsNullOrEmpty(tableModel.searchValue))
             {
                 results = results.Where(
-                    x => x.PageName.Contains(tableModel.searchValue)
-                    || x.SubMenuName.Contains(tableModel.searchValue)
+                    x =>
+                     (x.PageName != null ? x.PageName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.SubMenuName != null ? x.SubMenuName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                 );
             }
             tableModel.recordsTotal = results.Count();

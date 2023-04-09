@@ -85,9 +85,10 @@ namespace Ardita.Services.Classess
             if (!string.IsNullOrEmpty(tableModel.searchValue))
             {
                 results = results.Where(
-                    x => x.UserName.Contains(tableModel.searchValue)
-                    || x.EmployeeName.Contains(tableModel.searchValue)
-                    || x.EmployeePosition.Contains(tableModel.searchValue)
+                    x =>
+                    (x.UserName != null ? x.UserName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.EmployeePosition != null ? x.EmployeePosition.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                 );
             }
 
@@ -185,14 +186,14 @@ namespace Ardita.Services.Classess
             return await _userRepository.Insert(model);
         }
 
+        public async Task<bool> InsertBulk(List<MstUser> users)
+        {
+            return await _userRepository.InsertBulk(users);
+        }
+
         public async Task<int> Update(MstUser model)
         {
             return await _userRepository.Update(model);
-        }
-
-        public void Upload(MstUser model)
-        {
-            _userRepository.Upload(model);
         }
     }
 }

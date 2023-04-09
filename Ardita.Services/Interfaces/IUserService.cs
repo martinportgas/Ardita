@@ -20,8 +20,8 @@ namespace Ardita.Services.Interfaces
         Task<List<Claim>> GetLogin(string username, string password);
         Task<List<UserMenuListViewModel>> GetUserMenu(Guid id);
         Task<int> Insert(MstUser model);
+        Task<bool> InsertBulk(List<MstUser> users);
         Task<int> Delete(MstUser model);
         Task<int> Update(MstUser model);
-        void Upload(MstUser model);
     }
 }
