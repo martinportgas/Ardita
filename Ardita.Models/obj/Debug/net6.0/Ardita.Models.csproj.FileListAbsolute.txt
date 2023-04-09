@@ -12,3 +12,17 @@ D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita.Models\obj\Debug\net6.0\refi
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.pdb
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.genruntimeconfig.cache
 D:\DATA-Martin\Martin\Side\Ardita\App\Ardita\Ardita.Models\obj\Debug\net6.0\ref\Ardita.Models.dll
+D:\Code\Ardita\Ardita.Models\bin\Debug\net6.0\Ardita.Models.deps.json
+D:\Code\Ardita\Ardita.Models\bin\Debug\net6.0\Ardita.Models.runtimeconfig.json
+D:\Code\Ardita\Ardita.Models\bin\Debug\net6.0\Ardita.Models.dll
+D:\Code\Ardita\Ardita.Models\bin\Debug\net6.0\Ardita.Models.pdb
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.csproj.AssemblyReference.cache
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.AssemblyInfoInputs.cache
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.AssemblyInfo.cs
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.csproj.CoreCompileInputs.cache
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.dll
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\refint\Ardita.Models.dll
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.pdb
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\Ardita.Models.genruntimeconfig.cache
+D:\Code\Ardita\Ardita.Models\obj\Debug\net6.0\ref\Ardita.Models.dll
