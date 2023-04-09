@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Services\\Ardita.Services.csproj": {}
+    "D:\\Code\\Ardita\\Ardita.Services\\Ardita.Services.csproj": {}
   },
   "projects": {
-    "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
+    "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj",
+        "projectUniqueName": "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj",
         "projectName": "Ardita.Models",
-        "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj",
-        "packagesPath": "C:\\Users\\OS1510\\.nuget\\packages\\",
-        "outputPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\obj\\",
+        "projectPath": "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj",
+        "packagesPath": "C:\\Users\\NDS.NDS-LPT-0328\\.nuget\\packages\\",
+        "outputPath": "D:\\Code\\Ardita\\Ardita.Models\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\OS1510\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\NDS.NDS-LPT-0328\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -84,20 +81,17 @@
         }
       }
     },
-    "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj": {
+    "D:\\Code\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj",
+        "projectUniqueName": "D:\\Code\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj",
         "projectName": "Ardita.Repositories",
-        "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj",
-        "packagesPath": "C:\\Users\\OS1510\\.nuget\\packages\\",
-        "outputPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\obj\\",
+        "projectPath": "D:\\Code\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj",
+        "packagesPath": "C:\\Users\\NDS.NDS-LPT-0328\\.nuget\\packages\\",
+        "outputPath": "D:\\Code\\Ardita\\Ardita.Repositories\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\OS1510\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\NDS.NDS-LPT-0328\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -111,8 +105,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
-                "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj"
+              "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
+                "projectPath": "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj"
               }
             }
           }
@@ -126,6 +120,12 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "Z.EntityFramework.Extensions.EFCore": {
+              "target": "Package",
+              "version": "[7.20.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -146,20 +146,17 @@
         }
       }
     },
-    "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Services\\Ardita.Services.csproj": {
+    "D:\\Code\\Ardita\\Ardita.Services\\Ardita.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Services\\Ardita.Services.csproj",
+        "projectUniqueName": "D:\\Code\\Ardita\\Ardita.Services\\Ardita.Services.csproj",
         "projectName": "Ardita.Services",
-        "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Services\\Ardita.Services.csproj",
-        "packagesPath": "C:\\Users\\OS1510\\.nuget\\packages\\",
-        "outputPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Services\\obj\\",
+        "projectPath": "D:\\Code\\Ardita\\Ardita.Services\\Ardita.Services.csproj",
+        "packagesPath": "C:\\Users\\NDS.NDS-LPT-0328\\.nuget\\packages\\",
+        "outputPath": "D:\\Code\\Ardita\\Ardita.Services\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\OS1510\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\NDS.NDS-LPT-0328\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -173,11 +170,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
-                "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Models\\Ardita.Models.csproj"
+              "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj": {
+                "projectPath": "D:\\Code\\Ardita\\Ardita.Models\\Ardita.Models.csproj"
               },
-              "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj": {
-                "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj"
+              "D:\\Code\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj": {
+                "projectPath": "D:\\Code\\Ardita\\Ardita.Repositories\\Ardita.Repositories.csproj"
               }
             }
           }
@@ -195,6 +192,10 @@
             "Microsoft.AspNetCore.Authentication.Cookies": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "System.Linq.Dynamic.Core": {
+              "target": "Package",
+              "version": "[1.3.2, )"
             }
           },
           "imports": [

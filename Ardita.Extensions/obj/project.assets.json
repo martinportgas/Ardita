@@ -497,23 +497,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\OS1510\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\NDS.NDS-LPT-0328\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Extensions\\Ardita.Extensions.csproj",
+      "projectUniqueName": "D:\\Code\\Ardita\\Ardita.Extensions\\Ardita.Extensions.csproj",
       "projectName": "Ardita.Extensions",
-      "projectPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Extensions\\Ardita.Extensions.csproj",
-      "packagesPath": "C:\\Users\\OS1510\\.nuget\\packages\\",
-      "outputPath": "D:\\DATA-Martin\\Martin\\Side\\Ardita\\App\\Ardita\\Ardita.Extensions\\obj\\",
+      "projectPath": "D:\\Code\\Ardita\\Ardita.Extensions\\Ardita.Extensions.csproj",
+      "packagesPath": "C:\\Users\\NDS.NDS-LPT-0328\\.nuget\\packages\\",
+      "outputPath": "D:\\Code\\Ardita\\Ardita.Extensions\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\OS1510\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\NDS.NDS-LPT-0328\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
