@@ -53,22 +53,23 @@
                     <table id="tblRolePage" class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Sub Menu</th>
                                 <th>Sub Menu Path</th>
                                 <th>Page Name</th>
                                 <th>Page Path</th>
-                                <th></th>
+                                
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.rolePages)
                             {
                                 <tr>
+                                    <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "RolePage", new { Area="RolePage", id = item.RolePageId})"><i class="fa fa-trash"></i></a></td>
                                     <td>@item.SubMenuName</td>
                                     <td>@item.SubMenuPath</td>
                                     <td>@item.PageName</td>
                                     <td>@item.pagePath</td>
-                                    <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "RolePage", new { Area="RolePage", id = item.RolePageId})">Remove</a></td>
                                 </tr>
                             }
                         </tbody>

@@ -18,6 +18,7 @@ namespace Ardita.Areas.Position.Controllers
         {
             _positionService = positionService;
         }
+        [Authorize(Roles = "ADM, UKP")]
         public IActionResult Index()
         {
             return View();
@@ -97,6 +98,7 @@ namespace Ardita.Areas.Position.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADM")]
         public async Task<IActionResult> Save(MstPosition model)
         {
             int result = 0;
@@ -122,6 +124,7 @@ namespace Ardita.Areas.Position.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADM")]
         public async Task<IActionResult> Delete(MstPosition model)
         {
             int result = 0;

@@ -49,23 +49,24 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmEmployee" enctype="multipart/form-data" asp-controller="Employee" asp-area="Employee" asp-action="Save">
+                            <form role="form" id="frmEmployee" enctype="multipart/form-data" asp-controller="Employee" asp-area="Employee" asp-action="Delete">
                                 <div class="form-group">
                                     <div class="form-group">
-                                        <label>Employee NIK</label> 
-                                        <input type="text" placeholder="" id="txtEmployeeNIK" class="form-control" asp-for="Employee.Nik">
+                                        <label>Employee NIK</label>
+                                        <input type="hidden" value="@Model.Employee.EmployeeId" asp-for="Employee.EmployeeId" />
+                                        <input type="text" placeholder="" id="txtEmployeeNIK" class="form-control" asp-for="Employee.Nik" value="@Model.Employee.Nik" readonly="">
                                     </div>
                                     <div class="form-group">
                                         <label>Employee Name</label>
-                                        <input type="text" placeholder="" id="txtEmployeeName" class="form-control" asp-for="Employee.Name">
+                                        <input type="text" placeholder="" id="txtEmployeeName" class="form-control" asp-for="Employee.Name" value="@Model.Employee.Name" readonly="">
                                     </div>
                                     <div class="form-group">
                                         <label>Employee Email</label>
-                                        <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Employee.Email">
+                                        <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Employee.Email" value="@Model.Employee.Email" readonly="">
                                     </div>
                                     <div class="form-group">
                                         <label>Employee Gender</label>
-                                        <select asp-for="Employee.Gender" id="txtEmployeeGender" id="employeeGender" class="select2_demo_1 form-control">
+                                        <select asp-for="Employee.Gender" id="txtEmployeeGender" id="employeeGender" class="select2_demo_1 form-control" readonly="">
                                             <option value=""></option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
@@ -73,7 +74,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Employee Place Of Birth</label>
-                                        <input type="text" placeholder="" id="txtEmployeePlaceOfBirth" class="form-control" asp-for="Employee.PlaceOfBirth">
+                                        <input type="text" placeholder="" id="txtEmployeePlaceOfBirth" class="form-control" asp-for="Employee.PlaceOfBirth" value="@Model.Employee.PlaceOfBirth" readonly="">
                                     </div>
                                     <div class="form-group" id="employeeDateOfBirth">
                                         <label>Employee Date Of Birth</label>
@@ -81,20 +82,28 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="txtEmployeeDateOfBirth" class="form-control" asp-for="Employee.DateOfBirth">
+                                            <input type="text" id="txtEmployeeDateOfBirth" class="form-control" asp-for="Employee.DateOfBirth" value="@Model.Employee.DateOfBirth" readonly="">
                                         </div>
-                                       
+
                                     </div>
-                                    <select asp-for="Employee.PositionId" id="txtEmployeePosition" class="select2_demo_1 form-control">
+                                    <select asp-for="Employee.PositionId" id="txtEmployeePosition" class="select2_demo_1 form-control" readonly="">
                                         @foreach (var item in Model.Positions)
                                         {
-                                            <option value="@item.PosittionId">@item.Name</option>
+                                            @if (item.PosittionId == Model.Employee.PositionId)
+                                            {
+                                                <option selected="" value="@item.PosittionId">@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option selected="" value="@item.PosittionId">@item.Name</option>
+                                            }
+
                                         }
                                     </select>
                                 </div>
                                 <div>
                                     <a href="@Url.Action("Index", "Employee", new { Area = "Employee" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Remove</button>
                                 </div>
                             </form>
                         </div>
@@ -110,9 +119,11 @@
         $(document).ready(function () {
             $("#txtEmployeePosition").select2({
                 theme: 'bootstrap4',
+                readonly
             });
             $("#txtEmployeeGender").select2({
                 theme: 'bootstrap4',
+                readonly
             });
             var mem = $('#employeeDateOfBirth .input-group.date').datepicker({
                 todayBtn: "linked",
@@ -121,9 +132,8 @@
                 calendarWeeks: true,
                 autoclose: true
             });
-
-            
         });
+
         function validate() {
             if ($('#txtEmployeeNIK').val() == "") {
                 swal("Please enter Employee NIK !");
@@ -145,8 +155,8 @@
         function onSubmit(ctl, event) {
             event.preventDefault();
             swal({
-                title: "Do you want to save it?",
-                text: "Please check Information before Submiting!",
+                title: "Do you want to remove it?",
+                text: "Please check Information before Removing!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
@@ -157,11 +167,9 @@
             },
                 function (isConfirm) {
                     if (isConfirm) {
-                        if (validate() == true) {
-                            $("#frmEmployee").submit();
-                        }
+                        $("#frmEmployee").submit();
                     } else {
-                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        swal("Cancelled", "You have Cancelled Form Deleition!", "error");
                     }
                 });
         }

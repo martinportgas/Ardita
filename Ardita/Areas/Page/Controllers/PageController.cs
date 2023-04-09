@@ -80,13 +80,78 @@ namespace Ardita.Areas.Page.Controllers
         public async Task<IActionResult> Save(PageInsertViewModel model)
         {
             int result = 0;
-            if (model.page != null)
+            if (model != null)
             {
-                model.page.CreatedBy = new Guid(User.FindFirst("UserId").Value);
-                model.page.CreatedDate = DateTime.Now;
-                result = await _pageService.Insert(model.page);
+                if (model.page.PageId != Guid.Empty)
+                {
+                    model.page.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.page.UpdateDate = DateTime.Now;
+                    result = await _pageService.Update(model.page);
+                }
+                else
+                {
+                    model.page.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                    model.page.CreatedDate = DateTime.Now;
+                    result = await _pageService.Insert(model.page);
+                }
+
             }
             return RedirectToAction("Index", "Page", new { Area = "Page" });
+        }
+        public async Task<IActionResult> Delete(PageInsertViewModel model)
+        {
+            int result = 0;
+            if (model.page != null)
+            {
+                if (model.page.PageId != Guid.Empty)
+                {
+                    model.page.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.page.UpdateDate = DateTime.Now;
+                    result = await _pageService.Delete(model.page);
+                }
+            }
+            return RedirectToAction("Index", "Page", new { Area = "Page" });
+        }
+        public async Task<IActionResult> Update(Guid Id)
+        {
+            PageInsertViewModel model = new();
+            var MenuResult = await _menuService.GetMenuToLookUp();
+            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
+
+            model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+            model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+
+            var pages = await _pageService.GetById(Id);
+            if (pages.Count() > 0)
+            {
+                model.page = pages.FirstOrDefault();
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Page", new { Area = "Page" });
+            }
+        }
+
+        public async Task<IActionResult> Remove(Guid Id)
+        {
+            PageInsertViewModel model = new();
+            var MenuResult = await _menuService.GetMenuToLookUp();
+            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
+
+            model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+            model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+
+            var pages = await _pageService.GetById(Id);
+            if (pages.Count() > 0)
+            {
+                model.page = pages.FirstOrDefault();
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Page", new { Area = "Page" });
+            }
         }
     }
 }

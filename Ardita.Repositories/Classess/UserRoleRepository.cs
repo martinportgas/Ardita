@@ -47,8 +47,19 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
-                _context.MstUserRoles.Add(model);
-                result = await _context.SaveChangesAsync();
+                if (model.UserId != Guid.Empty && model.RoleId != Guid.Empty)
+                {
+                    var data = _context.MstUserRoles.AsNoTracking().Where(x =>
+                            x.UserId == model.UserId &&
+                            x.RoleId == model.RoleId
+                        );
+
+                    if (data.Count() == 0)
+                    {
+                        _context.MstUserRoles.Add(model);
+                        result = await _context.SaveChangesAsync();
+                    }
+                }
             }
             return result;
         }
@@ -57,11 +68,7 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            if (model != null)
-            {
-                _context.MstUserRoles.Add(model);
-                result = await _context.SaveChangesAsync();
-            }
+          
             return result;
         }
     }

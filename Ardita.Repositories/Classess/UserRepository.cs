@@ -19,17 +19,25 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Delete(MstUser model)
         {
             int result = 0;
-            if (model != null && model.UserId != Guid.Empty)
+
+            if (model.UserId != Guid.Empty)
             {
-                _context.MstUsers.Remove(model);
-                result = await _context.SaveChangesAsync();
+                var data = await _context.MstUsers.AsNoTracking().Where(x => x.UserId == model.UserId).ToListAsync();
+                if (data != null)
+                {
+                    model.IsActive = false;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    _context.MstUsers.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
 
         public async Task<IEnumerable<MstUser>> GetAll()
         {
-            var result = await _context.MstUsers.ToListAsync();
+            var result = await _context.MstUsers.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
 
@@ -42,11 +50,37 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(MstUser model)
         {
             int result = 0;
-            var emplyoee = await _context.MstUsers.Where(x => x.EmployeeId == model.EmployeeId).ToListAsync();
-            if (emplyoee.Count == 0) 
+            if (model != null)
             {
-                _context.MstUsers.Add(model);
-                result = await _context.SaveChangesAsync();
+                var data = await _context.MstUsers.AsNoTracking().Where(x => x.EmployeeId == model.EmployeeId).ToListAsync();
+                model.IsActive = true;
+
+                if (data.Count > 0)
+                {
+
+                    model.UserId = data.FirstOrDefault().UserId;
+                    model.UpdateBy = model.CreatedBy;
+                    model.UpdateDate = DateTime.Now;
+                    _context.MstUsers.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    _context.MstUsers.Add(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<bool> InsertBulk(List<MstUser> users)
+        {
+            bool result = false;
+            if (users.Count() > 0)
+            {
+                await _context.BulkInsertAsync(users);
+                result = true;
             }
             return result;
         }
@@ -55,19 +89,19 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            _context.Update(model);
-            result = await _context.SaveChangesAsync();
-            return result;
-        }
-
-        public void Upload(MstUser model)
-        {
-            var emplyoee = _context.MstUsers.Where(x => x.EmployeeId == model.EmployeeId).ToList();
-            if (emplyoee.Count == 0)
+            if (model.UserId != Guid.Empty)
             {
-                _context.MstUsers.Add(model);
-                _context.SaveChanges();
+                var data = await _context.MstUsers.AsNoTracking().Where(x => x.UserId == model.UserId).ToListAsync();
+                if (data != null)
+                {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    _context.MstUsers.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
+            return result;
         }
     }
 }

@@ -49,23 +49,27 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" enctype="multipart/form-data" asp-controller="User" asp-area="User" asp-action="Save">
+                            <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="User" asp-action="Save">
                                 <div class="form-group">
                                     <label>Employee</label> 
-                                    <select asp-for="User.EmployeeId" id="EmployeeId" class="select2_demo_1 form-control">
+                                    <select asp-for="User.EmployeeId" id="txtEmployeeId" class="select2_demo_1 form-control">
                                         @foreach(var item in Model.Employees)
                                         {
                                             <option value="@item.EmployeeId">@item.Name</option>
                                         }
                                     </select>
                                 </div>
-                                <div class="form-group"><label>Username</label> <input type="text" placeholder="" class="form-control" asp-for="User.Username"></div>
-                                <div class="form-group"><label>Password</label> <input type="password" placeholder="" class="form-control" asp-for="User.Password"></div>
+                                <div class="form-group">
+                                    <label>Username</label> 
+                                    <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="User.Username">
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label> 
+                                    <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="User.Password">
+                                </div>
                                 <div>
                                     <a href="@Url.Action("Index", "User", new { Area = "User" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
-                                    
-                                    <label> <input type="checkbox" asp-for="User.IsActive" class="i-checks"> Is Active </label>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -79,11 +83,48 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#EmployeeId").select2({
+            $("#txtEmployeeId").select2({
                 theme: 'bootstrap4',
             });
         });
 
+        function validate() {
+            if ($('#txtUserName').val() == "") {
+                swal("Please enter Username !");
+                return false;
+            } else if ($('#txtUserPassword').val() == "") {
+                swal("Please enter Employee Name !");
+                return false;
+            } else if ($('#txtEmployeeId').val() == "") {
+                swal("Please enter Employee!");
+                return false;
+            }  else {
+                return true;
+            }
+        }
 
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do you want to save it?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $("#frmUser").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
     </script>
 }

@@ -90,11 +90,10 @@ namespace Ardita.Areas.UserRole.Controllers
         {
             var userRoleDetails = await _userRoleService.GetById(id);
             var userRoleObj = new MstUserRole();
+
             if (userRoleDetails.Count() > 0)
             {
-                userRoleObj.UserRoleId = userRoleDetails.FirstOrDefault().UserRoleId;
-                userRoleObj.RoleId = userRoleDetails.FirstOrDefault().RoleId;
-                userRoleObj.UserId = userRoleDetails.FirstOrDefault().UserId;
+                userRoleObj = userRoleDetails.FirstOrDefault();
 
                 var delete = await _userRoleService.Delete(userRoleObj);
             }

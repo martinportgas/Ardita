@@ -16,48 +16,80 @@ namespace Ardita.Repositories.Classess
         {
             _context = context;
         }
-
         public async Task<int> Delete(MstPage model)
         {
             int result = 0;
-            if (model != null)
+
+            if (model.PageId != Guid.Empty)
             {
-                _context.MstPages.Remove(model);
-                await _context.SaveChangesAsync();
+                var data = await _context.MstPages.AsNoTracking().Where(x => x.PageId == model.PageId).ToListAsync();
+                if (data != null)
+                {
+                    model.IsActive = false;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+
+                    _context.MstPages.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
-
         public async Task<IEnumerable<MstPage>> GetAll()
         {
-            var result = await _context.MstPages.ToListAsync();
+            var result = await _context.MstPages.Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
-
         public async Task<IEnumerable<MstPage>> GetById(Guid id)
         {
-            var result = await _context.MstPages.AsNoTracking().Where(x=> x.PageId == id).ToListAsync();
+            var result = await _context.MstPages.AsNoTracking().Where(x=> x.PageId == id && x.IsActive == true).ToListAsync();
             return result;
         }
-
         public async Task<int> Insert(MstPage model)
         {
             int result = 0;
             if (model != null)
             {
-                _context.MstPages.Add(model);
-                await _context.SaveChangesAsync();
+                var data = await _context.MstPages.AsNoTracking().Where(
+                    x => x.SubmenuId == model.SubmenuId &&
+                    x.Name == model.Name &&
+                    x.Path == model.Path
+                    ).ToListAsync();
+
+                model.IsActive = true;
+
+                if (data.Count > 0)
+                {
+                    model.PageId = data.FirstOrDefault().PageId;
+                    model.UpdateBy = model.CreatedBy;
+                    model.UpdateDate = DateTime.Now;
+                    _context.MstPages.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    _context.MstPages.Add(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
+
             return result;
         }
-
         public async Task<int> Update(MstPage model)
         {
             int result = 0;
-            if (model != null)
+
+            if (model.PageId != Guid.Empty)
             {
-                _context.MstPages.Update(model);
-                await _context.SaveChangesAsync();
+                var data = await _context.MstPages.AsNoTracking().Where(x => x.PageId == model.PageId).ToListAsync();
+                if (data != null)
+                {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    _context.MstPages.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }

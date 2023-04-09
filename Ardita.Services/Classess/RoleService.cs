@@ -53,10 +53,12 @@ namespace Ardita.Services.Classess
             if (!string.IsNullOrEmpty(tableModel.searchValue))
             {
                 results = results.Where(
-                    x => x.RoleCode.Contains(tableModel.searchValue)
-                    || x.RoleName.Contains(tableModel.searchValue)
+                    x =>
+                    (x.RoleCode != null ? x.RoleCode.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.RoleName != null ? x.RoleName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                 );
             }
+
             tableModel.recordsTotal = results.Count();
             var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
 

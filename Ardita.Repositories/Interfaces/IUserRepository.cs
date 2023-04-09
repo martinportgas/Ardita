@@ -13,9 +13,9 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<MstUser>> GetById(Guid id);
         Task<IEnumerable<MstUser>> GetAll();
         Task<int> Insert(MstUser model);
+        Task<bool> InsertBulk(List<MstUser> users);
         Task<int> Delete(MstUser model);
         Task<int> Update(MstUser model);
-        void Upload(MstUser model);
         
     }
 }
