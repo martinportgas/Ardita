@@ -28,7 +28,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserRole" asp-action="Save">
+                            <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserManage" asp-action="Save">
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input type="hidden" asp-for="UserRole.UserId" value="@(Model.Users == null ? string.Empty : Model.Users.UserId)" />

@@ -137,6 +137,7 @@ namespace Ardita.Services.Classess
                     new Claim("Username" ,result.Username),
                     new Claim("UserId" ,result.UserId.ToString()),
                     new Claim("RoleId" ,result.RoleId.ToString()),
+                    new Claim("RoleCode" ,result.RoleCode.ToString()),
                     new Claim("RoleName", result.RoleName),
                     new Claim("EmployeeNIK", result.EmployeeNIK),
                     new Claim("EmployeeName", result.EmployeeName)

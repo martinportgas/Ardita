@@ -14,7 +14,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
-    [Authorize(Roles = "ADM")]
+    [CustomAuthorizeAttribute]
     [Area("UserManage")]
     public class UserController : Controller
     {

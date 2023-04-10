@@ -8,7 +8,7 @@ using Ardita.Models.ViewModels.UserRoles;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
-    [Authorize]
+    [CustomAuthorizeAttribute]
     [Area("UserManage")]
     public class UserRoleController : Controller
     {
@@ -30,7 +30,7 @@ namespace Ardita.Areas.UserManage.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<JsonResult> GetUsers()
+        public async Task<JsonResult> GetData()
         {
             try
             {

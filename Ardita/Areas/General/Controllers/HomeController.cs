@@ -6,7 +6,7 @@ using Ardita.Services.Interfaces;
 
 namespace Ardita.Areas.General.Controllers
 {
-    [Authorize]
+    [CustomAuthorizeAttribute]
     [Area("General")]
     public class HomeController : Controller
     {

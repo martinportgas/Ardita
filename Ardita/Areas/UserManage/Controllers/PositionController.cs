@@ -9,7 +9,7 @@ using Ardita.Areas.UserManage.Models;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
-    [Authorize]
+    [CustomAuthorizeAttribute]
     [Area("UserManage")]
     public class PositionController : Controller
     {
@@ -18,7 +18,6 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             _positionService = positionService;
         }
-        [Authorize(Roles = "ADM, UKP")]
         public IActionResult Index()
         {
             return View();
@@ -98,7 +97,6 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADM")]
         public async Task<IActionResult> Save(MstPosition model)
         {
             int result = 0;
@@ -124,7 +122,6 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADM")]
         public async Task<IActionResult> Delete(MstPosition model)
         {
             int result = 0;

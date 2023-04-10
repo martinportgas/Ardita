@@ -49,27 +49,15 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="Page" asp-area="Page" asp-action="Save">
+                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="Page" asp-area="UserManage" asp-action="Save">
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Page Name</label>
-                                        <select id="txtPageName" asp-for="page.Name" asp-for="page.Name" class="select2_demo_1 form-control">
-                                            <option value="Index">Index</option>
-                                            <option value="Create">Create</option>
-                                            <option value="Update">Update</option>
-                                            <option value="Delete">Delete</option>
-                                            <option value="View">View</option>
-                                        </select>
+                                        <input type="text" asp-for="page.Name" asp-for="page.Name" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <label>Page Path</label>
-                                        <select id="txtPagePath" asp-for="page.Path" class="select2_demo_1 form-control">
-                                            <option value="Index">Index</option>
-                                            <option value="Create">Create</option>
-                                            <option value="Update">Update</option>
-                                            <option value="Delete">Delete</option>
-                                            <option value="View">View</option>
-                                        </select>
+                                        <input type="text" asp-for="page.Path" asp-for="page.Path" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <label>Sub Menu</label>

@@ -9,7 +9,7 @@ using Ardita.Services.Classess;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
-    [Authorize]
+    [CustomAuthorizeAttribute]
     [Area("UserManage")]
     public class PageController : Controller
     {
@@ -132,7 +132,6 @@ namespace Ardita.Areas.UserManage.Controllers
                 return RedirectToAction("Index", "Page", new { Area = "UserManage" });
             }
         }
-
         public async Task<IActionResult> Remove(Guid Id)
         {
             PageInsertViewModel model = new();

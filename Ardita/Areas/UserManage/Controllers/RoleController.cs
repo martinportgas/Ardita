@@ -8,7 +8,7 @@ using Ardita.Areas.UserManage.Models;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
-    [Authorize]
+    [CustomAuthorizeAttribute]
     [Area("UserManage")]
     public class RoleController : Controller
     {
