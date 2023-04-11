@@ -99,7 +99,7 @@ function textAreaCounter() {
 //show message via sweatallert
 function showMessage(_title, _text, _icon, _reload = false, _href = '') {
     if (_reload) {
-        Swal.fire({
+        swal({
             title: _title,
             text: _text,
             icon: _icon,
@@ -111,7 +111,7 @@ function showMessage(_title, _text, _icon, _reload = false, _href = '') {
                 location.reload();
         });
     } else {
-        Swal.fire({
+        swal({
             title: _title,
             text: _text,
             icon: _icon,
@@ -129,5 +129,16 @@ function showConfirm(_title, _text, _icon, _oktext) {
         confirmButtonText: _oktext,
     });
 }
+//call ajax
+function ajaxcallreturn(urlstring, method, param, auth, content_type) {
+    return $.ajax({
+        url: urlstring,
+        type: method,
+        data: param,
+        //contentType: content_type,
+        dataType: 'json'
+    });
+}
+
 
 

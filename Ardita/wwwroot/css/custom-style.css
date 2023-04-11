@@ -55,6 +55,21 @@
     }
 }
 
+.sweet-alert h2 {
+    font-size: 15px !important;
+    margin: 20px 0px !important;
+}
+.sweet-alert p {
+    font-size: 15px !important;
+}
+.sweet-alert button {
+    font-size: 15px !important;
+    padding: 6px 26px !important;
+}
+.sweet-alert {
+    width: 420px !important;
+}
+
 .dataTable {
     width: 100% !important;
 }

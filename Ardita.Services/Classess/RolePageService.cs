@@ -1,6 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.RolePages;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
@@ -17,23 +18,30 @@ namespace Ardita.Services.Classess
         private readonly IRoleRepository _roleRepository;
         private readonly IPageRepository _pageRepository;
         private readonly ISubMenuRepository _subMenuRepository;
+        private readonly IMenuRepository _menuRepository;
 
         public RolePageService(
             IRolePageRepository rolePageRepository,
             IRoleRepository roleRepository,
             IPageRepository pageRepository,
-            ISubMenuRepository subMenuRepository
+            ISubMenuRepository subMenuRepository,
+            IMenuRepository menuRepository
             )
         {
             _rolePageRepository = rolePageRepository;
             _roleRepository = roleRepository;
             _pageRepository = pageRepository;
             _subMenuRepository = subMenuRepository;
+            _menuRepository = menuRepository;
         }
 
         public async Task<int> Delete(MstRolePage model)
         {
             return await _rolePageRepository.Delete(model);
+        }
+        public async Task<int> DeleteByRoleId(Guid roleId)
+        {
+            return await _rolePageRepository.DeleteByRoleId(roleId);
         }
 
         public async Task<IEnumerable<MstRolePage>> GetAll()
@@ -94,10 +102,71 @@ namespace Ardita.Services.Classess
 
             return rolePageListViewModel;
         }
+        public async Task<IEnumerable<RolePageTreeViewModel>> GetTreeRolePages(Guid id)
+        {
+            var rolePageTreeViewModel = new RolePageTreeViewModel();
+
+            var rolePageResult = await _rolePageRepository.GetAll();
+            var pageResult = await _pageRepository.GetAll();
+            var subMenuResult = await _subMenuRepository.GetAll();
+            var menuResult = await _menuRepository.GetAll();
+
+            var resultMenu = (from menu in menuResult
+                              where menu.IsActive = true && menu.Path != "General"
+                                select new RolePageTreeViewModel
+                                {
+                                    id = menu.MenuId.ToString(),
+                                    parent = "#",
+                                    text = menu.Name,
+                                    state = new RolePageTreeViewStateModel
+                                    {
+                                        opened = false,
+                                        selected = false,
+                                    }
+                                }
+                );
+
+            var resultSubMenu = (from subMenu in subMenuResult
+                                 where subMenu.IsActive = true
+                                 select new RolePageTreeViewModel
+                                 {
+                                     id = subMenu.SubmenuId.ToString(),
+                                     parent = subMenu.MenuId.ToString(),
+                                     text = subMenu.Name,
+                                     state = new RolePageTreeViewStateModel
+                                     {
+                                         opened = false,
+                                         selected = false,
+                                     }
+                                 }
+                );
+
+            var resultPage = (from page in pageResult
+                              where page.IsActive = true
+                              select new RolePageTreeViewModel
+                              {
+                                  id = page.PageId.ToString(),
+                                  parent = page.SubmenuId.ToString(),
+                                  text = page.Name,
+                                  state = new RolePageTreeViewStateModel
+                                  {
+                                      opened = false,
+                                      selected = (from rolepage in rolePageResult
+                                                  where rolepage.RoleId == id && rolepage.PageId == page.PageId select rolepage).Count() > 0,
+                                  }
+                              }
+                );
+
+            return resultMenu.Union(resultSubMenu).Union(resultPage);
+        }
 
         public async Task<int> Insert(MstRolePage model)
         {
             return await _rolePageRepository.Insert(model);
+        }
+        public async Task<bool> InsertBulk(List<MstRolePage> model)
+        {
+            return await _rolePageRepository.InsertBulk(model);
         }
 
         public async Task<int> Update(MstRolePage model)
