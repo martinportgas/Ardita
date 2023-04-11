@@ -37,7 +37,7 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(MstSubmenu model)
         {
             int result = 0;
-            var menus = await _context.MstSubmenus.Where(x => x.SubmenuId == model.SubmenuId).ToListAsync();
+            var menus = await _context.MstSubmenus.AsNoTracking().Where(x => x.SubmenuId == model.SubmenuId).ToListAsync();
             if (menus.Count == 0)
             {
                 _context.MstSubmenus.Add(model);
@@ -49,9 +49,17 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Update(MstSubmenu model)
         {
             int result = 0;
+            var menus = await _context.MstSubmenus.AsNoTracking().Where(x => x.SubmenuId == model.SubmenuId).ToListAsync();
+            if (menus.Count > 0)
+            {
+                model.MenuId = menus.FirstOrDefault().MenuId;
+                model.Path = menus.FirstOrDefault().Path;
+                model.CreatedBy = menus.FirstOrDefault().CreatedBy;
+                model.CreatedDate = menus.FirstOrDefault().CreatedDate;
 
-            _context.Update(model);
-            result = await _context.SaveChangesAsync();
+                _context.MstSubmenus.Update(model);
+                result = await _context.SaveChangesAsync();
+            }
             return result;
         }
     }

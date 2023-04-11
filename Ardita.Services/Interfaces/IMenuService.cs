@@ -1,5 +1,8 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Menus;
 using Ardita.Models.ViewModels.Pages;
+using Ardita.Models.ViewModels.Positions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +19,6 @@ namespace Ardita.Services.Interfaces
         Task<int> Delete(MstMenu model);
         Task<int> Update(MstMenu model);
         Task<List<MenuTypes>> GetMenuToLookUp();
+        Task<MenuListViewModel> GetListMenuWithSubMenu(DataTableModel tableModel);
     }
 }

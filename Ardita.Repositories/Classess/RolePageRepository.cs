@@ -44,10 +44,22 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(MstRolePage model)
         {
             int result = 0;
+
+          
+
+
             if (model != null)
             {
-                _context.MstRolePages.Add(model);
-                result = await _context.SaveChangesAsync();
+                var data = await _context.MstRolePages.AsNoTracking().Where(
+                  x => x.RoleId == model.RoleId &&
+                  x.PageId == model.PageId
+                  ).ToListAsync();
+
+                if (data.Count() == 0)
+                {
+                    _context.MstRolePages.Add(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
