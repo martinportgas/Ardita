@@ -16,8 +16,11 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<MstRolePage>> GetById(Guid id);
         Task<IEnumerable<MstRolePage>> GetAll();
         Task<RolePageListViewModel> GetListRolePages(Guid id);
+        Task<IEnumerable<RolePageTreeViewModel>> GetTreeRolePages(Guid id);
         Task<int> Insert(MstRolePage model);
+        Task<bool> InsertBulk(List<MstRolePage> model);
         Task<int> Delete(MstRolePage model);
+        Task<int> DeleteByRoleId(Guid roleId);
         Task<int> Update(MstRolePage model);
     }
 }

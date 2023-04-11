@@ -28,6 +28,17 @@ namespace Ardita.Repositories.Classess
             return result;
                 
         }
+        public async Task<int> DeleteByRoleId(Guid roleId)
+        {
+            int result = 0;
+            if (roleId != null)
+            {
+                _context.Database.ExecuteSqlRaw($" delete from dbo.MST_ROLE_PAGE where role_id='{roleId}'");
+                result = await _context.SaveChangesAsync();
+            }
+            return result;
+
+        }
 
         public async Task<IEnumerable<MstRolePage>> GetAll()
         {
@@ -48,6 +59,16 @@ namespace Ardita.Repositories.Classess
             {
                 _context.MstRolePages.Add(model);
                 result = await _context.SaveChangesAsync();
+            }
+            return result;
+        }
+        public async Task<bool> InsertBulk(List<MstRolePage> model)
+        {
+            bool result = false;
+            if (model.Count() > 0)
+            {
+                await _context.BulkInsertAsync(model);
+                result = true;
             }
             return result;
         }
