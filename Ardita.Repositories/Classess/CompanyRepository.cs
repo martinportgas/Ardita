@@ -1,11 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Classess
 {
@@ -29,9 +24,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<MstCompany>> GetById(int id)
+        public async Task<IEnumerable<MstCompany>> GetById(Guid id)
         {
-            var results = await _context.MstCompanies.Where(x=> x.CompanyId == id).ToListAsync();
+            var results = await _context.MstCompanies.Where(x => x.CompanyId == id).ToListAsync();
             return results;
         }
 

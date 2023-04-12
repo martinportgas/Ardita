@@ -89,13 +89,13 @@
                                     <select asp-for="Employee.PositionId" id="txtEmployeePosition" class="select2_demo_1 form-control" readonly="">
                                         @foreach (var item in Model.Positions)
                                         {
-                                            @if (item.PosittionId == Model.Employee.PositionId)
+                                            @if (item.PositionId == Model.Employee.PositionId)
                                             {
-                                                <option selected="" value="@item.PosittionId">@item.Name</option>
+                                                <option selected="" value="@item.PositionId">@item.Name</option>
                                             }
                                             else
                                             {
-                                                <option selected="" value="@item.PosittionId">@item.Name</option>
+                                                <option selected="" value="@item.PositionId">@item.Name</option>
                                             }
 
                                         }

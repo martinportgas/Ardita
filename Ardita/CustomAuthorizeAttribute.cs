@@ -1,8 +1,6 @@
 ﻿using Ardita.Models.DbModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
 
 namespace Ardita
 {
@@ -19,13 +17,13 @@ namespace Ardita
             base.OnActionExecuting(filterContext);
 
             var pages = new List<MstPage>();
-            var rolePages = new List<MstRolePage>();
+            var rolePages = new List<IdxRolePage>();
             var roles = new List<MstRole>();
 
             using (var dbContext = new BksArditaDevContext())
             {
                 pages = dbContext.MstPages.ToList();
-                rolePages = dbContext.MstRolePages.ToList();
+                rolePages = dbContext.IdxRolePages.ToList();
                 roles = dbContext.MstRoles.ToList();
             }
 
@@ -72,7 +70,7 @@ namespace Ardita
 
             var fullPath = $"{areaName}/{controllerName}/{actionName}";
 
-            if (fullPath != "General/Home/View") 
+            if (fullPath != "General/Home/View")
             {
                 var results = (from page in pages
                                join rolePage in rolePages on page.PageId equals rolePage.PageId

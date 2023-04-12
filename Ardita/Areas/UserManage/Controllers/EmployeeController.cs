@@ -281,7 +281,7 @@ namespace Ardita.Areas.UserManage.Controllers
                     row.CreateCell(6).SetCellValue(item.Address);
                     row.CreateCell(7).SetCellValue(item.Phone);
 
-                    var positionCode = positions.Where(x => x.PosittionId == item.PositionId).FirstOrDefault().Name;
+                    var positionCode = positions.Where(x => x.PositionId == item.PositionId).FirstOrDefault().Name;
                     row.CreateCell(8).SetCellValue(positionCode);
                     no += 1;
                 }
@@ -317,7 +317,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 employee.Address = row[6].ToString();
                 employee.Phone = row[7].ToString();
 
-                employee.PositionId = positions.Where(x => x.Code == row[8].ToString()).FirstOrDefault().PosittionId;
+                employee.PositionId = positions.Where(x => x.Code == row[8].ToString()).FirstOrDefault().PositionId;
 
                 employee.IsActive = true;
                 employee.CreatedBy = new Guid(User.FindFirst("UserId").Value);

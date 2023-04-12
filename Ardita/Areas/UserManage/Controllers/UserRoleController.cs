@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using Ardita.Services.Interfaces;
-using Ardita.Models.DbModels;
-using Ardita.Areas.UserManage.Models;
 using Ardita.Models.ViewModels.UserRoles;
+using Ardita.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
@@ -66,11 +64,11 @@ namespace Ardita.Areas.UserManage.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(UserRoleListViewModel model)
         {
-            
+
             int result = 0;
             if (model != null)
             {
-                var objUserRole = new MstUserRole();
+                var objUserRole = new IdxUserRole();
                 objUserRole.UserId = model.UserRole.UserId;
                 objUserRole.RoleId = model.UserRole.RoleId;
                 objUserRole.CreatedBy = model.UserRole.UserId;
@@ -83,13 +81,13 @@ namespace Ardita.Areas.UserManage.Controllers
         public async Task<IActionResult> Detail(Guid id)
         {
             var userRoleDetails = await _userRoleService.GetListUserRoles(id);
-            
+
             return View(userRoleDetails);
         }
         public async Task<IActionResult> Remove(Guid id)
         {
             var userRoleDetails = await _userRoleService.GetById(id);
-            var userRoleObj = new MstUserRole();
+            var userRoleObj = new IdxUserRole();
 
             if (userRoleDetails.Count() > 0)
             {
@@ -97,7 +95,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
                 var delete = await _userRoleService.Delete(userRoleObj);
             }
-            return RedirectToAction("Detail", "UserRole", new { Area = "UserManage", id=userRoleObj.UserId });
+            return RedirectToAction("Detail", "UserRole", new { Area = "UserManage", id = userRoleObj.UserId });
         }
     }
 }

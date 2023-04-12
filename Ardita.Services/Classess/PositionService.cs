@@ -1,14 +1,8 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Positions;
-using Ardita.Models.ViewModels.Users;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq.Dynamic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Services.Classess
 {
@@ -41,13 +35,13 @@ namespace Ardita.Services.Classess
 
             var positionResult = await _positionRepository.GetAll();
             var results = (from position in positionResult
-                          select new PositionListViewDetailModel 
-                          { 
-                            PositionId = position.PosittionId,
-                            PositionCode = position.Code,
-                            PositionName = position.Name,
-                            IsActive = position.IsActive
-                          });
+                           select new PositionListViewDetailModel
+                           {
+                               PositionId = position.PositionId,
+                               PositionCode = position.Code,
+                               PositionName = position.Name,
+                               IsActive = position.IsActive
+                           });
             //if (!(string.IsNullOrEmpty(tableModel.sortColumn) && string.IsNullOrEmpty(tableModel.sortColumnDirection)))
             //{
             //    results = results.OrderBy(tableModel.sortColumn + " " + tableModel.sortColumnDirection);

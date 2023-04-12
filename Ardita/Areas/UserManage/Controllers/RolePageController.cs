@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Ardita.Services.Interfaces;
+﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using Ardita.Services.Classess;
-using Ardita.Models.DbModels;
-using Ardita.Models.ViewModels.UserRoles;
-using Ardita.Models.ViewModels.RolePages;
+using Ardita.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
@@ -83,15 +79,15 @@ namespace Ardita.Areas.UserManage.Controllers
             string urlRedirect = "";
             string msg = "";
             Guid roleId = Guid.Empty;
-            if(Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
+            if (Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
             {
                 var listPageId = Request.Form["listPage[]"];
-                if(listPageId.Count > 0)
+                if (listPageId.Count > 0)
                 {
                     var delete = _rolePageService.DeleteByRoleId(roleId);
 
-                    List<MstRolePage> models = new();
-                    MstRolePage objRolePage;
+                    List<IdxRolePage> models = new();
+                    IdxRolePage objRolePage;
 
                     for (int i = 0; i < listPageId.Count; i++)
                     {
@@ -132,7 +128,7 @@ namespace Ardita.Areas.UserManage.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             var rolePageDetails = await _rolePageService.GetById(id);
-            var rolePageObj = new MstRolePage();
+            var rolePageObj = new IdxRolePage();
             if (rolePageDetails.Count() > 0)
             {
                 rolePageObj.RolePageId = rolePageDetails.FirstOrDefault().RolePageId;

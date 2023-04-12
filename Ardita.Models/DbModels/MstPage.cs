@@ -25,7 +25,5 @@ public partial class MstPage
 
     public virtual ICollection<IdxRolePage> IdxRolePages { get; } = new List<IdxRolePage>();
 
-    public virtual ICollection<MstPageDetail> MstPageDetails { get; } = new List<MstPageDetail>();
-
     public virtual MstSubmenu Submenu { get; set; } = null!;
 }
