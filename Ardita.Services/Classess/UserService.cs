@@ -72,7 +72,7 @@ namespace Ardita.Services.Classess
 
             var results = (from user in userResult
                         join employee in employeeResult on user.EmployeeId equals employee.EmployeeId
-                        join position in positionResult on employee.PositionId equals position.PosittionId
+                        join position in positionResult on employee.PositionId equals position.PositionId
                         select new UserListViewDetailModel
                         {
                             UserId = user.UserId,

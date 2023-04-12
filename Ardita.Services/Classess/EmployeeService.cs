@@ -1,14 +1,8 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Employees;
-using Ardita.Models.ViewModels.Users;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Services.Classess
 {
@@ -44,7 +38,7 @@ namespace Ardita.Services.Classess
             var positionResult = await _positionRepository.GetAll();
 
             var results = (from employee in employeeResult
-                           join position in positionResult on employee.PositionId equals position.PosittionId
+                           join position in positionResult on employee.PositionId equals position.PositionId
                            select new EmployeeListViewDetailModel
                            {
                                EmployeeId = employee.EmployeeId,
@@ -58,7 +52,7 @@ namespace Ardita.Services.Classess
                                EmployeePhone = employee.Phone,
                                EmployeeProfilePict = employee.ProfilePicture,
                                EmployeeLevel = employee.EmployeeLevel,
-                               PositionId = position.PosittionId,
+                               PositionId = position.PositionId,
                                PositionName = position.Name
                            }
                 );
@@ -66,8 +60,8 @@ namespace Ardita.Services.Classess
             if (!string.IsNullOrEmpty(tableModel.searchValue))
             {
                 results = results.Where(
-                    x => (x.EmployeeNIK != null ? x.EmployeeNIK.ToUpper().Contains(tableModel.searchValue.ToUpper()): false)
-                    || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()): false)
+                    x => (x.EmployeeNIK != null ? x.EmployeeNIK.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
+                    || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                     || (x.EmployeeEmail != null ? x.EmployeeEmail.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                     || (x.EmployeeGender != null ? x.EmployeeGender.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
                     || (x.EmployeePlaceOfBirth != null ? x.EmployeePlaceOfBirth.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)

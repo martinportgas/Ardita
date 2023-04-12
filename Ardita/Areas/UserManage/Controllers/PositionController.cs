@@ -65,7 +65,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data.Count() > 0)
             {
                 var model = new MstPosition();
-                model.PosittionId = data.FirstOrDefault().PosittionId;
+                model.PositionId = data.FirstOrDefault().PositionId;
                 model.Code = data.FirstOrDefault().Code;
                 model.Name = data.FirstOrDefault().Name;
                 model.IsActive = data.FirstOrDefault().IsActive;
@@ -83,7 +83,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data.Count() > 0)
             {
                 var model = new MstPosition();
-                model.PosittionId = data.FirstOrDefault().PosittionId;
+                model.PositionId = data.FirstOrDefault().PositionId;
                 model.Code = data.FirstOrDefault().Code;
                 model.Name = data.FirstOrDefault().Name;
                 model.IsActive = data.FirstOrDefault().IsActive;
@@ -102,7 +102,7 @@ namespace Ardita.Areas.UserManage.Controllers
             int result = 0;
             if (model != null)
             {
-                if (model.PosittionId != Guid.Empty)
+                if (model.PositionId != Guid.Empty)
                 {
                     model.UpdateBy = User.FindFirst("UserId").Value.ToString();
                     model.UpdateDate = DateTime.Now;
@@ -125,7 +125,7 @@ namespace Ardita.Areas.UserManage.Controllers
         public async Task<IActionResult> Delete(MstPosition model)
         {
             int result = 0;
-            if (model != null && model.PosittionId != Guid.Empty)
+            if (model != null && model.PositionId != Guid.Empty)
             {
                 model.UpdateBy = User.FindFirst("UserId").Value.ToString();
                 model.UpdateDate = DateTime.Now;

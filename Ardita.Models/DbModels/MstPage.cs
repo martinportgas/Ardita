@@ -23,7 +23,7 @@ public partial class MstPage
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<MstRolePage> MstRolePages { get; } = new List<MstRolePage>();
+    public virtual ICollection<IdxRolePage> IdxRolePages { get; } = new List<IdxRolePage>();
 
     public virtual MstSubmenu Submenu { get; set; } = null!;
 }

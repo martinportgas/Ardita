@@ -21,9 +21,9 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            if (model != null && model.PosittionId != Guid.Empty)
+            if (model != null && model.PositionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == model.PosittionId).ToListAsync();
+                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == model.PositionId).ToListAsync();
                 if (data.Count > 0)
                 {
                     model.IsActive = false;
@@ -42,7 +42,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstPosition>> GetById(Guid id)
         {
-            var result = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == id).ToListAsync();
+            var result = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == id).ToListAsync();
             return result;
         }
 
@@ -50,13 +50,13 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            if (model.PosittionId == Guid.Empty)
+            if (model.PositionId == Guid.Empty)
             {
                 var data = await _context.MstPositions.AsNoTracking().Where(x => x.Code.ToUpper() == model.Code.ToUpper()).ToListAsync();
                 model.IsActive = true;
                 if (data.Count > 0)
                 {
-                    model.PosittionId = data.FirstOrDefault().PosittionId;
+                    model.PositionId = data.FirstOrDefault().PositionId;
                     _context.MstPositions.Update(model);
                 }
                 else 
@@ -72,9 +72,9 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            if (model != null && model.PosittionId != Guid.Empty)
+            if (model != null && model.PositionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PosittionId == model.PosittionId).ToListAsync();
+                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == model.PositionId).ToListAsync();
                 if (data != null)
                 {
                     model.IsActive = true;

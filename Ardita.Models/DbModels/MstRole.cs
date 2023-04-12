@@ -21,7 +21,7 @@ public partial class MstRole
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<MstRolePage> MstRolePages { get; } = new List<MstRolePage>();
+    public virtual ICollection<IdxRolePage> IdxRolePages { get; } = new List<IdxRolePage>();
 
-    public virtual ICollection<MstUserRole> MstUserRoles { get; } = new List<MstUserRole>();
+    public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
 }

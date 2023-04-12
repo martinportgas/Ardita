@@ -1,11 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Classess
 {
@@ -17,31 +12,31 @@ namespace Ardita.Repositories.Classess
             _context = context;
         }
 
-        public async Task<int> Delete(MstUserRole model)
+        public async Task<int> Delete(IdxUserRole model)
         {
             int result = 0;
 
             if (model != null)
             {
-                _context.MstUserRoles.Remove(model);
+                _context.IdxUserRoles.Remove(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
         }
 
-        public async Task<IEnumerable<MstUserRole>> GetAll()
+        public async Task<IEnumerable<IdxUserRole>> GetAll()
         {
-            var results = await _context.MstUserRoles.ToListAsync();
+            var results = await _context.IdxUserRoles.ToListAsync();
             return results;
         }
 
-        public async Task<IEnumerable<MstUserRole>> GetById(Guid id)
+        public async Task<IEnumerable<IdxUserRole>> GetById(Guid id)
         {
-            var results = await _context.MstUserRoles.AsNoTracking().Where(x=>x.UserRoleId == id).ToListAsync();
+            var results = await _context.IdxUserRoles.AsNoTracking().Where(x => x.UserRoleId == id).ToListAsync();
             return results;
         }
 
-        public async Task<int> Insert(MstUserRole model)
+        public async Task<int> Insert(IdxUserRole model)
         {
             int result = 0;
 
@@ -49,14 +44,14 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.UserId != Guid.Empty && model.RoleId != Guid.Empty)
                 {
-                    var data = _context.MstUserRoles.AsNoTracking().Where(x =>
+                    var data = _context.IdxUserRoles.AsNoTracking().Where(x =>
                             x.UserId == model.UserId &&
                             x.RoleId == model.RoleId
                         );
 
                     if (data.Count() == 0)
                     {
-                        _context.MstUserRoles.Add(model);
+                        _context.IdxUserRoles.Add(model);
                         result = await _context.SaveChangesAsync();
                     }
                 }
@@ -64,11 +59,11 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<int> Update(MstUserRole model)
+        public async Task<int> Update(IdxUserRole model)
         {
             int result = 0;
 
-          
+
             return result;
         }
     }
