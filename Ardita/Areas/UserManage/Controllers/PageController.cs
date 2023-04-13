@@ -95,6 +95,32 @@ namespace Ardita.Areas.UserManage.Controllers
                     result = await _pageService.Insert(model.page);
                 }
 
+                var listPath = Request.Form["pagePath[]"];
+                var listname = Request.Form["namePath[]"];
+
+                if (listPath.Count > 0)
+                {
+                    result = await _pageService.DeleteDetail(model.page.PageId);
+
+                    MstPageDetail objPageDetail;
+                    for (int i = 0; i < listPath.Count; i++)
+                    {
+                        var path = listPath[i];
+                        var name = listname[i];
+
+                        if(!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(name))
+                        {
+                            objPageDetail = new();
+                            objPageDetail.PageId = model.page.PageId;
+                            objPageDetail.Path = path;
+                            objPageDetail.Name = name;
+                            objPageDetail.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                            objPageDetail.CreatedDate = DateTime.Now;
+
+                            result = await _pageService.InsertDetail(objPageDetail);
+                        }
+                    }
+                }
             }
             return RedirectToAction("Index", "Page", new { Area = "UserManage" });
         }
@@ -120,6 +146,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
             model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+            model.pageDetail = await _pageService.GetDetailByMainId(Id);
 
             var pages = await _pageService.GetById(Id);
             if (pages.Count() > 0)

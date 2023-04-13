@@ -17,14 +17,18 @@ namespace Ardita
             base.OnActionExecuting(filterContext);
 
             var pages = new List<MstPage>();
+            var pageDetails = new List<MstPageDetail>();
             var rolePages = new List<IdxRolePage>();
             var roles = new List<MstRole>();
+            var subMenus = new List<MstSubmenu>();
 
             using (var dbContext = new BksArditaDevContext())
             {
                 pages = dbContext.MstPages.ToList();
+                pageDetails = dbContext.MstPageDetails.ToList();
                 rolePages = dbContext.IdxRolePages.ToList();
                 roles = dbContext.MstRoles.ToList();
+                subMenus = dbContext.MstSubmenus.ToList();
             }
 
             var user = filterContext.HttpContext.User as System.Security.Claims.ClaimsPrincipal;
@@ -52,35 +56,36 @@ namespace Ardita
              */
 
             if (actionName.ToString() == "GetData")
-                actionName = "View";
-            else if (actionName.ToString() == "GetDataTreeView")
-                actionName = "View";
-            else if (actionName.ToString() == "Index")
-                actionName = "View";
-            else if (actionName.ToString() == "Add")
-                actionName = "Create";
-            else if (actionName.ToString() == "Save")
-                actionName = "Create";
-            else if (actionName.ToString() == "Edit")
-                actionName = "Update";
-            else if (actionName.ToString() == "Remove")
-                actionName = "Delete";
+                actionName = "Index";
+            //else if (actionName.ToString() == "GetDataTreeView")
+            //    actionName = "View";
+            //else if (actionName.ToString() == "Index")
+            //    actionName = "View";
+            //else if (actionName.ToString() == "Add")
+            //    actionName = "Create";
+            //else if (actionName.ToString() == "Save")
+            //    actionName = "Create";
+            //else if (actionName.ToString() == "Edit")
+            //    actionName = "Update";
+            //else if (actionName.ToString() == "Remove")
+            //    actionName = "Delete";
 
 
 
             var fullPath = $"{areaName}/{controllerName}/{actionName}";
-
-            if (fullPath != "General/Home/View")
+            if (fullPath != "General/Home/Index")
             {
                 var results = (from page in pages
+                               join pageDetail in pageDetails on page.PageId equals pageDetail.PageId
                                join rolePage in rolePages on page.PageId equals rolePage.PageId
                                join role in roles on rolePage.RoleId equals role.RoleId
+                               join subMenu in subMenus on page.SubmenuId equals subMenu.SubmenuId
                                where
-                                    page.Path == fullPath &&
+                                    (pageDetail.Path == fullPath || subMenu.Path == fullPath ) &&
                                     role.Code == userRoleCode.ToString()
                                select new
                                {
-                                   Page = page.Path
+                                   Page = pageDetail.Path
                                }
                 );
 
