@@ -409,6 +409,7 @@ input.form-control:enabled:read-write, input.text-box:enabled:read-write, input.
     border: solid 1px lightgray;
     border-radius: 0.55rem;
     cursor: text !important;
+    font-size: 11px !important;
 }
 input.form-control:disabled, input.form-control:read-only {
     background-color: transparent !important;

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ardita.Models.DbModels;
 
@@ -34,6 +36,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstMenu> MstMenus { get; set; }
 
     public virtual DbSet<MstPage> MstPages { get; set; }
+
+    public virtual DbSet<MstPageDetail> MstPageDetails { get; set; }
 
     public virtual DbSet<MstPosition> MstPositions { get; set; }
 
@@ -514,6 +518,35 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.SubmenuId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PAGE_SUBMENU");
+        });
+
+        modelBuilder.Entity<MstPageDetail>(entity =>
+        {
+            entity.HasKey(e => e.PageDetailId);
+
+            entity.ToTable("MST_PAGE_DETAIL");
+
+            entity.Property(e => e.PageDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("page_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("name");
+            entity.Property(e => e.PageId).HasColumnName("page_id");
+            entity.Property(e => e.Path)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("path");
+
+            entity.HasOne(d => d.Page).WithMany(p => p.MstPageDetails)
+                .HasForeignKey(d => d.PageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_PAGE_DETAIL_MST_PAGE");
         });
 
         modelBuilder.Entity<MstPosition>(entity =>
