@@ -21,6 +21,7 @@ namespace Ardita
             var rolePages = new List<IdxRolePage>();
             var roles = new List<MstRole>();
             var subMenus = new List<MstSubmenu>();
+            var menus = new List<MstMenu>();
 
             using (var dbContext = new BksArditaDevContext())
             {
@@ -29,6 +30,7 @@ namespace Ardita
                 rolePages = dbContext.IdxRolePages.ToList();
                 roles = dbContext.MstRoles.ToList();
                 subMenus = dbContext.MstSubmenus.ToList();
+                menus = dbContext.MstMenus.ToList();
             }
 
             var user = filterContext.HttpContext.User as System.Security.Claims.ClaimsPrincipal;
@@ -80,8 +82,9 @@ namespace Ardita
                                join rolePage in rolePages on page.PageId equals rolePage.PageId
                                join role in roles on rolePage.RoleId equals role.RoleId
                                join subMenu in subMenus on page.SubmenuId equals subMenu.SubmenuId
+                               join menu in menus on subMenu.MenuId equals menu.MenuId
                                where
-                                    (pageDetail.Path == fullPath || subMenu.Path == fullPath ) &&
+                                    (pageDetail.Path == fullPath || (actionName == "Index" ? menu == areaName && subMenu == controllerName: false) ) &&
                                     role.Code == userRoleCode.ToString()
                                select new
                                {

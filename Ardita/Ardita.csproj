@@ -46,10 +46,11 @@
   <ItemGroup>
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
-    <Folder Include="Areas\MasterData\Controllers\" />
     <Folder Include="Areas\MasterData\Data\" />
     <Folder Include="Areas\MasterData\Models\" />
-    <Folder Include="Areas\MasterData\Views\" />
+    <Folder Include="Areas\MasterData\Views\ClassificationType\" />
+    <Folder Include="Areas\MasterData\Views\SubSubjectClassification\" />
+    <Folder Include="Areas\MasterData\Views\SubjectClassification\" />
   </ItemGroup>
 
   <ItemGroup>
