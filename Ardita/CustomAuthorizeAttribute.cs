@@ -84,7 +84,7 @@ namespace Ardita
                                join subMenu in subMenus on page.SubmenuId equals subMenu.SubmenuId
                                join menu in menus on subMenu.MenuId equals menu.MenuId
                                where
-                                    (pageDetail.Path == fullPath || (actionName == "Index" ? menu == areaName && subMenu == controllerName: false) ) &&
+                                    (pageDetail.Path == fullPath || (actionName == "Index" ? menu.Name == areaName && subMenu.Name == controllerName: false) ) &&
                                     role.Code == userRoleCode.ToString()
                                select new
                                {
