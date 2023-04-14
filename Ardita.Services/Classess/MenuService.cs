@@ -54,7 +54,7 @@ namespace Ardita.Services.Classess
                            select new MenuListViewDetailModel
                            {
                                MenuId = menu.MenuId,
-                               SubMenuId = subMenu.MenuId,
+                               SubMenuId = subMenu.SubmenuId,
                                SubMenuName = subMenu.Name,
                                SubMenuPath = subMenu.Path,
                                SubMenuSort = subMenu.Sort

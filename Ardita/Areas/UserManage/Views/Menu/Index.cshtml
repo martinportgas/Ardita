@@ -3,7 +3,7 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Positions</h2>
+        <h2>Menu</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
@@ -12,7 +12,7 @@
                 User Management
             </li>
             <li class="active breadcrumb-item">
-                <strong>Position</strong>
+                <strong>Menu</strong>
             </li>
         </ol>
     </div>
@@ -24,7 +24,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Positions</h5>
+                    <h5>Menu</h5>
                     <div class="ibox-tools"></div>
                 </div>
                 <div class="ibox-content">
@@ -68,15 +68,18 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "positionId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "subMenuId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "positionId",
+                        "data": "subMenuId",
                         "render": function (data, type, row, meta) {
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Menu", new { Area = "UserManage", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Menu", new { Area = "UserManage", Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
+
+                            console.log(edit);
                             edit = edit.replace("-1", row.subMenuId);
+                            console.log(row.subMenuId, edit);
                             return edit;
                         }
                     },

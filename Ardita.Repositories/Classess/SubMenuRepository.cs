@@ -30,7 +30,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstSubmenu>> GetById(Guid id)
         {
-            var result = await _context.MstSubmenus.AsNoTracking().Where(x => x.MenuId == id).ToListAsync();
+            var result = await _context.MstSubmenus.AsNoTracking().Where(x => x.SubmenuId == id).ToListAsync();
             return result;
         }
 
