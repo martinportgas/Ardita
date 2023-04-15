@@ -34,6 +34,15 @@ namespace Ardita
             }
 
             var user = filterContext.HttpContext.User as System.Security.Claims.ClaimsPrincipal;
+            if (!user.Identity.IsAuthenticated)
+            {
+                filterContext.Result = new RedirectToRouteResult(
+                   new RouteValueDictionary {
+                        { "controller", "Login" },
+                        { "action", "Authentication" } }
+                   );
+                return;
+            }
             var userRoleCode = user.Identities.FirstOrDefault().FindFirst("RoleCode").Value;
 
             if (userRoleCode == null)
@@ -84,13 +93,19 @@ namespace Ardita
                                join subMenu in subMenus on page.SubmenuId equals subMenu.SubmenuId
                                join menu in menus on subMenu.MenuId equals menu.MenuId
                                where
-                                    (pageDetail.Path == fullPath || (actionName == "Index" ? menu.Name == areaName && subMenu.Name == controllerName: false) ) &&
+                                    menu.Path.ToLower() == areaName.ToString().ToLower() &&
+                                    subMenu.Path.ToLower() == controllerName.ToString().ToLower() &&
                                     role.Code == userRoleCode.ToString()
                                select new
                                {
                                    Page = pageDetail.Path
                                }
                 );
+
+                if(actionName.ToString() != "Index")
+                {
+                    results = results.Where(x => x.Page == fullPath);
+                }
 
                 if (results.Count() == 0)
                 {
