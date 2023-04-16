@@ -28,6 +28,11 @@ namespace Ardita.Services
             services.AddScoped<IPageService, PageService>();
             services.AddScoped<IRolePageService, RolePageService>();
             services.AddScoped<IClassificationService, ClassificationService>();
+            services.AddScoped<IFloorService, FloorService>();
+            services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IRackService, RackService>();
+            services.AddScoped<ILevelService, LevelService>();
+            services.AddScoped<IRowService, RowService>();
 
             return services;
         }
