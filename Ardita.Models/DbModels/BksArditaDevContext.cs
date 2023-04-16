@@ -47,6 +47,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
 
+    public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
+
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
@@ -56,6 +58,36 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstUser> MstUsers { get; set; }
 
     public virtual DbSet<TrxArchive> TrxArchives { get; set; }
+
+    public virtual DbSet<TrxArchiveMovement> TrxArchiveMovements { get; set; }
+
+    public virtual DbSet<TrxArchiveUnit> TrxArchiveUnits { get; set; }
+
+    public virtual DbSet<TrxClassification> TrxClassifications { get; set; }
+
+    public virtual DbSet<TrxFileArchiveDetail> TrxFileArchiveDetails { get; set; }
+
+    public virtual DbSet<TrxFloor> TrxFloors { get; set; }
+
+    public virtual DbSet<TrxLevel> TrxLevels { get; set; }
+
+    public virtual DbSet<TrxMediaStorage> TrxMediaStorages { get; set; }
+
+    public virtual DbSet<TrxMediaStorageDetail> TrxMediaStorageDetails { get; set; }
+
+    public virtual DbSet<TrxPermissionClassification> TrxPermissionClassifications { get; set; }
+
+    public virtual DbSet<TrxRack> TrxRacks { get; set; }
+
+    public virtual DbSet<TrxRoom> TrxRooms { get; set; }
+
+    public virtual DbSet<TrxRow> TrxRows { get; set; }
+
+    public virtual DbSet<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; set; }
+
+    public virtual DbSet<TrxSubjectClassification> TrxSubjectClassifications { get; set; }
+
+    public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
 
     public virtual DbSet<TrxArchiveMovement> TrxArchiveMovements { get; set; }
 
@@ -386,6 +418,72 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.PositionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_POSITION_ID_MST_EMPLOYEE");
+        });
+
+        modelBuilder.Entity<MstGmd>(entity =>
+        {
+            entity.HasKey(e => e.GmdId);
+
+            entity.ToTable("MST_GMD");
+
+            entity.Property(e => e.GmdId)
+                .ValueGeneratedNever()
+                .HasColumnName("gmd_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.GmdCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("gmd_code");
+            entity.Property(e => e.GmdName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("gmd_name");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+        });
+
+        modelBuilder.Entity<MstGmdLog>(entity =>
+        {
+            entity.HasKey(e => e.GmdIdLog);
+
+            entity.ToTable("MST_GMD_LOG");
+
+            entity.Property(e => e.GmdIdLog)
+                .ValueGeneratedNever()
+                .HasColumnName("gmd_id_log");
+            entity.Property(e => e.Action)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("action");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.GmdCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("gmd_code");
+            entity.Property(e => e.GmdId).HasColumnName("gmd_id");
+            entity.Property(e => e.GmdName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("gmd_name");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Gmd).WithMany(p => p.MstGmdLogs)
+                .HasForeignKey(d => d.GmdId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_GMD_ID_GMD_LOG");
         });
 
         modelBuilder.Entity<MstGmd>(entity =>

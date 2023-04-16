@@ -21,6 +21,7 @@ namespace Ardita.Areas.MasterData.Controllers
             _classificationService = classificationService;
             _classificationTypeService = classificationTypeService;
         }
+        // GET: ClassificationController
         public ActionResult Index()
         {
             return View();
@@ -92,6 +93,8 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
             }
         }
+
+        // POST: ClassificationController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(TrxClassification model)
@@ -115,6 +118,8 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
         }
+
+        // POST: ClassificationController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(TrxClassification model)
