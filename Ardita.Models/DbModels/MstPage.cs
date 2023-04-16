@@ -11,7 +11,7 @@ public partial class MstPage
 
     public string Name { get; set; } = null!;
 
-    public string Path { get; set; } = null!;
+    public string? Path { get; set; }
 
     public bool IsActive { get; set; }
 
@@ -23,7 +23,9 @@ public partial class MstPage
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<MstRolePage> MstRolePages { get; } = new List<MstRolePage>();
+    public virtual ICollection<IdxRolePage> IdxRolePages { get; } = new List<IdxRolePage>();
+
+    public virtual ICollection<MstPageDetail> MstPageDetails { get; } = new List<MstPageDetail>();
 
     public virtual MstSubmenu Submenu { get; set; } = null!;
 }

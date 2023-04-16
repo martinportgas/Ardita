@@ -33,5 +33,5 @@ public partial class MstUser
 
     public virtual MstEmployee Employee { get; set; } = null!;
 
-    public virtual ICollection<MstUserRole> MstUserRoles { get; } = new List<MstUserRole>();
+    public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
 }
