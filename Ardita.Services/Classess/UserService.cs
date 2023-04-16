@@ -116,6 +116,7 @@ namespace Ardita.Services.Classess
                           join r in role on ur.RoleId equals r.RoleId
                           join e in employee on usr.EmployeeId equals e.EmployeeId
                           where usr.Username == username && usr.Password == password
+                          && usr.IsActive == true && r.IsActive==true && e.IsActive==true
                           select new
                           {
                               Username = usr.Username,
@@ -161,7 +162,8 @@ namespace Ardita.Services.Classess
                           join page in pageResults on subMenu.SubmenuId equals page.SubmenuId
                           join rolePage in rolePageResults on page.PageId equals rolePage.PageId
                           join role in roleResults on rolePage.RoleId equals role.RoleId
-                          where role.RoleId == id
+                          where role.RoleId == id && menu.IsActive==true && subMenu.IsActive==true
+                          && page.IsActive==true && role.IsActive==true
                           select new UserMenuListViewModel
                           {
                              MenuId = menu.MenuId,

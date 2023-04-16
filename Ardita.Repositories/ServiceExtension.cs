@@ -34,6 +34,10 @@ namespace Ardita.Repositories
             services.AddScoped<IRackRepository, RackRepository>();
             services.AddScoped<ILevelRepository, LevelRepository>();
             services.AddScoped<IRowRepository, RowRepository>();
+            services.AddScoped<IClassificationTypeRepository, ClassificationTypeRepository>();
+            services.AddScoped<IClassificationSubjectRepository, ClassificationSubjectRepository>();
+            services.AddScoped<IClassificationSubSubjectRepository, ClassificationSubSubjectRepository>();
+            services.AddScoped<IClassificationPermissionRepository, ClassificationPermissionRepository>();
 
             return services;
         }

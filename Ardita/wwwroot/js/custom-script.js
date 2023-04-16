@@ -2,6 +2,14 @@
 $(document).ready(function () {
     textAreaCounterInit();
     textAreaCounter();
+    $("select").select2({
+        theme: 'bootstrap4',
+        allowClear: true
+    });
+    $('form').on('submit', function () {
+        $('html,body').scrollTop(0);
+        $('body').toggleClass('sk-loading');
+    });
 });
 
 function GetClock() {
@@ -37,6 +45,7 @@ function textAreaCounterInit() {
         $('textarea:enabled').each(function () {
             if ($(this).is(':visible')) {
                 $(this).css('max-height', '100px');
+                $(this).css('font-size', '11px');
                 if (!$(this).hasClass('detail'))
                     $(this).css('height', '85px');
                 else

@@ -3,7 +3,7 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Classification</h2>
+        <h2>Sub Subject Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
@@ -12,7 +12,7 @@
                 Master Data
             </li>
             <li class="active breadcrumb-item">
-                <strong>Classification</strong>
+                <strong>Sub Subject Classification</strong>
             </li>
         </ol>
     </div>
@@ -24,9 +24,9 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Classification</h5>
+                    <h5>Sub Subject Classification</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action("Add", "Classification", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action("Add", "ClassificationSubSubject", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -35,8 +35,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Classification Code</th>
-                                <th>Classification Name</th>
+                                <th>Sub Subject Classification Code</th>
+                                <th>Sub Subject Classification Name</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -58,7 +58,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action("GetData", "Classification", new { Area = "MasterData"})',
+                    "url": '@Url.Action("GetData", "ClassificationSubSubject", new { Area = "MasterData"})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -70,28 +70,28 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "classificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "subSubjectClassificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "classificationId", "orderable": false, "searchable": false,
+                        "data": "subSubjectClassificationId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Classification", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
-                            detail = detail.replace("-1", row.classificationId);
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "ClassificationSubSubject", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", data);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Classification", new { Area = "MasterData", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
-                            edit = edit.replace("-1", row.classificationId);
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "ClassificationSubSubject", new { Area = "MasterData", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", data);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Classification", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
-                            remove = remove.replace("-1", row.classificationId);
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "ClassificationSubSubject", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", data);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
-                    { "data": "classificationCode", "name": "classificationCode", "autoWidth": true },
-                    { "data": "classificationName", "name": "classificationName", "autoWidth": true },
+                    { "data": "subSubjectClassificationCode", "name": "subSubjectClassificationCode", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
                 ],
                 buttons: [
                     { extend: 'excel', title: 'user-data' },
