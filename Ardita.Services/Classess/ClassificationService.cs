@@ -36,6 +36,12 @@ namespace Ardita.Services.Classess
         {
             return await _classificationRepository.GetById(id);
         }
+        public async Task<IEnumerable<TrxClassification>> GetByTypeId(Guid id)
+        {
+            var result = await _classificationRepository.GetAll();
+            result = result.Where(x => x.TypeClassificationId == id);
+            return result;
+        }
 
         public async Task<int> Insert(TrxClassification model)
         {

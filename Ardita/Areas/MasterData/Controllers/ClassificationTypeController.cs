@@ -1,83 +1,114 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
+using Ardita.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
+    [CustomAuthorizeAttribute]
+    [Area("MasterData")]
     public class ClassificationTypeController : Controller
     {
-        // GET: ClassificationTypeController
+        private readonly IClassificationTypeService _classificationTypeService;
+        public ClassificationTypeController(IClassificationTypeService classificationTypeService)
+        {
+            _classificationTypeService = classificationTypeService;
+        }
         public ActionResult Index()
         {
             return View();
         }
-
-        // GET: ClassificationTypeController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: ClassificationTypeController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ClassificationTypeController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var result = await _classificationTypeService.GetListClassificationType(model);
+
+                return Json(result);
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                throw;
             }
         }
-
-        // GET: ClassificationTypeController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Add()
         {
             return View();
         }
-
-        // POST: ClassificationTypeController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Update(Guid Id)
         {
-            try
+            var data = await _classificationTypeService.GetById(Id);
+            if (data.Count() > 0)
             {
-                return RedirectToAction(nameof(Index));
+                return View(data.FirstOrDefault());
             }
-            catch
+            else
             {
-                return View();
+                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
             }
         }
-
-        // GET: ClassificationTypeController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Remove(Guid Id)
         {
-            return View();
-        }
+            var data = await _classificationTypeService.GetById(Id);
+            if (data.Count() > 0)
+            {
+                return View(data.FirstOrDefault());
+            }
+            else
+            {
+                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+            }
 
-        // POST: ClassificationTypeController/Delete/5
+        }
+        public async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _classificationTypeService.GetById(Id);
+            if (data.Count() > 0)
+            {
+                return View(data.FirstOrDefault());
+            }
+            else
+            {
+                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+            }
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Save(MstTypeClassification model)
         {
-            try
+            int result = 0;
+            if (model != null)
             {
-                return RedirectToAction(nameof(Index));
+                if (model.TypeClassificationId != Guid.Empty)
+                {
+                    model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.UpdatedDate = DateTime.Now;
+                    result = await _classificationTypeService.Update(model);
+                }
+
+                else
+                {
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.CreatedDate = DateTime.Now;
+                    result = await _classificationTypeService.Insert(model);
+                }
             }
-            catch
+            return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(MstTypeClassification model)
+        {
+            int result = 0;
+            if (model != null && model.TypeClassificationId != Guid.Empty)
             {
-                return View();
+                result = await _classificationTypeService.Delete(model);
             }
+            return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
         }
     }
 }

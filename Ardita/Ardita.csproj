@@ -48,9 +48,6 @@
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />
     <Folder Include="Areas\MasterData\Models\" />
-    <Folder Include="Areas\MasterData\Views\ClassificationType\" />
-    <Folder Include="Areas\MasterData\Views\SubSubjectClassification\" />
-    <Folder Include="Areas\MasterData\Views\SubjectClassification\" />
   </ItemGroup>
 
   <ItemGroup>

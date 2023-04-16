@@ -6,20 +6,24 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Security.Claims;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
     [Area("MasterData")]
-    public class ClassificationController : Controller
+    public class ClassificationSubjectController : Controller
     {
+        private readonly IClassificationSubjectService _classificationSubjectService;
         private readonly IClassificationService _classificationService;
         private readonly IClassificationTypeService _classificationTypeService;
-        public ClassificationController(IClassificationService classificationService, IClassificationTypeService classificationTypeService)
+        public ClassificationSubjectController(
+            IClassificationSubjectService classificationSubjectService,
+            IClassificationTypeService classificationTypeService,
+            IClassificationService classificationService)
         {
-            _classificationService = classificationService;
+            _classificationSubjectService = classificationSubjectService;
             _classificationTypeService = classificationTypeService;
+            _classificationService = classificationService;
         }
         public ActionResult Index()
         {
@@ -29,7 +33,22 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                var result = await _classificationService.GetListClassification(model);
+                var result = await _classificationSubjectService.GetListClassificationSubject(model);
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetClassifictionIdByTypeId(Guid id)
+        {
+            try
+            {
+                var result = await _classificationService.GetByTypeId(id);
 
                 return Json(result);
 
@@ -42,89 +61,97 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Add()
         {
             var classificationTypeData = await _classificationTypeService.GetAll();
+            var classificationData = await _classificationService.GetAll();
 
             ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
+            ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
             return View();
         }
         public async Task<IActionResult> Update(Guid Id)
         {
-            var data = await _classificationService.GetById(Id);
+            var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
+                var classificationData = await _classificationService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
+                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 return View(data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+                return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
             }
         }
         public async Task<IActionResult> Remove(Guid Id)
         {
-            var data = await _classificationService.GetById(Id);
+            var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
+                var classificationData = await _classificationService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
+                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 return View(data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+                return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
             }
 
         }
         public async Task<IActionResult> Detail(Guid Id)
         {
-            var data = await _classificationService.GetById(Id);
+            var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
+                var classificationData = await _classificationService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
+                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 return View(data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+                return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(TrxClassification model)
+        public async Task<IActionResult> Save(TrxSubjectClassification model)
         {
             int result = 0;
             if (model != null)
             {
-                if (model.ClassificationId != Guid.Empty)
+                if (model.SubjectClassificationId != Guid.Empty)
                 {
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdatedDate = DateTime.Now;
-                    result = await _classificationService.Update(model);
+                    result = await _classificationSubjectService.Update(model);
                 }
 
                 else
                 {
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
-                    result = await _classificationService.Insert(model);
+                    result = await _classificationSubjectService.Insert(model);
                 }
             }
-            return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+            return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(TrxClassification model)
+        public async Task<IActionResult> Delete(TrxSubjectClassification model)
         {
             int result = 0;
-            if (model != null && model.ClassificationId != Guid.Empty)
+            if (model != null && model.SubjectClassificationId != Guid.Empty)
             {
-                result = await _classificationService.Delete(model);
+                result = await _classificationSubjectService.Delete(model);
             }
-            return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+            return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
         }
     }
 }

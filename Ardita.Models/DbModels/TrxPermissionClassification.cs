@@ -7,9 +7,9 @@ public partial class TrxPermissionClassification
 {
     public Guid PermissionClassificationId { get; set; }
 
-    public Guid? SubSubjectClassificationId { get; set; }
+    public Guid SubSubjectClassificationId { get; set; }
 
-    public Guid? PositionId { get; set; }
+    public Guid PositionId { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
@@ -19,7 +19,7 @@ public partial class TrxPermissionClassification
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual MstPosition? Position { get; set; }
+    public virtual MstPosition Position { get; set; } = null!;
 
-    public virtual TrxSubSubjectClassification? SubSubjectClassification { get; set; }
+    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 }
