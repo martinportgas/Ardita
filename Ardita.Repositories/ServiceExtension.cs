@@ -29,6 +29,10 @@ namespace Ardita.Repositories
             services.AddScoped<IRolePageRepository, RolePageRepository>();
             services.AddScoped<IPageDetailRepository, PageDetailRepository>();
             services.AddScoped<IClassificationRepository, ClassificationRepository>();
+            services.AddScoped<IClassificationTypeRepository, ClassificationTypeRepository>();
+            services.AddScoped<IClassificationSubjectRepository, ClassificationSubjectRepository>();
+            services.AddScoped<IClassificationSubSubjectRepository, ClassificationSubSubjectRepository>();
+            services.AddScoped<IClassificationPermissionRepository, ClassificationPermissionRepository>();
 
             return services;
         }

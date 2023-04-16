@@ -28,6 +28,11 @@ namespace Ardita.Services.Classess
         {
             return await _positionRepository.GetById(id);
         }
+        public async Task<MstPosition> GetFirstById(Guid id)
+        {
+            var result = await _positionRepository.GetById(id);
+            return result.FirstOrDefault();
+        }
 
         public async Task<PositionListViewModel> GetListPosition(DataTableModel tableModel)
         {

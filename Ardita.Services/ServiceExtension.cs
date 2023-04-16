@@ -28,6 +28,9 @@ namespace Ardita.Services
             services.AddScoped<IPageService, PageService>();
             services.AddScoped<IRolePageService, RolePageService>();
             services.AddScoped<IClassificationService, ClassificationService>();
+            services.AddScoped<IClassificationTypeService, ClassificationTypeService>();
+            services.AddScoped<IClassificationSubjectService, ClassificationSubjectService>();
+            services.AddScoped<IClassificationSubSubjectService, ClassificationSubSubjectService>();
 
             return services;
         }
