@@ -1,20 +1,15 @@
 ﻿using Ardita.Models.DbModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Interfaces
 {
     public interface IRolePageRepository
     {
-        Task<IEnumerable<MstRolePage>> GetById(Guid id);
-        Task<IEnumerable<MstRolePage>> GetAll();
-        Task<int> Insert(MstRolePage model);
-        Task<bool> InsertBulk(List<MstRolePage> model);
-        Task<int> Delete(MstRolePage model);
+        Task<IEnumerable<IdxRolePage>> GetById(Guid id);
+        Task<IEnumerable<IdxRolePage>> GetAll();
+        Task<int> Insert(IdxRolePage model);
+        Task<bool> InsertBulk(List<IdxRolePage> model);
+        Task<int> Delete(IdxRolePage model);
         Task<int> DeleteByRoleId(Guid id);
-        Task<int> Update(MstRolePage model);
+        Task<int> Update(IdxRolePage model);
     }
 }

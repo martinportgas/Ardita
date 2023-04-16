@@ -17,19 +17,29 @@ namespace Ardita.Services.Classess
     {
         private readonly IPageRepository _pageRepository;
         private readonly ISubMenuRepository _subMenuRepository;
+        private readonly IMenuRepository _menuRepository;
+        private readonly IPageDetailRepository _pageDetailRepository;
 
         public PageService(
             IPageRepository pageRepository,
-            ISubMenuRepository subMenuRepository
+            ISubMenuRepository subMenuRepository,
+            IMenuRepository menuRepository,
+            IPageDetailRepository pageDetailRepository
             )
         {
             _pageRepository = pageRepository;
             _subMenuRepository = subMenuRepository;
+            _menuRepository = menuRepository;
+            _pageDetailRepository = pageDetailRepository;
         }
 
         public async Task<int> Delete(MstPage model)
         {
             return await _pageRepository.Delete(model);
+        }
+        public async Task<int> DeleteDetail(Guid id)
+        {
+            return await _pageDetailRepository.DeleteByMainId(id);
         }
 
         public async Task<IEnumerable<MstPage>> GetAll()
@@ -41,6 +51,10 @@ namespace Ardita.Services.Classess
         {
             return await _pageRepository.GetById(id);
         }
+        public async Task<IEnumerable<MstPageDetail>> GetDetailByMainId(Guid id)
+        {
+            return await _pageDetailRepository.GetByMainId(id);
+        }
 
         public async Task<PageListViewModel> GetListPage(DataTableModel tableModel)
         {
@@ -48,9 +62,11 @@ namespace Ardita.Services.Classess
             
             var pageResult = await _pageRepository.GetAll();
             var subMenuResult = await _subMenuRepository.GetAll();
+            var menuResult = await _menuRepository.GetAll();
 
             var results = (from page in pageResult
                            join subMenu in subMenuResult on page.SubmenuId equals subMenu.SubmenuId
+                           join menu in menuResult on subMenu.MenuId equals menu.MenuId
                            select new PageListViewDetailModel
                            {
                               PageId = page.PageId,
@@ -60,7 +76,10 @@ namespace Ardita.Services.Classess
                               SubMenuId = subMenu.SubmenuId,
                               SubMenuName = subMenu.Name,
                               SubMenuPath = subMenu.Path,
-                              SubmIsActive = subMenu.IsActive
+                              SubmIsActive = subMenu.IsActive,
+                              MenuId = menu.MenuId,
+                              MenuName = menu.Name,
+                              MenuPath = menu.Path,
                            });
 
             if (!string.IsNullOrEmpty(tableModel.searchValue))
@@ -85,6 +104,10 @@ namespace Ardita.Services.Classess
         public async Task<int> Insert(MstPage model)
         {
             return await _pageRepository.Insert(model);
+        }
+        public async Task<int> InsertDetail(MstPageDetail model)
+        {
+            return await _pageDetailRepository.Insert(model);
         }
 
         public async Task<int> Update(MstPage model)

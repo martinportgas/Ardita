@@ -8,6 +8,7 @@ namespace Ardita.Areas.UserManage.Models
     public class PageInsertViewModel
     {
         public MstPage page { get; set; }
+        public IEnumerable<MstPageDetail> pageDetail { get; set; }
         public IEnumerable<SelectListItem> MenuTypes { get; set; }
         public IEnumerable<SelectListItem> subMenuTypes { get; set; }
     }

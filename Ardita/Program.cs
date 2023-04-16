@@ -13,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDIRepositories(builder.Configuration);
 //From Services
 builder.Services.AddDIServices(builder.Configuration);
-
+//Add Razor Cmpilation
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

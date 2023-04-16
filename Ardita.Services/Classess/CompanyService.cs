@@ -1,11 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Services.Classess
 {
@@ -27,7 +22,7 @@ namespace Ardita.Services.Classess
             return await _companyRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstCompany>> GetById(int id)
+        public async Task<IEnumerable<MstCompany>> GetById(Guid id)
         {
             return await _companyRepository.GetById(id);
         }

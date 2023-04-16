@@ -5,7 +5,7 @@ namespace Ardita.Models.DbModels;
 
 public partial class MstPosition
 {
-    public Guid PosittionId { get; set; }
+    public Guid PositionId { get; set; }
 
     public string Code { get; set; } = null!;
 
@@ -22,4 +22,6 @@ public partial class MstPosition
     public DateTime? UpdateDate { get; set; }
 
     public virtual ICollection<MstEmployee> MstEmployees { get; } = new List<MstEmployee>();
+
+    public virtual ICollection<TrxPermissionClassification> TrxPermissionClassifications { get; } = new List<TrxPermissionClassification>();
 }

@@ -1,11 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Classess
 {
@@ -17,16 +12,16 @@ namespace Ardita.Repositories.Classess
             _context = context;
         }
 
-        public async Task<int> Delete(MstRolePage model)
+        public async Task<int> Delete(IdxRolePage model)
         {
             int result = 0;
             if (model != null)
             {
-                _context.MstRolePages.Remove(model);
+                _context.IdxRolePages.Remove(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
-                
+
         }
         public async Task<int> DeleteByRoleId(Guid roleId)
         {
@@ -40,41 +35,41 @@ namespace Ardita.Repositories.Classess
 
         }
 
-        public async Task<IEnumerable<MstRolePage>> GetAll()
+        public async Task<IEnumerable<IdxRolePage>> GetAll()
         {
-            var result = await _context.MstRolePages.ToListAsync();
+            var result = await _context.IdxRolePages.ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<MstRolePage>> GetById(Guid id)
+        public async Task<IEnumerable<IdxRolePage>> GetById(Guid id)
         {
-            var result = await _context.MstRolePages.AsNoTracking().Where(x => x.RolePageId == id).ToListAsync();
+            var result = await _context.IdxRolePages.AsNoTracking().Where(x => x.RolePageId == id).ToListAsync();
             return result;
         }
 
-        public async Task<int> Insert(MstRolePage model)
+        public async Task<int> Insert(IdxRolePage model)
         {
             int result = 0;
 
-          
+
 
 
             if (model != null)
             {
-                var data = await _context.MstRolePages.AsNoTracking().Where(
+                var data = await _context.IdxRolePages.AsNoTracking().Where(
                   x => x.RoleId == model.RoleId &&
                   x.PageId == model.PageId
                   ).ToListAsync();
 
                 if (data.Count() == 0)
                 {
-                    _context.MstRolePages.Add(model);
+                    _context.IdxRolePages.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
             }
             return result;
         }
-        public async Task<bool> InsertBulk(List<MstRolePage> model)
+        public async Task<bool> InsertBulk(List<IdxRolePage> model)
         {
             bool result = false;
             if (model.Count() > 0)
@@ -85,12 +80,12 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<int> Update(MstRolePage model)
+        public async Task<int> Update(IdxRolePage model)
         {
             int result = 0;
             if (model != null)
             {
-                _context.MstRolePages.Update(model);
+                _context.IdxRolePages.Update(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
