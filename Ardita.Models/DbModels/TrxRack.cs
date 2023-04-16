@@ -17,9 +17,9 @@ public partial class TrxRack
 
     public bool? IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public string? UpdatedDate { get; set; }
 

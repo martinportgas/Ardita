@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Ardita.Areas.MasterData.Models;
 
-namespace Ardita.Models.DbModels;
-
-public partial class MstCompany
+public class CompanyModel
 {
     public Guid CompanyId { get; set; }
 
@@ -26,8 +23,4 @@ public partial class MstCompany
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
-
-    public virtual ICollection<MstCompanyLog> MstCompanyLogs { get; } = new List<MstCompanyLog>();
-
-    public virtual ICollection<TrxArchiveUnit> TrxArchiveUnits { get; } = new List<TrxArchiveUnit>();
 }

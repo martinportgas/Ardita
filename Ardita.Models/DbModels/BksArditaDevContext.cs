@@ -162,7 +162,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("MST_COMPANY");
 
             entity.Property(e => e.CompanyId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("company_id");
             entity.Property(e => e.Address)
                 .HasMaxLength(200)
@@ -1044,7 +1044,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_FLOOR");
 
             entity.Property(e => e.FloorId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("floor_id");
             entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -1077,7 +1077,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_LEVEL");
 
             entity.Property(e => e.LevelId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("level_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
@@ -1233,7 +1233,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_RACK");
 
             entity.Property(e => e.RackId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("rack_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
@@ -1268,7 +1268,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_ROOM");
 
             entity.Property(e => e.RoomId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("room_id");
             entity.Property(e => e.ArchiveRoomType)
                 .HasMaxLength(200)
@@ -1305,7 +1305,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_ROW");
 
             entity.Property(e => e.RowId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("row_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)

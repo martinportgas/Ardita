@@ -1,7 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Companies;
-using Ardita.Models.ViewModels.Users;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -38,15 +37,15 @@ public class CompanyService : ICompanyService
         var companyResult = await _companyRepository.GetAll();
 
         var results = from company in companyResult
-                       select new CompanyListViewDetailModel
-                       {
-                           CompanyId = company.CompanyId,
-                           CompanyCode = company.CompanyCode,
-                           CompanyName = company.CompanyName,
-                           Address = company.Address,
-                           Telepone = company.Telepone,
-                           Email = company.Email
-                       };
+                      select new CompanyListViewDetailModel
+                      {
+                          CompanyId = company.CompanyId,
+                          CompanyCode = company.CompanyCode,
+                          CompanyName = company.CompanyName,
+                          Address = company.Address,
+                          Telepone = company.Telepone,
+                          Email = company.Email
+                      };
         if (!string.IsNullOrEmpty(tableModel.searchValue))
         {
             results = results.Where(
