@@ -54,7 +54,60 @@
         float: right !important;
     }
 }
+body > .sk-spinner {
+    display: none;
+}
 
+body.sk-loading {
+    position: relative;
+}
+
+    body.sk-loading > .sk-spinner {
+        display: block;
+        position: absolute;
+        top: 40%;
+        left: 0;
+        right: 0;
+        z-index: 3000;
+    }
+
+    body.sk-loading:after {
+        content: '';
+        background-color: rgba(255, 255, 255, 0.7);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2999;
+    }
+.select2-container--bootstrap4 .select2-selection__clear {
+    background-color: #ebe3e3 !important;
+    color: #dc3545;
+    margin-top: 0.85em !important;
+    transition: transform ease 0.5s, font-size ease 0.5s;
+}
+    .select2-container--bootstrap4 .select2-selection__clear:hover {
+        transform: translateY(-5px);
+        background-color: #bfb7b7 !important;
+        font-weight: bolder;
+        font-size: 13px !important;
+    }
+
+[name*="tbl"] {
+    font-size: 11px !important;
+    border-radius: 5px !important;
+    height: 1.85rem !important;
+}
+.pagination {
+    justify-content: end;
+}
+input.form-control, input.single-line {
+    height: calc(2rem - 3px) !important;
+}
+.select2-container--bootstrap4 .select2-selection--single {
+    height: calc(2rem + 2px) !important;
+}
 .sweet-alert h2 {
     font-size: 15px !important;
     margin: 20px 0px !important;
@@ -414,7 +467,20 @@ input.form-control:enabled:read-write, input.text-box:enabled:read-write, input.
 input.form-control:disabled, input.form-control:read-only {
     background-color: transparent !important;
     border: unset !important;
+    font-size: 11px !important;
+    border-bottom: 1px dotted gray !important;
 }
+.select2-container--disabled > span > .select2-selection--single {
+    background-color: white !important;
+    border: unset !important;
+    border-bottom: 1px dotted gray !important;
+}
+    .select2-container--disabled > span > .select2-selection--single > .select2-selection__arrow {
+        display:none;
+    }
+    .select2-container--disabled > span > .select2-selection--single > span > .select2-selection__clear {
+        display: none;
+    }
 
 textarea.form-control:disabled, textarea.form-control:read-only {
     background-color: transparent !important;

@@ -13,6 +13,8 @@ public partial class MstMenu
 
     public string? Icon { get; set; }
 
+    public int? Sort { get; set; }
+
     public bool IsActive { get; set; }
 
     public Guid CreatedBy { get; set; }

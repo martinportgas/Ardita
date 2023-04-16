@@ -25,5 +25,7 @@ public partial class TrxClassification
 
     public virtual ICollection<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; } = new List<TrxSubSubjectClassification>();
 
+    public virtual ICollection<TrxSubjectClassification> TrxSubjectClassifications { get; } = new List<TrxSubjectClassification>();
+
     public virtual MstTypeClassification? TypeClassification { get; set; }
 }

@@ -18,4 +18,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ardita.Models\Ardita.Models.csproj" />
+  </ItemGroup>
+
 </Project>

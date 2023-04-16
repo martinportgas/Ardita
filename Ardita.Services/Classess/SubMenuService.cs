@@ -39,11 +39,12 @@ namespace Ardita.Services.Classess
             List<SubMenuTypes> ListResult = new List<SubMenuTypes>();
             SubMenuTypes subMenu;
             var model = await _subMenuRepository.GetAll();
+            model = model.OrderBy(x => x.Menu.Sort).ThenBy(x => x.Sort);
             foreach (var item in model)
             {
                 subMenu = new SubMenuTypes();
                 subMenu.Id = item.SubmenuId;
-                subMenu.Name = item.Name;
+                subMenu.Name = item.Menu.Name + " - " + item.Name;
                 ListResult.Add(subMenu);
             }
             return ListResult;
@@ -52,15 +53,15 @@ namespace Ardita.Services.Classess
         public async Task<List<SubMenuTypes>> GetSubMenuTypeToLookUp(Guid id)
         {
             List<SubMenuTypes> ListResult = new List<SubMenuTypes>();
-            SubMenuTypes subMenu;
+            SubMenuTypes subMenu;   
             var model = await _subMenuRepository.GetAll();
-            model = model.Where(x=> x.MenuId == id);
+            model = model.Where(x=> x.MenuId == id).OrderBy(x => x.Menu.Sort).ThenBy(x => x.Sort);
 
             foreach (var item in model)
             {
                 subMenu = new SubMenuTypes();
                 subMenu.Id = item.SubmenuId;
-                subMenu.Name = item.Name;
+                subMenu.Name = item.Menu.Name + " - " + item.Name;
                 ListResult.Add(subMenu);
             }
             return ListResult;

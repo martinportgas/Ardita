@@ -9,6 +9,8 @@ public partial class TrxSubjectClassification
 
     public Guid? TypeClassificationId { get; set; }
 
+    public Guid? ClassificationId { get; set; }
+
     public string? SubjectClassificationCode { get; set; }
 
     public string? SubjectClassificationName { get; set; }
@@ -22,6 +24,8 @@ public partial class TrxSubjectClassification
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual TrxClassification? Classification { get; set; }
 
     public virtual ICollection<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; } = new List<TrxSubSubjectClassification>();
 

@@ -480,6 +480,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("path");
+            entity.Property(e => e.Sort).HasColumnName("sort");
             entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("datetime")
@@ -723,7 +724,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("MST_TYPE_CLASSIFICATION");
 
             entity.Property(e => e.TypeClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("type_classification_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
@@ -976,7 +977,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_CLASSIFICATION");
 
             entity.Property(e => e.ClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("classification_id");
             entity.Property(e => e.ClassificationCode)
                 .HasMaxLength(50)
@@ -1203,7 +1204,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_PERMISSION_CLASSIFICATION");
 
             entity.Property(e => e.PermissionClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("permission_classification_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
@@ -1216,10 +1217,12 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.Position).WithMany(p => p.TrxPermissionClassifications)
                 .HasForeignKey(d => d.PositionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_POSITION_ID_TRX_PERMISSION_CLASSIFICATION");
 
             entity.HasOne(d => d.SubSubjectClassification).WithMany(p => p.TrxPermissionClassifications)
                 .HasForeignKey(d => d.SubSubjectClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SUB_SUBJECT_CALSSIFICATIONE_ID_PERMISSION_CLASSIFIFCATION");
         });
 
@@ -1335,7 +1338,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_SUB_SUBJECT_CLASSIFICATION");
 
             entity.Property(e => e.SubSubjectClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.BasicInformation)
                 .HasMaxLength(2500)
@@ -1394,8 +1397,9 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_SUBJECT_CLASSIFICATION");
 
             entity.Property(e => e.SubjectClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("subject_classification_id");
+            entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -1415,9 +1419,13 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
+            entity.HasOne(d => d.Classification).WithMany(p => p.TrxSubjectClassifications)
+                .HasForeignKey(d => d.ClassificationId)
+                .HasConstraintName("FK_TRX_SUBJECT_CLASSIFICATION_TRX_CLASSIFICATION");
+
             entity.HasOne(d => d.TypeClassification).WithMany(p => p.TrxSubjectClassifications)
                 .HasForeignKey(d => d.TypeClassificationId)
-                .HasConstraintName("FK_TYPE_CLASSIFICATION_ID_SUBJECT_CLASSIFICATION");
+                .HasConstraintName("FK_TRX_SUBJECT_CLASSIFICATION_MST_TYPE_CLASSIFICATION");
         });
 
         modelBuilder.Entity<TrxTypeStorage>(entity =>
