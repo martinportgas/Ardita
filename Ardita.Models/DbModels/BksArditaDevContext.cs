@@ -47,7 +47,6 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
 
-    public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
 
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
@@ -89,35 +88,6 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
 
-    public virtual DbSet<TrxArchiveMovement> TrxArchiveMovements { get; set; }
-
-    public virtual DbSet<TrxArchiveUnit> TrxArchiveUnits { get; set; }
-
-    public virtual DbSet<TrxClassification> TrxClassifications { get; set; }
-
-    public virtual DbSet<TrxFileArchiveDetail> TrxFileArchiveDetails { get; set; }
-
-    public virtual DbSet<TrxFloor> TrxFloors { get; set; }
-
-    public virtual DbSet<TrxLevel> TrxLevels { get; set; }
-
-    public virtual DbSet<TrxMediaStorage> TrxMediaStorages { get; set; }
-
-    public virtual DbSet<TrxMediaStorageDetail> TrxMediaStorageDetails { get; set; }
-
-    public virtual DbSet<TrxPermissionClassification> TrxPermissionClassifications { get; set; }
-
-    public virtual DbSet<TrxRack> TrxRacks { get; set; }
-
-    public virtual DbSet<TrxRoom> TrxRooms { get; set; }
-
-    public virtual DbSet<TrxRow> TrxRows { get; set; }
-
-    public virtual DbSet<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; set; }
-
-    public virtual DbSet<TrxSubjectClassification> TrxSubjectClassifications { get; set; }
-
-    public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
