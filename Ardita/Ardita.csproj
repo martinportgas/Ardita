@@ -47,7 +47,6 @@
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />
-    <Folder Include="Areas\MasterData\Models\" />
   </ItemGroup>
 
   <ItemGroup>

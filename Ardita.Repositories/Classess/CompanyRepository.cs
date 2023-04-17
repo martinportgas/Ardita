@@ -15,12 +15,26 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> Delete(MstCompany model)
         {
-            throw new NotImplementedException();
+            int result = 0;
+
+            if (model.CompanyId != Guid.Empty)
+            {
+                var data = await _context.MstCompanies.AsNoTracking().Where(x => x.CompanyId == model.CompanyId).ToListAsync();
+                if (data != null)
+                {
+                    model.IsActive = false;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    _context.MstCompanies.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
         }
 
         public async Task<IEnumerable<MstCompany>> GetAll()
         {
-            var results = await _context.MstCompanies.ToListAsync();
+            var results = await _context.MstCompanies.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
 
@@ -33,14 +47,28 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(MstCompany model)
         {
             int result = 0;
-
             if (model != null)
             {
-                _context.MstCompanies.Add(model);
-                result = await _context.SaveChangesAsync();
-            }
-            return result;
+                var data = await _context.MstCompanies.AsNoTracking().Where(x => x.CompanyId == model.CompanyId).ToListAsync();
+                model.IsActive = true;
 
+                if (data.Count > 0)
+                {
+
+                    model.CompanyId = data.FirstOrDefault().CompanyId;
+                    model.UpdatedBy = model.CreatedBy;
+                    model.UpdatedDate = DateTime.Now;
+                    _context.MstCompanies.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    _context.MstCompanies.Add(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+
+            return result;
         }
 
         public async Task<int> Update(MstCompany model)
@@ -49,9 +77,12 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.CompanyId != null)
             {
-                var data = await _context.MstCompanies.Where(x => x.CompanyId == model.CompanyId).ToListAsync();
+                var data = await _context.MstCompanies.AsNoTracking().Where(x => x.CompanyId == model.CompanyId).ToListAsync();
                 if (data != null)
                 {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
