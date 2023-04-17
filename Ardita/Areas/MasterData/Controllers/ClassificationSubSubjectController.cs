@@ -1,4 +1,5 @@
 ﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -75,7 +76,7 @@ namespace Ardita.Areas.MasterData.Controllers
             ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
             ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
             ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-            return View();
+            return View(Const.Form, new TrxSubSubjectClassification());
         }
         public async Task<IActionResult> Update(Guid Id)
         {
@@ -100,7 +101,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
                 ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -130,7 +131,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
                 ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -161,7 +162,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
                 ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
                 ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
