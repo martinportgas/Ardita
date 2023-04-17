@@ -3,7 +3,7 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Floors</h2>
+        <h2>Rooms</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
@@ -12,7 +12,7 @@
                 Master Data
             </li>
             <li class="active breadcrumb-item">
-                <strong>Floor</strong>
+                <strong>Room</strong>
             </li>
         </ol>
     </div>
@@ -26,7 +26,7 @@
                 <div class="ibox-title">
                     <h5>Positions</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action("Form", "Floor", new { Area = "MasterData", FormType = "Create"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action("Add", "Room", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -35,8 +35,9 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Floor Code</th>
-                                <th>Floor Name</th>
+                                <th>Room Code</th>
+                                <th>Room Name</th>
+                                <th>Room Type</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -58,7 +59,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action("GetData", "Floor", new { Area = "MasterData"})',
+                    "url": '@Url.Action("GetData", "Room", new { Area = "MasterData"})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -77,21 +78,22 @@
                     {
                         "data": "floorId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Detail" })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Room", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.floorId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Update" })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Room", new { Area = "MasterData", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.floorId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Delete" })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Room", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.floorId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
-                    { "data": "floorCode", "name": "floorCode", "autoWidth": true },
-                    { "data": "floorName", "name": "floorName", "autoWidth": true },
+                    { "data": "roomCode", "name": "roomCode", "autoWidth": true },
+                    { "data": "roomName", "name": "roomName", "autoWidth": true },
+                    { "data": "archiveRoomType", "name": "roomName", "autoWidth": true },
                 ]
             });
         });

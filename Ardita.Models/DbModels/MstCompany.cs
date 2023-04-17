@@ -7,9 +7,9 @@ public partial class MstCompany
 {
     public Guid CompanyId { get; set; }
 
-    public string? CompanyCode { get; set; }
+    public string CompanyCode { get; set; } = null!;
 
-    public string? CompanyName { get; set; }
+    public string CompanyName { get; set; } = null!;
 
     public string? Address { get; set; }
 
@@ -19,9 +19,9 @@ public partial class MstCompany
 
     public bool? IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 
