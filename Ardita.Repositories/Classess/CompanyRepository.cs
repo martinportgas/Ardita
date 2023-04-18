@@ -1,6 +1,8 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Ardita.Repositories.Classess
 {
@@ -42,6 +44,33 @@ namespace Ardita.Repositories.Classess
         {
             var results = await _context.MstCompanies.Where(x => x.CompanyId == id).ToListAsync();
             return results;
+        }
+
+        public async Task<IEnumerable<MstCompany>> GetByFilterModel(DataTableModel model)
+        {
+            IEnumerable<MstCompany> result;
+
+            var propertyInfo = typeof(MstCompany).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var propertyName = propertyInfo == null ? typeof(MstCompany).GetProperties()[0].Name : propertyInfo.Name;
+
+            if (model.sortColumnDirection.ToLower() == "asc")
+            {
+                result = await _context.MstCompanies
+                .Where(x => (x.CompanyCode + x.CompanyName).Contains(model.searchValue))
+                .OrderBy(x => EF.Property<MstCompany>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+            else
+            {
+                result = await _context.MstCompanies
+                .Where(x => (x.CompanyCode + x.CompanyName).Contains(model.searchValue))
+                .OrderByDescending(x => EF.Property<MstCompany>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+
+            return result;
         }
 
         public async Task<int> Insert(MstCompany model)
@@ -88,6 +117,12 @@ namespace Ardita.Repositories.Classess
                 }
             }
             return result;
+        }
+
+        public async Task<int> GetCount()
+        {
+            var results = await _context.MstCompanies.CountAsync();
+            return results;
         }
     }
 }
