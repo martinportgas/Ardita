@@ -8,10 +8,16 @@
 
         //Area
         public const string MasterData = "MasterData";
+        public const string UserManage = "UserManage";
+        public const string General = "General";
 
         //Controller
         public const string Company = "Company";
         public const string Home = "Home";
+        public const string Classification = "Classification";
+        public const string ClassificationType = "ClassificationType";
+        public const string ClassificationSubject = "ClassificationSubject";
+        public const string ClassificationSubSubject = "ClassificationSubSubject";
 
         //Action
         public const string Index = "Index";
@@ -23,6 +29,13 @@
         public const string Create = "Create";
         public const string Export = "Export";
         public const string GetData = "GetData";
+
+        //Html helper
+        public const string Required = "required";
+        public const string Disabled = "disabled";
+
+        //Other
+        public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
 
     }
 }

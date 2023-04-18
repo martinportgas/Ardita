@@ -1,4 +1,5 @@
 ﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -65,7 +66,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
             ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
             ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-            return View();
+            return View(Const.Form, new TrxSubjectClassification());
         }
         public async Task<IActionResult> Update(Guid Id)
         {
@@ -77,7 +78,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -94,7 +95,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -112,7 +113,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
                 ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {

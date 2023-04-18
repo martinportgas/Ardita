@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Ardita.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ardita.Globals
 {
@@ -22,6 +23,44 @@ namespace Ardita.Globals
 
             return area == currentArea && controller == currentController ?
                 cssClass : String.Empty;
+        }
+        public static FormModel Form(this IHtmlHelper html)
+        {
+            string currentArea = (string)html.ViewContext.RouteData.Values["area"];
+            string currentAction = (string)html.ViewContext.RouteData.Values["action"];
+            string currentController = (string)html.ViewContext.RouteData.Values["controller"];
+
+            string FormAction = Const.Save;
+
+            string LastBreadcrumb = Const.Create;
+
+            if (currentAction == Const.Update)
+            {
+                LastBreadcrumb = Const.Update;
+            }
+
+            if (currentAction == Const.Detail)
+            {
+                LastBreadcrumb = Const.Detail;
+            }
+
+            if (currentAction == Const.Remove)
+            {
+                FormAction = Const.Delete;
+                LastBreadcrumb = Const.Delete;
+            }
+
+            var isInput = currentAction == Const.Add || currentAction == Const.Update;
+
+            FormModel model = new FormModel();
+            model.CurrentArea = currentArea;
+            model.CurrentController = currentController;
+            model.CurrentAction = currentAction;
+            model.FormAction = FormAction;
+            model.LastBreadcrumb = LastBreadcrumb;
+            model.isInput = isInput;
+
+            return model;
         }
     }
 }
