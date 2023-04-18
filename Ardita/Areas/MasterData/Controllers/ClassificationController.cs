@@ -1,4 +1,5 @@
 ﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -45,7 +46,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var classificationTypeData = await _classificationTypeService.GetAll();
 
             ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-            return View();
+            return View(Const.Form, new TrxClassification());
         }
         public async Task<IActionResult> Update(Guid Id)
         {
@@ -55,7 +56,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -70,7 +71,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -86,7 +87,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {

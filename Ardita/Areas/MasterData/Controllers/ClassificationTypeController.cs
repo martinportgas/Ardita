@@ -1,4 +1,5 @@
 ﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -37,14 +38,14 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public async Task<IActionResult> Add()
         {
-            return View();
+            return View(Const.Form, new MstTypeClassification());
         }
         public async Task<IActionResult> Update(Guid Id)
         {
             var data = await _classificationTypeService.GetById(Id);
             if (data.Count() > 0)
             {
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -56,7 +57,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _classificationTypeService.GetById(Id);
             if (data.Count() > 0)
             {
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
@@ -69,7 +70,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _classificationTypeService.GetById(Id);
             if (data.Count() > 0)
             {
-                return View(data.FirstOrDefault());
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
