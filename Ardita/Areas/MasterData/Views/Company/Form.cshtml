@@ -82,26 +82,9 @@
                 theme: 'bootstrap4',
             });
 
-            if ("@form.CurrentAction" == "@Const.Detail") {
-                readonlyForm(true);
-                $('#btn-submit').hide();
-                $('#btn-cancel').html("Back");
-            } else if ("@form.CurrentAction" == "@Const.Remove") {
-                readonlyForm(true);
-                $("#btn-submit").prop("disabled", false);
-                $('#btn-submit').show();
-            } 
-            else {
-                $('#btn-submit').show();
-                readonlyForm(false);
-            }
+            initForms("@form.CurrentAction");
 
         });
-
-        function readonlyForm(condition) {
-            $('#frmCompany input').attr('readonly', condition);
-            $('#frmCompany textarea').attr('readonly', condition);
-        }
 
         function validate() {
             if ($('#txtCompanyCode').val() == "") {

@@ -66,26 +66,8 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            if ("@form.CurrentAction" == "@Const.Detail") {
-                readonlyForm(true);
-                $('#btn-submit').hide();
-                $('#btn-cancel').html("Back");
-
-            } else if ("@form.CurrentAction" == "@Const.Remove") {
-                readonlyForm(true);
-                $("#btn-submit").prop("disabled", false);
-                $('#btn-submit').show();
-            } 
-            else {
-                $('#btn-submit').show();
-                readonlyForm(false);
-            }
+            initForms("@form.CurrentAction");
         });
-
-        function readonlyForm(condition) {
-            $('#frmGmd input').attr('readonly', condition);
-            $('#frmGmd textarea').attr('readonly', condition);
-        }
 
         function validate() {
             if ($('#txtGmdCode').val() == "") {
