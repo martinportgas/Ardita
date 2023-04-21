@@ -21,13 +21,11 @@ public partial class TrxRack
 
     public Guid CreatedBy { get; set; }
 
-    public string? UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
 
     public virtual TrxRoom? Room { get; set; }
-
-    public virtual ICollection<TrxLevel> TrxLevels { get; } = new List<TrxLevel>();
 
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 

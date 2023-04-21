@@ -7,15 +7,15 @@ public partial class MstGmd
 {
     public Guid GmdId { get; set; }
 
-    public string? GmdCode { get; set; }
+    public string GmdCode { get; set; } = null!;
 
-    public string? GmdName { get; set; }
+    public string GmdName { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 

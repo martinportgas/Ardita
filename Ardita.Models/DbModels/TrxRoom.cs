@@ -7,7 +7,7 @@ public partial class TrxRoom
 {
     public Guid RoomId { get; set; }
 
-    public Guid? ArchiveUnitId { get; set; }
+    public Guid? FloorId { get; set; }
 
     public string? RoomCode { get; set; }
 
@@ -24,8 +24,6 @@ public partial class TrxRoom
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
-
-    public virtual TrxArchiveUnit? ArchiveUnit { get; set; }
 
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 

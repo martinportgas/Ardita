@@ -117,6 +117,7 @@ namespace Ardita.Repositories.Classess
                     var data = await _context.TrxRooms.AsNoTracking().Where(x => x.RoomId == model.RoomId && x.IsActive == true).ToListAsync();
                     if (data != null)
                     {
+                        model.IsActive = true;
                         model.CreatedBy = data.FirstOrDefault().CreatedBy;
                         model.CreatedDate = data.FirstOrDefault().CreatedDate;
 

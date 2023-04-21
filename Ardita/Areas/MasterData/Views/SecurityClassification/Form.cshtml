@@ -1,0 +1,131 @@
+﻿@using Ardita.Globals;
+@model Ardita.Models.DbModels.MstSecurityClassification;
+@using Ardita.Models.ViewModels;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Data</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, @form.CurrentController, new { Area = @form.CurrentArea})">Gmd</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Data</strong>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Security Classification</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <form role="form" id="frmSecurityClassification" enctype="multipart/form-data" asp-controller=@form.CurrentController asp-area=@form.CurrentArea asp-action=@form.FormAction>
+                                <div class="form-group">
+                                    <label>Security Classification Code</label>
+                                    <input type="text" placeholder="" id="txtSecurityClassificationCode" class="form-control" asp-for="@Model.SecurityClassificationCode">
+                                    <input type="hidden" placeholder="" id="txtSecurityClassificationId" class="form-control" asp-for="@Model.SecurityClassificationId">
+                                </div>
+                                <div class="form-group">
+                                    <label>Security Classification Name</label>
+                                    <input type="text" placeholder="" id="txtSecurityClassificationName" class="form-control" asp-for="@Model.SecurityClassificationName">
+                                </div>
+                              
+                                <div>
+                                    <a href="@Url.Action(Const.Index, @form.CurrentController, new { Area = @form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.FormAction</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ("@form.CurrentAction" == "@Const.Detail") {
+                readonlyForm(true);
+                $('#btn-submit').hide();
+                $('#btn-cancel').html("Back");
+
+            } else if ("@form.CurrentAction" == "@Const.Remove") {
+                readonlyForm(true);
+                $("#btn-submit").prop("disabled", false);
+                $('#btn-submit').show();
+            } 
+            else {
+                $('#btn-submit').show();
+                readonlyForm(false);
+            }
+        });
+
+        function readonlyForm(condition) {
+            $('#frmSecurityClassification input').attr('readonly', condition);
+            $('#frmSecurityClassification textarea').attr('readonly', condition);
+        }
+
+        function validate() {
+            if ($('#txtSecurityClassificationCode').val() == "") {
+                swal("Please enter Security Classification Code !");
+                return false;
+            } else if ($('#txtSecurityClassificationName').val() == "") {
+                swal("Please enter Security Classification Name !");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#frmSecurityClassification").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+
+    </script>
+}

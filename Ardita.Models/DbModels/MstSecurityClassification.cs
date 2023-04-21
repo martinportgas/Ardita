@@ -7,15 +7,15 @@ public partial class MstSecurityClassification
 {
     public Guid SecurityClassificationId { get; set; }
 
-    public string? SecurityClassificationCode { get; set; }
+    public string SecurityClassificationCode { get; set; } = null!;
 
-    public string? SecurityClassificationName { get; set; }
+    public string SecurityClassificationName { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 

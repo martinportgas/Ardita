@@ -1,8 +1,9 @@
 ﻿@using Ardita.Globals;
+@using Ardita.Models.ViewModels;
+
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    string CurrentController = (string)ViewContext.RouteData.Values["controller"];
-    string CurrentArea = (string)ViewContext.RouteData.Values["area"];
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -25,8 +26,8 @@
                 <div class="ibox-title">
                     <h5>Users</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, CurrentController, new { Area = CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action(Const.Export, CurrentController, new { Area = CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(Const.Add, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.Export, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
@@ -63,7 +64,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, CurrentController, new { Area = CurrentArea})',
+                    "url": '@Url.Action(Const.GetData, @form.CurrentController, new { Area = @form.CurrentArea})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -83,13 +84,13 @@
                         "data": "companyId",
                         "render": function (data, type, row, meta) 
                         {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, CurrentController, new { Area = CurrentArea, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, @form.CurrentController, new { Area = @form.CurrentArea, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.companyId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, CurrentController, new { Area = CurrentArea, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, @form.CurrentController, new { Area = @form.CurrentArea, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.companyId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, CurrentController, new { Area = CurrentArea, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, @form.CurrentController, new { Area = @form.CurrentArea, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.companyId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

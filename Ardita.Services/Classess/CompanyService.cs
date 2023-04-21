@@ -1,6 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Companies;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -30,43 +31,36 @@ public class CompanyService : ICompanyService
         return await _companyRepository.GetById(id);
     }
 
-    public async Task<CompanyListViewModel> GetListCompanies(DataTableModel tableModel)
+    public async Task<DataTableResponseModel<MstCompany>> GetListCompanies(DataTablePostModel model)
     {
-        List<CompanyListViewDetailModel>? data;
-        var companyListViewModel = new CompanyListViewModel();
-        var companyResult = await _companyRepository.GetAll();
-
-        var results = from company in companyResult
-                      select new CompanyListViewDetailModel
-                      {
-                          CompanyId = company.CompanyId,
-                          CompanyCode = company.CompanyCode,
-                          CompanyName = company.CompanyName,
-                          Address = company.Address,
-                          Telepone = company.Telepone,
-                          Email = company.Email
-                      };
-        if (!string.IsNullOrEmpty(tableModel.searchValue))
+        try
         {
-            results = results.Where(
-                    x =>
-                    (x.CompanyCode != null ? x.CompanyCode.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.CompanyName != null ? x.CompanyName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.Address != null ? x.Address.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.Telepone != null ? x.Telepone.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.Email != null ? x.Email.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                );
+            var dataCount = await _companyRepository.GetCount();
+
+            var filterData = new DataTableModel();
+
+            filterData.sortColumn = model.columns[model.order[0].column].data;
+            filterData.sortColumnDirection = model.order[0].dir;
+            filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+            filterData.pageSize = model.length;
+            filterData.skip = model.start;
+
+            var results = await _companyRepository.GetByFilterModel(filterData);
+
+            var responseModel = new DataTableResponseModel<MstCompany>();
+
+            responseModel.draw = model.draw;
+            responseModel.recordsTotal = dataCount;
+            responseModel.recordsFiltered = dataCount;
+            responseModel.data = results.ToList();
+
+            return responseModel;
+        }
+        catch (Exception ex)
+        {
+            return null;
         }
 
-        tableModel.recordsTotal = results.Count();
-        data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-        companyListViewModel.Draw = tableModel.draw;
-        companyListViewModel.RecordsFiltered = tableModel.recordsTotal;
-        companyListViewModel.RecordsTotal = tableModel.recordsTotal;
-        companyListViewModel.Data = data;
-
-        return companyListViewModel;
     }
 
     public async Task<int> Insert(MstCompany model)

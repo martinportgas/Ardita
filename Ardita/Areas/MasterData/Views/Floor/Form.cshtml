@@ -1,24 +1,28 @@
-﻿@model Ardita.Models.DbModels.TrxFloor
+﻿@using Ardita.Globals;
+@model Ardita.Models.DbModels.TrxFloor
+@using Ardita.Models.ViewModels;
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Floors</h2>
+        <h2>Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Home", new {Area = "General"})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Floor", new {Area = "MasterData"})">Classification</a>
+                <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})">Floor</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>Create</strong>
+                <strong>@form.LastBreadcrumb</strong>
             </li>
         </ol>
     </div>
@@ -30,7 +34,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Classification</h5>
+                    <h5>Floor</h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -54,48 +58,33 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" action="@Url.Action("ExecuteForm", "Floor", new { Area = "MasterData", FormType = ViewBag.FormType})">
+                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
-                                        @if(Model != null)
-                                        {
-                                            <input type="hidden" value="@Model.FloorId" asp-for="FloorId" />
-                                        }
-                                       
-                                        <select id="txtUnitArchive" class="select2_demo_1 form-control" asp-for="ArchiveUnitId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
+                                        <input type="hidden" value="@Model.FloorId" asp-for="FloorId" />
+                                        <select asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnits"
+                                            id="txtUnitArchive" class="select2_demo_1 form-control" 
+                                            data-placeholder="-- Pilih Unit Kearsipan --">
+                                            <option value=""></option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Lantai</label>
-                                        @if (Model != null)
-                                        {
-                                            <input type="text" placeholder="" id="txtFloorCode" class="form-control" asp-for="FloorCode" value="@Model.FloorCode" required>
-                                        }
-                                        else
-                                        {
-                                            <input type="text" placeholder="" id="txtFloorCode" class="form-control" asp-for="FloorCode" required>
-                                        }
+                                        <input type="text" placeholder="" id="txtFloorCode" class="form-control" asp-for="FloorCode" value="@Model.FloorCode">
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Lantai</label>
-                                        <input type="text" placeholder="" id="txtFloorName" class="form-control" asp-for="FloorName" value="@Model.FloorName" required>
+                                        <input type="text" placeholder="" id="txtFloorName" class="form-control" asp-for="FloorName" value="@Model.FloorName">
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action("Index", "Floor", new { Area = "MasterData" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (ViewBag.FormType != "Detail")
+                                    <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    @if (form.isInput)
                                     {
-                                        @if (ViewBag.FormType == "Delete")
-                                        {
-                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Delete</button>
-                                        }
-                                        else
-                                        {
-                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Save</button>
-                                        }
+                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
                                     }
-                                    
                                 </div>
                             </form>
                         </div>

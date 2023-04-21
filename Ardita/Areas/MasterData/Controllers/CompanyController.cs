@@ -1,6 +1,8 @@
-﻿using Ardita.Globals;
+﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,41 +26,17 @@ public class CompanyController : Controller
         return View();
     }
 
-    [HttpPost]
-    public async Task<JsonResult> GetData()
+    public async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
-            var model = new DataTableModel
-            {
-                draw = Request.Form["draw"].FirstOrDefault(),
-                start = Request.Form["start"].FirstOrDefault(),
-                length = Request.Form["length"].FirstOrDefault(),
-                sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault(),
-                sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault(),
-                searchValue = Request.Form["search[value]"].FirstOrDefault()
-            };
-
-            model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-            model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-            model.recordsTotal = 0;
-
             var result = await _companyService.GetListCompanies(model);
 
-            var jsonResult = new
-            {
-                draw = result.Draw,
-                recordsFiltered = result.RecordsFiltered,
-                recordsTotal = result.RecordsTotal,
-                data = result.Data
-            };
-
-            return Json(jsonResult);
+            return Json(result);
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
             throw;
         }
     }
@@ -77,21 +55,20 @@ public class CompanyController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(MstCompany model)
     {
-        int result = 0;
         if (model != null)
         {
 
             if (model.CompanyId != Guid.Empty)
             {
-                model.UpdatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                result = await _companyService.Update(model);
+                await _companyService.Update(model);
             }
             else
             {
-                model.CreatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 model.CreatedDate = DateTime.Now;
-                result = await _companyService.Insert(model);
+                await _companyService.Insert(model);
             }
 
         }
@@ -142,12 +119,11 @@ public class CompanyController : Controller
 
     public async Task<IActionResult> Delete(MstCompany model)
     {
-        int result = 0;
         if (model != null)
         {
-            model.UpdatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+            model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
             model.UpdatedDate = DateTime.Now;
-            result = await _companyService.Delete(model);
+            await _companyService.Delete(model);
 
         }
         return RedirectToIndex();

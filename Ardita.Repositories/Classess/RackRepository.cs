@@ -112,11 +112,12 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
-                if (model.RoomId != Guid.Empty)
+                if (model.RackId != Guid.Empty)
                 {
-                    var data = await _context.TrxRacks.AsNoTracking().Where(x => x.RackId == model.RoomId && x.IsActive == true).ToListAsync();
-                    if (data != null)
+                    var data = await _context.TrxRacks.AsNoTracking().Where(x => x.RackId == model.RackId && x.IsActive == true).ToListAsync();
+                    if (data.Any())
                     {
+                        model.IsActive = true;
                         model.CreatedBy = data.FirstOrDefault().CreatedBy;
                         model.CreatedDate = data.FirstOrDefault().CreatedDate;
 

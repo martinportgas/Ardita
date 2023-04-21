@@ -1,12 +1,14 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@using Ardita.Globals;
+
+@{
+    Layout = Const.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Floors</h2>
+        <h2>Floor</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
@@ -24,9 +26,9 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Positions</h5>
+                    <h5>Floors</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action("Form", "Floor", new { Area = "MasterData", FormType = "Create"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.Add, Const.Floor, new { Area = Const.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -77,13 +79,13 @@
                     {
                         "data": "floorId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Detail" })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Floor", new { Area = "MasterData", Id = -1})"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.floorId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Update" })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Floor", new { Area = "MasterData", Id = -1})"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.floorId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Form", "Floor", new { Area = "MasterData", Id = -1, FormType = "Delete" })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Floor", new { Area = "MasterData", Id = -1})"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.floorId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

@@ -1,9 +1,11 @@
 ﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -12,23 +14,22 @@ namespace Ardita.Areas.MasterData.Controllers
     public class RoomController : Controller
     {
         private readonly IRoomService _roomService;
+        private readonly IFloorService _floorService;
+        private readonly IArchiveUnitService _archiveUnitService;
 
-        public RoomController(IRoomService roomService)
+        public RoomController(IRoomService roomService, IFloorService floorService, IArchiveUnitService archiveUnitService)
         {
             _roomService = roomService;
+            _floorService = floorService;
+            _archiveUnitService = archiveUnitService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
         public async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
                 var result = await _roomService.GetListClassification(model);
-
                 return Json(result);
-
             }
             catch (Exception ex)
             {
@@ -37,24 +38,22 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public async Task<IActionResult> Add() 
         {
-            //var classificationTypeData = await _classificationTypeService.GetAll();
+            ViewBag.listFloors = await BindFloors();
 
-            //ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-            return View();
+            return View(Const.Form, new TrxRoom());
         }
         public async Task<IActionResult> Update(Guid Id)
         {
             var data = await _roomService.GetById(Id);
+            
             if (data.Count() > 0)
             {
-                //var classificationTypeData = await _classificationTypeService.GetAll();
-
-                //ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                ViewBag.listFloors = await BindFloors();
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Room", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         public async Task<IActionResult> Remove(Guid Id)
@@ -62,14 +61,12 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _roomService.GetById(Id);
             if (data.Count() > 0)
             {
-                //var classificationTypeData = await _classificationTypeService.GetAll();
-
-                //ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                ViewBag.listFloors = await BindFloors();
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Room", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         public async Task<IActionResult> Detail(Guid Id)
@@ -77,55 +74,68 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _roomService.GetById(Id);
             if (data.Count() > 0)
             {
-                //var classificationTypeData = await _classificationTypeService.GetAll();
-
-                //ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(data.FirstOrDefault());
+                ViewBag.listFloors = await BindFloors();
+                return View(Const.Form, data.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "Room", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
-
-        // POST: FloorController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(TrxRoom model)
         {
-            int result = 0;
             if (model != null)
             {
                 if (model.RoomId != Guid.Empty)
                 {
-                    model.ArchiveUnitId = new Guid("B0ADFB41-1516-4145-8623-D0118FBE646D");
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdatedDate = DateTime.Now;
-                    result = await _roomService.Update(model);
+                    await _roomService.Update(model);
                 }
 
                 else
                 {
-                    model.ArchiveUnitId = new Guid("B0ADFB41-1516-4145-8623-D0118FBE646D");
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
-                    result = await _roomService.Insert(model);
+                    await _roomService.Insert(model);
                 }
             }
-            return RedirectToAction("Index", "Room", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
 
-        // POST: FloorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(TrxRoom model)
         {
-            int result = 0;
             if (model != null && model.RoomId != Guid.Empty)
             {
-                result = await _roomService.Delete(model);
+                await _roomService.Delete(model);
             }
-            return RedirectToAction("Index", "Room", new { Area = "MasterData" });
+            return RedirectToIndex();
+        }
+
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Room, new { Area = Const.MasterData });
+        private async Task<List<SelectListItem>> BindFloors()
+        {
+            var archiveUnits = await _floorService.GetAll();
+
+            return archiveUnits.Select(x => new SelectListItem
+            {
+                Value = x.FloorId.ToString(),
+                Text = x.FloorName
+            }).ToList();
+        }
+        private async Task<List<SelectListItem>> BindArchiveUnits()
+        {
+            var archiveUnits = await _archiveUnitService.GetAll();
+
+            return archiveUnits.Select(x => new SelectListItem
+            {
+                Value = x.ArchiveUnitId.ToString(),
+                Text = x.ArchiveUnitName
+            }).ToList();
         }
     }
 }
