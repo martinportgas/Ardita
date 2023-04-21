@@ -47,7 +47,6 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
 
-
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
@@ -87,7 +86,6 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<TrxSubjectClassification> TrxSubjectClassifications { get; set; }
 
     public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
-
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -256,6 +254,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatorId)
                 .ValueGeneratedNever()
                 .HasColumnName("creator_id");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -268,15 +267,16 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("creator_name");
-            entity.Property(e => e.CreatorType)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("creator_type");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.MstCreators)
+                .HasForeignKey(d => d.ArchiveUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_CREATOR_TRX_ARCHIVE_UNIT");
         });
 
         modelBuilder.Entity<MstCreatorLog>(entity =>
@@ -397,9 +397,11 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("MST_GMD");
 
             entity.Property(e => e.GmdId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("gmd_id");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
@@ -625,9 +627,11 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("MST_SECURITY_CLASSIFICATION");
 
             entity.Property(e => e.SecurityClassificationId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("security_classification_id");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedBy)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
@@ -934,7 +938,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_ARCHIVE_UNIT");
 
             entity.Property(e => e.ArchiveUnitId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("archive_unit_id");
             entity.Property(e => e.ArchiveUnitAddress)
                 .HasMaxLength(2500)
@@ -969,6 +973,7 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.Company).WithMany(p => p.TrxArchiveUnits)
                 .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_COMPANY_ID");
         });
 
@@ -1437,7 +1442,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_TYPE_STORAGE");
 
             entity.Property(e => e.TypeStorageId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("type_storage_id");
             entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -1462,6 +1467,7 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.TrxTypeStorages)
                 .HasForeignKey(d => d.ArchiveUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ARCHIVE_UNIT_ID_TYPE_STORAGE");
         });
 

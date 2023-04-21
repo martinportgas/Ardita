@@ -7,11 +7,11 @@ public partial class TrxArchiveUnit
 {
     public Guid ArchiveUnitId { get; set; }
 
-    public Guid? CompanyId { get; set; }
+    public Guid CompanyId { get; set; }
 
-    public string? ArchiveUnitCode { get; set; }
+    public string ArchiveUnitCode { get; set; } = null!;
 
-    public string? ArchiveUnitName { get; set; }
+    public string ArchiveUnitName { get; set; } = null!;
 
     public string? ArchiveUnitAddress { get; set; }
 
@@ -19,17 +19,19 @@ public partial class TrxArchiveUnit
 
     public string? ArchiveUnitEmail { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual MstCompany? Company { get; set; }
+    public virtual MstCompany Company { get; set; } = null!;
+
+    public virtual ICollection<MstCreator> MstCreators { get; } = new List<MstCreator>();
 
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovements { get; } = new List<TrxArchiveMovement>();
 

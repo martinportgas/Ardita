@@ -18,7 +18,11 @@
         public const string ClassificationType = "ClassificationType";
         public const string ClassificationSubject = "ClassificationSubject";
         public const string ClassificationSubSubject = "ClassificationSubSubject";
-
+        public const string ArchiveUnit = "ArchiveUnit";
+        public const string ArchiveCreator = "ArchiveCreator";
+        public const string Gmd = "Gmd";
+        public const string SecurityClassification = "SecurityClassification";
+        
         //Action
         public const string Index = "Index";
         public const string Update = "Update";

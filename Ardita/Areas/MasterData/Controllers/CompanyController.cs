@@ -1,4 +1,5 @@
-﻿using Ardita.Globals;
+﻿using Ardita.Extensions;
+using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -54,21 +55,20 @@ public class CompanyController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(MstCompany model)
     {
-        int result = 0;
         if (model != null)
         {
 
             if (model.CompanyId != Guid.Empty)
             {
-                model.UpdatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                result = await _companyService.Update(model);
+                await _companyService.Update(model);
             }
             else
             {
-                model.CreatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 model.CreatedDate = DateTime.Now;
-                result = await _companyService.Insert(model);
+                await _companyService.Insert(model);
             }
 
         }
@@ -119,12 +119,11 @@ public class CompanyController : Controller
 
     public async Task<IActionResult> Delete(MstCompany model)
     {
-        int result = 0;
         if (model != null)
         {
-            model.UpdatedBy = new Guid(User.FindFirst(Const.UserId).Value);
+            model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
             model.UpdatedDate = DateTime.Now;
-            result = await _companyService.Delete(model);
+            await _companyService.Delete(model);
 
         }
         return RedirectToIndex();

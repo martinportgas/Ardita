@@ -7,21 +7,23 @@ public partial class MstCreator
 {
     public Guid CreatorId { get; set; }
 
-    public string? CreatorCode { get; set; }
+    public Guid ArchiveUnitId { get; set; }
 
-    public string? CreatorType { get; set; }
+    public string CreatorCode { get; set; } = null!;
 
-    public string? CreatorName { get; set; }
+    public string CreatorName { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
     public virtual ICollection<MstCreatorLog> MstCreatorLogs { get; } = new List<MstCreatorLog>();
 
