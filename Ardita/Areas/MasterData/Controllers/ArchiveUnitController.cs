@@ -43,9 +43,7 @@ public class ArchiveUnitController : Controller
 
     public async Task<IActionResult> Add()
     {
-        ViewBag.listCompany = BindCompany();
-
-        await Task.Delay(0);
+        ViewBag.listCompany = await BindCompany();
 
         return View(Const.Form, new TrxArchiveUnit());
     }
@@ -55,7 +53,7 @@ public class ArchiveUnitController : Controller
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = BindCompany();
+            ViewBag.listCompany = await BindCompany();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -70,7 +68,7 @@ public class ArchiveUnitController : Controller
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = BindCompany();
+            ViewBag.listCompany = await BindCompany();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -85,7 +83,7 @@ public class ArchiveUnitController : Controller
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = BindCompany();
+            ViewBag.listCompany = await BindCompany();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -133,6 +131,14 @@ public class ArchiveUnitController : Controller
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveUnit, new { Area = Const.MasterData });
 
-    private async Task<SelectList> BindCompany() => new SelectList(await _companyService.GetAll(), nameof(MstCompany.CompanyId), nameof(MstCompany.CompanyName));
+    private async Task<List<SelectListItem>> BindCompany()
+    {
+        var company = await _companyService.GetAll();
+        return company.Select(x => new SelectListItem
+        {
+            Value = x.CompanyId.ToString(),
+            Text = x.CompanyName.ToString()
+        }).ToList();
+    }
     #endregion
 }

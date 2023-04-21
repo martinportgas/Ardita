@@ -9,6 +9,11 @@ namespace Ardita.Repositories.Classess;
 public class TypeStorageRepository : ITypeStorageRepository
 {
     private readonly BksArditaDevContext _context;
+    public TypeStorageRepository(BksArditaDevContext context) => _context = context;
+    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Where(x => x.IsActive == true).ToListAsync();
+
+    public async Task<IEnumerable<TrxTypeStorage>> GetById(Guid id) => await _context.TrxTypeStorages.Where(x => x.TypeStorageId == id).ToListAsync();
+    public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync();
 
     public async Task<int> Delete(TrxTypeStorage model)
     {
@@ -21,9 +26,6 @@ public class TypeStorageRepository : ITypeStorageRepository
         }
         return result;
     }
-
-    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Where(x => x.IsActive == true).ToListAsync();
-    
 
     public async Task<IEnumerable<TrxTypeStorage>> GetByFilterModel(DataTableModel model)
     {
@@ -51,10 +53,6 @@ public class TypeStorageRepository : ITypeStorageRepository
 
         return result;
     }
-
-    public async Task<IEnumerable<TrxTypeStorage>> GetById(Guid id) => await _context.TrxTypeStorages.Where(x => x.TypeStorageId == id).ToListAsync();
-
-    public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync();
 
     public async Task<int> Insert(TrxTypeStorage model)
     {

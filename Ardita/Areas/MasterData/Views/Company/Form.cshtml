@@ -85,6 +85,7 @@
             if ("@form.CurrentAction" == "@Const.Detail") {
                 readonlyForm(true);
                 $('#btn-submit').hide();
+                $('#btn-cancel').html("Back");
             } else if ("@form.CurrentAction" == "@Const.Remove") {
                 readonlyForm(true);
                 $("#btn-submit").prop("disabled", false);

@@ -10,14 +10,23 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
 {
     private readonly BksArditaDevContext _context;
 
+    public ArchiveCreatorRepository(BksArditaDevContext context) => _context = context;
+
     public async Task<int> Delete(MstCreator model)
     {
         int result = 0;
 
-        if (model.CreatorId != Guid.Empty)
+        if (model.ArchiveUnitId != Guid.Empty)
         {
-            _context.MstCreators.Remove(model);
-            result = await _context.SaveChangesAsync();
+            var data = await _context.MstCreators.AsNoTracking().FirstAsync(x => x.CreatorId == model.CreatorId);
+            if (data != null)
+            {
+                data.IsActive = false;
+                data.UpdatedDate = model.UpdatedDate;
+                data.UpdatedBy = model.UpdatedBy;
+                _context.MstCreators.Update(data);
+                result = await _context.SaveChangesAsync();
+            }
         }
         return result;
     }
@@ -34,7 +43,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         if (model.sortColumnDirection.ToLower() == "asc")
         {
             result = await _context.MstCreators
-            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue))
+            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue) && x.IsActive == true)
             .OrderBy(x => EF.Property<MstCreator>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)
             .ToListAsync();
@@ -42,7 +51,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         else
         {
             result = await _context.MstCreators
-            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue))
+            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue) && x.IsActive == true)
             .OrderByDescending(x => EF.Property<MstCreator>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)
             .ToListAsync();
@@ -53,7 +62,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
 
     public async Task<IEnumerable<MstCreator>> GetById(Guid id) => await _context.MstCreators.Where(x => x.CreatorId== id).ToListAsync();
 
-    public async Task<int> GetCount() => await _context.MstCreators.CountAsync();
+    public async Task<int> GetCount() => await _context.MstCreators.CountAsync(x => x.IsActive == true);
 
     public async Task<int> Insert(MstCreator model)
     {
@@ -61,6 +70,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
 
         if (model != null)
         {
+            model.IsActive = true;
             _context.MstCreators.Add(model);
             result = await _context.SaveChangesAsync();
         }
@@ -71,12 +81,15 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
     {
         int result = 0;
 
-        if (model != null && model.CreatorId != Guid.Empty)
+        if (model != null && model.ArchiveUnitId != Guid.Empty)
         {
-            var data = await _context.MstCreators.AsNoTracking().Where(x => x.CreatorId == model.CreatorId).ToListAsync();
+            var data = await _context.MstCreators.AsNoTracking().FirstAsync(x => x.CreatorId == model.CreatorId);
             if (data != null)
             {
-                _context.Update(model);
+                model.IsActive = data.IsActive;
+                model.CreatedBy = data.CreatedBy;
+                model.CreatedDate = data.CreatedDate;
+                _context.MstCreators.Update(model);
                 result = await _context.SaveChangesAsync();
             }
         }

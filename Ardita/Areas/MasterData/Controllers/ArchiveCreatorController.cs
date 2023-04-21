@@ -2,6 +2,7 @@
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -43,7 +44,7 @@ public class ArchiveCreatorController : Controller
 
     public async Task<IActionResult> Add()
     {
-        ViewBag.listArchiveUnit = BindArchiveUnit();
+        ViewBag.listArchiveUnit = await BindArchiveUnit();
 
         await Task.Delay(0);
 
@@ -55,7 +56,7 @@ public class ArchiveCreatorController : Controller
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnit();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -70,7 +71,7 @@ public class ArchiveCreatorController : Controller
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnit();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -85,7 +86,7 @@ public class ArchiveCreatorController : Controller
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnit();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -101,7 +102,7 @@ public class ArchiveCreatorController : Controller
     {
         if (model != null)
         {
-            if (model.ArchiveUnitId != Guid.Empty)
+            if (model.CreatorId != Guid.Empty)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
@@ -133,6 +134,15 @@ public class ArchiveCreatorController : Controller
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveCreator, new { Area = Const.MasterData });
 
-    private async Task<SelectList> BindArchiveUnit() => new SelectList(await _archiveUnitService.GetAll(), nameof(TrxArchiveUnit.ArchiveUnitId), nameof(TrxArchiveUnit.ArchiveUnitName));
+
+    private async Task<List<SelectListItem>> BindArchiveUnit()
+    {
+        var company = await _archiveUnitService.GetAll();
+        return company.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveUnitId.ToString(),
+            Text = x.ArchiveUnitName.ToString()
+        }).ToList();
+    }
     #endregion
 }

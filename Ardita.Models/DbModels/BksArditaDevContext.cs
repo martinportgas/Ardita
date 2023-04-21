@@ -252,7 +252,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("MST_CREATOR");
 
             entity.Property(e => e.CreatorId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("creator_id");
             entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -1104,10 +1104,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.Rack).WithMany(p => p.TrxLevels)
-                .HasForeignKey(d => d.RackId)
-                .HasConstraintName("FK_RACK_ID_LEVEL");
         });
 
         modelBuilder.Entity<TrxMediaStorage>(entity =>
@@ -1259,8 +1255,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.RoomId).HasColumnName("room_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
-                .HasMaxLength(2500)
-                .IsUnicode(false)
+                .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
             entity.HasOne(d => d.Room).WithMany(p => p.TrxRacks)
@@ -1281,11 +1276,11 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_room_type");
-            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.FloorId).HasColumnName("floor_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.RoomCode)
                 .HasMaxLength(50)
@@ -1299,10 +1294,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.TrxRooms)
-                .HasForeignKey(d => d.ArchiveUnitId)
-                .HasConstraintName("FK_ARCHIVE_UNIT_ID_ROOM");
         });
 
         modelBuilder.Entity<TrxRow>(entity =>
