@@ -1310,7 +1310,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.RackId).HasColumnName("rack_id");
+            entity.Property(e => e.LevelId).HasColumnName("level_id");
             entity.Property(e => e.RowCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1324,8 +1324,8 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
-            entity.HasOne(d => d.Rack).WithMany(p => p.TrxRows)
-                .HasForeignKey(d => d.RackId)
+            entity.HasOne(d => d.Level).WithMany(p => p.TrxRows)
+                .HasForeignKey(d => d.LevelId)
                 .HasConstraintName("FK_RACK_ID_ROW");
         });
 

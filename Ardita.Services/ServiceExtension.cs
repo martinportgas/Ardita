@@ -1,4 +1,6 @@
-﻿using Ardita.Services.Classess;
+﻿using Ardita.Repositories.Classess;
+using Ardita.Repositories.Interfaces;
+using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +31,11 @@ public static class ServiceExtension
         services.AddScoped<IClassificationTypeService, ClassificationTypeService>();
         services.AddScoped<IClassificationSubjectService, ClassificationSubjectService>();
         services.AddScoped<IClassificationSubSubjectService, ClassificationSubSubjectService>();
-
+        services.AddScoped<IFloorService, FloorService>();
+        services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IRackService, RackService>();
+        services.AddScoped<ILevelService, LevelService>();
+        services.AddScoped<IRowService, RowService>();
         return services;
     }
 }

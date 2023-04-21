@@ -2,6 +2,11 @@
 using Ardita.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Ardita.Repositories;
 public static class ServiceExtension
@@ -30,6 +35,12 @@ public static class ServiceExtension
         services.AddScoped<IGmdRepository, GmdRepository>();
         services.AddScoped<ISecurityClassificationRepository, SecurityClassificationRepository>();
         services.AddScoped<ITypeStorageRepository, TypeStorageRepository>();
+
+        services.AddScoped<IFloorRepository, FloorRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IRackRepository, RackRepository>();
+        services.AddScoped<ILevelRepository, LevelRepository>();
+        services.AddScoped<IRowRepository, RowRepository>();
 
         return services;
     }

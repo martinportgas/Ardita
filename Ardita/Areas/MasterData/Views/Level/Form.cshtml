@@ -1,0 +1,127 @@
+﻿@using Ardita.Globals;
+@model Ardita.Models.DbModels.TrxLevel
+@using Ardita.Models.ViewModels;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Level</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Master Data
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.Level, new {Area = Const.MasterData})">Level</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Level</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Unit Kearsipan</label>
+                                        <input type="hidden" value="@Model.LevelId" asp-for="LevelId" />
+
+                                        <select asp-items="ViewBag.listArchiveUnits"
+                                                id="txtUnitArchive" class="select2_demo_1 form-control"
+                                                data-placeholder="-- Pilih Unit Kearsipan --">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Lantai</label>
+                                        <select asp-items="ViewBag.listFloors"
+                                                id="txtFloorId" class="select2_demo_1 form-control"
+                                                data-placeholder="-- Pilih Lantai --">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ruangan</label>
+                                        <select asp-items="ViewBag.listRooms"
+                                                id="txtRoomId" class="select2_demo_1 form-control"
+                                                data-placeholder="-- Pilih Ruangan --">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Rack</label>
+                                        <select asp-for="RackId" asp-items="ViewBag.listRooms"
+                                                id="txtRackId" class="select2_demo_1 form-control"
+                                                data-placeholder="-- Pilih Rak --">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kode Tingkat</label>
+                                        <input type="text" placeholder="" id="txtLevelCode" class="form-control" asp-for="LevelCode" value="@Model.LevelCode">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nama Tingkat</label>
+                                        <input type="text" placeholder="" id="txtLevelName" class="form-control" asp-for="LevelName" value="@Model.LevelName">
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action(Const.Index, Const.Rack, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    @if (form.isInput)
+                                    {
+                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

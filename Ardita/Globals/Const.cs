@@ -22,6 +22,11 @@
         public const string ArchiveCreator = "ArchiveCreator";
         public const string Gmd = "Gmd";
         public const string SecurityClassification = "SecurityClassification";
+        public const string Floor = "Floor";
+        public const string Room = "Room";
+        public const string Rack = "Rack";
+        public const string Level = "Level";
+        public const string Row = "Row";
         
         //Action
         public const string Index = "Index";

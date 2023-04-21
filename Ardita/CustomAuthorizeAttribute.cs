@@ -68,6 +68,9 @@ namespace Ardita
 
             if (actionName.ToString() == "GetData")
                 actionName = "Index";
+            else if (actionName.ToString().Contains("Bind"))
+                actionName = "Index";
+
             //else if (actionName.ToString() == "GetDataTreeView")
             //    actionName = "View";
             //else if (actionName.ToString() == "Index")
