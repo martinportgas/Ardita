@@ -39,7 +39,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Add() 
         {
             ViewBag.listFloors = await BindFloors();
-
+            ViewBag.listArchiveUnits = await BindArchiveUnits();
             return View(Const.Form, new TrxRoom());
         }
         public async Task<IActionResult> Update(Guid Id)
@@ -61,7 +61,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _roomService.GetById(Id);
             if (data.Count() > 0)
             {
-                ViewBag.listFloors = await BindFloors();
+               ViewBag.listFloors = await BindFloors();
                 return View(Const.Form, data.FirstOrDefault());
             }
             else
@@ -136,6 +136,17 @@ namespace Ardita.Areas.MasterData.Controllers
                 Value = x.ArchiveUnitId.ToString(),
                 Text = x.ArchiveUnitName
             }).ToList();
+        }
+
+        public async Task<JsonResult> BindFloors(string Id)
+        {
+            List<TrxFloor> listFloors = new();
+            Guid ArchiveUnitId = new Guid(Id);
+
+            var data = await _floorService.GetAll();
+            listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
+            return Json(listFloors);
+            
         }
     }
 }

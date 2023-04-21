@@ -67,7 +67,9 @@
 
                                         <select asp-items="ViewBag.listArchiveUnits"
                                                 id="txtUnitArchive" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Unit Kearsipan --">
+                                                data-placeholder="-- Pilih Unit Kearsipan --"
+                                                onchange="loadFloors(this)"
+                                        >
                                             <option value=""></option>
                                         </select>
                                     </div>
@@ -117,6 +119,21 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        function loadFloors(obj) {
+            var value = obj.value;
+            var url = '@Url.Action("BindFloors", "Room", new { Area="MasterData" })';
 
+            $.post(url, { id: value }, function (data) {
+                PopulateDropDown("#txtFloorId", data);
+            });
+        }
+        function PopulateDropDown(dropDownId, list, selectedId) {
+            $(dropDownId).empty();
+            $(dropDownId).append("<option>-- Silahkan Pilih --</option>")
+            $.each(list, function (index, row) {
+                console.log(row);
+                $(dropDownId).append("<option value='" + row.floorId + "'>" + row.floorName + "</option>")
+            });
+        }
     </script>
 }
