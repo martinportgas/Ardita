@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
+                            <form id="frmRow" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     <div class="form-group">
@@ -115,10 +115,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.Row, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
-                                    {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
-                                    }
+                                   <button onclick="onSubmit(this, event);"id="btn-submit" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.CurrentAction</button>
                                 </div>
                             </form>
                         </div>
@@ -131,6 +128,34 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        $(document).ready(function(){
+             initForms("@form.CurrentAction");
+        });
 
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                         $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#frmRow").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
     </script>
 }
