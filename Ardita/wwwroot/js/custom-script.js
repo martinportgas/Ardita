@@ -155,5 +155,28 @@ function ajaxcallreturn(urlstring, method, param, auth, content_type) {
     });
 }
 
+function initForms(action){
+    $('#btn-submit').show();
+    initFormReadOnly(false);
+    
+    if(action == "Detail"){
+        $('#btn-submit').hide();
+        $('#btn-cancel').html("Back");
+         initFormReadOnly(true);
+    }
+
+    if(action == "Remove"){
+        $('#btn-submit').html("Delete");
+        initFormReadOnly(true);
+    }
+}
+
+function initFormReadOnly(condition){
+    $("input").attr('readonly', condition);
+    $("textarea").attr('readonly', condition);
+    $('select').prop('disabled', condition);
+}
+
+
 
 

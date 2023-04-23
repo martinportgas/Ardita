@@ -5,13 +5,13 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ardita", "Ardita\Ardita.csproj", "{062038D5-6B68-44F9-8A6B-B9F94A0703DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ardita.Models", "Ardita.Models\Ardita.Models.csproj", "{CDA44C70-BD6D-4E38-AD2A-1CFCDB31B943}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ardita.Models", "Ardita.Models\Ardita.Models.csproj", "{CDA44C70-BD6D-4E38-AD2A-1CFCDB31B943}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ardita.Repositories", "Ardita.Repositories\Ardita.Repositories.csproj", "{967F34AC-3BA7-4E0C-ADC6-B5873939FE31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ardita.Repositories", "Ardita.Repositories\Ardita.Repositories.csproj", "{967F34AC-3BA7-4E0C-ADC6-B5873939FE31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ardita.Services", "Ardita.Services\Ardita.Services.csproj", "{BAA218CE-26CF-4673-BE46-86ECB88DE93D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ardita.Services", "Ardita.Services\Ardita.Services.csproj", "{BAA218CE-26CF-4673-BE46-86ECB88DE93D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ardita.Extensions", "Ardita.Extensions\Ardita.Extensions.csproj", "{C53C94D0-B713-4C21-B6EF-ACC1633BCD45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ardita.Extensions", "Ardita.Extensions\Ardita.Extensions.csproj", "{C53C94D0-B713-4C21-B6EF-ACC1633BCD45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

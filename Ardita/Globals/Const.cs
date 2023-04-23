@@ -19,7 +19,17 @@
         public const string ClassificationType = "ClassificationType";
         public const string ClassificationSubject = "ClassificationSubject";
         public const string ClassificationSubSubject = "ClassificationSubSubject";
-
+        public const string ArchiveUnit = "ArchiveUnit";
+        public const string ArchiveCreator = "ArchiveCreator";
+        public const string Gmd = "Gmd";
+        public const string SecurityClassification = "SecurityClassification";
+        public const string Floor = "Floor";
+        public const string Room = "Room";
+        public const string Rack = "Rack";
+        public const string Level = "Level";
+        public const string Row = "Row";
+        public const string TypeStorage = "TypeStorage";
+        
         //Action
         public const string Index = "Index";
         public const string Update = "Update";

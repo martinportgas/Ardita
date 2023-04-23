@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="DbModels\" />
+    <Folder Include="ViewModels\TypeStorage\" />
   </ItemGroup>
 
 </Project>
