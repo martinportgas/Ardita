@@ -7,6 +7,8 @@ public partial class MstTypeClassification
 {
     public Guid TypeClassificationId { get; set; }
 
+    public string? TypeClassificationCode { get; set; }
+
     public string? TypeClassificationName { get; set; }
 
     public bool? IsActive { get; set; }

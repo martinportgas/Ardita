@@ -1,11 +1,11 @@
 ﻿@using Ardita.Globals;
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = Const.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Archive Unit</h2>
+        <h2>Type Storages</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
@@ -14,7 +14,7 @@
                 Master Data
             </li>
             <li class="active breadcrumb-item">
-                <strong>Archive Unit</strong>
+                <strong>Master Type Storage</strong>
             </li>
         </ol>
     </div>
@@ -28,7 +28,7 @@
                 <div class="ibox-title">
                     <h5>Archive Unit</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.ArchiveUnit, new { Area = Const.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.Add, Const.TypeStorage, new { Area = Const.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -37,8 +37,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Archive Unit Code</th>
-                                <th>Archive Unit Name</th>
+                                <th>Type Storage Code</th>
+                                <th>Type Storage Name</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -60,7 +60,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.ArchiveUnit, new { Area = Const.MasterData})',
+                    "url": '@Url.Action(Const.GetData, Const.TypeStorage, new { Area = Const.MasterData})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -72,28 +72,28 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "archiveUnitId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "typeStorageId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "archiveUnitId",
+                        "data": "typeStorageId",
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveUnit, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
-                            detail = detail.replace("-1", row.archiveUnitId);
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.TypeStorage, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", row.typeStorageId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.ArchiveUnit, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
-                            edit = edit.replace("-1", row.archiveUnitId);
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.TypeStorage, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.typeStorageId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.ArchiveUnit, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
-                            remove = remove.replace("-1", row.archiveUnitId);
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.TypeStorage, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.typeStorageId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
-                    { "data": "archiveUnitCode", "Code": "ArchiveUnitCode", "autoWidth": true },
-                    { "data": "archiveUnitName", "Name": "ArchiveUnitName", "autoWidth": true }
+                    { "data": "typeStorageCode", "Code": "typeStorageCode", "autoWidth": true },
+                    { "data": "typeStorageName", "Name": "typeStorageName", "autoWidth": true }
                 ]
             });
         });

@@ -11,11 +11,11 @@ public partial class TrxTypeStorage
 
     public string TypeStorageName { get; set; } = null!;
 
-    public Guid ParentId { get; set; }
+    public Guid? ParentId { get; set; }
 
     public Guid ArchiveUnitId { get; set; }
 
-    public int Length { get; set; }
+    public int Volume { get; set; }
 
     public bool IsActive { get; set; }
 

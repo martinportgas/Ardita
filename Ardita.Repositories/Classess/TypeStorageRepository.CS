@@ -9,11 +9,14 @@ namespace Ardita.Repositories.Classess;
 public class TypeStorageRepository : ITypeStorageRepository
 {
     private readonly BksArditaDevContext _context;
+    
     public TypeStorageRepository(BksArditaDevContext context) => _context = context;
+    
     public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Where(x => x.IsActive == true).ToListAsync();
-
+    
     public async Task<IEnumerable<TrxTypeStorage>> GetById(Guid id) => await _context.TrxTypeStorages.Where(x => x.TypeStorageId == id).ToListAsync();
-    public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync();
+    
+    public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync(x => x.IsActive == true);
 
     public async Task<int> Delete(TrxTypeStorage model)
     {
@@ -21,8 +24,15 @@ public class TypeStorageRepository : ITypeStorageRepository
 
         if (model.TypeStorageId != Guid.Empty)
         {
-            _context.TrxTypeStorages.Remove(model);
-            result = await _context.SaveChangesAsync();
+            var data = await _context.TrxTypeStorages.AsNoTracking().FirstAsync(x => x.TypeStorageId == model.TypeStorageId);
+            if (data != null)
+            {
+                data.IsActive = false;
+                data.UpdatedDate = model.UpdatedDate;
+                data.UpdatedBy = model.UpdatedBy;
+                _context.TrxTypeStorages.Update(data);
+                result = await _context.SaveChangesAsync();
+            }
         }
         return result;
     }
@@ -37,7 +47,7 @@ public class TypeStorageRepository : ITypeStorageRepository
         if (model.sortColumnDirection.ToLower() == "asc")
         {
             result = await _context.TrxTypeStorages
-            .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue))
+            .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue) && x.IsActive == true)
             .OrderBy(x => EF.Property<TrxTypeStorage>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)
             .ToListAsync();
@@ -45,7 +55,7 @@ public class TypeStorageRepository : ITypeStorageRepository
         else
         {
             result = await _context.TrxTypeStorages
-            .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue))
+            .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue) && x.IsActive == true)
             .OrderByDescending(x => EF.Property<TrxTypeStorage>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)
             .ToListAsync();
@@ -60,6 +70,7 @@ public class TypeStorageRepository : ITypeStorageRepository
 
         if (model != null)
         {
+            model.IsActive = true;
             _context.TrxTypeStorages.Add(model);
             result = await _context.SaveChangesAsync();
         }
@@ -72,10 +83,13 @@ public class TypeStorageRepository : ITypeStorageRepository
 
         if (model != null && model.TypeStorageId != Guid.Empty)
         {
-            var data = await _context.TrxTypeStorages.AsNoTracking().Where(x => x.TypeStorageId == model.TypeStorageId).ToListAsync();
+            var data = await _context.TrxTypeStorages.AsNoTracking().FirstAsync(x => x.TypeStorageId == model.TypeStorageId);
             if (data != null)
             {
-                _context.Update(model);
+                model.IsActive = data.IsActive;
+                model.CreatedBy = data.CreatedBy;
+                model.CreatedDate = data.CreatedDate;
+                _context.TrxTypeStorages.Update(model);
                 result = await _context.SaveChangesAsync();
             }
         }

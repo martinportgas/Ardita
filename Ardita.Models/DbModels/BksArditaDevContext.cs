@@ -729,6 +729,8 @@ public partial class BksArditaDevContext : DbContext
 
             entity.ToTable("MST_TYPE_CLASSIFICATION");
 
+            entity.HasIndex(e => e.TypeClassificationCode, "IX_MST_TYPE_CLASSIFICATION").IsUnique();
+
             entity.Property(e => e.TypeClassificationId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("type_classification_id");
@@ -737,6 +739,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.TypeClassificationCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("type_classification_code");
             entity.Property(e => e.TypeClassificationName)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -1323,10 +1329,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.Level).WithMany(p => p.TrxRows)
-                .HasForeignKey(d => d.LevelId)
-                .HasConstraintName("FK_RACK_ID_ROW");
         });
 
         modelBuilder.Entity<TrxSubSubjectClassification>(entity =>
@@ -1441,7 +1443,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.Length).HasColumnName("length");
             entity.Property(e => e.ParentId).HasColumnName("parent_id");
             entity.Property(e => e.TypeStorageCode)
                 .HasMaxLength(50)
@@ -1455,6 +1456,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+            entity.Property(e => e.Volume).HasColumnName("volume");
 
             entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.TrxTypeStorages)
                 .HasForeignKey(d => d.ArchiveUnitId)

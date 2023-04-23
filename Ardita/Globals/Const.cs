@@ -27,6 +27,7 @@
         public const string Rack = "Rack";
         public const string Level = "Level";
         public const string Row = "Row";
+        public const string TypeStorage = "TypeStorage";
         
         //Action
         public const string Index = "Index";
