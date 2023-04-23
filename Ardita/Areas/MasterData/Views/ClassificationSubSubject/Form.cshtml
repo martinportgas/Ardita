@@ -65,43 +65,43 @@
                                             <div class="form-group">
                                                 <label>Pencipta Arsip</label>
                                                 <input type="hidden" asp-for="SubSubjectClassificationId" value="@Model.SubSubjectClassificationId" />
-                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtCreatorId" class="select2_demo_1 form-control" asp-for="CreatorId" asp-items="ViewBag.listCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
+                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="CreatorId" asp-items="ViewBag.listCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Jenis Klasifikasi</label>
-                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtTypeClassificationId" class="select2_demo_1 form-control" asp-for="TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --" required><option value=""></option></select>
+                                                <select id="txtTypeClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassification.Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Klasifikasi</label>
-                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtClassificationId" class="select2_demo_1 form-control" asp-for="ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --" required><option value=""></option></select>
+                                                <select id="txtClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassification.ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Subjek Klasifikasi</label>
-                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtSubjectlassificationId" class="select2_demo_1 form-control" asp-for="SubjectClassificationId" asp-items="ViewBag.listClassificationSubject" data-placeholder="-- Pilih Subjek Klasifikasi --" required><option value=""></option></select>
+                                                <select id="txtSubjectlassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationId" asp-items="ViewBag.listClassificationSubject" data-placeholder="-- Pilih Subjek Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
-                                                <label>Kode Subjek Klasifikasi</label>
-                                                <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="text" placeholder="" id="txtPositionClassificationName" class="form-control" asp-for="SubSubjectClassificationCode" required>
+                                                <label>Kode Sub Subjek Klasifikasi</label>
+                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubSubjectClassificationCode" >
                                             </div>
                                             <div class="form-group">
-                                                <label>Nama Subject Klasifikasi</label>
-                                                <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="text" placeholder="" id="txtPositionClassificationName" class="form-control" asp-for="SubSubjectClassificationName" required>
+                                                <label>Nama Sub Subject Klasifikasi</label>
+                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubSubjectClassificationName" >
                                             </div>
                                             <div class="form-group">
                                                 <label>Klasifikasi Keamanan</label>
-                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtSecurityClassificationId" class="select2_demo_1 form-control" asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
+                                                <select id="txtSecurityClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Retensi Aktif ( Bulan )</label>
-                                                <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="number" id="txtRetentionActive" class="form-control" asp-for="RetentionActive" required />
+                                                <input type="number" id="txtRetentionActive" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RetentionActive"  />
                                             </div>
                                             <div class="form-group">
                                                 <label>Retensi In Aktif ( Bulan )</label>
-                                                <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="number" id="txtRetentionInActive" class="form-control" asp-for="RetentionInactive" required />
+                                                <input type="number" id="txtRetentionInActive" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RetentionInactive"  />
                                             </div>
                                             <div class="form-group">
                                                 <label>Dasar Pertimbangan</label>
-                                                <textarea @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtBasicInformation" asp-for="BasicInformation" class="form-control" required></textarea>
+                                                <textarea id="txtBasicInformation" asp-for="BasicInformation" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" ></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? "" : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:95%">
-                                                                <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) class="select2_demo_1 form-control pos" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --" required><option value="@item.PositionId" selected>@item.Position.Name</option></select>
+                                                                <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
                                                             </td>
                                                         </tr>
                                                     }
@@ -132,7 +132,7 @@
                                                     <tr>
                                                         <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                         <td style="width:95%">
-                                                            <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) class="select2_demo_1 form-control pos" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --" required><option value=""></option></select>
+                                                            <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
                                                         </td>
                                                     </tr>
                                                 }
@@ -142,9 +142,9 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.ClassificationSubSubject, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
+                                    @if (form.isInput || form.CurrentAction == Const.Remove)
                                     {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
                                     }
                                 </div>
                             </form>

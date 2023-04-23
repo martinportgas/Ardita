@@ -14,6 +14,7 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<MstTypeClassification>> GetAll();
         Task<DataTableResponseModel<MstTypeClassification>> GetListClassificationType(DataTablePostModel model);
         Task<int> Insert(MstTypeClassification model);
+        Task<bool> InsertBulk(List<MstTypeClassification> models);
         Task<int> Delete(MstTypeClassification model);
         Task<int> Update(MstTypeClassification model);
     }

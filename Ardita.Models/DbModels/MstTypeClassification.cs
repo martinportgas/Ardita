@@ -7,6 +7,8 @@ public partial class MstTypeClassification
 {
     public Guid TypeClassificationId { get; set; }
 
+    public string? TypeClassificationCode { get; set; }
+
     public string? TypeClassificationName { get; set; }
 
     public bool? IsActive { get; set; }
@@ -22,8 +24,4 @@ public partial class MstTypeClassification
     public virtual ICollection<MstTypeClassificationLog> MstTypeClassificationLogs { get; } = new List<MstTypeClassificationLog>();
 
     public virtual ICollection<TrxClassification> TrxClassifications { get; } = new List<TrxClassification>();
-
-    public virtual ICollection<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; } = new List<TrxSubSubjectClassification>();
-
-    public virtual ICollection<TrxSubjectClassification> TrxSubjectClassifications { get; } = new List<TrxSubjectClassification>();
 }

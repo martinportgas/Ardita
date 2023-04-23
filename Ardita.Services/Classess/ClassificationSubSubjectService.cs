@@ -49,6 +49,10 @@ namespace Ardita.Services.Classess
         {
             return await _classificationSubSubjectRepository.Insert(model);
         }
+        public async Task<bool> InsertBulk(List<TrxSubSubjectClassification> models)
+        {
+            return await _classificationSubSubjectRepository.InsertBulk(models);
+        }
         public async Task<int> InsertDetail(TrxPermissionClassification model)
         {
             return await _classificationPermissionRepository.Insert(model);

@@ -5,6 +5,7 @@
         public const string Form = "Form";
         public const string Add = "Add";
         public const string UserId = "UserId";
+        public const string Submit = "Submit";
 
         //Area
         public const string MasterData = "MasterData";

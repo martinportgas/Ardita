@@ -76,7 +76,16 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
-
+        public async Task<bool> InsertBulk(List<TrxPermissionClassification> models)
+        {
+            bool result = false;
+            if (models.Count() > 0)
+            {
+                await _context.BulkInsertAsync(models);
+                result = true;
+            }
+            return result;
+        }
         public async Task<int> Update(TrxPermissionClassification model)
         {
             int result = 0;

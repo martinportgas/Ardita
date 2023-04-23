@@ -59,6 +59,7 @@ namespace Ardita.Globals
             model.FormAction = FormAction;
             model.LastBreadcrumb = LastBreadcrumb;
             model.isInput = isInput;
+            model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
 
             return model;
         }

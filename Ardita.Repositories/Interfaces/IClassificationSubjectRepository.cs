@@ -15,6 +15,7 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<TrxSubjectClassification>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(TrxSubjectClassification model);
+        Task<bool> InsertBulk(List<TrxSubjectClassification> models);
         Task<int> Delete(TrxSubjectClassification model);
         Task<int> Update(TrxSubjectClassification model);
     }

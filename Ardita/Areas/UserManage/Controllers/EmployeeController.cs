@@ -327,7 +327,7 @@ namespace Ardita.Areas.UserManage.Controllers
             }
             await _employeeService.InsertBulk(employees);
 
-            return RedirectToAction("Index", "Employee", new { Area = "Employee" });
+            return RedirectToAction("Index", "Employee", new { Area = "UserManage" });
         }
     }
 }

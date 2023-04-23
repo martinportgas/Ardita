@@ -62,23 +62,23 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Jenis Klasifikasi</label>
-                                        <select @Html.Raw(form.isInput ? Const.Required : Const.Disabled) id="txtSubMenu" class="select2_demo_1 form-control" asp-for="TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
+                                        <select id="txtSubMenu" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Klasifikasi</label>
                                         <input type="hidden" asp-for="ClassificationId" value="@Model.ClassificationId">
-                                        <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="text" placeholder="" id="txtPositionClassificationCode" class="form-control" asp-for="ClassificationCode">
+                                        <input type="text" placeholder="" id="txtPositionClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ClassificationCode">
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Klasifikasi</label>
-                                        <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="text" placeholder="" id="txtPositionClassificationName" class="form-control" asp-for="ClassificationName">
+                                        <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ClassificationName">
                                     </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.Classification, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
+                                    @if (form.isInput || form.CurrentAction == Const.Remove)
                                     {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
                                     }
                                 </div>
                             </form>

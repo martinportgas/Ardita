@@ -7,7 +7,12 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting.Internal;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Data;
 using System.Security.Claims;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -15,12 +20,14 @@ namespace Ardita.Areas.MasterData.Controllers
     [Area("MasterData")]
     public class ClassificationController : Controller
     {
+        private IHostingEnvironment _hostingEnvironment;
         private readonly IClassificationService _classificationService;
         private readonly IClassificationTypeService _classificationTypeService;
-        public ClassificationController(IClassificationService classificationService, IClassificationTypeService classificationTypeService)
+        public ClassificationController(IHostingEnvironment hostingEnvironment, IClassificationService classificationService, IClassificationTypeService classificationTypeService)
         {
             _classificationService = classificationService;
             _classificationTypeService = classificationTypeService;
+            _hostingEnvironment = hostingEnvironment;
         }
         // GET: ClassificationController
         public ActionResult Index()
@@ -51,12 +58,13 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Update(Guid Id)
         {
             var data = await _classificationService.GetById(Id);
-            if (data.Count() > 0)
+            var model = data.Where(x => x.ClassificationId == Id).FirstOrDefault();
+            if (model != null)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -66,12 +74,13 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _classificationService.GetById(Id);
-            if (data.Count() > 0)
+            var model = data.Where(x => x.ClassificationId == Id).FirstOrDefault();
+            if (model != null)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -82,12 +91,13 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _classificationService.GetById(Id);
-            if (data.Count() > 0)
+            var model = data.Where(x => x.ClassificationId == Id).FirstOrDefault();
+            if (model != null)
             {
                 var classificationTypeData = await _classificationTypeService.GetAll();
 
                 ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -128,8 +138,128 @@ namespace Ardita.Areas.MasterData.Controllers
             int result = 0;
             if (model != null && model.ClassificationId != Guid.Empty)
             {
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 result = await _classificationService.Delete(model);
             }
+            return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
+        }
+        public async Task<IActionResult> DownloadTemplate()
+        {
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string sFileName = @"ClassificationTemplate.xlsx";
+            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
+            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            var memory = new MemoryStream();
+            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook;
+                workbook = new XSSFWorkbook();
+                ISheet excelSheet = workbook.CreateSheet("Classification");
+                ISheet excelSheetPosition = workbook.CreateSheet("ClassificationType");
+
+                IRow row = excelSheet.CreateRow(0);
+                IRow rowPosition = excelSheetPosition.CreateRow(0);
+
+                row.CreateCell(0).SetCellValue("ClassificationCode");
+                row.CreateCell(1).SetCellValue("ClassificationName");
+                row.CreateCell(2).SetCellValue("TypeClassificationCode");
+
+                row = excelSheet.CreateRow(1);
+                row.CreateCell(0).SetCellValue("Sample Code");
+                row.CreateCell(1).SetCellValue("Sample Name");
+                row.CreateCell(2).SetCellValue("Sample Classification Type Code");
+
+                rowPosition.CreateCell(0).SetCellValue("Code");
+                rowPosition.CreateCell(1).SetCellValue("Name");
+
+                var dataclassificationType = await _classificationTypeService.GetAll();
+
+                int no = 1;
+                foreach (var item in dataclassificationType)
+                {
+                    rowPosition = excelSheetPosition.CreateRow(no);
+
+                    rowPosition.CreateCell(0).SetCellValue(item.TypeClassificationCode);
+                    rowPosition.CreateCell(1).SetCellValue(item.TypeClassificationName);
+                    no += 1;
+                }
+                workbook.Write(fs);
+            }
+            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
+        }
+        public async Task<IActionResult> Export()
+        {
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string sFileName = @"ClassificationData.xlsx";
+            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
+            var data = await _classificationService.GetAll();
+            var type = await _classificationTypeService.GetAll();
+
+            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            var memory = new MemoryStream();
+            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook;
+                workbook = new XSSFWorkbook();
+                ISheet excelSheet = workbook.CreateSheet("Classification");
+
+                IRow row = excelSheet.CreateRow(0);
+
+                row.CreateCell(0).SetCellValue("ClassificationCode");
+                row.CreateCell(1).SetCellValue("ClassificationName");
+                row.CreateCell(2).SetCellValue("TypeClassificationCode");
+                row.CreateCell(3).SetCellValue("TypeClassificationName");
+
+                int no = 1;
+                foreach (var item in data)
+                {
+                    row = excelSheet.CreateRow(no);
+                    row.CreateCell(0).SetCellValue(item.ClassificationCode);
+                    row.CreateCell(1).SetCellValue(item.ClassificationName);
+                    var typeData = type.Where(x => x.TypeClassificationId == item.TypeClassificationId).FirstOrDefault();
+                    row.CreateCell(2).SetCellValue(typeData.TypeClassificationCode);
+                    row.CreateCell(3).SetCellValue(typeData.TypeClassificationName);
+                    no += 1;
+                }
+                workbook.Write(fs);
+            }
+            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
+        }
+        public async Task<ActionResult> Upload()
+        {
+            IFormFile file = Request.Form.Files[0];
+            var result = Extensions.Global.ImportExcel(file, "Upload", _hostingEnvironment.WebRootPath);
+
+            var type = await _classificationTypeService.GetAll();
+
+            List<TrxClassification> models = new();
+            TrxClassification model;
+
+            foreach (DataRow row in result.Rows)
+            {
+                model = new();
+                model.ClassificationId = Guid.NewGuid();
+                model.ClassificationCode = row[0].ToString();
+                model.ClassificationName = row[1].ToString();
+                model.TypeClassificationId = type.Where(x => x.TypeClassificationCode == row[2].ToString()).FirstOrDefault().TypeClassificationId;
+                model.IsActive = true;
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                model.CreatedDate = DateTime.Now;
+
+                models.Add(model);
+            }
+            await _classificationService.InsertBulk(models);
+
             return RedirectToAction("Index", "Classification", new { Area = "MasterData" });
         }
     }
