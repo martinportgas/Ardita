@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -78,7 +79,31 @@ namespace Ardita.Extensions
             }
             return results;
         }
+        public static void WriteExcelToResponse(this IWorkbook book, HttpContext httpContext, string templateName)
+        {
+            templateName = $"{templateName}.xlsx";
 
+            var response = httpContext.Response;
+            response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            if (!string.IsNullOrEmpty(templateName))
+            {
+                var contentDisposition = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                contentDisposition.SetHttpFileName(templateName);
+                response.Headers[HeaderNames.ContentDisposition] = contentDisposition.ToString();
+            }
+            book.Write(response.Body);
+        }
+
+        public static string ToDateTimeStringNow(this DateTime dateTime)
+        {
+            return dateTime.ToString("yyyyMMddhhmmss");
+        }
+        public static string ToFileNameDateTimeStringNow(this string fileString, string fileName)
+        {
+            DateTime dateTime = DateTime.Now;
+            string result = $"{fileName} - {dateTime.ToString("yyyyMMddhhmmss")}";
+            return result;
+        }
         public static string Encode(string password)
         {
             try

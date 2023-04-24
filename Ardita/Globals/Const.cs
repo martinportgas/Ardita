@@ -39,7 +39,9 @@
         public const string Save = "Save";
         public const string Create = "Create";
         public const string Export = "Export";
+        public const string Upload = "Upload";
         public const string GetData = "GetData";
+        public const string DownloadTemplate = "DownloadTemplate";
 
         //Html helper
         public const string Required = "required";
@@ -47,6 +49,10 @@
 
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
+        public const string Template = "Template";
+
+        //Prefix
+        public const string Trx = "Trx";
 
     }
 }

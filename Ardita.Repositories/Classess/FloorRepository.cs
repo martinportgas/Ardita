@@ -107,6 +107,17 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
+        public async Task<bool> InsertBulk(List<TrxFloor> floors)
+        {
+            bool result = false;
+            if (floors.Count() > 0)
+            {
+                await _context.BulkInsertAsync(floors);
+                result = true;
+            }
+            return result;
+        }
+
         public async Task<int> Update(TrxFloor model)
         {
             int result = 0;
