@@ -110,11 +110,16 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "employeeId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "employeeId", 
+                        "orderable": false, 
+                        "searchable": false, 
+                        "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
+                        "orderable": false, 
+                        "searchable": false,
                         "data": "employeeId",
                         "render": function (data, type, row, meta) {
                             var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Employee", new { Area = "UserManage", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
@@ -131,12 +136,12 @@
                     { "data": "employeeName", "name": "EmployeeName", "autoWidth": true },
                     { "data": "employeeEmail", "name": "EmployeeEmail", "autoWidth": true },
                     { "data": "employeeGender", "name": "EmployeeGender", "autoWidth": true },
-                    { "data": "employeePlaceOfBirth", "name": "EmployeePlaceofBirth", "autoWidth": true },
-                    { "data": "employeeDateOfBirth", "name": "EmployeePlaceofBirth", "autoWidth": true },
-                    { "data": "employeeAddress", "name": "Employee Address", "autoWidth": true },
-                    { "data": "employeePhone", "name": "Employee Phone", "autoWidth": true },
-                    { "data": "employeeLevel", "name": "Employee Level", "autoWidth": true },
-                    { "data": "positionName", "name": "Employee Position", "autoWidth": true }
+                    { "data": "employeePlaceOfBirth", "name": "EmployeePlaceOfBirth", "autoWidth": true },
+                    { "data": "employeeDateOfBirth", "name": "EmployeeDateOfBirth", "autoWidth": true },
+                    { "data": "employeeAddress", "name": "EmployeeAddress", "autoWidth": true },
+                    { "data": "employeePhone", "name": "EmployeePhone", "autoWidth": true },
+                    { "data": "employeeLevel", "name": "EmployeeLevel", "autoWidth": true },
+                    { "data": "positionName", "name": "PositionName", "autoWidth": true }
                 ]
             });
 

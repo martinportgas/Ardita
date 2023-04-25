@@ -11,7 +11,12 @@ public abstract class BaseController<T> : Controller
 {
     #region Properties
     protected IHostingEnvironment _hostingEnvironment;
+    
+    //User Manage
+    protected IEmployeeService _employeeService { get; set; }
+    protected IPositionService _positionService { get; set; }
 
+    //Master Data
     protected IArchiveUnitService _archiveUnitService { get; set; }
     protected ICompanyService _companyService { get; set; }
     protected IArchiveCreatorService _archiveCreatorService { get; set; }
@@ -19,7 +24,6 @@ public abstract class BaseController<T> : Controller
     protected IClassificationTypeService _classificationTypeService { get; set; }
     protected IClassificationSubjectService _classificationSubjectService { get; set; }
     protected IClassificationSubSubjectService _classificationSubSubjectService { get; set; }
-    protected IPositionService _positionService { get; set; }
     protected IFloorService _floorService { get; set; }
     protected IGmdService _gmdService { get; set; }
     protected ILevelService _levelService { get; set; }
