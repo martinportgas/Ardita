@@ -1,21 +1,18 @@
-﻿using Ardita.Extensions;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
 [Area(Const.MasterData)]
-public class ArchiveUnitController : Controller
+public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 {
     #region MEMBER AND CTR
-    private readonly IArchiveUnitService _archiveUnitService;
-    private readonly ICompanyService _companyService;
-
     public ArchiveUnitController(IArchiveUnitService archiveUnitService, ICompanyService companyService)
     {
         _archiveUnitService = archiveUnitService;
@@ -24,9 +21,9 @@ public class ArchiveUnitController : Controller
     #endregion
 
     #region MAIN ACTION
-    public IActionResult Index() => View();
+    public override async Task<ActionResult> Index() => await base.Index();
 
-    public async Task<JsonResult> GetData(DataTablePostModel model)
+    public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
@@ -41,19 +38,19 @@ public class ArchiveUnitController : Controller
         }
     }
 
-    public async Task<IActionResult> Add()
+    public override async Task<IActionResult> Add()
     {
-        ViewBag.listCompany = await BindCompany();
+        ViewBag.listCompany = await BindCompanies();
 
         return View(Const.Form, new TrxArchiveUnit());
     }
 
-    public async Task<IActionResult> Update(Guid Id)
+    public override async Task<IActionResult> Update(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = await BindCompany();
+            ViewBag.listCompany = await BindCompanies();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -63,12 +60,12 @@ public class ArchiveUnitController : Controller
         }
     }
 
-    public async Task<IActionResult> Remove(Guid Id)
+    public override async Task<IActionResult> Remove(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = await BindCompany();
+            ViewBag.listCompany = await BindCompanies();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -78,12 +75,12 @@ public class ArchiveUnitController : Controller
         }
     }
 
-    public async Task<IActionResult> Detail(Guid Id)
+    public override async Task<IActionResult> Detail(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listCompany = await BindCompany();
+            ViewBag.listCompany = await BindCompanies();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -95,7 +92,7 @@ public class ArchiveUnitController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(TrxArchiveUnit model)
+    public override async Task<IActionResult> Save(TrxArchiveUnit model)
     {
         if (model != null)
         {
@@ -118,7 +115,7 @@ public class ArchiveUnitController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(TrxArchiveUnit model)
+    public override async Task<IActionResult> Delete(TrxArchiveUnit model)
     {
         if (model != null && model.ArchiveUnitId != Guid.Empty)
         {
@@ -130,15 +127,5 @@ public class ArchiveUnitController : Controller
 
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveUnit, new { Area = Const.MasterData });
-
-    private async Task<List<SelectListItem>> BindCompany()
-    {
-        var company = await _companyService.GetAll();
-        return company.Select(x => new SelectListItem
-        {
-            Value = x.CompanyId.ToString(),
-            Text = x.CompanyName.ToString()
-        }).ToList();
-    }
     #endregion
 }

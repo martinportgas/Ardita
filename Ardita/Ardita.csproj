@@ -44,6 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\ArchiveActive\Data\" />
+    <Folder Include="Areas\ArchiveActive\Models\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />

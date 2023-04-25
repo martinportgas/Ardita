@@ -79,7 +79,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.ArchiveCreator, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
+                                    <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
                                 </div>
                             </form>
                         </div>
@@ -92,29 +92,9 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
-
-            if ("@form.CurrentAction" == "@Const.Detail") {
-                readonlyForm(true);
-                $('#btn-submit').hide();
-                $('#btn-cancel').html("Back");
-            } else if ("@form.CurrentAction" == "@Const.Remove") {
-                readonlyForm(true);
-                $("#btn-submit").prop("disabled", false);
-                $('#btn-submit').show();
-                $('#btn-submit').html("Delete");
-            }
-            else {
-                $('#btn-submit').show();
-                readonlyForm(false);
-            }
-
+        $(function () {
+            initForms("@form.CurrentAction");
         });
-
-        function readonlyForm(condition) {
-            $('#formInput input').attr('readonly', condition);
-            $('#formInput textarea').attr('readonly', condition);
-        }
 
         function validate() {
             let result = true;
@@ -137,10 +117,10 @@
             return result;
         }
 
-        function onSubmit(ctl, event) {
+        function onSubmit(ctl, event, currentAction) {
             event.preventDefault();
             swal({
-                title: "Do You Want To @form.CurrentAction It?",
+                title: "Do You Want To " + currentAction + " It?",
                 text: "Please check Information before Submiting!",
                 type: "warning",
                 showCancelButton: true,
@@ -163,5 +143,6 @@
                     }
                 });
         }
+
     </script>
 }

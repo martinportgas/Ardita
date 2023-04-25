@@ -169,6 +169,7 @@ namespace Ardita.Services.Classess
                              MenuId = menu.MenuId,
                              MenuName = menu.Name,
                              MenuPath = menu.Path,
+                             MenuSort = menu.Sort,
                              SubMenuId = subMenu.SubmenuId,
                              SubMenuName = subMenu.Name,
                              SubMenuPath = subMenu.Path,

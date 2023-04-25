@@ -1,4 +1,5 @@
-﻿using Ardita.Extensions;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
@@ -12,11 +13,8 @@ namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
     [Area("MasterData")]
-    public class ClassificationSubjectController : Controller
+    public class ClassificationSubjectController : BaseController<TrxSubjectClassification>
     {
-        private readonly IClassificationSubjectService _classificationSubjectService;
-        private readonly IClassificationService _classificationService;
-        private readonly IClassificationTypeService _classificationTypeService;
         public ClassificationSubjectController(
             IClassificationSubjectService classificationSubjectService,
             IClassificationTypeService classificationTypeService,
@@ -26,11 +24,9 @@ namespace Ardita.Areas.MasterData.Controllers
             _classificationTypeService = classificationTypeService;
             _classificationService = classificationService;
         }
-        public ActionResult Index()
-        {
-            return View();
-        }
-        public async Task<JsonResult> GetData(DataTablePostModel model)
+        public override async Task<ActionResult> Index() => await base.Index();
+
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
@@ -59,7 +55,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 throw;
             }
         }
-        public async Task<IActionResult> Add()
+        public override async Task<IActionResult> Add()
         {
             var classificationTypeData = await _classificationTypeService.GetAll();
             var classificationData = await _classificationService.GetAll();
@@ -68,7 +64,7 @@ namespace Ardita.Areas.MasterData.Controllers
             ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
             return View(Const.Form, new TrxSubjectClassification());
         }
-        public async Task<IActionResult> Update(Guid Id)
+        public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
@@ -85,7 +81,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToAction("Index", "ClassificationSubject", new { Area = "MasterData" });
             }
         }
-        public async Task<IActionResult> Remove(Guid Id)
+        public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
@@ -103,7 +99,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
 
         }
-        public async Task<IActionResult> Detail(Guid Id)
+        public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _classificationSubjectService.GetById(Id);
             if (data.Count() > 0)
@@ -122,7 +118,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(TrxSubjectClassification model)
+        public async override Task<IActionResult> Save(TrxSubjectClassification model)
         {
             int result = 0;
             if (model != null)
@@ -145,7 +141,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(TrxSubjectClassification model)
+        public async override Task<IActionResult> Delete(TrxSubjectClassification model)
         {
             int result = 0;
             if (model != null && model.SubjectClassificationId != Guid.Empty)

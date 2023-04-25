@@ -1,4 +1,5 @@
-﻿using Ardita.Extensions;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
@@ -10,10 +11,9 @@ namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
 [Area(Const.MasterData)]
-public class CompanyController : Controller
+public class CompanyController : BaseController<MstCompany>
 {
     private IWebHostEnvironment _webHostEnvironment;
-    private readonly ICompanyService _companyService;
 
     public CompanyController(IWebHostEnvironment webHostEnvironment, ICompanyService companyService)
     {
@@ -21,12 +21,9 @@ public class CompanyController : Controller
         _companyService = companyService;
     }
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public override async Task<ActionResult> Index() => await base.Index();
 
-    public async Task<JsonResult> GetData(DataTablePostModel model)
+    public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
@@ -41,7 +38,7 @@ public class CompanyController : Controller
         }
     }
 
-    public async Task<IActionResult> Add()
+    public override async Task<IActionResult> Add()
     {
         var Company = new MstCompany();
         ViewBag.CurrentAction = Const.Add;
@@ -53,7 +50,7 @@ public class CompanyController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(MstCompany model)
+    public override async Task<IActionResult> Save(MstCompany model)
     {
         if (model != null)
         {
@@ -75,7 +72,7 @@ public class CompanyController : Controller
         return RedirectToIndex();
     }
 
-    public async Task<IActionResult> Update(Guid Id)
+    public override async Task<IActionResult> Update(Guid Id)
     {
         var listCompany = await _companyService.GetById(Id);
 
@@ -89,7 +86,7 @@ public class CompanyController : Controller
         }
     }
 
-    public async Task<IActionResult> Detail(Guid Id)
+    public override async Task<IActionResult> Detail(Guid Id)
     {
         var listCompany = await _companyService.GetById(Id);
 
@@ -103,7 +100,7 @@ public class CompanyController : Controller
         }
     }
 
-    public async Task<IActionResult> Remove(Guid Id)
+    public override async Task<IActionResult> Remove(Guid Id)
     {
         var listCompany = await _companyService.GetById(Id);
 
@@ -117,7 +114,7 @@ public class CompanyController : Controller
         }
     }
 
-    public async Task<IActionResult> Delete(MstCompany model)
+    public override async Task<IActionResult> Delete(MstCompany model)
     {
         if (model != null)
         {

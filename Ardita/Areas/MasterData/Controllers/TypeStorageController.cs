@@ -44,7 +44,7 @@ public class TypeStorageController : Controller
 
     public async Task<IActionResult> Add()
     {
-        ViewBag.listArchiveUnit = await BindArchiveUnit();
+        ViewBag.listArchiveUnit = await BindArchiveUnits();
         ViewBag.listTypeStorage = await BindTypeStorage();
 
         return View(Const.Form, new TrxTypeStorage());
@@ -55,7 +55,7 @@ public class TypeStorageController : Controller
         var data = await _typeStorage.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
             return View(Const.Form, data.FirstOrDefault());
@@ -71,7 +71,7 @@ public class TypeStorageController : Controller
         var data = await _typeStorage.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
             return View(Const.Form, data.FirstOrDefault());
@@ -87,7 +87,7 @@ public class TypeStorageController : Controller
         var data = await _typeStorage.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
             return View(Const.Form, data.FirstOrDefault());
@@ -136,7 +136,7 @@ public class TypeStorageController : Controller
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.TypeStorage, new { Area = Const.MasterData });
 
-    private async Task<List<SelectListItem>> BindArchiveUnit()
+    private async Task<List<SelectListItem>> BindArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
         return data.Select(x => new SelectListItem

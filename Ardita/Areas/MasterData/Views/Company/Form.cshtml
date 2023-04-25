@@ -77,13 +77,8 @@
 
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
-            $("#txtEmployeeId").select2({
-                theme: 'bootstrap4',
-            });
-
+        $(function () {
             initForms("@form.CurrentAction");
-
         });
 
         function validate() {

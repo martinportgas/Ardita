@@ -36,6 +36,7 @@ public static class ServiceExtension
         services.AddScoped<IRackService, RackService>();
         services.AddScoped<ILevelService, LevelService>();
         services.AddScoped<IRowService, RowService>();
+        services.AddScoped<IArchiveService, ArchiveService>();
         return services;
     }
 }

@@ -1,20 +1,18 @@
-﻿using Ardita.Extensions;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
     [Area("MasterData")]
-    public class FloorController : Controller
+    public class FloorController : BaseController<TrxFloor>
     {
         #region MEMBER AND CTR
-        private readonly IFloorService _floorService;
-        private readonly IArchiveUnitService _archiveUnitService;
         public FloorController(IFloorService floorService, IArchiveUnitService archiveUnitService)
         {
             _floorService = floorService;
@@ -22,8 +20,8 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region MAIN
-        public IActionResult Index() => View();
-        public async Task<JsonResult> GetData(DataTablePostModel model)
+        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
@@ -37,19 +35,19 @@ namespace Ardita.Areas.MasterData.Controllers
                 throw;
             }
         }
-        public async Task<IActionResult> Add()
+        public override async Task<IActionResult> Add()
         {
-            
-            ViewBag.listArchiveUnits = await BindArchiveUnit();
+
+            ViewBag.listArchiveUnits = await BindArchiveUnits();
 
             return View(Const.Form, new TrxFloor());
         }
-        public async Task<IActionResult> Update(Guid Id)
+        public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _floorService.GetById(Id);
             if (data.Count() > 0)
             {
-                ViewBag.listArchiveUnits = await BindArchiveUnit();
+                ViewBag.listArchiveUnits = await BindArchiveUnits();
                 return View(Const.Form, data.FirstOrDefault());
             }
             else
@@ -57,12 +55,12 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToIndex();
             }
         }
-        public async Task<IActionResult> Remove(Guid Id)
+        public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _floorService.GetById(Id);
             if (data.Count() > 0)
             {
-                ViewBag.listArchiveUnits = await BindArchiveUnit();
+                ViewBag.listArchiveUnits = await BindArchiveUnits();
                 return View(Const.Form, data.FirstOrDefault());
             }
             else
@@ -70,12 +68,12 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToIndex();
             }
         }
-        public async Task<IActionResult> Detail(Guid Id)
+        public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _floorService.GetById(Id);
             if (data.Count() > 0)
             {
-                ViewBag.listArchiveUnits = await BindArchiveUnit();
+                ViewBag.listArchiveUnits = await BindArchiveUnits();
                 return View(Const.Form, data.FirstOrDefault());
             }
             else
@@ -85,7 +83,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(TrxFloor model)
+        public override async Task<IActionResult> Save(TrxFloor model)
         {
             if (model != null)
             {
@@ -108,7 +106,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(TrxFloor model)
+        public override async Task<IActionResult> Delete(TrxFloor model)
         {
             if (model != null && model.FloorId != Guid.Empty)
             {
@@ -119,17 +117,6 @@ namespace Ardita.Areas.MasterData.Controllers
         #endregion
         #region HELPER
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Floor, new { Area = Const.MasterData });
-
-        private async Task<List<SelectListItem>> BindArchiveUnit()
-        {
-            var archiveUnits = await _archiveUnitService.GetAll();
-
-            return archiveUnits.Select(x => new SelectListItem
-            {
-                Value = x.ArchiveUnitId.ToString(),
-                Text = x.ArchiveUnitName
-            }).ToList();
-        }
         #endregion
 
     }

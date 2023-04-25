@@ -1,4 +1,5 @@
-﻿using Ardita.Extensions;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
@@ -11,12 +12,9 @@ namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
 [Area(Const.MasterData)]
-public class ArchiveCreatorController : Controller
+public class ArchiveCreatorController : BaseController<MstCreator>
 {
     #region MEMBER AND CTR
-    private readonly IArchiveUnitService _archiveUnitService;
-    private readonly IArchiveCreatorService _archiveCreatorService;
-
     public ArchiveCreatorController(IArchiveUnitService archiveUnitService, IArchiveCreatorService archiveCreatorService)
     {
         _archiveUnitService = archiveUnitService;
@@ -25,9 +23,9 @@ public class ArchiveCreatorController : Controller
     #endregion
 
     #region MAIN ACTION
-    public IActionResult Index() => View();
+    public override async Task<ActionResult> Index() => await base.Index();
 
-    public async Task<JsonResult> GetData(DataTablePostModel model)
+    public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
@@ -42,21 +40,21 @@ public class ArchiveCreatorController : Controller
         }
     }
 
-    public async Task<IActionResult> Add()
+    public override async Task<IActionResult> Add()
     {
-        ViewBag.listArchiveUnit = await BindArchiveUnit();
+        ViewBag.listArchiveUnit = await BindArchiveUnits();
 
         await Task.Delay(0);
 
         return View(Const.Form, new MstCreator());
     }
 
-    public async Task<IActionResult> Update(Guid Id)
+    public override async Task<IActionResult> Update(Guid Id)
     {
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -66,12 +64,12 @@ public class ArchiveCreatorController : Controller
         }
     }
 
-    public async Task<IActionResult> Remove(Guid Id)
+    public override async Task<IActionResult> Remove(Guid Id)
     {
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -81,12 +79,12 @@ public class ArchiveCreatorController : Controller
         }
     }
 
-    public async Task<IActionResult> Detail(Guid Id)
+    public override async Task<IActionResult> Detail(Guid Id)
     {
         var data = await _archiveCreatorService.GetById(Id);
         if (data.Any())
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnit();
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
 
             return View(Const.Form, data.FirstOrDefault());
         }
@@ -98,7 +96,7 @@ public class ArchiveCreatorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(MstCreator model)
+    public override async Task<IActionResult> Save(MstCreator model)
     {
         if (model != null)
         {
@@ -121,7 +119,7 @@ public class ArchiveCreatorController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(MstCreator model)
+    public override async Task<IActionResult> Delete(MstCreator model)
     {
         if (model != null && model.ArchiveUnitId != Guid.Empty)
         {
@@ -134,15 +132,5 @@ public class ArchiveCreatorController : Controller
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveCreator, new { Area = Const.MasterData });
 
-
-    private async Task<List<SelectListItem>> BindArchiveUnit()
-    {
-        var company = await _archiveUnitService.GetAll();
-        return company.Select(x => new SelectListItem
-        {
-            Value = x.ArchiveUnitId.ToString(),
-            Text = x.ArchiveUnitName.ToString()
-        }).ToList();
-    }
     #endregion
 }

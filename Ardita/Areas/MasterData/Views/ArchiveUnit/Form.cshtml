@@ -104,32 +104,9 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-            $(document).ready(function () {
-                $("#txtEmployeeId").select2({
-                    theme: 'bootstrap4',
-                });
-
-                if ("@form.CurrentAction" == "@Const.Detail") {
-                    readonlyForm(true);
-                    $('#btn-submit').hide();
-                    $('#btn-cancel').html("Back");
-                } else if ("@form.CurrentAction" == "@Const.Remove") {
-                    readonlyForm(true);
-                    $("#btn-submit").prop("disabled", false);
-                    $('#btn-submit').show();
-                    $('#btn-submit').html("Delete");
-                }
-                else {
-                    $('#btn-submit').show();
-                    readonlyForm(false);
-                }
-
-            });
-
-        function readonlyForm(condition) {
-            $('#formInput input').attr('readonly', condition);
-            $('#formInput textarea').attr('readonly', condition);
-        }
+        $(function () {
+            initForms("@form.CurrentAction");
+        });
 
         function validate() {
             let result = true;

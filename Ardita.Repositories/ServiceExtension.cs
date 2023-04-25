@@ -35,12 +35,12 @@ public static class ServiceExtension
         services.AddScoped<IGmdRepository, GmdRepository>();
         services.AddScoped<ISecurityClassificationRepository, SecurityClassificationRepository>();
         services.AddScoped<ITypeStorageRepository, TypeStorageRepository>();
-
         services.AddScoped<IFloorRepository, FloorRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IRackRepository, RackRepository>();
         services.AddScoped<ILevelRepository, LevelRepository>();
         services.AddScoped<IRowRepository, RowRepository>();
+        services.AddScoped<IArchiveRepository, ArchiveRepository>();
 
         return services;
     }

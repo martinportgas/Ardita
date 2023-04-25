@@ -10,6 +10,7 @@
         public const string MasterData = "MasterData";
         public const string UserManage = "UserManage";
         public const string General = "General";
+        public const string ArchiveActive = "ArchiveActive";
 
         //Controller
         public const string Company = "Company";
@@ -28,6 +29,7 @@
         public const string Level = "Level";
         public const string Row = "Row";
         public const string TypeStorage = "TypeStorage";
+        public const string Archive = "Archive";
         
         //Action
         public const string Index = "Index";
