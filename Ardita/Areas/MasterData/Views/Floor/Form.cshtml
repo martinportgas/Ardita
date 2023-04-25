@@ -10,7 +10,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Classification</h2>
+        <h2>Floor</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
+                            <form id="frmFloor" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     <div class="form-group">
@@ -80,11 +80,8 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
-                                    {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
-                                    }
+                                    <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.FormAction</button>
                                 </div>
                             </form>
                         </div>
@@ -97,6 +94,46 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        $(document).ready(function () {
+            initForms("@form.CurrentAction");
+        });
 
+        function validate() {
+            if ($('#txtFloorCode').val() == "") {
+                swal("Please enter Floor Code !");
+                return false;
+            } else if ($('#txtFloorName').val() == "") {
+                swal("Please enter Floor Name !");
+                return false;
+            } else {
+                return true;
+            }
+        }
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#frmFloor").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
     </script>
 }

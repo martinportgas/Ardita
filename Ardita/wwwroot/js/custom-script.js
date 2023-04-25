@@ -10,6 +10,12 @@ $(document).ready(function () {
         $('html,body').scrollTop(0);
         $('body').toggleClass('sk-loading');
     });
+    $('.required').each(function () {
+        $(this).prop('required', true);
+    });
+    $('.disabled').each(function () {
+        $(this).prop('disabled', true);
+    });
 });
 
 function GetClock() {

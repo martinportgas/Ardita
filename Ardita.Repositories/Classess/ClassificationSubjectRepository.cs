@@ -24,26 +24,33 @@ namespace Ardita.Repositories.Classess
 
             if (model.SubjectClassificationId != Guid.Empty)
             {
-                _context.TrxSubjectClassifications.Remove(model);
-                result = await _context.SaveChangesAsync();
+                var data = _context.TrxSubjectClassifications.AsNoTracking().Where(x => x.SubjectClassificationId == model.SubjectClassificationId).FirstOrDefault();
+                if (data != null)
+                {
+                    data.IsActive = false;
+                    data.UpdatedBy = model.UpdatedBy;
+                    data.UpdatedDate = DateTime.Now;
+                    _context.Update(data);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
 
         public async Task<IEnumerable<TrxSubjectClassification>> GetAll()
         {
-            var results = await _context.TrxSubjectClassifications.ToListAsync();
+            var results = await _context.TrxSubjectClassifications.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()
         {
-            var results = await _context.TrxSubjectClassifications.CountAsync();
+            var results = await _context.TrxSubjectClassifications.Where(x => x.IsActive == true).CountAsync();
             return results;
         }
 
         public async Task<IEnumerable<TrxSubjectClassification>> GetById(Guid id)
         {
-            var result = await _context.TrxSubjectClassifications.AsNoTracking().Where(x => x.SubjectClassificationId == id).ToListAsync();
+            var result = await _context.TrxSubjectClassifications.AsNoTracking().Where(x => x.IsActive == true && x.SubjectClassificationId == id).ToListAsync();
             return result;
         }
         public async Task<IEnumerable<TrxSubjectClassification>> GetByFilterModel(DataTableModel model)
@@ -56,7 +63,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxSubjectClassifications
-                .Where(x => (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
+                .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
                 .OrderBy(x => EF.Property<TrxSubjectClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -64,7 +71,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxSubjectClassifications
-                .Where(x => (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
+                .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<TrxSubjectClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -79,12 +86,22 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                model.IsActive = true;
                 _context.TrxSubjectClassifications.Add(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
         }
-
+        public async Task<bool> InsertBulk(List<TrxSubjectClassification> models)
+        {
+            bool result = false;
+            if (models.Count() > 0)
+            {
+                await _context.BulkInsertAsync(models);
+                result = true;
+            }
+            return result;
+        }
         public async Task<int> Update(TrxSubjectClassification model)
         {
             int result = 0;
@@ -94,6 +111,9 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxSubjectClassifications.AsNoTracking().Where(x => x.SubjectClassificationId == model.SubjectClassificationId).ToListAsync();
                 if (data != null)
                 {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

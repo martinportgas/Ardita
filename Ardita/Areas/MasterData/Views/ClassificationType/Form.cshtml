@@ -61,16 +61,20 @@
                             <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="form-group">
                                     <div class="form-group">
-                                        <label>Jenis Klasifikasi</label>
+                                        <label>Kode Jenis Klasifikasi</label>
                                         <input type="hidden" asp-for="TypeClassificationId" value="@Model.TypeClassificationId">
-                                        <input @Html.Raw(form.isInput ? Const.Required : Const.Disabled) type="text" placeholder="" id="txtPositionClassificationName" class="form-control" asp-for="TypeClassificationName" required>
+                                        <input type="text" placeholder="" id="txtTypeClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TypeClassificationCode">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Jenis Klasifikasi</label>
+                                        <input type="text" placeholder="" id="txtTypeClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TypeClassificationName">
                                     </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.ClassificationType, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
+                                    @if (form.isInput || form.CurrentAction == Const.Remove)
                                     {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
                                     }
                                 </div>
                             </form>

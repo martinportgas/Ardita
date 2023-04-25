@@ -9,10 +9,6 @@ public partial class TrxSubSubjectClassification
 
     public Guid? CreatorId { get; set; }
 
-    public Guid? TypeClassificationId { get; set; }
-
-    public Guid? ClassificationId { get; set; }
-
     public Guid? SubjectClassificationId { get; set; }
 
     public Guid? SecurityClassificationId { get; set; }
@@ -37,8 +33,6 @@ public partial class TrxSubSubjectClassification
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual TrxClassification? Classification { get; set; }
-
     public virtual MstCreator? Creator { get; set; }
 
     public virtual MstSecurityClassification? SecurityClassification { get; set; }
@@ -48,6 +42,4 @@ public partial class TrxSubSubjectClassification
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 
     public virtual ICollection<TrxPermissionClassification> TrxPermissionClassifications { get; } = new List<TrxPermissionClassification>();
-
-    public virtual MstTypeClassification? TypeClassification { get; set; }
 }

@@ -24,26 +24,33 @@ namespace Ardita.Repositories.Classess
 
             if (model.TypeClassificationId != Guid.Empty)
             {
-                _context.MstTypeClassifications.Remove(model);
-                result = await _context.SaveChangesAsync();
+                var data = _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == model.TypeClassificationId).FirstOrDefault();
+                if (data != null)
+                {
+                    data.IsActive = false;
+                    data.UpdatedBy = model.UpdatedBy;
+                    data.UpdatedDate = DateTime.Now;
+                    _context.Update(data);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
 
         public async Task<IEnumerable<MstTypeClassification>> GetAll()
         {
-            var results = await _context.MstTypeClassifications.ToListAsync();
+            var results = await _context.MstTypeClassifications.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()
         {
-            var results = await _context.MstTypeClassifications.CountAsync();
+            var results = await _context.MstTypeClassifications.Where(x => x.IsActive == true).CountAsync();
             return results;
         }
 
         public async Task<IEnumerable<MstTypeClassification>> GetById(Guid id)
         {
-            var result = await _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == id).ToListAsync();
+            var result = await _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == id && x.IsActive == true).ToListAsync();
             return result;
         }
         public async Task<IEnumerable<MstTypeClassification>> GetByFilterModel(DataTableModel model)
@@ -56,7 +63,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.MstTypeClassifications
-                .Where(x => x.TypeClassificationName.Contains(model.searchValue))
+                .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
                 .OrderBy(x => EF.Property<MstTypeClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -64,7 +71,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.MstTypeClassifications
-                .Where(x => x.TypeClassificationName.Contains(model.searchValue))
+                .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<MstTypeClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -79,12 +86,22 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                model.IsActive = true;
                 _context.MstTypeClassifications.Add(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
         }
-
+        public async Task<bool> InsertBulk(List<MstTypeClassification> models)
+        {
+            bool result = false;
+            if (models.Count() > 0)
+            {
+                await _context.BulkInsertAsync(models);
+                result = true;
+            }
+            return result;
+        }
         public async Task<int> Update(MstTypeClassification model)
         {
             int result = 0;
@@ -94,6 +111,9 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == model.TypeClassificationId).ToListAsync();
                 if (data != null)
                 {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

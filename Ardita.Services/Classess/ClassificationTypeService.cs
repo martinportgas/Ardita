@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
@@ -35,6 +36,10 @@ namespace Ardita.Services.Classess
         public async Task<int> Insert(MstTypeClassification model)
         {
             return await _classificationTypeRepository.Insert(model);
+        }
+        public async Task<bool> InsertBulk(List<MstTypeClassification> models)
+        {
+            return await _classificationTypeRepository.InsertBulk(models);
         }
 
         public async Task<int> Update(MstTypeClassification model)

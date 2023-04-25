@@ -47,7 +47,10 @@ namespace Ardita.Services.Classess
         {
             return await _classificationRepository.Insert(model);
         }
-
+        public async Task<bool> InsertBulk(List<TrxClassification> models)
+        {
+            return await _classificationRepository.InsertBulk(models);
+        }
         public async Task<int> Update(TrxClassification model)
         {
             return await _classificationRepository.Update(model);

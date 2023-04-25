@@ -68,5 +68,10 @@ namespace Ardita.Services.Classess
             }
 
         }
+
+        public async Task<bool> InsertBulk(List<TrxFloor> floors)
+        {
+            return await _floorRepository.InsertBulk(floors);
+        }
     }
 }

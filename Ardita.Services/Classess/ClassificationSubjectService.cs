@@ -14,9 +14,15 @@ namespace Ardita.Services.Classess
     public class ClassificationSubjectService : IClassificationSubjectService
     {
         private readonly IClassificationSubjectRepository _classificationSubjectRepository;
-        public ClassificationSubjectService(IClassificationSubjectRepository classificationSubjectRepository)
+        private readonly IClassificationRepository _classificationRepository;
+        private readonly IClassificationTypeRepository _classificationTypeRepository;
+        public ClassificationSubjectService(IClassificationSubjectRepository classificationSubjectRepository,
+            IClassificationRepository classificationRepository,
+            IClassificationTypeRepository classificationTypeRepository)
         {
             _classificationSubjectRepository = classificationSubjectRepository;
+            _classificationRepository = classificationRepository;
+            _classificationTypeRepository = classificationTypeRepository;
         }
         public async Task<int> Delete(TrxSubjectClassification model)
         {
@@ -42,6 +48,10 @@ namespace Ardita.Services.Classess
         public async Task<int> Insert(TrxSubjectClassification model)
         {
             return await _classificationSubjectRepository.Insert(model);
+        }
+        public async Task<bool> InsertBulk(List<TrxSubjectClassification> models)
+        {
+            return await _classificationSubjectRepository.InsertBulk(models);
         }
 
         public async Task<int> Update(TrxSubjectClassification model)

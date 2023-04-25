@@ -25,26 +25,33 @@ namespace Ardita.Repositories.Classess
 
             if (model.ClassificationId != Guid.Empty)
             {
-                _context.TrxClassifications.Remove(model);
-                result = await _context.SaveChangesAsync();
+                var data = _context.TrxClassifications.AsNoTracking().Where(x => x.ClassificationId == model.ClassificationId).FirstOrDefault();
+                if (data != null)
+                {
+                    data.IsActive = false;
+                    data.UpdatedBy = model.UpdatedBy;
+                    data.UpdatedDate = DateTime.Now;
+                    _context.Update(data);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }
 
         public async Task<IEnumerable<TrxClassification>> GetAll()
         {
-            var results = await _context.TrxClassifications.ToListAsync();
+            var results = await _context.TrxClassifications.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()
         {
-            var results = await _context.TrxClassifications.CountAsync();
+            var results = await _context.TrxClassifications.Where(x => x.IsActive == true).CountAsync();
             return results;
         }
 
         public async Task<IEnumerable<TrxClassification>> GetById(Guid id)
         {
-            var result = await _context.TrxClassifications.AsNoTracking().Where(x => x.ClassificationId == id).ToListAsync();
+            var result = await _context.TrxClassifications.AsNoTracking().Where(x => x.IsActive == true && x.ClassificationId == id).ToListAsync();
             return result;
         }
         public async Task<IEnumerable<TrxClassification>> GetByFilterModel(DataTableModel model)
@@ -57,7 +64,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxClassifications
-                .Where(x => (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
+                .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
                 .OrderBy(x => EF.Property<TrxClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -65,7 +72,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxClassifications
-                .Where(x => (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
+                .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<TrxClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -80,8 +87,19 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                model.IsActive = true;
                 _context.TrxClassifications.Add(model);
                 result = await _context.SaveChangesAsync();
+            }
+            return result;
+        }
+        public async Task<bool> InsertBulk(List<TrxClassification> models)
+        {
+            bool result = false;
+            if (models.Count() > 0)
+            {
+                await _context.BulkInsertAsync(models);
+                result = true;
             }
             return result;
         }
@@ -95,6 +113,9 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxClassifications.AsNoTracking().Where(x => x.ClassificationId == model.ClassificationId).ToListAsync();
                 if (data != null)
                 {
+                    model.IsActive = true;
+                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
+                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
