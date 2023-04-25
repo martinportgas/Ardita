@@ -73,5 +73,10 @@ namespace Ardita.Services.Classess
             }
 
         }
+
+        public async Task<bool> InsertBulk(List<TrxRow> rows)
+        {
+            return await _rowRepository.InsertBulk(rows);
+        }
     }
 }

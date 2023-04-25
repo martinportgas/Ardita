@@ -1,5 +1,5 @@
 ﻿@using Ardita.Globals;
-
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = Const.ViewStart;
 }
@@ -53,13 +53,15 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Floor Upload</h4>
-                        <small>Pastikan format file anda sudah benar.</small>
-                    </div>
-                    <div class="modal-body">
-                        <form>
+                    <form id="frmFloorUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Floor" asp-action="@Const.Upload" asp-area="@Const.MasterData">
+                       @Html.AntiForgeryToken();
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Floor Upload</h4>
+                            <small>Pastikan format file anda sudah benar.</small>
+                        </div>
+                        <div class="modal-body">
+
                             <div class="row">
                                 <div class="input-group">
                                     <div class="custom-file">
@@ -69,13 +71,15 @@
                                 </div>
                             </div>
                             <br />
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Floor, new { Area = Const.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                        <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                    </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Floor, new { Area = Const.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                    
                 </div>
             </div>
         </div>
@@ -92,7 +96,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action("GetData", "Floor", new { Area = "MasterData"})',
+                    "url": '@Url.Action(Const.GetData, Const.Floor, new { Area = Const.MasterData})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -142,27 +146,7 @@
                         return false;
                     }
                 }
-                var fdata = new FormData();
-                var fileUpload = $("#fUpload").get(0);
-                var files = fileUpload.files;
-                fdata.append(files[0].name, files[0]);
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action(Const.Upload, Const.Floor, new { Area = Const.MasterData })',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: fdata,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        window.location.reload();
-                    },
-                    error: function (e) {
-                        alert(e.responseText);
-                    }
-                });
+                $("#frmFloorUpload").submit();
             });
         });
     </script>

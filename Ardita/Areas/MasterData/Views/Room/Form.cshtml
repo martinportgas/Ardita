@@ -119,11 +119,24 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        $(function () {
+            initForms("@form.CurrentAction");
+
+            $("#txtUnitArchive").select2({
+                theme: 'bootstrap4',
+            });
+            $("#txtFloorId").select2({
+                theme: 'bootstrap4',
+            });
+        });
+        
+        
         function loadFloors(obj) {
             var value = obj.value;
-            var url = '@Url.Action("BindFloors", "Room", new { Area="MasterData" })';
+            var url = '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Room, new { Area = Const.MasterData })';
 
             $.post(url, { id: value }, function (data) {
+                console.log(data);
                 PopulateDropDown("#txtFloorId", data);
             });
         }

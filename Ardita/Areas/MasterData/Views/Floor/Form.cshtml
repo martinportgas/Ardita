@@ -94,8 +94,12 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(function () {
             initForms("@form.CurrentAction");
+
+            $("#txtUnitArchive").select2({
+                theme: 'bootstrap4',
+            });
         });
 
         function validate() {

@@ -74,5 +74,9 @@ namespace Ardita.Services.Classess
             }
 
         }
+        public async Task<bool> InsertBulk(List<TrxRoom> rooms)
+        {
+            return await _roomRepository.InsertBulk(rooms);
+        }
     }
 }

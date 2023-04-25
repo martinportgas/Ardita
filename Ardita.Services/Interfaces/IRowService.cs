@@ -14,6 +14,7 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<TrxRow>> GetAll();
         Task<DataTableResponseModel<TrxRow>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxRow model);
+        Task<bool> InsertBulk(List<TrxRow> rows);
         Task<int> Delete(TrxRow model);
         Task<int> Update(TrxRow model);
     }

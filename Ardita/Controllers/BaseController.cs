@@ -3,12 +3,15 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Controllers;
 
 public abstract class BaseController<T> : Controller
 {
     #region Properties
+    protected IHostingEnvironment _hostingEnvironment;
+
     protected IArchiveUnitService _archiveUnitService { get; set; }
     protected ICompanyService _companyService { get; set; }
     protected IArchiveCreatorService _archiveCreatorService { get; set; }
@@ -78,7 +81,7 @@ public abstract class BaseController<T> : Controller
     #endregion
 
     #region Binding
-    protected async Task<List<SelectListItem>> BindCompanies()
+    public async Task<List<SelectListItem>> BindCompanies()
     {
         var data = await _companyService.GetAll();
         return data.Select(x => new SelectListItem
@@ -87,7 +90,7 @@ public abstract class BaseController<T> : Controller
             Text = x.CompanyName.ToString()
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindRacks()
+    public async Task<List<SelectListItem>> BindRacks()
     {
         var data = await _rackService.GetAll();
 
@@ -97,7 +100,7 @@ public abstract class BaseController<T> : Controller
             Text = x.RackName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindRooms()
+    public async Task<List<SelectListItem>> BindRooms()
     {
         var data = await _roomService.GetAll();
 
@@ -107,7 +110,7 @@ public abstract class BaseController<T> : Controller
             Text = x.RoomName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindFloors()
+    public async Task<List<SelectListItem>> BindFloors()
     {
         var data = await _floorService.GetAll();
 
@@ -117,7 +120,7 @@ public abstract class BaseController<T> : Controller
             Text = x.FloorName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindArchiveUnits()
+    public async Task<List<SelectListItem>> BindArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
 
@@ -127,7 +130,7 @@ public abstract class BaseController<T> : Controller
             Text = x.ArchiveUnitName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindLevels()
+    public async Task<List<SelectListItem>> BindLevels()
     {
         var data = await _levelService.GetAll();
 
@@ -137,7 +140,7 @@ public abstract class BaseController<T> : Controller
             Text = x.LevelName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindGmds()
+    public async Task<List<SelectListItem>> BindGmds()
     {
         var data = await _gmdService.GetAll();
 
@@ -147,7 +150,7 @@ public abstract class BaseController<T> : Controller
             Text = x.GmdName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindSubSubjectClasscifications()
+    public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetAll();
 
@@ -157,7 +160,7 @@ public abstract class BaseController<T> : Controller
             Text = x.SubSubjectClassificationName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindSecurityClassifications()
+    public async Task<List<SelectListItem>> BindSecurityClassifications()
     {
         var data = await _securityClassificationService.GetAll();
 
@@ -167,7 +170,7 @@ public abstract class BaseController<T> : Controller
             Text = x.SecurityClassificationName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindArchiveCreators()
+    public async Task<List<SelectListItem>> BindArchiveCreators()
     {
         var data = await _archiveCreatorService.GetAll();
 
@@ -177,7 +180,7 @@ public abstract class BaseController<T> : Controller
             Text = x.CreatorName
         }).ToList();
     }
-    protected async Task<JsonResult> BindFloors(string Id)
+    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
     {
         List<TrxFloor> listFloors = new();
         Guid ArchiveUnitId = new Guid(Id);
