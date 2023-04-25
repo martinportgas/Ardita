@@ -194,5 +194,57 @@ public abstract class BaseController<T> : Controller
         return Json(listFloors);
 
     }
+    public async Task<List<SelectListItem>> BindClassificationTypes()
+    {
+        var data = await _classificationTypeService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.TypeClassificationId.ToString(),
+            Text = x.TypeClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindClasscifications()
+    {
+        var data = await _classificationService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ClassificationId.ToString(),
+            Text = x.ClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindClasscificationSubjects()
+    {
+        var data = await _classificationSubjectService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubjectClassificationId.ToString(),
+            Text = x.SubjectClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindPositions()
+    {
+        var data = await _positionService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.PositionId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id)
+    {
+        var data = await _classificationSubjectService.GetAll();
+        var result = data.Where(x => x.ClassificationId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindClassificationIdByClassificationTypeId(Guid Id)
+    {
+        var data = await _classificationService.GetAll();
+        var result = data.Where(x => x.TypeClassificationId == Id).ToList();
+        return Json(result);
+    }
     #endregion
 }

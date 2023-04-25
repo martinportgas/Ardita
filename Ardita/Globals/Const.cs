@@ -69,6 +69,8 @@
         public const string BindRooms = "BindRooms";
         public const string BindRacks = "BindRacks";
         public const string BindCompanies = "BindCompanies";
+        public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
+        public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
 
     }
 }

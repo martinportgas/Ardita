@@ -65,7 +65,7 @@
                                             <div class="form-group">
                                                 <label>Pencipta Arsip</label>
                                                 <input type="hidden" asp-for="SubSubjectClassificationId" value="@Model.SubSubjectClassificationId" />
-                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="CreatorId" asp-items="ViewBag.listCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
+                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Jenis Klasifikasi</label>
@@ -89,7 +89,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Klasifikasi Keamanan</label>
-                                                <select id="txtSecurityClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
+                                                <select id="txtSecurityClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SecurityClassificationId" asp-items="ViewBag.ListSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Retensi Aktif ( Bulan )</label>
@@ -115,7 +115,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtl">
-                                                @if (ViewBag.subDetail.Count > 0)
+                                                @if (ViewBag.subDetail != null)
                                                 {
                                                     foreach (Ardita.Models.DbModels.TrxPermissionClassification item in ViewBag.subDetail)
                                                     {
@@ -190,7 +190,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action("GetClassifictionIdByTypeId", "ClassificationSubject", new { Area = "MasterData" })',
+                    url: '@Url.Action(Const.BindClassificationIdByClassificationTypeId, Const.ClassificationSubSubject, new { Area = Const.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -216,7 +216,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Subjek Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action("GetSubjectClassifictionIdByClassificationId", "ClassificationSubSubject", new { Area = "MasterData" })',
+                    url: '@Url.Action(Const.BindClassificationSubjectIdByClassificationId, Const.ClassificationSubSubject, new { Area = Const.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {

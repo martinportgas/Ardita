@@ -106,7 +106,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action("GetClassifictionIdByTypeId", "ClassificationSubject", new { Area = "MasterData" })',
+                    url: '@Url.Action(Const.BindClassificationIdByClassificationTypeId, Const.ClassificationSubject, new { Area = Const.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {

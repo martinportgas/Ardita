@@ -16,10 +16,10 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("MasterData")]
+    [Area(Const.MasterData)]
     public class ClassificationTypeController : BaseController<MstTypeClassification>
     {
-        private IHostingEnvironment _hostingEnvironment;
+        #region MEMBER AND CTR
         private readonly IClassificationTypeService _classificationTypeService;
         public ClassificationTypeController(
             IHostingEnvironment hostingEnvironment, IClassificationTypeService classificationTypeService)
@@ -27,6 +27,9 @@ namespace Ardita.Areas.MasterData.Controllers
             _hostingEnvironment = hostingEnvironment;
             _classificationTypeService = classificationTypeService;
         }
+
+        #endregion
+        #region MAIN ACTION
         public override async Task<ActionResult> Index() => await base.Index();
         public async Task<JsonResult> GetData(DataTablePostModel model)
         {
@@ -55,7 +58,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         public override async Task<IActionResult> Remove(Guid Id)
@@ -67,7 +70,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
 
         }
@@ -80,7 +83,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         [HttpPost]
@@ -104,7 +107,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     result = await _classificationTypeService.Insert(model);
                 }
             }
-            return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -116,60 +119,48 @@ namespace Ardita.Areas.MasterData.Controllers
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 result = await _classificationTypeService.Delete(model);
             }
-            return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
-        public async Task<IActionResult> DownloadTemplate()
+        public async Task DownloadTemplate()
         {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"ClassificationTypeTemplate.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            try
             {
+                string fileName = $"{Const.Template}-{nameof(MstTypeClassification).ToCleanNameOf()}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("ClassificationType");
+                ISheet excelSheet = workbook.CreateSheet(nameof(MstTypeClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("ClassificationTypeCode");
-                row.CreateCell(1).SetCellValue("ClassificationTypeName");
-                row.CreateCell(2).SetCellValue("Active");
+                row.CreateCell(0).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+                row.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
 
-                row = excelSheet.CreateRow(1);
-                row.CreateCell(0).SetCellValue("Sample Code");
-                row.CreateCell(1).SetCellValue("Sample Name");
-                row.CreateCell(2).SetCellValue("1");
-
-                workbook.Write(fs);
+                workbook.WriteExcelToResponse(HttpContext, fileName);
             }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            catch (Exception ex)
             {
-                await stream.CopyToAsync(memory);
+                throw new Exception();
             }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }
-        public async Task<IActionResult> Export()
+        public async Task Export()
         {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"ClassificationTypeData.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            var data = await _classificationTypeService.GetAll();
-
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            try
             {
+                string fileName = nameof(TrxSubjectClassification).ToCleanNameOf();
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                var data = await _classificationTypeService.GetAll();
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("ClassificationType");
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxSubjectClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("ClassificationTypeCode");
-                row.CreateCell(1).SetCellValue("ClassificationTypeName");
+                row.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
 
                 int no = 1;
                 foreach (var item in data)
@@ -179,19 +170,17 @@ namespace Ardita.Areas.MasterData.Controllers
                     row.CreateCell(1).SetCellValue(item.TypeClassificationName);
                     no += 1;
                 }
-                workbook.Write(fs);
+                workbook.WriteExcelToResponse(HttpContext, fileName);
             }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            catch (Exception ex)
             {
-                await stream.CopyToAsync(memory);
+                throw new Exception();
             }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }
-        public async Task<ActionResult> Upload()
+        public async Task<IActionResult> Upload()
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, "Upload", _hostingEnvironment.WebRootPath);
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
 
             var type = await _classificationTypeService.GetAll();
 
@@ -212,7 +201,11 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             await _classificationTypeService.InsertBulk(models);
 
-            return RedirectToAction("Index", "ClassificationType", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
+        #endregion
+        #region HELPER
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationSubject, new { Area = Const.MasterData });
+        #endregion
     }
 }

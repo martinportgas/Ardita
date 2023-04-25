@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static Azure.Core.HttpHeader;
 
 namespace Ardita.Globals
 {
@@ -62,6 +63,23 @@ namespace Ardita.Globals
             model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
 
             return model;
+        }
+        public static string ToCleanNameOf(this string nameOf)
+        {
+            if (nameOf.Length > 0)
+            {
+                string prefix = nameOf.Substring(0, 3);
+
+                if (prefix.ToLower() == "trx")
+                    return nameOf.Replace("Trx", string.Empty);
+
+                if (prefix.ToLower() == "mst")
+                    return nameOf.Replace("Mst", string.Empty);
+
+                if (prefix.ToLower() == "idx")
+                    return nameOf.Replace("Idx", string.Empty);
+            }
+            return nameOf;
         }
     }
 }
