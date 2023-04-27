@@ -66,9 +66,8 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.First(x => x.SubSubjectClassificationId == Id);
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -78,7 +77,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {
@@ -87,9 +86,8 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public override async Task<IActionResult> Remove(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.First(x => x.SubSubjectClassificationId == Id);
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -99,7 +97,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {
@@ -108,9 +106,8 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public override async Task<IActionResult> Detail(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.First(x => x.SubSubjectClassificationId == Id);
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -120,7 +117,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {

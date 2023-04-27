@@ -106,7 +106,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add"><i class="fa fa-plus"></i> Add</button>
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add" @Html.Raw(form.isInput ? string.Empty : Const.Hidden)><i class="fa fa-plus"></i> Add</button>
                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -115,12 +115,12 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtl">
-                                                @if (ViewBag.subDetail != null)
+                                                @if (ViewBag.subDetail.Count > 0)
                                                 {
                                                     foreach (Ardita.Models.DbModels.TrxPermissionClassification item in ViewBag.subDetail)
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? "" : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                            <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:95%">
                                                                 <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
                                                             </td>

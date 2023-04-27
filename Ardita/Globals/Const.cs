@@ -48,6 +48,7 @@
         //Html helper
         public const string Required = "required";
         public const string Disabled = "disabled";
+        public const string Hidden = "hidden";
 
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";

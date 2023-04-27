@@ -31,7 +31,7 @@ namespace Ardita.Areas.MasterData.Controllers
         #endregion
         #region MAIN ACTION
         public override async Task<ActionResult> Index() => await base.Index();
-        public async Task<JsonResult> GetData(DataTablePostModel model)
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
