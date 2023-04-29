@@ -5,7 +5,7 @@ namespace Ardita.Repositories.Interfaces;
 
 public interface IArchiveRepository
 {
-    Task<IEnumerable<TrxArchive>> GetById(Guid id);
+    Task<TrxArchive> GetById(Guid id);
     Task<IEnumerable<TrxArchive>> GetAll();
     Task<IEnumerable<TrxArchive>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();

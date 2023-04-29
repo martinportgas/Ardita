@@ -54,9 +54,12 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public Task<IEnumerable<TrxArchive>> GetById(Guid id)
+    public async Task<TrxArchive> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.TrxArchives
+            .Include(s => s.SubSubjectClassification)
+            .ThenInclude(c => c.Creator)
+            .Where(x => x.ArchiveId == id).FirstAsync();
     }
 
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);

@@ -21,6 +21,7 @@
         public const string ClassificationSubject = "ClassificationSubject";
         public const string ClassificationSubSubject = "ClassificationSubSubject";
         public const string ArchiveUnit = "ArchiveUnit";
+        public const string MediaStorage = "MediaStorage";
         public const string ArchiveCreator = "ArchiveCreator";
         public const string Gmd = "Gmd";
         public const string SecurityClassification = "SecurityClassification";
@@ -73,6 +74,12 @@
         public const string BindCompanies = "BindCompanies";
         public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
         public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
+        public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
+        public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
+        public const string BindRoomByFloorId = "BindRoomByFloorId";
+        public const string BindRackByRoomId = "BindRackByRoomId";
+        public const string BindLevelByRackId = "BindLevelByRackId";
+        public const string BindRowByLevelId = "BindRowByLevelId";
 
         //Web Component
         public const string GET = "GET";

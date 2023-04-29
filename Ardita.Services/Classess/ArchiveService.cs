@@ -22,9 +22,9 @@ public class ArchiveService : IArchiveService
 
     public async Task<IEnumerable<TrxArchive>> GetAll() => await _archiveRepository.GetAll();
 
-    public Task<IEnumerable<TrxArchive>> GetById(Guid id)
+    public async Task<TrxArchive> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _archiveRepository.GetById(id);
     }
 
     public async Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model)
