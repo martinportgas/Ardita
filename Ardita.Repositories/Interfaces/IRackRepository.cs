@@ -15,6 +15,7 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<TrxRack>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(TrxRack model);
+        Task<bool> InsertBulk(List<TrxRack> racks);
         Task<int> Delete(TrxRack model);
         Task<int> Update(TrxRack model);
     }

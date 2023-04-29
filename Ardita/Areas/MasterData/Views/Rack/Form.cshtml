@@ -10,7 +10,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Rack</h2>
+        <h2>@Const.Rack</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
@@ -19,7 +19,7 @@
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Rack, new {Area = Const.MasterData})">Rack</a>
+                <a href="@Url.Action(Const.Index, Const.Rack, new {Area = Const.MasterData})">@Const.Rack</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -34,7 +34,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Room</h5>
+                    <h5>@Const.Rack</h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
+                            <form id="frmRack" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction" )">
                                 @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     <div class="form-group">
@@ -97,15 +97,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Panjang</label>
-                                        <input type="number" placeholder="" id="txtFloorCode" class="form-control" asp-for="Length" value="@Model.Length">
+                                        <input type="number" placeholder="" id="txtRackLength" class="form-control" asp-for="Length" value="@Model.Length">
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Rack, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput)
-                                    {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
-                                    }
+                                    <a href="@Url.Action(Const.Index, Const.Rack, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.FormAction</button>
                                 </div>
                             </form>
                         </div>
@@ -118,6 +115,75 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        $(function () {
+            initForms("@form.CurrentAction");
 
+            $("#txtUnitArchive").select2({
+                theme: 'bootstrap4',
+            });
+            $("#txtFloorId").select2({
+                theme: 'bootstrap4',
+            });
+        });
+
+        function validate() {
+            if ($('#txtRackCode').val() == "") {
+                swal("Please enter Rack Code !");
+                return false;
+            } else if ($('#txtRackName').val() == "") {
+                swal("Please enter Rack Name !");
+                return false;
+            } else if ($('#txtRackLength').val() == "") {
+                swal("Please enter Rack Length !");
+                return false;
+            } else {
+                return true;
+            }
+        }
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#frmRack").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+
+        function loadFloors(obj) {
+            var value = obj.value;
+            var url = '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Room, new { Area = Const.MasterData })';
+
+            $.post(url, { id: value }, function (data) {
+                console.log(data);
+                PopulateDropDown("#txtFloorId", data);
+            });
+        }
+        function PopulateDropDown(dropDownId, list, selectedId) {
+            $(dropDownId).empty();
+            $(dropDownId).append("<option>-- Silahkan Pilih --</option>")
+            $.each(list, function (index, row) {
+                console.log(row);
+                $(dropDownId).append("<option value='" + row.floorId + "'>" + row.floorName + "</option>")
+            });
+        }
     </script>
 }

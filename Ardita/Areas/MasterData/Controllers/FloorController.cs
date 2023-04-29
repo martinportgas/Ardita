@@ -22,11 +22,10 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("MasterData")]
+    [Area(Const.MasterData)]
     public class FloorController : BaseController<TrxFloor>
     {
         #region MEMBER AND CTR
-        private IHostingEnvironment _hostingEnvironment;
         public FloorController(
             IHostingEnvironment hostingEnvironment,
             IFloorService floorService, 
@@ -121,11 +120,14 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
-        public async Task Upload()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload()
         {
             try
             {
                 IFormFile file = Request.Form.Files[0];
+
                 var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
 
                 var ArchiveUnits = await _archiveUnitService.GetAll();
@@ -147,6 +149,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     floors.Add(floor);
                 }
                 await _floorService.InsertBulk(floors);
+                return RedirectToIndex();
             }
             catch (Exception)
             {
@@ -206,32 +209,31 @@ namespace Ardita.Areas.MasterData.Controllers
                 ISheet excelSheetArchiceUnit = workbook.CreateSheet(nameof(TrxArchiveUnit).Replace(Const.Trx, string.Empty));
 
                 IRow row = excelSheet.CreateRow(0);
-                IRow rowPosition = excelSheetArchiceUnit.CreateRow(0);
+                IRow rowArchive = excelSheetArchiceUnit.CreateRow(0);
 
                 row.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
                 row.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
                 row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
 
 
-                rowPosition.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
-                rowPosition.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
+                rowArchive.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
+                rowArchive.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
 
-                var dataEmployee = await _archiveUnitService.GetAll();
+                var dataArchive = await _archiveUnitService.GetAll();
 
                 int no = 1;
-                foreach (var item in dataEmployee)
+                foreach (var item in dataArchive)
                 {
-                    rowPosition = excelSheetArchiceUnit.CreateRow(no);
+                    rowArchive = excelSheetArchiceUnit.CreateRow(no);
 
-                    rowPosition.CreateCell(0).SetCellValue(item.ArchiveUnitCode);
-                    rowPosition.CreateCell(1).SetCellValue(item.ArchiveUnitName);
+                    rowArchive.CreateCell(0).SetCellValue(item.ArchiveUnitCode);
+                    rowArchive.CreateCell(1).SetCellValue(item.ArchiveUnitName);
                     no += 1;
                 }
                 workbook.WriteExcelToResponse(HttpContext, fileName);
             }
             catch (Exception)
             {
-
                 throw new Exception();
             }
         }

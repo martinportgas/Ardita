@@ -4,12 +4,20 @@ using Ardita.Models.ViewModels.SubSubjectClasscification;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Controllers;
 
 public abstract class BaseController<T> : Controller
 {
     #region Properties
+    protected IHostingEnvironment _hostingEnvironment;
+    
+    //User Manage
+    protected IEmployeeService _employeeService { get; set; }
+    protected IPositionService _positionService { get; set; }
+
+    //Master Data
     protected IArchiveUnitService _archiveUnitService { get; set; }
     protected ICompanyService _companyService { get; set; }
     protected IArchiveCreatorService _archiveCreatorService { get; set; }
@@ -17,7 +25,6 @@ public abstract class BaseController<T> : Controller
     protected IClassificationTypeService _classificationTypeService { get; set; }
     protected IClassificationSubjectService _classificationSubjectService { get; set; }
     protected IClassificationSubSubjectService _classificationSubSubjectService { get; set; }
-    protected IPositionService _positionService { get; set; }
     protected IFloorService _floorService { get; set; }
     protected IGmdService _gmdService { get; set; }
     protected ILevelService _levelService { get; set; }
@@ -80,7 +87,7 @@ public abstract class BaseController<T> : Controller
     #endregion
 
     #region Binding
-    protected async Task<List<SelectListItem>> BindCompanies()
+    public async Task<List<SelectListItem>> BindCompanies()
     {
         var data = await _companyService.GetAll();
         return data.Select(x => new SelectListItem
@@ -89,7 +96,7 @@ public abstract class BaseController<T> : Controller
             Text = x.CompanyName.ToString()
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindRacks()
+    public async Task<List<SelectListItem>> BindRacks()
     {
         var data = await _rackService.GetAll();
 
@@ -99,7 +106,7 @@ public abstract class BaseController<T> : Controller
             Text = x.RackName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindRooms()
+    public async Task<List<SelectListItem>> BindRooms()
     {
         var data = await _roomService.GetAll();
 
@@ -109,7 +116,7 @@ public abstract class BaseController<T> : Controller
             Text = x.RoomName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindFloors()
+    public async Task<List<SelectListItem>> BindFloors()
     {
         var data = await _floorService.GetAll();
 
@@ -119,7 +126,7 @@ public abstract class BaseController<T> : Controller
             Text = x.FloorName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindArchiveUnits()
+    public async Task<List<SelectListItem>> BindArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
 
@@ -129,7 +136,7 @@ public abstract class BaseController<T> : Controller
             Text = x.ArchiveUnitName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindLevels()
+    public async Task<List<SelectListItem>> BindLevels()
     {
         var data = await _levelService.GetAll();
 
@@ -139,7 +146,7 @@ public abstract class BaseController<T> : Controller
             Text = x.LevelName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindGmds()
+    public async Task<List<SelectListItem>> BindGmds()
     {
         var data = await _gmdService.GetAll();
 
@@ -149,7 +156,7 @@ public abstract class BaseController<T> : Controller
             Text = x.GmdName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindSubSubjectClasscifications()
+    public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetAll();
 
@@ -159,7 +166,7 @@ public abstract class BaseController<T> : Controller
             Text = x.SubSubjectClassificationName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindSecurityClassifications()
+    public async Task<List<SelectListItem>> BindSecurityClassifications()
     {
         var data = await _securityClassificationService.GetAll();
 
@@ -169,7 +176,7 @@ public abstract class BaseController<T> : Controller
             Text = x.SecurityClassificationName
         }).ToList();
     }
-    protected async Task<List<SelectListItem>> BindArchiveCreators()
+    public async Task<List<SelectListItem>> BindArchiveCreators()
     {
         var data = await _archiveCreatorService.GetAll();
 
@@ -179,7 +186,7 @@ public abstract class BaseController<T> : Controller
             Text = x.CreatorName
         }).ToList();
     }
-    public async Task<JsonResult> BindFloors(string Id)
+    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
     {
         List<TrxFloor> listFloors = new();
         Guid ArchiveUnitId = new Guid(Id);
@@ -188,6 +195,58 @@ public abstract class BaseController<T> : Controller
         listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
         return Json(listFloors);
 
+    }
+    public async Task<List<SelectListItem>> BindClassificationTypes()
+    {
+        var data = await _classificationTypeService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.TypeClassificationId.ToString(),
+            Text = x.TypeClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindClasscifications()
+    {
+        var data = await _classificationService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ClassificationId.ToString(),
+            Text = x.ClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindClasscificationSubjects()
+    {
+        var data = await _classificationSubjectService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubjectClassificationId.ToString(),
+            Text = x.SubjectClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindPositions()
+    {
+        var data = await _positionService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.PositionId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id)
+    {
+        var data = await _classificationSubjectService.GetAll();
+        var result = data.Where(x => x.ClassificationId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindClassificationIdByClassificationTypeId(Guid Id)
+    {
+        var data = await _classificationService.GetAll();
+        var result = data.Where(x => x.TypeClassificationId == Id).ToList();
+        return Json(result);
     }
     public async Task<JsonResult> BindSubSubjectClasscificationsById(string Id)
     {

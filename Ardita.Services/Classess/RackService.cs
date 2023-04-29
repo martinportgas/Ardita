@@ -73,5 +73,10 @@ namespace Ardita.Services.Classess
             }
 
         }
+
+        public async Task<bool> InsertBulk(List<TrxRack> racks)
+        {
+            return await _rackRepository.InsertBulk(racks);
+        }
     }
 }

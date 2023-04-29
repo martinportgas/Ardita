@@ -14,18 +14,19 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("MasterData")]
+    [Area(Const.MasterData)]
     public class ClassificationSubSubjectController : BaseController<TrxSubSubjectClassification>
     {
-        private IHostingEnvironment _hostingEnvironment;
-
+        #region MEMBER AND CTR
         public ClassificationSubSubjectController(
             IHostingEnvironment hostingEnvironment,
             IClassificationSubSubjectService classificationSubSubjectService,
             IClassificationSubjectService classificationSubjectService,
             IClassificationTypeService classificationTypeService,
             IClassificationService classificationService,
-            IPositionService positionService)
+            IPositionService positionService,
+            IArchiveCreatorService archiveCreatorService,
+            ISecurityClassificationService securityClassificationService)
         {
             _hostingEnvironment = hostingEnvironment;
             _classificationSubSubjectService = classificationSubSubjectService;
@@ -33,7 +34,11 @@ namespace Ardita.Areas.MasterData.Controllers
             _classificationTypeService = classificationTypeService;
             _classificationService = classificationService;
             _positionService = positionService;
+            _archiveCreatorService = archiveCreatorService;
+            _securityClassificationService = securityClassificationService;
         }
+        #endregion
+        #region MAIN ACTION
         public override async Task<ActionResult> Index() => await base.Index();
 
         public override async Task<JsonResult> GetData(DataTablePostModel model)
@@ -43,22 +48,6 @@ namespace Ardita.Areas.MasterData.Controllers
                 var result = await _classificationSubSubjectService.GetListClassificationSubSubject(model);
 
                 return Json(result);
-
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-        [HttpPost]
-        public async Task<JsonResult> GetSubjectClassifictionIdByClassificationId(Guid id)
-        {
-            try
-            {
-                var result = await _classificationSubjectService.GetByClassificationId(id);
-
-                return Json(result);
-
             }
             catch (Exception ex)
             {
@@ -67,109 +56,72 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            var classificationTypeData = await _classificationTypeService.GetAll();
-            var classificationData = await _classificationService.GetAll();
-            var classificationSubjectData = await _classificationSubjectService.GetAll();
-            var positionData = await _positionService.GetAll();
-
-            ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-            ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-            ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
-            ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
+            ViewBag.listClassificationType = await BindClassificationTypes();
+            ViewBag.listClassification = await BindClasscifications();
+            ViewBag.listClassificationSubject = await BindClasscificationSubjects();
+            ViewBag.listPosition = await BindPositions();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListSecurityClassification = await BindSecurityClassifications();
             return View(Const.Form, new TrxSubSubjectClassification());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.Where(x => x.SubSubjectClassificationId == Id).FirstOrDefault();
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
-                var classificationTypeData = await _classificationTypeService.GetAll();
-                var classificationData = await _classificationService.GetAll();
-                var classificationSubjectData = await _classificationSubjectService.GetAll();
-                var positionData = await _positionService.GetAll();
-                var subDetail = await _classificationSubSubjectService.GetDetailByMainId(Id);
+                ViewBag.listClassificationType = await BindClassificationTypes();
+                ViewBag.listClassification = await BindClasscifications();
+                ViewBag.listClassificationSubject = await BindClasscificationSubjects();
+                ViewBag.listPosition = await BindPositions();
+                ViewBag.ListArchiveCreator = await BindArchiveCreators();
+                ViewBag.ListSecurityClassification = await BindSecurityClassifications();
+                ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                ViewBag.subDetail = (from detail in subDetail
-                                     join position in positionData on detail.PositionId equals position.PositionId
-                                     select new TrxPermissionClassification
-                                     {
-                                         PositionId = detail.PositionId,
-                                         Position = position,
-                                     }).ToList();
-
-                ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
-                ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         public override async Task<IActionResult> Remove(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.Where(x => x.SubSubjectClassificationId == Id).FirstOrDefault();
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
-                var classificationTypeData = await _classificationTypeService.GetAll();
-                var classificationData = await _classificationService.GetAll();
-                var classificationSubjectData = await _classificationSubjectService.GetAll();
-                var positionData = await _positionService.GetAll();
-                var subDetail = await _classificationSubSubjectService.GetDetailByMainId(Id);
+                ViewBag.listClassificationType = await BindClassificationTypes();
+                ViewBag.listClassification = await BindClasscifications();
+                ViewBag.listClassificationSubject = await BindClasscificationSubjects();
+                ViewBag.listPosition = await BindPositions();
+                ViewBag.ListArchiveCreator = await BindArchiveCreators();
+                ViewBag.ListSecurityClassification = await BindSecurityClassifications();
+                ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                ViewBag.subDetail = (from detail in subDetail
-                                     join position in positionData on detail.PositionId equals position.PositionId
-                                     select new TrxPermissionClassification
-                                     {
-                                         PositionId = detail.PositionId,
-                                         Position = position,
-                                     }).ToList();
-
-                ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
-                ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
-
         }
         public override async Task<IActionResult> Detail(Guid Id)
         {
-            var data = await _classificationSubSubjectService.GetAll();
-            var model = data.Where(x => x.SubSubjectClassificationId == Id).FirstOrDefault();
-            if (model != null)
+            var model = await _classificationSubSubjectService.GetById(Id);
+            if (model.Any())
             {
-                var classificationTypeData = await _classificationTypeService.GetAll();
-                var classificationData = await _classificationService.GetAll();
-                var classificationSubjectData = await _classificationSubjectService.GetAll();
-                var positionData = await _positionService.GetAll();
-                var subDetail = await _classificationSubSubjectService.GetDetailByMainId(Id);
+                ViewBag.listClassificationType = await BindClassificationTypes();
+                ViewBag.listClassification = await BindClasscifications();
+                ViewBag.listClassificationSubject = await BindClasscificationSubjects();
+                ViewBag.listPosition = await BindPositions();
+                ViewBag.ListArchiveCreator = await BindArchiveCreators();
+                ViewBag.ListSecurityClassification = await BindSecurityClassifications();
+                ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                ViewBag.subDetail = (from detail in subDetail
-                                     join position in positionData on detail.PositionId equals position.PositionId
-                                     select new TrxPermissionClassification
-                                     {
-                                         PositionId = detail.PositionId,
-                                         Position = position,
-                                     }).ToList();
-
-                ViewBag.listClassificationType = new SelectList(classificationTypeData, "TypeClassificationId", "TypeClassificationName");
-                ViewBag.listClassification = new SelectList(classificationData, "ClassificationId", "ClassificationName");
-                ViewBag.listClassificationSubject = new SelectList(classificationSubjectData, "SubjectClassificationId", "SubjectClassificationName");
-                ViewBag.listPosition = new SelectList(positionData, "PositionId", "Name");
-                return View(Const.Form, model);
+                return View(Const.Form, model.FirstOrDefault());
             }
             else
             {
-                return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+                return RedirectToIndex();
             }
         }
         [HttpPost]
@@ -218,7 +170,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     }
                 }
             }
-            return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -230,50 +182,57 @@ namespace Ardita.Areas.MasterData.Controllers
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 result = await _classificationSubSubjectService.Delete(model);
             }
-            return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
-        public async Task<IActionResult> DownloadTemplate()
+        public async Task DownloadTemplate()
         {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"ClassificationSubSubjectTemplate.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            try
             {
+                string fileName = $"{Const.Template}-{nameof(TrxSubSubjectClassification).ToCleanNameOf()}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("ClassificationSubSubject");
-                ISheet excelSheetSubject = workbook.CreateSheet("ClassificationSubject");
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxSubSubjectClassification).ToCleanNameOf());
+                ISheet excelSheetCreator = workbook.CreateSheet(nameof(MstCreator).ToCleanNameOf());
+                ISheet excelSheetSubject = workbook.CreateSheet(nameof(TrxSubjectClassification).ToCleanNameOf());
+                ISheet excelSheetSecurity = workbook.CreateSheet(nameof(MstSecurityClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
+                IRow rowCreator = excelSheetCreator.CreateRow(0);
                 IRow rowSubject = excelSheetSubject.CreateRow(0);
+                IRow rowSecurity = excelSheetSecurity.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("ClassificationSubSubjectCode");
-                row.CreateCell(1).SetCellValue("ClassificationSubSubjectName");
-                row.CreateCell(2).SetCellValue("CreatorCode");
-                row.CreateCell(3).SetCellValue("ClassificationSubjectCode");
-                row.CreateCell(4).SetCellValue("ClassificationSecurityCode");
-                row.CreateCell(5).SetCellValue("RetentionActive");
-                row.CreateCell(6).SetCellValue("RetentionInActive");
-                row.CreateCell(7).SetCellValue("BasicInfo");
+                row.CreateCell(0).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
+                row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
+                row.CreateCell(3).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(4).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                row.CreateCell(5).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
+                row.CreateCell(6).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
+                row.CreateCell(7).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
 
-                row = excelSheet.CreateRow(1);
-                row.CreateCell(0).SetCellValue("Sample Code");
-                row.CreateCell(1).SetCellValue("Sample Name");
-                row.CreateCell(2).SetCellValue("Sample Creator Code");
-                row.CreateCell(3).SetCellValue("Sample Classification Subject Code");
-                row.CreateCell(4).SetCellValue("Sample Classification Security Code");
-                row.CreateCell(5).SetCellValue("10");
-                row.CreateCell(6).SetCellValue("20");
-                row.CreateCell(7).SetCellValue("Deskripsi");
+                rowCreator.CreateCell(0).SetCellValue(nameof(MstCreator.CreatorCode));
+                rowCreator.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorName));
 
-                rowSubject.CreateCell(0).SetCellValue("Code");
-                rowSubject.CreateCell(1).SetCellValue("Name");
+                var dataCreator = await _archiveCreatorService.GetAll();
+
+                int no = 1;
+                foreach (var item in dataCreator)
+                {
+                    rowCreator = excelSheetCreator.CreateRow(no);
+
+                    rowCreator.CreateCell(0).SetCellValue(item.CreatorCode);
+                    rowCreator.CreateCell(1).SetCellValue(item.CreatorName);
+                    no += 1;
+                }
+
+                rowSubject.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                rowSubject.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
 
                 var dataclassificationSubject = await _classificationSubjectService.GetAll();
 
-                int no = 1;
+                no = 1;
                 foreach (var item in dataclassificationSubject)
                 {
                     rowSubject = excelSheetSubject.CreateRow(no);
@@ -282,103 +241,141 @@ namespace Ardita.Areas.MasterData.Controllers
                     rowSubject.CreateCell(1).SetCellValue(item.SubjectClassificationName);
                     no += 1;
                 }
-                workbook.Write(fs);
-            }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
-        }
-        public async Task<IActionResult> Export()
-        {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"ClassificationSubSubjectData.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            var data = await _classificationSubSubjectService.GetAll();
-            var subject = await _classificationSubjectService.GetAll();
 
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+                rowSecurity.CreateCell(0).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                rowSecurity.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+
+                var dataSecurity = await _securityClassificationService.GetAll();
+
+                no = 1;
+                foreach (var item in dataSecurity)
+                {
+                    rowSecurity = excelSheetSecurity.CreateRow(no);
+
+                    rowSecurity.CreateCell(0).SetCellValue(item.SecurityClassificationCode);
+                    rowSecurity.CreateCell(1).SetCellValue(item.SecurityClassificationName);
+                    no += 1;
+                }
+
+                workbook.WriteExcelToResponse(HttpContext, fileName);
+            }
+            catch (Exception ex)
             {
+                throw new Exception();
+            }
+        }
+        public async Task Export()
+        {
+            try
+            {
+                string fileName = nameof(TrxSubSubjectClassification).ToCleanNameOf();
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                var data = await _classificationSubSubjectService.GetAll();
+                var dataSubjects = await _classificationSubjectService.GetAll();
+                var dataCreators = await _archiveCreatorService.GetAll();
+                var dataSecuritys = await _securityClassificationService.GetAll();
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("Classification");
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxSubSubjectClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("ClassificationSubSubjectCode");
-                row.CreateCell(1).SetCellValue("ClassificationSubSubjectName");
-                row.CreateCell(2).SetCellValue("CreatorCode");
-                row.CreateCell(3).SetCellValue("CreatorName");
-                row.CreateCell(4).SetCellValue("ClassificationSubjectCode");
-                row.CreateCell(5).SetCellValue("ClassificationSubjectName");
-                row.CreateCell(6).SetCellValue("ClassificationSecurityCode");
-                row.CreateCell(7).SetCellValue("ClassificationSecurityName");
-                row.CreateCell(8).SetCellValue("RetentionActive");
-                row.CreateCell(9).SetCellValue("RetentionInActive");
-                row.CreateCell(10).SetCellValue("BasicInfo");
+                row.CreateCell(0).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
+                row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
+                row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorName));
+                row.CreateCell(4).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(5).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(6).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                row.CreateCell(7).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+                row.CreateCell(8).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
+                row.CreateCell(9).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
+                row.CreateCell(10).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
 
                 int no = 1;
-                foreach (var item in data)
+                if (data.Any())
                 {
-                    row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(item.SubSubjectClassificationCode);
-                    row.CreateCell(1).SetCellValue(item.SubSubjectClassificationName);
-                    row.CreateCell(2).SetCellValue(item.SubSubjectClassificationName);
-                    row.CreateCell(3).SetCellValue(item.SubSubjectClassificationName);
-                    var subjectData = subject.Where(x => x.SubjectClassificationId == item.SubjectClassificationId).FirstOrDefault();
-                    row.CreateCell(4).SetCellValue(subjectData.SubjectClassificationCode);
-                    row.CreateCell(5).SetCellValue(subjectData.SubjectClassificationName);
-                    row.CreateCell(6).SetCellValue(subjectData.SubjectClassificationCode);
-                    row.CreateCell(7).SetCellValue(subjectData.SubjectClassificationName);
-                    row.CreateCell(8).SetCellValue(item.RetentionActive.ToString());
-                    row.CreateCell(9).SetCellValue(item.RetentionInactive.ToString());
-                    row.CreateCell(10).SetCellValue(item.BasicInformation);
-                    no += 1;
+                    foreach (var item in data)
+                    {
+                        var dataCreator = dataCreators.Where(x => x.CreatorId == item.CreatorId).FirstOrDefault();
+                        var dataSubject = dataSubjects.Where(x => x.SubjectClassificationId == item.SubjectClassificationId).FirstOrDefault();
+                        var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationId == item.SecurityClassificationId).FirstOrDefault();
+
+                        if(dataCreator != null && dataSubject != null && dataSecurity != null)
+                        {
+                            row = excelSheet.CreateRow(no);
+                            row.CreateCell(0).SetCellValue(item.SubSubjectClassificationCode);
+                            row.CreateCell(1).SetCellValue(item.SubSubjectClassificationName);
+                            row.CreateCell(2).SetCellValue(dataCreator.CreatorCode);
+                            row.CreateCell(3).SetCellValue(dataCreator.CreatorName);
+                            row.CreateCell(4).SetCellValue(dataSubject.SubjectClassificationCode);
+                            row.CreateCell(5).SetCellValue(dataSubject.SubjectClassificationName);
+                            row.CreateCell(6).SetCellValue(dataSecurity.SecurityClassificationCode);
+                            row.CreateCell(7).SetCellValue(dataSecurity.SecurityClassificationName);
+                            row.CreateCell(8).SetCellValue(item.RetentionActive.ToString());
+                            row.CreateCell(9).SetCellValue(item.RetentionInactive.ToString());
+                            row.CreateCell(10).SetCellValue(item.BasicInformation);
+                            no += 1;
+                        }
+                    }
                 }
-                workbook.Write(fs);
+                
+                workbook.WriteExcelToResponse(HttpContext, fileName);
             }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            catch (Exception ex)
             {
-                await stream.CopyToAsync(memory);
+                throw new Exception();
             }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }
-        public async Task<ActionResult> Upload()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload()
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, "Upload", _hostingEnvironment.WebRootPath);
 
-            var subjectClassifications = await _classificationSubjectService.GetAll();
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+
+            var dataSubjects = await _classificationSubjectService.GetAll();
+            var dataCreators = await _archiveCreatorService.GetAll();
+            var dataSecuritys = await _securityClassificationService.GetAll();
 
             List<TrxSubSubjectClassification> models = new();
             TrxSubSubjectClassification model;
 
             foreach (DataRow row in result.Rows)
             {
-                model = new();
-                model.SubSubjectClassificationId = Guid.NewGuid();
-                model.SubSubjectClassificationCode = row[0].ToString();
-                model.SubSubjectClassificationName = row[1].ToString();
-                model.CreatorId = subjectClassifications.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault().SubjectClassificationId;
-                model.SubjectClassificationId = subjectClassifications.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault().SubjectClassificationId;
-                model.SecurityClassificationId = subjectClassifications.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault().SubjectClassificationId;
-                model.RetentionActive = (int)row[5];
-                model.RetentionInactive = (int)row[6];
-                model.BasicInformation = row[7].ToString();
-                model.IsActive = true;
-                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                model.CreatedDate = DateTime.Now;
+                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[3].ToString()).FirstOrDefault();
+                var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault();
+                var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).FirstOrDefault();
 
-                models.Add(model);
+                if (dataCreator != null && dataSubject != null && dataSecurity != null)
+                {
+                    model = new();
+                    model.SubSubjectClassificationId = Guid.NewGuid();
+                    model.SubSubjectClassificationCode = row[0].ToString();
+                    model.SubSubjectClassificationName = row[1].ToString();
+                    model.CreatorId = dataCreator.CreatorId;
+                    model.SubjectClassificationId = dataSubject.SubjectClassificationId;
+                    model.SecurityClassificationId = dataSecurity.SecurityClassificationId;
+                    model.RetentionActive = (int)row[5];
+                    model.RetentionInactive = (int)row[6];
+                    model.BasicInformation = row[7].ToString();
+                    model.IsActive = true;
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.CreatedDate = DateTime.Now;
+
+                    models.Add(model);
+                }
             }
             await _classificationSubSubjectService.InsertBulk(models);
 
-            return RedirectToAction("Index", "ClassificationSubSubject", new { Area = "MasterData" });
+            return RedirectToIndex();
         }
+        #endregion
+        #region HELPER
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationSubSubject, new { Area = Const.MasterData });
+        #endregion
     }
 }

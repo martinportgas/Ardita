@@ -15,12 +15,15 @@ namespace Ardita.Services.Classess
     {
         private readonly IClassificationSubSubjectRepository _classificationSubSubjectRepository;
         private readonly IClassificationPermissionRepository _classificationPermissionRepository;
+        private readonly IPositionRepository _positionRepository;
         public ClassificationSubSubjectService(
             IClassificationSubSubjectRepository classificationSubSubjectRepository,
-            IClassificationPermissionRepository classificationPermissionRepository)
+            IClassificationPermissionRepository classificationPermissionRepository,
+            IPositionRepository  positionRepository)
         {
             _classificationSubSubjectRepository = classificationSubSubjectRepository;
             _classificationPermissionRepository = classificationPermissionRepository;
+            _positionRepository = positionRepository;
         }
         public async Task<int> Delete(TrxSubSubjectClassification model)
         {
@@ -91,6 +94,21 @@ namespace Ardita.Services.Classess
                 return null;
             }
 
+        }
+        public async Task<IEnumerable<TrxPermissionClassification>> GetListDetailPermissionClassifications(Guid id)
+        {
+            var positionData = await _positionRepository.GetAll();
+            var subDetail = await _classificationPermissionRepository.GetByMainId(id);
+
+            var result = (from detail in subDetail
+                                 join position in positionData on detail.PositionId equals position.PositionId
+                                 select new TrxPermissionClassification
+                                 {
+                                     PositionId = detail.PositionId,
+                                     Position = position,
+                                 }).ToList();
+
+            return result;
         }
     }
 }

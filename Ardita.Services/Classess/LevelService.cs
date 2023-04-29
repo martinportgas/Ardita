@@ -73,5 +73,10 @@ namespace Ardita.Services.Classess
             }
 
         }
+
+        public async Task<bool> InsertBulk(List<TrxLevel> levels)
+        {
+            return await _levelRepository.InsertBulk(levels);
+        }
     }
 }

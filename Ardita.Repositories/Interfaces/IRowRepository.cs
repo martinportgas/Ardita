@@ -15,6 +15,7 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<TrxRow>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(TrxRow model);
+        Task<bool> InsertBulk(List<TrxRow> rows);
         Task<int> Delete(TrxRow model);
         Task<int> Update(TrxRow model);
     }

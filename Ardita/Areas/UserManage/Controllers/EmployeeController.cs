@@ -14,17 +14,15 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Data;
+using Ardita.Globals;
+using Ardita.Controllers;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("UserManage")]
-    public class EmployeeController : Controller
+    [Area(Const.UserManage)]
+    public class EmployeeController : BaseController<MstEmployee>
     {
-        private IHostingEnvironment _hostingEnvironment;
-
-        private readonly IEmployeeService _employeeService;
-        private readonly IPositionService _positionService;
         public EmployeeController(
             IHostingEnvironment hostingEnvironment,
             IEmployeeService employeeService,
@@ -35,28 +33,24 @@ namespace Ardita.Areas.UserManage.Controllers
             _employeeService = employeeService;
             _positionService = positionService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<JsonResult> GetData()
+        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                var model = new DataTableModel();
+                var dtModel = new DataTableModel();
 
-                model.draw = Request.Form["draw"].FirstOrDefault();
-                model.start = Request.Form["start"].FirstOrDefault();
-                model.length = Request.Form["length"].FirstOrDefault();
-                model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                model.recordsTotal = 0;
+                dtModel.draw = Request.Form["draw"].FirstOrDefault();
+                dtModel.start = Request.Form["start"].FirstOrDefault();
+                dtModel.length = Request.Form["length"].FirstOrDefault();
+                dtModel.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                dtModel.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                dtModel.searchValue = Request.Form["search[value]"].FirstOrDefault();
+                dtModel.pageSize = model.length != null ? Convert.ToInt32(dtModel.length) : 0;
+                dtModel.skip = model.start != null ? Convert.ToInt32(dtModel.start) : 0;
+                dtModel.recordsTotal = 0;
 
-                var result = await _employeeService.GetListEmployee(model);
+                var result = await _employeeService.GetListEmployee(dtModel);
 
                 var jsonResult = new
                 {
@@ -72,7 +66,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 throw;
             }
         }
-        public async Task<IActionResult> Add()
+        public override async Task<IActionResult> Add()
         {
             EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
 
@@ -85,7 +79,7 @@ namespace Ardita.Areas.UserManage.Controllers
             return View(viewModels);
         }
 
-        public async Task<IActionResult> Update(Guid Id)
+        public override async Task<IActionResult> Update(Guid Id)
         {
             EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
 
@@ -108,7 +102,7 @@ namespace Ardita.Areas.UserManage.Controllers
             }
         }
 
-        public async Task<IActionResult> Remove(Guid Id)
+        public override async Task<IActionResult> Remove(Guid Id)
         {
             EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
 

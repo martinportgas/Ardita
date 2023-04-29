@@ -74,7 +74,7 @@ namespace Ardita.Repositories.Classess
                     x => (x.FloorId + x.FloorName).Contains(model.searchValue) &&
                     x.IsActive == true
                     )
-                .OrderByDescending(x => EF.Property<TrxClassification>(x, propertyName))
+                .OrderByDescending(x => EF.Property<TrxFloor>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
             }

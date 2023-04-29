@@ -50,7 +50,12 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxSubjectClassification>> GetById(Guid id)
         {
-            var result = await _context.TrxSubjectClassifications.AsNoTracking().Where(x => x.IsActive == true && x.SubjectClassificationId == id).ToListAsync();
+            var result = await _context.TrxSubjectClassifications
+                .Include(x => x.Classification)
+                .Include(x => x.Classification.TypeClassification)
+                .AsNoTracking()
+                .Where(x => x.IsActive == true && x.SubjectClassificationId == id)
+                .ToListAsync();
             return result;
         }
         public async Task<IEnumerable<TrxSubjectClassification>> GetByFilterModel(DataTableModel model)

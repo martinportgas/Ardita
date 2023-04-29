@@ -69,6 +69,24 @@ namespace Ardita.Services.Classess
                 );
             }
 
+            if (!(string.IsNullOrEmpty(tableModel.sortColumn)))
+            {
+                var param = tableModel.sortColumn;
+                var propertyInfo = typeof(EmployeeListViewDetailModel).GetProperty(param);
+
+                if (tableModel.sortColumnDirection == "asc")
+                {
+                    results = results.OrderBy(x => propertyInfo.GetValue(x, null));
+                }
+                else
+                {
+                    results = results.OrderByDescending(x => propertyInfo.GetValue(x, null));
+                }
+                
+
+               
+            }
+
             tableModel.recordsTotal = results.Count();
             var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
 

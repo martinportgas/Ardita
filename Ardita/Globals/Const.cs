@@ -48,6 +48,7 @@
         //Html helper
         public const string Required = "required";
         public const string Disabled = "disabled";
+        public const string Hidden = "hidden";
 
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
@@ -56,6 +57,22 @@
 
         //Prefix
         public const string Trx = "Trx";
+        public const string No = "No";
+
+        //Binding
+        public const string BindFloors = "BindFloors";
+        public const string BindFloorsByArchiveUnitId = "BindFloorsByArchiveUnitId";
+        public const string BindArchiveCreators = "BindArchiveCreators";
+        public const string BindSecurityClassifications = "BindSecurityClassifications";
+        public const string BindSubSubjectClasscifications = "BindSubSubjectClasscifications";
+        public const string BindGmds = "BindGmds";
+        public const string BindLevels = "BindLevels";
+        public const string BindArchiveUnits = "BindArchiveUnits";
+        public const string BindRooms = "BindRooms";
+        public const string BindRacks = "BindRacks";
+        public const string BindCompanies = "BindCompanies";
+        public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
+        public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
 
         //Web Component
         public const string GET = "GET";
