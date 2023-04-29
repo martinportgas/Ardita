@@ -28,7 +28,7 @@ namespace Ardita.Services.Classess
             return await _rackRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxRack>> GetById(Guid id)
+        public async Task<TrxRack> GetById(Guid id)
         {
             return await _rackRepository.GetById(id);
         }

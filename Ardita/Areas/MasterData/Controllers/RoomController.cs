@@ -49,11 +49,11 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             var data = await _roomService.GetById(Id);
             
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -63,10 +63,10 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _roomService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -76,10 +76,10 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _roomService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -136,7 +136,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     room = new();
                     room.RoomId = Guid.NewGuid();
-                    room.FloorId = floors.Where(x => x.FloorCode == row[1].ToString()).FirstOrDefault().FloorId;
+                    room.FloorId = floors.Where(x => x.FloorCode.Contains(row[1].ToString())).FirstOrDefault().FloorId;
                     room.RoomCode = row[2].ToString();
                     room.RoomName = row[3].ToString();
                     room.ArchiveRoomType = row[4].ToString();
@@ -184,14 +184,9 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     row = excelSheet.CreateRow(no);
 
-                    var floorDetail = floors.Where(x => x.FloorId == item.FloorId).FirstOrDefault();
-                    
-                    var archiveUnitName = archives.Where(x => x.ArchiveUnitId == floorDetail.ArchiveUnitId).FirstOrDefault().ArchiveUnitName;
-                    var floorName = floors.Where(x => x.FloorId == floorDetail.FloorId).FirstOrDefault().FloorName;
-
                     row.CreateCell(0).SetCellValue(no);
-                    row.CreateCell(1).SetCellValue(archiveUnitName);
-                    row.CreateCell(2).SetCellValue(floorName);
+                    row.CreateCell(1).SetCellValue(item.Floor.ArchiveUnit.ArchiveUnitName);
+                    row.CreateCell(2).SetCellValue(item.Floor.FloorName);
                     row.CreateCell(3).SetCellValue(item.RoomCode);
                     row.CreateCell(4).SetCellValue(item.RoomName);
                     row.CreateCell(5).SetCellValue(item.ArchiveRoomType);
@@ -233,19 +228,16 @@ namespace Ardita.Areas.MasterData.Controllers
                 rowFloor.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
 
                 var dataFloors = await _floorService.GetAll();
-                var dataArchiveUnits = await _archiveUnitService.GetAll();
 
                 int no = 1;
                 foreach (var item in dataFloors)
                 {
                     rowFloor = excelSheetFloors.CreateRow(no);
 
-                    var archiveUnitName = dataArchiveUnits.Where(x => x.ArchiveUnitId == item.ArchiveUnitId).FirstOrDefault().ArchiveUnitName;
-
                     rowFloor.CreateCell(0).SetCellValue(no);
                     rowFloor.CreateCell(1).SetCellValue(item.FloorCode);
                     rowFloor.CreateCell(2).SetCellValue(item.FloorName);
-                    rowFloor.CreateCell(3).SetCellValue(archiveUnitName);
+                    rowFloor.CreateCell(3).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
                     no += 1;
                 }
                 workbook.WriteExcelToResponse(HttpContext, fileName);

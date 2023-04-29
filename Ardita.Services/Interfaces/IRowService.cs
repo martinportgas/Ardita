@@ -10,7 +10,7 @@ namespace Ardita.Services.Interfaces
 {
     public interface IRowService
     {
-        Task<IEnumerable<TrxRow>> GetById(Guid id);
+        Task<TrxRow> GetById(Guid id);
         Task<IEnumerable<TrxRow>> GetAll();
         Task<DataTableResponseModel<TrxRow>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxRow model);

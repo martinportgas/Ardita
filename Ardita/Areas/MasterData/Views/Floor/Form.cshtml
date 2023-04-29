@@ -63,7 +63,8 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
-                                        <input type="hidden" value="@Model.FloorId" asp-for="FloorId" />
+                                        <input type="hidden" asp-for="FloorId" />
+
                                         <select asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnits"
                                             id="txtUnitArchive" class="select2_demo_1 form-control" 
                                             data-placeholder="-- Pilih Unit Kearsipan --">
@@ -72,11 +73,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Lantai</label>
-                                        <input type="text" placeholder="" id="txtFloorCode" class="form-control" asp-for="FloorCode" value="@Model.FloorCode">
+                                        <input type="text" placeholder="" id="txtFloorCode" class="form-control" asp-for="FloorCode">
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Lantai</label>
-                                        <input type="text" placeholder="" id="txtFloorName" class="form-control" asp-for="FloorName" value="@Model.FloorName">
+                                        <input type="text" placeholder="" id="txtFloorName" class="form-control" asp-for="FloorName">
                                     </div>
                                 </div>
                                 <div>
