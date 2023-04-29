@@ -24,6 +24,4 @@ public partial class MstGmd
     public virtual ICollection<MstGmdLog> MstGmdLogs { get; } = new List<MstGmdLog>();
 
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
-
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 }

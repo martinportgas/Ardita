@@ -56,7 +56,6 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
         }
-
         return result;
     }
 

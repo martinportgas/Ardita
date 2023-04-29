@@ -7,9 +7,21 @@ public partial class TrxArchiveMovement
 {
     public Guid ArchiveMovementId { get; set; }
 
-    public Guid? ArchiveUnitId { get; set; }
+    public string? MovementCode { get; set; }
 
-    public Guid? ArchiveId { get; set; }
+    public string? MovementName { get; set; }
+
+    public string? Description { get; set; }
+
+    public Guid TypeStorageId { get; set; }
+
+    public int? TotalVolume { get; set; }
+
+    public int? DifferenceVolume { get; set; }
+
+    public Guid ArchiveUnitIdDestination { get; set; }
+
+    public Guid ArchiveUnitIdFrom { get; set; }
 
     public DateTime? DateSchedule { get; set; }
 
@@ -17,7 +29,15 @@ public partial class TrxArchiveMovement
 
     public DateTime? DateReceived { get; set; }
 
-    public bool? IsActive { get; set; }
+    public int? ApproveLevel { get; set; }
+
+    public int? ApproveMax { get; set; }
+
+    public long StatusId { get; set; }
+
+    public string? Note { get; set; }
+
+    public bool IsActive { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
@@ -27,7 +47,13 @@ public partial class TrxArchiveMovement
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual TrxArchive? Archive { get; set; }
+    public virtual TrxArchiveUnit ArchiveUnitIdDestinationNavigation { get; set; } = null!;
 
-    public virtual TrxArchiveUnit? ArchiveUnit { get; set; }
+    public virtual TrxArchiveUnit ArchiveUnitIdFromNavigation { get; set; } = null!;
+
+    public virtual MstStatus Status { get; set; } = null!;
+
+    public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
+
+    public virtual TrxTypeStorage TypeStorage { get; set; } = null!;
 }

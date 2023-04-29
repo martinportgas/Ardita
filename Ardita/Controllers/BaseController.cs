@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.SubSubjectClasscification;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,6 +26,7 @@ public abstract class BaseController<T> : Controller
     protected IRowService _rowService { get; set; }
     protected ISecurityClassificationService _securityClassificationService { get; set; }
     protected IArchiveService _archiveService { get; set; }
+    protected IMediaStorageService _mediaStorage { get; set; }
     #endregion
 
     #region Main Action
@@ -177,7 +179,7 @@ public abstract class BaseController<T> : Controller
             Text = x.CreatorName
         }).ToList();
     }
-    protected async Task<JsonResult> BindFloors(string Id)
+    public async Task<JsonResult> BindFloors(string Id)
     {
         List<TrxFloor> listFloors = new();
         Guid ArchiveUnitId = new Guid(Id);
@@ -185,6 +187,29 @@ public abstract class BaseController<T> : Controller
         var data = await _floorService.GetAll();
         listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
         return Json(listFloors);
+
+    }
+    public async Task<JsonResult> BindSubSubjectClasscificationsById(string Id)
+    {
+        Guid SubSubjectClasscificationId = new(Id);
+
+        var data = await _classificationSubSubjectService.GetById(SubSubjectClasscificationId);
+        var subSubjectClassification = from d in data
+                      where d.SubSubjectClassificationId == SubSubjectClasscificationId
+                      select new SubSubjectClasscificationViewModel
+                      {
+                          SubSubjectClassificationId = d.SubSubjectClassificationId,
+                          SubSubjectClassificationCode = d.SubSubjectClassificationCode,
+                          CreatorId = d.CreatorId,
+                          CreatorName = d.Creator?.CreatorName,
+                          RetentionActive = d.RetentionActive,
+                          RetentionInactive = d.RetentionInactive,
+                          SubSubjectClassificationName = d.SubSubjectClassificationName
+                      };
+                      
+
+
+        return Json(subSubjectClassification.FirstOrDefault());
 
     }
     #endregion

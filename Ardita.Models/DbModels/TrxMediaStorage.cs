@@ -7,51 +7,35 @@ public partial class TrxMediaStorage
 {
     public Guid MediaStorageId { get; set; }
 
-    public Guid? CreatorId { get; set; }
+    public Guid TypeStorageId { get; set; }
 
-    public Guid? TypeStorageId { get; set; }
+    public Guid RowId { get; set; }
 
-    public Guid? GmdId { get; set; }
+    public string MediaStorageCode { get; set; } = null!;
 
-    public Guid? RoomId { get; set; }
+    public string MediaStorageName { get; set; } = null!;
 
-    public Guid? RackId { get; set; }
+    public int TotalVolume { get; set; }
 
-    public Guid? LevelId { get; set; }
+    public int DifferenceVolume { get; set; }
 
-    public Guid? RowId { get; set; }
+    public bool IsActive { get; set; }
 
-    public string? MediaStorageCode { get; set; }
+    public long StatusId { get; set; }
 
-    public string? MediaStorageName { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public int? TotalVolume { get; set; }
-
-    public int? DifferenceVolume { get; set; }
-
-    public bool? IsActive { get; set; }
-
-    public DateTime? CreatedDate { get; set; }
-
-    public Guid? CreatedBy { get; set; }
+    public Guid CreatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual MstCreator? Creator { get; set; }
+    public virtual TrxRow Row { get; set; } = null!;
 
-    public virtual MstGmd? Gmd { get; set; }
-
-    public virtual TrxLevel? Level { get; set; }
-
-    public virtual TrxRack? Rack { get; set; }
-
-    public virtual TrxRoom? Room { get; set; }
-
-    public virtual TrxRow? Row { get; set; }
+    public virtual MstStatus Status { get; set; } = null!;
 
     public virtual ICollection<TrxMediaStorageDetail> TrxMediaStorageDetails { get; } = new List<TrxMediaStorageDetail>();
 
-    public virtual TrxTypeStorage? TypeStorage { get; set; }
+    public virtual TrxTypeStorage TypeStorage { get; set; } = null!;
 }

@@ -33,7 +33,9 @@ public partial class TrxArchiveUnit
 
     public virtual ICollection<MstCreator> MstCreators { get; } = new List<MstCreator>();
 
-    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovements { get; } = new List<TrxArchiveMovement>();
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementArchiveUnitIdDestinationNavigations { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementArchiveUnitIdFromNavigations { get; } = new List<TrxArchiveMovement>();
 
     public virtual ICollection<TrxFloor> TrxFloors { get; } = new List<TrxFloor>();
 

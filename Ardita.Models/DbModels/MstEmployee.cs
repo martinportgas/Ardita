@@ -46,4 +46,6 @@ public partial class MstEmployee
     public virtual ICollection<MstUser> MstUsers { get; } = new List<MstUser>();
 
     public virtual MstPosition Position { get; set; } = null!;
+
+    public virtual ICollection<TrxApproval> TrxApprovals { get; } = new List<TrxApproval>();
 }

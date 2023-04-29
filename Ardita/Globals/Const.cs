@@ -52,9 +52,16 @@
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
         public const string Template = "Template";
+        public const string Files = "files";
 
         //Prefix
         public const string Trx = "Trx";
+
+        //Web Component
+        public const string GET = "GET";
+        public const string JSON = "JSON";
+        public const string APPLICATIONJSON = "application/json";
+
 
     }
 }

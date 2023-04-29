@@ -47,6 +47,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstSecurityClassificationLog> MstSecurityClassificationLogs { get; set; }
 
+    public virtual DbSet<MstStatus> MstStatuses { get; set; }
+
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
@@ -55,9 +57,21 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstUser> MstUsers { get; set; }
 
+    public virtual DbSet<TrxApproval> TrxApprovals { get; set; }
+
     public virtual DbSet<TrxArchive> TrxArchives { get; set; }
 
+    public virtual DbSet<TrxArchiveDestroy> TrxArchiveDestroys { get; set; }
+
+    public virtual DbSet<TrxArchiveDestroyDetail> TrxArchiveDestroyDetails { get; set; }
+
+    public virtual DbSet<TrxArchiveExtend> TrxArchiveExtends { get; set; }
+
+    public virtual DbSet<TrxArchiveExtendDetail> TrxArchiveExtendDetails { get; set; }
+
     public virtual DbSet<TrxArchiveMovement> TrxArchiveMovements { get; set; }
+
+    public virtual DbSet<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; set; }
 
     public virtual DbSet<TrxArchiveUnit> TrxArchiveUnits { get; set; }
 
@@ -86,6 +100,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<TrxSubjectClassification> TrxSubjectClassifications { get; set; }
 
     public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
+
+    public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -688,6 +704,31 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_SECURITY_CLASSIFICATION_ID_SECURITY_CLASSIFICATION_LOG");
         });
 
+        modelBuilder.Entity<MstStatus>(entity =>
+        {
+            entity.HasKey(e => e.StatusId);
+
+            entity.ToTable("MST_STATUS");
+
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+        });
+
         modelBuilder.Entity<MstSubmenu>(entity =>
         {
             entity.HasKey(e => e.SubmenuId).HasName("PK_SUBMENU");
@@ -836,6 +877,44 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_EMPLOYEEID");
         });
 
+        modelBuilder.Entity<TrxApproval>(entity =>
+        {
+            entity.HasKey(e => e.ApprovalId);
+
+            entity.ToTable("TRX_APPROVAL");
+
+            entity.Property(e => e.ApprovalId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("approval_id");
+            entity.Property(e => e.ApprovalCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("approval_code");
+            entity.Property(e => e.ApprovalDate)
+                .HasColumnType("datetime")
+                .HasColumnName("approval_date");
+            entity.Property(e => e.ApprovalLevel).HasColumnName("approval_level");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+            entity.Property(e => e.Note)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("note");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.TransId).HasColumnName("trans_id");
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.TrxApprovals)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_TRX_APPROVAL_MST_EMPLOYEE");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxApprovals)
+                .HasForeignKey(d => d.StatusId)
+                .HasConstraintName("FK_TRX_APPROVAL_MST_STATUS");
+        });
+
         modelBuilder.Entity<TrxArchive>(entity =>
         {
             entity.HasKey(e => e.ArchiveId);
@@ -902,6 +981,163 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_SUB_SUBJECT_CLASSIFICATION_ID");
         });
 
+        modelBuilder.Entity<TrxArchiveDestroy>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveDestroyId);
+
+            entity.ToTable("TRX_ARCHIVE_DESTROY");
+
+            entity.Property(e => e.ArchiveDestroyId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_destroy_id");
+            entity.Property(e => e.ApproveLevel).HasColumnName("approve_level");
+            entity.Property(e => e.ApproveMax).HasColumnName("approve_max");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.DestroyCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("destroy_code");
+            entity.Property(e => e.DestroyName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("destroy_name");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Note)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("note");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveDestroys)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_DESTROY_MST_STATUS");
+        });
+
+        modelBuilder.Entity<TrxArchiveDestroyDetail>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveDestroyDetailId);
+
+            entity.ToTable("TRX_ARCHIVE_DESTROY_DETAIL");
+
+            entity.Property(e => e.ArchiveDestroyDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_destroy_detail_id");
+            entity.Property(e => e.ArchiveDestroyId).HasColumnName("archive_destroy_id");
+            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.DestroySchedule)
+                .HasColumnType("datetime")
+                .HasColumnName("destroy_schedule");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Reason)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("reason");
+
+            entity.HasOne(d => d.ArchiveDestroy).WithMany(p => p.TrxArchiveDestroyDetails)
+                .HasForeignKey(d => d.ArchiveDestroyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_DESTROY_DETAIL_TRX_ARCHIVE_DESTROY");
+
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveDestroyDetails)
+                .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_DESTROY_DETAIL_TRX_ARCHIVE");
+        });
+
+        modelBuilder.Entity<TrxArchiveExtend>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveExtendId);
+
+            entity.ToTable("TRX_ARCHIVE_EXTEND");
+
+            entity.Property(e => e.ArchiveExtendId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_extend_id");
+            entity.Property(e => e.ApproveLevel).HasColumnName("approve_level");
+            entity.Property(e => e.ApproveMax).HasColumnName("approve_max");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.ExtendCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("extend_code");
+            entity.Property(e => e.ExtendName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("extend_name");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Note)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("note");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveExtends)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_EXTEND_MST_STATUS");
+        });
+
+        modelBuilder.Entity<TrxArchiveExtendDetail>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveExtendDetailId);
+
+            entity.ToTable("TRX_ARCHIVE_EXTEND_DETAIL");
+
+            entity.Property(e => e.ArchiveExtendDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_extend_detail_id");
+            entity.Property(e => e.ArchiveExtendId).HasColumnName("archive_extend_id");
+            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Reason)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("reason");
+            entity.Property(e => e.RetensionAfter).HasColumnName("retension_after");
+            entity.Property(e => e.RetentionBefore).HasColumnName("retention_before");
+
+            entity.HasOne(d => d.ArchiveExtend).WithMany(p => p.TrxArchiveExtendDetails)
+                .HasForeignKey(d => d.ArchiveExtendId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_EXTEND_DETAIL_TRX_ARCHIVE_EXTEND");
+
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveExtendDetails)
+                .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_EXTEND_DETAIL_TRX_ARCHIVE");
+        });
+
         modelBuilder.Entity<TrxArchiveMovement>(entity =>
         {
             entity.HasKey(e => e.ArchiveMovementId);
@@ -909,10 +1145,12 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_ARCHIVE_MOVEMENT");
 
             entity.Property(e => e.ArchiveMovementId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("archive_movement_id");
-            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
-            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
+            entity.Property(e => e.ApproveLevel).HasColumnName("approve_level");
+            entity.Property(e => e.ApproveMax).HasColumnName("approve_max");
+            entity.Property(e => e.ArchiveUnitIdDestination).HasColumnName("archive_unit_id_destination");
+            entity.Property(e => e.ArchiveUnitIdFrom).HasColumnName("archive_unit_id_from");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -926,19 +1164,79 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.DateSend)
                 .HasColumnType("datetime")
                 .HasColumnName("date_send");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.MovementCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("movement_code");
+            entity.Property(e => e.MovementName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("movement_name");
+            entity.Property(e => e.Note)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("note");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
+            entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
-            entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveMovements)
-                .HasForeignKey(d => d.ArchiveId)
-                .HasConstraintName("FK_ARCHIVE_ID");
+            entity.HasOne(d => d.ArchiveUnitIdDestinationNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdDestinationNavigations)
+                .HasForeignKey(d => d.ArchiveUnitIdDestination)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT");
 
-            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.TrxArchiveMovements)
-                .HasForeignKey(d => d.ArchiveUnitId)
-                .HasConstraintName("FK_ARCHIVE_UNIT_ID");
+            entity.HasOne(d => d.ArchiveUnitIdFromNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdFromNavigations)
+                .HasForeignKey(d => d.ArchiveUnitIdFrom)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT1");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveMovements)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_STATUS");
+
+            entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxArchiveMovements)
+                .HasForeignKey(d => d.TypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<TrxArchiveMovementDetail>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveMovementDetailId);
+
+            entity.ToTable("TRX_ARCHIVE_MOVEMENT_DETAIL");
+
+            entity.Property(e => e.ArchiveMovementDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_movement_detail_id");
+            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.ArchiveMovementId).HasColumnName("archive_movement_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveMovementDetails)
+                .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_DETAIL_TRX_ARCHIVE");
+
+            entity.HasOne(d => d.ArchiveMovement).WithMany(p => p.TrxArchiveMovementDetails)
+                .HasForeignKey(d => d.ArchiveMovementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_DETAIL_TRX_ARCHIVE_MOVEMENT");
         });
 
         modelBuilder.Entity<TrxArchiveUnit>(entity =>
@@ -1022,16 +1320,18 @@ public partial class BksArditaDevContext : DbContext
 
         modelBuilder.Entity<TrxFileArchiveDetail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("TRX_FILE_ARCHIVE_DETAIL");
+            entity.HasKey(e => e.FileArchiveDetailId);
 
+            entity.ToTable("TRX_FILE_ARCHIVE_DETAIL");
+
+            entity.Property(e => e.FileArchiveDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("file_archive_detail_id");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
-            entity.Property(e => e.FileArchiveDetailId).HasColumnName("file_archive_detail_id");
             entity.Property(e => e.FileName)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -1044,13 +1344,15 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("file_type");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
-            entity.HasOne(d => d.Archive).WithMany()
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxFileArchiveDetails)
                 .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ARCHIVE_ID_ARCHIVE_DETAIL");
         });
 
@@ -1123,17 +1425,14 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_MEDIA_STORAGE");
 
             entity.Property(e => e.MediaStorageId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("media_storage_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
-            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
-            entity.Property(e => e.GmdId).HasColumnName("gmd_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.LevelId).HasColumnName("level_id");
             entity.Property(e => e.MediaStorageCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1142,9 +1441,8 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("media_storage_name");
-            entity.Property(e => e.RackId).HasColumnName("rack_id");
-            entity.Property(e => e.RoomId).HasColumnName("room_id");
             entity.Property(e => e.RowId).HasColumnName("row_id");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
             entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
@@ -1152,32 +1450,19 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
-            entity.HasOne(d => d.Creator).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.CreatorId)
-                .HasConstraintName("FK_CREATOR_ID_MEDIA_STORAGE");
-
-            entity.HasOne(d => d.Gmd).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.GmdId)
-                .HasConstraintName("FK_GMD_ID_MEDIA_STORAGE");
-
-            entity.HasOne(d => d.Level).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.LevelId)
-                .HasConstraintName("FK_LEVEL_ID_MEDIA_STORAGE");
-
-            entity.HasOne(d => d.Rack).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.RackId)
-                .HasConstraintName("FK_RACK_ID_MEDIA_STORAGE");
-
-            entity.HasOne(d => d.Room).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.RoomId)
-                .HasConstraintName("FK_ROOM_ID_MEDIA_STORAGE");
-
             entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.RowId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ROW_ID_MEDIA_STORAGE");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxMediaStorages)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_STATUS");
 
             entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.TypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TYPE_STORAGE_ID_MEDIA_STORAGE");
         });
 
@@ -1188,7 +1473,7 @@ public partial class BksArditaDevContext : DbContext
             entity.ToTable("TRX_MEDIA_STORAGE_DETAIL");
 
             entity.Property(e => e.MediaStorageDetailId)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("media_storage_detail_id");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -1203,10 +1488,12 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.Archive).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ARCHIVE_ID_MEDIA_STORAGE_DETAIL");
 
             entity.HasOne(d => d.MediaStorage).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.MediaStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MEDIA_STORAGE_ID_MEDIA_STORAGE_DETAIL");
         });
 
@@ -1333,6 +1620,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Level).WithMany(p => p.TrxRows)
+                .HasForeignKey(d => d.LevelId)
+                .HasConstraintName("FK_TRX_ROW_ID_LEVEL");
         });
 
         modelBuilder.Entity<TrxSubSubjectClassification>(entity =>
@@ -1452,6 +1743,38 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveUnitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ARCHIVE_UNIT_ID_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<VwArchiveRetention>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_ARCHIVE_RETENTION");
+
+            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.ArchiveNumber)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("archive_number");
+            entity.Property(e => e.ArchiveType)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("archive_type");
+            entity.Property(e => e.CreatorName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("creator_name");
+            entity.Property(e => e.RetentionDateArchive)
+                .HasColumnType("datetime")
+                .HasColumnName("retention_date_archive");
+            entity.Property(e => e.Status)
+                .HasMaxLength(25)
+                .IsUnicode(false)
+                .HasColumnName("status");
+            entity.Property(e => e.TitleArchive)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("title_archive");
         });
 
         OnModelCreatingPartial(modelBuilder);
