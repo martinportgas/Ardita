@@ -3,6 +3,9 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
+using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 
 namespace Ardita.Services.Classess;
 
@@ -25,10 +28,7 @@ public class ArchiveService : IArchiveService
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<TrxArchive>> GetAll()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<IEnumerable<TrxArchive>> GetAll() => await _archiveRepository.GetAll();
 
     public async Task<TrxArchive> GetById(Guid id)
     {
@@ -101,10 +101,29 @@ public class ArchiveService : IArchiveService
             return null;
         }
     }
-
-    public Task<int> Insert(TrxArchive model)
+    public async Task<int> Insert(TrxArchive model, StringValues files)
     {
-        throw new NotImplementedException();
+        List<FileModel> file = new();
+        FileModel temp;
+        string name;
+        string type;
+        string data;
+
+        if (files[0] != string.Empty)
+        {
+            foreach (var item in files)
+            {
+                temp = new();
+                JObject json = JObject.Parse(item);
+
+                temp.FileName = (string)json[nameof(name)];
+                temp.FileType = (string)json[nameof(type)];
+                temp.Base64 = (string)json[nameof(data)];
+                file.Add(temp);
+            }
+        }
+
+        return await _archiveRepository.Insert(model, file);
     }
 
     public Task<int> Update(TrxArchive model)

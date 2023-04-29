@@ -7,6 +7,11 @@
     FormModel form = Html.Form();
 }
 
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet" />
+<link href="https://ernestbrandi.github.io/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css" rel="stylesheet" />
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Archive</h2>
@@ -58,6 +63,7 @@
                     <div class="row">
                         <div class="col-sm-6 b-r">
                             <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>GMD</label>
@@ -77,12 +83,14 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Sub Subject Classifications</label>
-                                        <input type="hidden" asp-for="SubSubjectClassificationId" value="@Model.SubSubjectClassificationId">
-                                        <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="SubSubjectClassificationId">
+                                        <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? Const.Required : Const.Disabled)
+                                                id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                data-placeholder="-- Select Sub Subject Classification --">
+                                            <option value=""></option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Keywords</label>
-                                        <input type="hidden" asp-for="Keyword" value="@Model.Keyword">
                                         <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                     </div>
                                     <div class="form-group">
@@ -98,9 +106,46 @@
                                             <option value=""></option>
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Archive Creator</label>
+                                        <input type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
+                                        <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Archive Type</label>
+                                        <br />
+                                        <input type="radio" placeholder="" id="txtOriginal" value="Original" asp-for="TypeArchive">
+                                        <label>Original</label>
+                                        <input type="radio" placeholder="" id="txtCopy" value="Copy" asp-for="TypeArchive">
+                                        <label>Copy</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>File</label>
+                                        <input type="file" class="filepond" id ="filepond" name="files" multiple data-allow-reorder="true" data-max-file-size="10MB"
+                                               data-max-files="10">
+                                    </div>
+                                    <div class="form-group" id="created_date">
+                                        <label class="font-normal">Created Date</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input type="text" class="form-control"  asp-for="CreatedDateArchive" id="txtCreatedDateArchive" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Active Retention</label>
+                                        <input type="number" placeholder="" id="txtActiveRetention" class="form-control" asp-for="ActiveRetention">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>In Active Retention</label>
+                                        <input type="number" placeholder="" id="txtInactiveRetention" class="form-control" asp-for="InactiveRetention">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Volume</label>
+                                        <input type="number" placeholder="" id="txtVolume" class="form-control" asp-for="Volume">
+                                    </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ArchiveCreator, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                    <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
                                     <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
                                 </div>
                             </form>
@@ -111,18 +156,73 @@
         </div>
     </div>
 </div>
+
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
+<script src="https://ernestbrandi.github.io/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.js"></script>
+
 @section Scripts {
     <script type="text/javascript">
         $(function () {
             initForms("@form.CurrentAction");
+
+            var mem = $('#created_date .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
+
+            FilePond.registerPlugin(
+                FilePondPluginFileEncode,
+                FilePondPluginFileValidateSize,
+                FilePondPluginImageExifOrientation,
+                FilePondPluginImagePreview,
+                FilePondPluginMediaPreview
+            );
+
+            FilePond.create(
+                document.querySelector('input[id="filepond"]')
+            );
+
+            $("#txtSubSubjectClassificationId").change(function () {
+                var id = $('#txtSubSubjectClassificationId').val();
+                var url = '@Url.Action("BindSubSubjectClasscificationsById", form.CurrentController, new { Area = form.CurrentArea })';
+
+                $.ajax({
+                    url: url,
+                    type: "@Const.GET",
+                    data: { Id: id },
+                    dataType: "@Const.JSON",
+                    contentType: "@Const.APPLICATIONJSON",
+                    success: function (data) {
+                        $("#txtCreatorName").val(data.creatorName);
+                        $("#txtCreatorId").val(data.creatorId);
+                        $("#txtActiveRetention").val(data.retentionActive);
+                        $("#txtInactiveRetention").val(data.retentionInactive);
+                    },
+                    error: function () {
+                        alert("Sub Subject Classification Not Found");
+                    }
+                });
+            });
+           
         });
 
         function validate() {
             let result = true;
 
-            if ($('#txtCreatorCode').val() == "") 
+            if ($('#txtCreatedDateArchive').val() == "") 
             {
-                swal("Please enter Creator Code !");
+                swal("Please enter Created Date Archive !");
                 result = false;
             } 
             if ($('#txtCreatorName').val() == "") 

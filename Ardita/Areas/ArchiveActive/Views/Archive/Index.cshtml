@@ -38,7 +38,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Archive Creator Name</th>
+                                <th>Archive Title</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -49,3 +49,53 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+
+            var table = $('#tbl').DataTable({
+                processing: true,
+                serverSide: true,
+                scrollX: true,
+                filter: true,
+                ajax: {
+                    "url": '@Url.Action(Const.GetData, Const.Archive, new { Area = Const.ArchiveActive})',
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                columnDefs: [
+                    {
+                        width: 50, targets: 0
+                    }
+                ],
+                fixedColumns: true,
+                columns: [
+                    {
+                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        "data": "archiveId",
+                        "render": function (data, type, row, meta) {
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", row.archiveId);
+
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.archiveId);
+
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.archiveId);
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+                            return JoinButton;
+                        }
+                    },
+                    { "data": "titleArchive", "Title Archive": "TitleArchive", "autoWidth": true }
+                ]
+            });
+        });
+    </script>
+}
