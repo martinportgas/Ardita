@@ -180,7 +180,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxLevel).Replace(Const.Trx, string.Empty);
+                string fileName = nameof(TrxLevel).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var levels = await _levelService.GetAll();
@@ -224,7 +224,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxLevel).Replace(Const.Trx, string.Empty)}";
+                string fileName = $"{Const.Template}-{nameof(TrxLevel).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;

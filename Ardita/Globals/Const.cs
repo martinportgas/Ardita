@@ -33,6 +33,8 @@
         public const string TypeStorage = "TypeStorage";
         public const string Archive = "Archive";
         public const string ArchiveMonitoring = "ArchiveMonitoring";
+        public const string Employee = "Employee";
+        public const string Position = "Position";
         
         //Action
         public const string Index = "Index";

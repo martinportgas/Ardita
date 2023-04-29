@@ -27,12 +27,12 @@ namespace Ardita.Repositories.Classess
 
             if (model.EmployeeId != Guid.Empty)
             {
-                var data = await _context.MstEmployees.AsNoTracking().Where(x => x.EmployeeId == model.EmployeeId).ToListAsync();
+                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
                     model.IsActive = false;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
@@ -42,7 +42,10 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstEmployee>> GetAll()
         {
-            var result = await _context.MstEmployees.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
+            var result = await _context.MstEmployees
+                .Include(x => x.Position)
+                .AsNoTracking()
+                .Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
 
@@ -56,6 +59,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.MstEmployees
+                .Include(x => x.Position)
                 .Where(
                     x => (x.Nik + x.Name).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -67,6 +71,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.MstEmployees
+                .Include(x => x.Position)
                 .Where(
                     x => (x.Nik + x.Name).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -79,9 +84,11 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstEmployee>> GetById(Guid id)
+        public async Task<MstEmployee> GetById(Guid id)
         {
-            var result = await _context.MstEmployees.AsNoTracking().Where(x => x.EmployeeId == id).ToListAsync();
+            var result = await _context.MstEmployees
+                .Include(x => x.Position)
+                .AsNoTracking().FirstAsync(x => x.EmployeeId == id);
             return result;
         }
 
@@ -96,11 +103,11 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (model != null) 
             {
-                var data = await _context.MstEmployees.AsNoTracking().Where(x => x.Nik == model.Nik).ToListAsync();
+                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.Nik == model.Nik);
                 model.IsActive = true;
-                if (data.Count > 0)
+                if (data != null)
                 {
-                    model.EmployeeId = data.FirstOrDefault().EmployeeId;
+                    model.EmployeeId = data.EmployeeId;
                     model.UpdateBy = model.CreatedBy;
                     model.UpdateDate = DateTime.Now;
                     _context.MstEmployees.Update(model);
@@ -133,12 +140,12 @@ namespace Ardita.Repositories.Classess
 
             if (model.EmployeeId != Guid.Empty)
             {
-                var data = await _context.MstEmployees.AsNoTracking().Where(x => x.EmployeeId == model.EmployeeId).ToListAsync();
+                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
                     model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.MstEmployees.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
