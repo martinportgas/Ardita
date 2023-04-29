@@ -15,6 +15,7 @@ namespace Ardita.Models.ViewModels
         public string RoleName { get; set; }
         public string EmployeeNIK { get; set; }
         public string EmployeeName { get; set; }
+        public Guid PositionId { get; set; }
 
     }
 }

@@ -1,0 +1,264 @@
+﻿@using Ardita.Globals;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.TrxArchive;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
+    int fileNo = 0;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Archive Monitoring</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Monitoring
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.ArchiveMonitoring, new {Area = Const.ArchiveActive})">Archive</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Archive Monitoring</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label>Media Arsip</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="Gmd.GmdName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pengirim</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TypeSender" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Klasifikasi Arsip</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="SubSubjectClassification.SubSubjectClassificationName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kata Kunci</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="Keyword" readonly>
+                                </div>
+                            </div>
+                           
+                           @* <div>
+                                <a href="@Url.Action(Const.Index, Const.ArchiveMonitoring, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+
+                            </div>*@
+                        </div>
+                        <div class="col-sm-6 b-r">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label>Judul Arsip</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TitleArchive" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Klasifikasi Keamanan</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="SecurityClassification.SecurityClassificationName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pencipta Arsip</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="Creator.CreatorName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipe Arsip</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TypeArchive" readonly>
+                                </div>
+                            </div>
+                        
+                        </div>
+
+                       
+                       
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="row">
+                       
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <table>
+                                    <thead>
+                                   <tr>
+                                            <th>File</th>
+                                   </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.TrxFileArchiveDetails)
+                                        {
+                                            <tr>
+                                                <td><a href="@Url.Action(Const.DownloadFile, Const.ArchiveMonitoring,  new { area = Const.ArchiveActive, Id = item.FileArchiveDetailId })">@item.FileName</a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="row">
+                        <!--Detail-->
+                        <div class="col-sm-6" b-r>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label>Kode Media</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageCode" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nama Media</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageName" readonly>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6" b-r>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label>Unit Kearsipan</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Jenis Penyimpanan</label>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" b-r>
+                            <div class="form-row">
+                                <div class="form-group col-md-2">
+                                    <label for="floor">Lantai</label>
+                                    <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.FloorName" readonly>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="room">Ruangan</label>
+                                    <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.RoomName" readonly>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="rack">Rak</label>
+                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName" readonly>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="level">Tingkat</label>
+                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName" readonly>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="row">Baris</label>
+                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-6">
+                        <div class="form-group">
+                        <table>
+                        <thead>
+                        <th>File</th>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.TrxFileArchiveDetails)
+                        {
+                        <tr>
+                        <td>@item.FileName</td>
+                        </tr>
+                        }
+                        </tbody>
+                        </table>
+                        </div>
+                        </div>*@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

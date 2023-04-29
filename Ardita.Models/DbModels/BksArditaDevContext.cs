@@ -1416,6 +1416,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Rack).WithMany(p => p.TrxLevels)
+                .HasForeignKey(d => d.RackId)
+                .HasConstraintName("FK_TRX_LEVEL_ID_RACK");
         });
 
         modelBuilder.Entity<TrxMediaStorage>(entity =>
@@ -1557,7 +1561,7 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.Room).WithMany(p => p.TrxRacks)
                 .HasForeignKey(d => d.RoomId)
-                .HasConstraintName("FK_ROOM_ID_RACK");
+                .HasConstraintName("FK_TRX_RACK_ID_ROOM");
         });
 
         modelBuilder.Entity<TrxRoom>(entity =>
@@ -1591,6 +1595,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Floor).WithMany(p => p.TrxRooms)
+                .HasForeignKey(d => d.FloorId)
+                .HasConstraintName("FK_TRX_ROOM_ID_FLOOR");
         });
 
         modelBuilder.Entity<TrxRow>(entity =>

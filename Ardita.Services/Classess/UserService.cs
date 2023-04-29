@@ -110,11 +110,13 @@ namespace Ardita.Services.Classess
             var role = await _roleRepository.GetAll();
             var userRole = await _userRoleRepository.GetAll();
             var employee = await _employeeRepository.GetAll();
+            var position = await _positionRepository.GetAll();
 
             var result = (from usr in user
                           join ur in userRole on usr.UserId equals ur.UserId
                           join r in role on ur.RoleId equals r.RoleId
                           join e in employee on usr.EmployeeId equals e.EmployeeId
+                          join p in position on e.PositionId equals p.PositionId
                           where usr.Username == username && usr.Password == password
                           && usr.IsActive == true && r.IsActive==true && e.IsActive==true
                           select new
@@ -125,7 +127,9 @@ namespace Ardita.Services.Classess
                               RoleCode = r.Code,
                               RoleName = r.Name,
                               EmployeeNIK = e.Nik,
-                              EmployeeName = e.Name
+                              EmployeeName = e.Name,
+                              PositionId = p.PositionId
+                              
                           }
                 ).ToList().FirstOrDefault();
 
@@ -141,7 +145,8 @@ namespace Ardita.Services.Classess
                     new Claim("RoleCode" ,result.RoleCode.ToString()),
                     new Claim("RoleName", result.RoleName),
                     new Claim("EmployeeNIK", result.EmployeeNIK),
-                    new Claim("EmployeeName", result.EmployeeName)
+                    new Claim("EmployeeName", result.EmployeeName),
+                    new Claim("PositionId", result.PositionId.ToString())
                 };
             }
        

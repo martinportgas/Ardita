@@ -32,13 +32,16 @@ public class ArchiveRepository : IArchiveRepository
     {
         IEnumerable<TrxArchive> result;
 
-        var propertyInfo = typeof(TrxArchiveUnit).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        var propertyInfo = typeof(TrxArchive).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
         var propertyName = propertyInfo == null ? typeof(TrxArchive).GetProperties()[0].Name : propertyInfo.Name;
 
         if (model.sortColumnDirection.ToLower() == "asc")
         {
             result = await _context.TrxArchives
-                .Where(x => (x.TitleArchive + x.Keyword).Contains(model.searchValue) && x.IsActive == true)
+                .Include(x => x.Gmd)
+                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.Creator)
+                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true)
                 .OrderBy(x => EF.Property<TrxArchive>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -46,20 +49,77 @@ public class ArchiveRepository : IArchiveRepository
         else
         {
             result = await _context.TrxArchives
-                .Where(x => (x.TitleArchive + x.Keyword).Contains(model.searchValue) && x.IsActive == true)
+                .Include(x => x.Gmd)
+                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.Creator)
+                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true)
                 .OrderByDescending(x => EF.Property<TrxArchive>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
         }
+
+        return result;
+    }
+
+    public async Task<IEnumerable<TrxArchive>> GetByFilterModelForMonitoring(DataTableModel model)
+    {
+        IEnumerable<TrxArchive> result;
+
+        var propertyInfo = typeof(TrxArchive).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        var propertyName = propertyInfo == null ? typeof(TrxArchive).GetProperties()[0].Name : propertyInfo.Name;
+
+        if (model.sortColumnDirection.ToLower() == "asc")
+        {
+            result = await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.Creator)
+                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId)
+                .OrderBy(x => EF.Property<TrxArchive>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+        }
+        else
+        {
+            result = await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.Creator)
+                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId)
+                .OrderByDescending(x => EF.Property<TrxArchive>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+        }
+
         return result;
     }
 
     public async Task<TrxArchive> GetById(Guid id)
     {
-        return await _context.TrxArchives
-            .Include(s => s.SubSubjectClassification)
-            .ThenInclude(c => c.Creator)
-            .Where(x => x.ArchiveId == id).FirstAsync();
+        var result = await _context.TrxArchives.AsNoTracking()
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator)
+            .Include(x => x.TrxFileArchiveDetails)
+            .Include(x => x.TrxMediaStorageDetails)
+            .ThenInclude(x => x.MediaStorage)
+            .ThenInclude(x => x.Row)
+            .ThenInclude(x => x.Level)
+            .ThenInclude(x => x.Rack)
+            .ThenInclude(x => x.Room)
+            .ThenInclude(x => x.Floor)
+            .ThenInclude(x => x.ArchiveUnit)
+            .Include(x => x.TrxMediaStorageDetails)
+            .ThenInclude(x => x.MediaStorage)
+            .ThenInclude(x => x.TypeStorage)
+
+            .Where(x => x.ArchiveId == id && x.IsActive == true)
+            .FirstAsync();
+
+        
+
+        return result;
     }
 
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
@@ -100,6 +160,17 @@ public class ArchiveRepository : IArchiveRepository
                         {
                             Directory.CreateDirectory(directory);
                         }
+    public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
+    public async Task<int> GetCountForMonitoring(Guid? PositionId)
+    {
+       return await _context
+            .TrxArchives
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.Creator)
+            .CountAsync(x => x.IsActive == true 
+            && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
+    }
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath, bytes);
