@@ -123,6 +123,16 @@ public class ArchiveRepository : IArchiveRepository
     }
 
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
+    public async Task<int> GetCountForMonitoring(Guid? PositionId)
+    {
+        return await _context
+             .TrxArchives
+             .Include(x => x.Gmd)
+             .Include(x => x.SubSubjectClassification)
+             .Include(x => x.Creator)
+             .CountAsync(x => x.IsActive == true
+             && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
+    }
 
     public async Task<int> Insert(TrxArchive model, List<FileModel> files)
     {
@@ -160,17 +170,7 @@ public class ArchiveRepository : IArchiveRepository
                         {
                             Directory.CreateDirectory(directory);
                         }
-    public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
-    public async Task<int> GetCountForMonitoring(Guid? PositionId)
-    {
-       return await _context
-            .TrxArchives
-            .Include(x => x.Gmd)
-            .Include(x => x.SubSubjectClassification)
-            .Include(x => x.Creator)
-            .CountAsync(x => x.IsActive == true 
-            && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
-    }
+    
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath, bytes);

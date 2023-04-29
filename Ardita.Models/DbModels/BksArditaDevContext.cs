@@ -925,6 +925,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("archive_id");
             entity.Property(e => e.ActiveRetention).HasColumnName("active_retention");
+            entity.Property(e => e.ArchiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("archive_code");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")

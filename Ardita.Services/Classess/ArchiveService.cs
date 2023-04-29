@@ -35,11 +35,6 @@ public class ArchiveService : IArchiveService
         return await _archiveRepository.GetById(id);
     }
 
-    public async Task<TrxArchive> GetById(Guid id)
-    {
-        return await _archiveRepository.GetById(id);
-    }
-
     public async Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model)
     {
         try
