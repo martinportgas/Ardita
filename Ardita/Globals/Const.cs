@@ -31,6 +31,7 @@
         public const string Row = "Row";
         public const string TypeStorage = "TypeStorage";
         public const string Archive = "Archive";
+        public const string ArchiveMonitoring = "ArchiveMonitoring";
         
         //Action
         public const string Index = "Index";
@@ -44,6 +45,7 @@
         public const string Upload = "Upload";
         public const string GetData = "GetData";
         public const string DownloadTemplate = "DownloadTemplate";
+        public const string DownloadFile = "DownloadFile";
 
         //Html helper
         public const string Required = "required";
@@ -72,6 +74,9 @@
         public const string BindCompanies = "BindCompanies";
         public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
         public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
+
+        //Partial View
+        public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
     }
 }

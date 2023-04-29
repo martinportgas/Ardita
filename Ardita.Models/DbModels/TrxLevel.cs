@@ -23,5 +23,7 @@ public partial class TrxLevel
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+    public virtual TrxRack? Rack { get; set; }
+
+    public virtual ICollection<TrxRow> TrxRows { get; } = new List<TrxRow>();
 }

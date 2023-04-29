@@ -25,7 +25,7 @@ public partial class TrxRoom
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+    public virtual TrxFloor? Floor { get; set; }
 
     public virtual ICollection<TrxRack> TrxRacks { get; } = new List<TrxRack>();
 }

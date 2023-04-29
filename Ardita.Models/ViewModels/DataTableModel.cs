@@ -17,6 +17,7 @@ namespace Ardita.Models.ViewModels
         public int pageSize { get; set; }
         public int skip { get; set; }
         public int recordsTotal { get; set; }
+        public Guid? PositionId { get; set; }
 
     }
 }

@@ -27,5 +27,5 @@ public partial class TrxRack
 
     public virtual TrxRoom? Room { get; set; }
 
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+    public virtual ICollection<TrxLevel> TrxLevels { get; } = new List<TrxLevel>();
 }

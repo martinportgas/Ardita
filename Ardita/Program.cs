@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories;
 using System.Configuration;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 //From Repositories
@@ -24,6 +25,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.LoginPath = "/Authentication/Index";
         option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddDbContext<BksArditaDevContext>(opts => opts.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 

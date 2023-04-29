@@ -32,6 +32,10 @@ public abstract class BaseController<T> : Controller
     protected IRowService _rowService { get; set; }
     protected ISecurityClassificationService _securityClassificationService { get; set; }
     protected IArchiveService _archiveService { get; set; }
+
+    //Trx
+    protected IFileArchiveDetailService _fileArchiveDetailService { get; set; }
+
     #endregion
 
     #region Main Action
