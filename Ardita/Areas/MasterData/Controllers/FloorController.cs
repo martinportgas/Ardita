@@ -62,10 +62,10 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _floorService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -75,10 +75,10 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _floorService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -88,10 +88,10 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _floorService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -129,8 +129,8 @@ namespace Ardita.Areas.MasterData.Controllers
                 IFormFile file = Request.Form.Files[0];
 
                 var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
-
                 var ArchiveUnits = await _archiveUnitService.GetAll();
+
 
                 List<TrxFloor> floors = new();
                 TrxFloor floor;
@@ -139,7 +139,8 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     floor = new();
                     floor.FloorId = Guid.NewGuid();
-                    floor.ArchiveUnitId = ArchiveUnits.Where(x => x.ArchiveUnitCode == row[0].ToString()).FirstOrDefault().ArchiveUnitId;
+
+                    floor.ArchiveUnitId = ArchiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[0].ToString())).FirstOrDefault().ArchiveUnitId;
                     floor.FloorCode = row[1].ToString();
                     floor.FloorName = row[2].ToString();
                     floor.IsActive = true;
@@ -166,8 +167,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var floors = await _floorService.GetAll();
-                var archives = await _archiveUnitService.GetAll();
-
+               
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet(nameof(TrxFloor).Replace(Const.Trx, string.Empty));
@@ -182,8 +182,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 foreach (var item in floors)
                 {
                     row = excelSheet.CreateRow(no);
-                    var archiveUnit = archives.Where(x => x.ArchiveUnitId == item.ArchiveUnitId).FirstOrDefault().ArchiveUnitName;
-                    row.CreateCell(0).SetCellValue(archiveUnit);
+                    row.CreateCell(0).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
                     row.CreateCell(1).SetCellValue(item.FloorCode);
                     row.CreateCell(2).SetCellValue(item.FloorName);
 

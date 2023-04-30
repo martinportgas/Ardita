@@ -1,6 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Employees;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -31,76 +32,39 @@ namespace Ardita.Services.Classess
             return await _employeeRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstEmployee>> GetById(Guid id)
+        public async Task<MstEmployee> GetById(Guid id)
         {
             return await _employeeRepository.GetById(id);
         }
-        public async Task<EmployeeListViewModel> GetListEmployee(DataTableModel tableModel)
+        public async Task<DataTableResponseModel<MstEmployee>> GetListEmployee(DataTablePostModel model)
         {
-            var employeeListViewModel = new EmployeeListViewModel();
-
-            var employeeResult = await _employeeRepository.GetAll();
-            var positionResult = await _positionRepository.GetAll();
-
-            var results = (from employee in employeeResult
-                           join position in positionResult on employee.PositionId equals position.PositionId
-                           select new EmployeeListViewDetailModel
-                           {
-                               EmployeeId = employee.EmployeeId,
-                               EmployeeNIK = employee.Nik,
-                               EmployeeName = employee.Name,
-                               EmployeeEmail = employee.Email,
-                               EmployeeGender = employee.Gender,
-                               EmployeePlaceOfBirth = employee.PlaceOfBirth,
-                               EmployeeDateOfBirth = employee.DateOfBirth,
-                               EmployeeAddress = employee.Address,
-                               EmployeePhone = employee.Phone,
-                               EmployeeProfilePict = employee.ProfilePicture,
-                               EmployeeLevel = employee.EmployeeLevel,
-                               PositionId = position.PositionId,
-                               PositionName = position.Name
-                           }
-                );
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x => (x.EmployeeNIK != null ? x.EmployeeNIK.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeeEmail != null ? x.EmployeeEmail.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeeGender != null ? x.EmployeeGender.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeePlaceOfBirth != null ? x.EmployeePlaceOfBirth.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.PositionName != null ? x.PositionName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                );
-            }
+                var dataCount = await _employeeRepository.GetCount();
 
-            if (!(string.IsNullOrEmpty(tableModel.sortColumn)))
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+
+                var results = await _employeeRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstEmployee>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
+            }
+            catch (Exception ex)
             {
-                var param = tableModel.sortColumn;
-                var propertyInfo = typeof(EmployeeListViewDetailModel).GetProperty(param);
-
-                if (tableModel.sortColumnDirection == "asc")
-                {
-                    results = results.OrderBy(x => propertyInfo.GetValue(x, null));
-                }
-                else
-                {
-                    results = results.OrderByDescending(x => propertyInfo.GetValue(x, null));
-                }
-                
-
-               
+                return null;
             }
-
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            employeeListViewModel.draw = tableModel.draw;
-            employeeListViewModel.recordsFiltered = tableModel.recordsTotal;
-            employeeListViewModel.recordsTotal = tableModel.recordsTotal;
-            employeeListViewModel.data = data;
-
-            return employeeListViewModel;
         }
         public async Task<IEnumerable<MstEmployee>> GetListEmployeeBySubSubjectClassificationId(Guid Id)
         {

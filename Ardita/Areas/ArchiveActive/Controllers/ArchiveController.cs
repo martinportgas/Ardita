@@ -1,6 +1,8 @@
 ﻿using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,10 +31,50 @@ public class ArchiveController : BaseController<TrxArchive>
     public override async Task<IActionResult> Add()
     {
         ViewBag.listGmd = await BindGmds();
-        //ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
+        ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
-        ViewBag.listArchiveCreator = await BindArchiveCreators();
 
         return View(Const.Form, new TrxArchive());
     }
+    public override async Task<JsonResult> GetData(DataTablePostModel model)
+    {
+        try
+        {
+            var result = await _archiveService.GetList(model);
+
+            return Json(result);
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Save(TrxArchive model)
+    {
+        if (model is not null)
+        {
+            var files = Request.Form[Const.Files];
+
+            if (model.ArchiveId != Guid.Empty)
+            {
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                await _archiveService.Update(model);
+            }
+            else
+            {
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                model.CreatedDate = DateTime.Now;
+                await _archiveService.Insert(model, files);
+            }
+        }
+        return RedirectToIndex();
+    }
+
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Archive, new { Area = Const.ArchiveActive });
+
 }

@@ -42,6 +42,7 @@ public static class ServiceExtension
         services.AddScoped<IArchiveMovementService, ArchiveMovementService>();
         services.AddScoped<IArchiveRetentionService, ArchiveRetentionService>();
         services.AddScoped<IArchiveApprovalService, ArchiveApprovalService>();
+        services.AddScoped<IFileArchiveDetailService, FileArchiveDetailService>();
         return services;
     }
 }

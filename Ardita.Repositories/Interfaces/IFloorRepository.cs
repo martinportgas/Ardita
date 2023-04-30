@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IFloorRepository
     {
-        Task<IEnumerable<TrxFloor>> GetById(Guid id);
+        Task<TrxFloor> GetById(Guid id);
         Task<IEnumerable<TrxFloor>> GetAll();
         Task<IEnumerable<TrxFloor>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();

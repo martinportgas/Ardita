@@ -1,7 +1,6 @@
 using Ardita.Models.DbModels;
-using Ardita.Repositories.Interfaces;
+using Ardita.Repositories;
 using Ardita.Services;
-using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Ardita.Repositories.Classess;
@@ -26,10 +25,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(option => {
+    .AddCookie(option =>
+    {
         option.LoginPath = "/Authentication/Index";
         option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddDbContext<BksArditaDevContext>(opts => opts.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 

@@ -26,11 +26,11 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.RoomId != Guid.Empty)
                 {
-                    var data = await _context.TrxRooms.AsNoTracking().Where(x => x.RoomId == model.RoomId && x.IsActive == true).ToListAsync();
+                    var data = await _context.TrxRooms.AsNoTracking().FirstAsync(x => x.RoomId == model.RoomId && x.IsActive == true);
                     if (data != null)
                     {
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
                         model.IsActive = false;
 
                         _context.Update(model);
@@ -44,7 +44,11 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxRoom>> GetAll()
         {
-            var results = await _context.TrxRooms.AsNoTracking().Where(x=>x.IsActive == true).ToListAsync();
+            var results = await _context.TrxRooms
+               .Include(x => x.Floor.ArchiveUnit)
+                .AsNoTracking()
+                .Where(x=>x.IsActive == true)
+                .ToListAsync();
             return results;
         }
 
@@ -81,9 +85,11 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxRoom>> GetById(Guid id)
+        public async Task<TrxRoom> GetById(Guid id)
         {
-            var result = await _context.TrxRooms.AsNoTracking().Where(x => x.RoomId == id && x.IsActive == true).ToListAsync();
+            var result = await _context.TrxRooms
+                .Include(x => x.Floor.ArchiveUnit)
+                .AsNoTracking().FirstAsync(x => x.RoomId == id && x.IsActive == true);
             return result;
         }
 
@@ -125,12 +131,12 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.RoomId != Guid.Empty) 
                 {
-                    var data = await _context.TrxRooms.AsNoTracking().Where(x => x.RoomId == model.RoomId && x.IsActive == true).ToListAsync();
+                    var data = await _context.TrxRooms.AsNoTracking().FirstAsync(x => x.RoomId == model.RoomId && x.IsActive == true);
                     if (data != null)
                     {
                         model.IsActive = true;
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
 
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();

@@ -19,6 +19,8 @@ public partial class TrxArchive
 
     public string Keyword { get; set; } = null!;
 
+    public string? ArchiveCode { get; set; }
+
     public string TitleArchive { get; set; } = null!;
 
     public string TypeArchive { get; set; } = null!;

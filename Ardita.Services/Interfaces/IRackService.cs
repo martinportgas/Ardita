@@ -10,7 +10,7 @@ namespace Ardita.Services.Interfaces
 {
     public interface IRackService
     {
-        Task<IEnumerable<TrxRack>> GetById(Guid id);
+        Task<TrxRack> GetById(Guid id);
         Task<IEnumerable<TrxRack>> GetAll();
         Task<DataTableResponseModel<TrxRack>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxRack model);

@@ -29,7 +29,5 @@ public partial class MstCreator
 
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
-
     public virtual ICollection<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; } = new List<TrxSubSubjectClassification>();
 }

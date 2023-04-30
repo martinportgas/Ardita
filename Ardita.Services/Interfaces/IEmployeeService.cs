@@ -11,9 +11,9 @@ namespace Ardita.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<MstEmployee>> GetById(Guid id);
+        Task<MstEmployee> GetById(Guid id);
         Task<IEnumerable<MstEmployee>> GetAll();
-        Task<EmployeeListViewModel> GetListEmployee(DataTableModel tableModel);
+        Task<DataTableResponseModel<MstEmployee>> GetListEmployee(DataTablePostModel model);
         Task<int> Insert(MstEmployee model);
         Task<bool> InsertBulk(List<MstEmployee> employees);
         Task<int> Delete(MstEmployee model);

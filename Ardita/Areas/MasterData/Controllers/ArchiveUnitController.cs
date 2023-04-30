@@ -48,11 +48,11 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     public override async Task<IActionResult> Update(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
-        if (data.Any())
+        if (data != null)
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {
@@ -63,11 +63,11 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     public override async Task<IActionResult> Remove(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
-        if (data.Any())
+        if (data != null)
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {
@@ -78,11 +78,11 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     public override async Task<IActionResult> Detail(Guid Id)
     {
         var data = await _archiveUnitService.GetById(Id);
-        if (data.Any())
+        if (data != null)
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {

@@ -62,7 +62,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             var data = await _rowService.GetById(Id);
 
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
@@ -70,7 +70,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRacks = await BindRacks();
                 ViewBag.listLevels = await BindLevels();
 
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _rowService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
@@ -88,7 +88,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRacks = await BindRacks();
                 ViewBag.listLevels = await BindLevels();
 
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -98,7 +98,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _rowService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
@@ -106,7 +106,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRacks = await BindRacks();
                 ViewBag.listLevels = await BindLevels();
 
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -162,7 +162,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     objRow = new();
                     objRow.RowId = Guid.NewGuid();
-                    objRow.LevelId = levels.Where(x => x.LevelCode == row[1].ToString()).FirstOrDefault().LevelId;
+                    objRow.LevelId = levels.Where(x => x.LevelCode.Contains(row[1].ToString())).FirstOrDefault().LevelId;
                     objRow.RowCode = row[2].ToString();
                     objRow.RowName = row[3].ToString();
                     objRow.IsActive = true;
@@ -188,11 +188,6 @@ namespace Ardita.Areas.MasterData.Controllers
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var rows = await _rowService.GetAll();
-                var levels = await _levelService.GetAll();
-                var racks = await _rackService.GetAll();
-                var rooms = await _roomService.GetAll();
-                var floors = await _floorService.GetAll();
-                var archives = await _archiveUnitService.GetAll();
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
@@ -213,24 +208,12 @@ namespace Ardita.Areas.MasterData.Controllers
                 foreach (var item in rows)
                 {
                     row = excelSheet.CreateRow(no);
-
-                    var levelDetail = levels.Where(x => x.LevelId == item.LevelId).FirstOrDefault();
-                    var rackDetail = racks.Where(x => x.RackId == levelDetail.RackId).FirstOrDefault();
-                    var roomDetail = rooms.Where(x => x.RoomId == rackDetail.RoomId).FirstOrDefault();
-                    var floorDetail = floors.Where(x => x.FloorId == roomDetail.FloorId).FirstOrDefault();
-
-                    var archiveUnitName = archives.Where(x => x.ArchiveUnitId == floorDetail.ArchiveUnitId).FirstOrDefault().ArchiveUnitName;
-                    var floorName = floors.Where(x => x.FloorId == floorDetail.FloorId).FirstOrDefault().FloorName;
-                    var roomName = roomDetail.RoomName;
-                    var rackName = rackDetail.RackName;
-                    var levelName = levelDetail.LevelName;
-
                     row.CreateCell(0).SetCellValue(no);
-                    row.CreateCell(1).SetCellValue(archiveUnitName);
-                    row.CreateCell(2).SetCellValue(floorName);
-                    row.CreateCell(3).SetCellValue(roomName);
-                    row.CreateCell(4).SetCellValue(rackName);
-                    row.CreateCell(5).SetCellValue(levelName);
+                    row.CreateCell(1).SetCellValue(item.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName);
+                    row.CreateCell(2).SetCellValue(item.Level.Rack.Room.Floor.FloorName);
+                    row.CreateCell(3).SetCellValue(item.Level.Rack.Room.RoomName);
+                    row.CreateCell(4).SetCellValue(item.Level.Rack.RackName);
+                    row.CreateCell(5).SetCellValue(item.Level.LevelName);
                     row.CreateCell(6).SetCellValue(item.RowCode);
                     row.CreateCell(7).SetCellValue(item.RowName);
 
@@ -273,35 +256,19 @@ namespace Ardita.Areas.MasterData.Controllers
                 rowLevel.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
 
                 var dataLevels = await _levelService.GetAll();
-                var dataRacks = await _rackService.GetAll();
-                var dataRooms = await _roomService.GetAll();
-                var dataFloors = await _floorService.GetAll();
-                var dataArchiveUnits = await _archiveUnitService.GetAll();
 
                 int no = 1;
                 foreach (var item in dataLevels)
                 {
                     rowLevel = excelSheetLevels.CreateRow(no);
 
-                    var rackDetail = dataRacks.Where(x => x.RackId == item.RackId).FirstOrDefault();
-                    var rackName = rackDetail.RackName;
-
-                    var roomDetail = dataRooms.Where(x => x.RoomId == rackDetail.RoomId).FirstOrDefault();
-                    var roomName = roomDetail.RoomName;
-
-                    var floorDetail = dataFloors.Where(x => x.FloorId == roomDetail.FloorId).FirstOrDefault();
-                    var floorName = floorDetail.FloorName;
-
-                    var archiveUnitName = dataArchiveUnits.Where(x => x.ArchiveUnitId == floorDetail.ArchiveUnitId).FirstOrDefault().ArchiveUnitName;
-
-
                     rowLevel.CreateCell(0).SetCellValue(no);
                     rowLevel.CreateCell(1).SetCellValue(item.LevelCode);
                     rowLevel.CreateCell(2).SetCellValue(item.LevelName);
-                    rowLevel.CreateCell(3).SetCellValue(rackName);
-                    rowLevel.CreateCell(4).SetCellValue(roomName);
-                    rowLevel.CreateCell(5).SetCellValue(floorName);
-                    rowLevel.CreateCell(6).SetCellValue(archiveUnitName);
+                    rowLevel.CreateCell(3).SetCellValue(item.Rack.RackName);
+                    rowLevel.CreateCell(4).SetCellValue(item.Rack.Room.RoomName);
+                    rowLevel.CreateCell(5).SetCellValue(item.Rack.Room.Floor.FloorName);
+                    rowLevel.CreateCell(6).SetCellValue(item.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName);
                     no += 1;
                 }
                 workbook.WriteExcelToResponse(HttpContext, fileName);

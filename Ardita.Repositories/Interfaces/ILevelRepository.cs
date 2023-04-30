@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface ILevelRepository
     {
-        Task<IEnumerable<TrxLevel>> GetById(Guid id);
+        Task<TrxLevel> GetById(Guid id);
         Task<IEnumerable<TrxLevel>> GetAll();
         Task<IEnumerable<TrxLevel>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();

@@ -28,11 +28,11 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.LevelId != Guid.Empty)
                 {
-                    var data = await _context.TrxFloors.AsNoTracking().Where(x => x.FloorId == model.LevelId && x.IsActive == true).ToListAsync();
+                    var data = await _context.TrxFloors.AsNoTracking().FirstAsync(x => x.FloorId == model.LevelId && x.IsActive == true);
                     if (data != null)
                     {
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
                         model.IsActive = false;
 
                         _context.Update(model);
@@ -46,7 +46,11 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxLevel>> GetAll()
         {
-            var results = await _context.TrxLevels.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context
+                .TrxLevels.AsNoTracking()
+                .Include(x => x.Rack.Room.Floor.ArchiveUnit)
+                .Where(x => x.IsActive == true)
+                .ToListAsync();
             return results;
         }
 
@@ -83,9 +87,14 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxLevel>> GetById(Guid id)
+        public async Task<TrxLevel> GetById(Guid id)
         {
-            var result = await _context.TrxLevels.AsNoTracking().Where(x => x.LevelId == id && x.IsActive == true).ToListAsync();
+            var result = await _context.TrxLevels
+                .Include(x => x.Rack.Room.Floor.ArchiveUnit)
+                .AsNoTracking()
+                .Where(x => x.LevelId == id && x.IsActive == true)
+                .FirstAsync();
+
             return result;
         }
 
@@ -127,11 +136,11 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.LevelId != Guid.Empty) 
                 {
-                    var data = await _context.TrxLevels.AsNoTracking().Where(x => x.LevelId == model.LevelId).ToListAsync();
+                    var data = await _context.TrxLevels.AsNoTracking().FirstAsync(x => x.LevelId == model.LevelId);
                     if (data != null)
                     {
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
                         model.IsActive = true;
 
                         _context.Update(model);

@@ -56,11 +56,10 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
         }
-
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetById(Guid id) => await _context.TrxArchiveUnits.Where(x => x.ArchiveUnitId == id).ToListAsync();
+    public async Task<TrxArchiveUnit> GetById(Guid id) => await _context.TrxArchiveUnits.Where(x => x.ArchiveUnitId == id).FirstAsync();
 
     public async Task<int> GetCount() => await _context.TrxArchiveUnits.CountAsync(x => x.IsActive == true);
 

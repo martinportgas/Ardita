@@ -1,5 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Archive;
+using Ardita.Models.ViewModels.SubSubjectClasscification;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +13,7 @@ public abstract class BaseController<T> : Controller
 {
     #region Properties
     protected IHostingEnvironment _hostingEnvironment;
-    
+
     //User Manage
     protected IEmployeeService _employeeService { get; set; }
     protected IPositionService _positionService { get; set; }
@@ -32,6 +34,12 @@ public abstract class BaseController<T> : Controller
     protected IRowService _rowService { get; set; }
     protected ISecurityClassificationService _securityClassificationService { get; set; }
     protected IArchiveService _archiveService { get; set; }
+
+    //Trx
+    protected IFileArchiveDetailService _fileArchiveDetailService { get; set; }
+
+    protected IMediaStorageService _mediaStorageService { get; set; }
+    protected ITypeStorageService _typeStorageService { get; set; }
     protected IArchiveRetentionService _archiveRetentionService { get; set; }
     protected IArchiveExtendService _archiveExtendService { get; set; }
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
@@ -79,7 +87,7 @@ public abstract class BaseController<T> : Controller
         await Task.Delay(0);
         throw new NotImplementedException();
     }
-     
+
     public virtual async Task<IActionResult> Delete(T model)
     {
         await Task.Delay(0);
@@ -88,6 +96,7 @@ public abstract class BaseController<T> : Controller
     #endregion
 
     #region Binding
+    //selectlist
     public async Task<List<SelectListItem>> BindCompanies()
     {
         var data = await _companyService.GetAll();
@@ -187,16 +196,6 @@ public abstract class BaseController<T> : Controller
             Text = x.CreatorName
         }).ToList();
     }
-    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
-    {
-        List<TrxFloor> listFloors = new();
-        Guid ArchiveUnitId = new Guid(Id);
-
-        var data = await _floorService.GetAll();
-        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
-        return Json(listFloors);
-
-    }
     public async Task<List<SelectListItem>> BindClassificationTypes()
     {
         var data = await _classificationTypeService.GetAll();
@@ -237,6 +236,82 @@ public abstract class BaseController<T> : Controller
             Text = x.Name
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindArchives()
+    {
+        var data = await _archiveService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveId.ToString(),
+            Text = x.TitleArchive.ToString()
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindTypeStorage()
+    {
+        var data = await _typeStorageService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.TypeStorageId.ToString(),
+            Text = x.TypeStorageName.ToString()
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindRows()
+    {
+        var data = await _rowService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.RowId.ToString(),
+            Text = x.RowName.ToString()
+        }).ToList();
+    }
+    //json
+    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
+    {
+        List<TrxFloor> listFloors = new();
+        Guid ArchiveUnitId = new(Id);
+
+        var data = await _floorService.GetAll();
+        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
+        return Json(listFloors);
+
+    }
+    public async Task<JsonResult> BindRoomByFloorId(string Id)
+    {
+        List<TrxRoom> list = new();
+        Guid id = new(Id);
+
+        var data = await _roomService.GetAll();
+        list = data.Where(x => x.FloorId == id).ToList();
+        return Json(list);
+
+    }
+    public async Task<JsonResult> BindRackByRoomId(string Id)
+    {
+        List<TrxRack> list = new();
+        Guid id = new(Id);
+
+        var data = await _rackService.GetAll();
+        list = data.Where(x => x.RoomId == id).ToList();
+        return Json(list);
+    }
+    public async Task<JsonResult> BindLevelByRackId(string Id)
+    {
+        List<TrxLevel> list = new();
+        Guid id = new(Id);
+
+        var data = await _levelService.GetAll();
+        list = data.Where(x => x.RackId == id).ToList();
+        return Json(list);
+    }
+    public async Task<JsonResult> BindRowByLevelId(string Id)
+    {
+        List<TrxRow> list = new();
+        Guid id = new(Id);
+
+        var data = await _rowService.GetAll();
+        list = data.Where(x => x.LevelId == id).ToList();
+        return Json(list);
+    }
     public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id)
     {
         var data = await _classificationSubjectService.GetAll();
@@ -247,6 +322,58 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _classificationService.GetAll();
         var result = data.Where(x => x.TypeClassificationId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubSubjectClasscificationsById(string Id)
+    {
+        Guid SubSubjectClasscificationId = new(Id);
+
+        var data = await _classificationSubSubjectService.GetById(SubSubjectClasscificationId);
+        var subSubjectClassification = from d in data
+                                       where d.SubSubjectClassificationId == SubSubjectClasscificationId
+                                       select new SubSubjectClasscificationViewModel
+                                       {
+                                           SubSubjectClassificationId = d.SubSubjectClassificationId,
+                                           SubSubjectClassificationCode = d.SubSubjectClassificationCode,
+                                           CreatorId = d.CreatorId,
+                                           CreatorName = d.Creator?.CreatorName,
+                                           RetentionActive = d.RetentionActive,
+                                           RetentionInactive = d.RetentionInactive,
+                                           SubSubjectClassificationName = d.SubSubjectClassificationName
+                                       };
+
+
+
+        return Json(subSubjectClassification.FirstOrDefault());
+
+    }
+    public async Task<JsonResult> BindArchiveById(string Id)
+    {
+        Guid ArchiveId = new(Id);
+
+        var data = await _archiveService.GetById(ArchiveId);
+        ArchiveViewModel result = new() 
+        {
+            ArchiveId = data.ArchiveId,
+            TitleArchive = data.TitleArchive,
+            TypeArchive = data.TypeArchive,
+            TypeSender = data.TypeSender,
+            Volume = data.Volume,
+            ArchiveCreator = data.SubSubjectClassification.Creator.CreatorName
+        };
+        return Json(result);
+    }
+    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id)
+    {
+        var data = await _archiveService.GetAll();
+
+        var result = data.Where(x => x.SubSubjectClassificationId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id)
+    {
+        var data = await _typeStorageService.GetAll();
+        var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
         return Json(result);
     }
     public async Task<List<SelectListItem>> BindEmployeeIdBySubSubjectClassificationId(Guid Id)

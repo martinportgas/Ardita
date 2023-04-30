@@ -28,11 +28,11 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.RowId != Guid.Empty)
                 {
-                    var data = await _context.TrxRows.AsNoTracking().Where(x => x.RowId == model.RowId && x.IsActive == true).ToListAsync();
+                    var data = await _context.TrxRows.AsNoTracking().FirstAsync(x => x.RowId == model.RowId && x.IsActive == true);
                     if (data != null)
                     {
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
                         model.IsActive = false;
 
                         _context.Update(model);
@@ -46,7 +46,11 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxRow>> GetAll()
         {
-            var results = await _context.TrxRows.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxRows
+                .AsNoTracking()
+                .Include(x => x.Level.Rack.Room.Floor.ArchiveUnit)
+                .Where(x => x.IsActive == true)
+                .ToListAsync();
             return results;
         }
 
@@ -83,9 +87,12 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxRow>> GetById(Guid id)
+        public async Task<TrxRow> GetById(Guid id)
         {
-            var result = await _context.TrxRows.AsNoTracking().Where(x => x.RowId == id && x.IsActive == true).ToListAsync();
+            var result = await _context.TrxRows
+                .Include(x => x.Level.Rack.Room.Floor.ArchiveUnit)
+                .AsNoTracking()
+                .FirstAsync(x => x.RowId == id && x.IsActive == true);
             return result;
         }
 
@@ -127,11 +134,11 @@ namespace Ardita.Repositories.Classess
             {
                 if (model.RowId != Guid.Empty)
                 {
-                    var data = await _context.TrxRows.AsNoTracking().Where(x => x.RowId == model.RowId).ToListAsync();
+                    var data = await _context.TrxRows.AsNoTracking().FirstAsync(x => x.RowId == model.RowId);
                     if (data != null)
                     {
-                        model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                        model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                        model.CreatedBy = data.CreatedBy;
+                        model.CreatedDate = data.CreatedDate;
                         model.IsActive = true;
 
                         _context.Update(model);

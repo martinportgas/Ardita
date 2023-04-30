@@ -1,0 +1,303 @@
+﻿@using Ardita.Globals;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.ViewModels.MediaStorage.MediaStorageInsertViewModel;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Media Storage</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(Const.Index, Const.MediaStorage, new {Area = Const.ArchiveActive})">Media Storage</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Page</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label>Media Storage Code</label>
+                                                <input type="text" asp-for="MediaStorage.MediaStorageCode" id="txtMediaStorageCode" class="form-control" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Media Storage</label>
+                                                <input type="text" asp-for="MediaStorage.MediaStorageName" id="txtMediaStorageName" class="form-control" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Archive Unit</label>
+                                                <select asp-items="ViewBag.listArchiveUnit" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtArchiveUnitId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Archive Unit --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Type Storage</label>
+                                                <select asp-items="ViewBag.listTypeStorage" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtTypeStorageId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Type Storage --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Total Volume</label>
+                                                <input type="number" asp-for="MediaStorage.TotalVolume" id="txtTotalVolume" class="form-control" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Difference Volume</label>
+                                                <input type="number" asp-for="MediaStorage.DifferenceVolume" id="txtDifferenceVolume" class="form-control" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Floor</label>
+                                                <select asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtFloorId" class="select2_demo_1 form-control m-1"
+                                                        data-placeholder="-- Select Floor --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Room</label>
+                                                <select asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtRoomId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Room --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Rack</label>
+                                                <select asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtRackId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Rack --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Level</label>
+                                                <select asp-items="ViewBag.listLevel" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtLevelId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Level --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Row</label>
+                                                <select asp-items="ViewBag.listRow" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtRowId" asp-for="MediaStorage.RowId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Row --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                                <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Sub Subject Classifications</label>
+                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? Const.Required : Const.Disabled)
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive</label>
+                                            <select id="txtArchiveId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-items="ViewBag.listArchive" data-placeholder="-- Select Archive --"><option value=""></option></select>
+                                        </div>
+
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add"><i class="fa fa-plus"></i> Add</button>
+                                        <table id="table-archive" class="table table-condensed" style="border-radius: unset;width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Archive Type</th>
+                                                    <th>Archive Title</th>
+                                                    <th>Archive Creator</th>
+                                                    <th>Volume</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listdtl">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#txtSubSubjectClassificationId').on('change', function () {
+                $('#txtArchiveId').val('').trigger('change');
+            });
+
+            $('#txtArchiveUnitId').on('change', function () {
+                $('#txtTypeStorageId').val('').trigger('change');
+                $('#txtFloorId').val('').trigger('change');
+            });
+
+            $('#txtArchiveId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Archive --',
+                ajax: {
+                    url: '@Url.Action(Const.BindArchivesBySubSubjectClassificationId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtSubSubjectClassificationId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.titleArchive,
+                                id: item.archiveId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtTypeStorageId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Type Storage --',
+                ajax: {
+                    url: '@Url.Action(Const.BindTypeStorageByArchiveUnitId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.typeStorageName,
+                                id: item.typeStorageId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtFloorId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.floorName,
+                                id: item.floorId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $("#add").click(function () {
+                addArchive();
+            });
+        });
+
+        function addArchive() {
+            var id = $('#txtArchiveId').val();
+            var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
+            var remove = `<a class="btn btn-sm btn-danger" id="-1""><i class="fa fa-trash"></i> </a>`;
+
+            $.ajax({
+                url: url,
+                type: "@Const.GET",
+                data: { Id: id },
+                dataType: "@Const.JSON",
+                contentType: "@Const.APPLICATIONJSON",
+                success: function (data) {
+                    remove = remove.replace("-1", data.archiveId);
+                    console.warn(remove);
+                    $('#table-archive > tbody:last-child').append(`<tr id="${data.ArchiveId}"><td> ${data.typeArchive} </td><td> ${data.titleArchive} </td><td> ${data.archiveCreator} </td><td> ${data.volume} </td><td> ${remove}</td></tr>`);
+                },
+                error: function () {
+                    alert("Archive Not Found");
+                }
+            });
+        }
+    </script>
+}

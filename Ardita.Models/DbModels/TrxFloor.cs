@@ -24,4 +24,6 @@ public partial class TrxFloor
     public Guid? UpdatedBy { get; set; }
 
     public virtual TrxArchiveUnit? ArchiveUnit { get; set; }
+
+    public virtual ICollection<TrxRoom> TrxRooms { get; } = new List<TrxRoom>();
 }

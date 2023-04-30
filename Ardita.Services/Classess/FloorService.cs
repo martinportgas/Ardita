@@ -23,7 +23,7 @@ namespace Ardita.Services.Classess
             return await _floorRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxFloor>> GetById(Guid id)
+        public async Task<TrxFloor> GetById(Guid id)
         {
             return await _floorRepository.GetById(id);
         }

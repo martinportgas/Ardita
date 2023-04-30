@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IRackRepository
     {
-        Task<IEnumerable<TrxRack>> GetById(Guid id);
+        Task<TrxRack> GetById(Guid id);
         Task<IEnumerable<TrxRack>> GetAll();
         Task<IEnumerable<TrxRack>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();

@@ -29,7 +29,7 @@ namespace Ardita.Services.Classess
             return await _roomRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxRoom>> GetById(Guid id)
+        public async Task<TrxRoom> GetById(Guid id)
         {
             return await _roomRepository.GetById(id);
         }

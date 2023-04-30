@@ -21,6 +21,7 @@
         public const string ClassificationSubject = "ClassificationSubject";
         public const string ClassificationSubSubject = "ClassificationSubSubject";
         public const string ArchiveUnit = "ArchiveUnit";
+        public const string MediaStorage = "MediaStorage";
         public const string ArchiveCreator = "ArchiveCreator";
         public const string Gmd = "Gmd";
         public const string SecurityClassification = "SecurityClassification";
@@ -31,6 +32,10 @@
         public const string Row = "Row";
         public const string TypeStorage = "TypeStorage";
         public const string Archive = "Archive";
+        public const string ArchiveMonitoring = "ArchiveMonitoring";
+        public const string Employee = "Employee";
+        public const string Position = "Position";
+        
         public const string ArchiveRetention = "ArchiveRetention";
         public const string ArchiveExtend = "ArchiveExtend";
         public const string ArchiveDestroy = "ArchiveDestroy";
@@ -48,6 +53,7 @@
         public const string Upload = "Upload";
         public const string GetData = "GetData";
         public const string DownloadTemplate = "DownloadTemplate";
+        public const string DownloadFile = "DownloadFile";
 
         //Html helper
         public const string Required = "required";
@@ -57,6 +63,7 @@
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
         public const string Template = "Template";
+        public const string Files = "files";
 
         //Prefix
         public const string Trx = "Trx";
@@ -76,6 +83,21 @@
         public const string BindCompanies = "BindCompanies";
         public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
         public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
+        public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
+        public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
+        public const string BindRoomByFloorId = "BindRoomByFloorId";
+        public const string BindRackByRoomId = "BindRackByRoomId";
+        public const string BindLevelByRackId = "BindLevelByRackId";
+        public const string BindRowByLevelId = "BindRowByLevelId";
+
+        //Web Component
+        public const string GET = "GET";
+        public const string JSON = "JSON";
+        public const string APPLICATIONJSON = "application/json";
+
+
+        //Partial View
+        public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
         public enum Status
         {

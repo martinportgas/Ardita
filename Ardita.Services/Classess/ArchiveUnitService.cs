@@ -15,7 +15,7 @@ public class ArchiveUnitService : IArchiveUnitService
 
     public async Task<IEnumerable<TrxArchiveUnit>> GetAll() => await _archiveUnitRepository.GetAll();
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetById(Guid id) => await _archiveUnitRepository.GetById(id);
+    public async Task<TrxArchiveUnit> GetById(Guid id) => await _archiveUnitRepository.GetById(id);
 
     public async Task<DataTableResponseModel<TrxArchiveUnit>> GetList(DataTablePostModel model)
     {
