@@ -29,7 +29,7 @@ namespace Ardita.Services.Classess
             return await _subMenuRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstSubmenu>> GetById(Guid id)
+        public async Task<MstSubmenu> GetById(Guid id)
         {
             return await _subMenuRepository.GetById(id);
         }

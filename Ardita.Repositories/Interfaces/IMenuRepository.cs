@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,10 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IMenuRepository
     {
-        Task<IEnumerable<MstMenu>> GetById(Guid id);
+        Task<MstMenu> GetById(Guid id);
         Task<IEnumerable<MstMenu>> GetAll();
+        Task<IEnumerable<MstMenu>> GetByFilterModel(DataTableModel model);
+        Task<int> GetCount();
         Task<int> Insert(MstMenu model);
         Task<int> Delete(MstMenu model);
         Task<int> Update(MstMenu model);

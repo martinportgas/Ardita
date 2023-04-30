@@ -51,7 +51,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             {
                 var result = await _archiveService.GetById(Guid.Parse(Id));
 
-                return Json(result.FirstOrDefault());
+                return Json(result);
 
             }
             catch (Exception ex)

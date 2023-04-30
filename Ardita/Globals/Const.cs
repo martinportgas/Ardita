@@ -35,6 +35,9 @@
         public const string ArchiveMonitoring = "ArchiveMonitoring";
         public const string Employee = "Employee";
         public const string Position = "Position";
+        public const string Menu = "Menu";
+        public const string User = "User";
+        public const string Page = "Page";
         
         public const string ArchiveRetention = "ArchiveRetention";
         public const string ArchiveExtend = "ArchiveExtend";

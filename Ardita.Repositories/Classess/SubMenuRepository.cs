@@ -28,9 +28,9 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstSubmenu>> GetById(Guid id)
+        public async Task<MstSubmenu> GetById(Guid id)
         {
-            var result = await _context.MstSubmenus.AsNoTracking().Where(x => x.SubmenuId == id).ToListAsync();
+            var result = await _context.MstSubmenus.AsNoTracking().FirstAsync(x => x.SubmenuId == id);
             return result;
         }
 

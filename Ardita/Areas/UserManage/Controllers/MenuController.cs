@@ -1,98 +1,100 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
+using Ardita.Globals;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("UserManage")]
-    public class MenuController : Controller
+    [Area(Const.UserManage)]
+    public class MenuController : BaseController<MstMenu>
     {
-        private readonly IMenuService _menuService;
-        private readonly ISubMenuService _subMenu;
-
         public MenuController(
             IMenuService menuService,
-            ISubMenuService subMenuService)
+            ISubMenuService subMenuService,
+            IPageService pageService
+            
+            )
         {
             _menuService = menuService;
-            _subMenu = subMenuService;
+            _subMenuService = subMenuService;
+            _pageService = pageService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public override async Task<ActionResult> Index() => await base.Index();
 
         [HttpPost]
-        public async Task<JsonResult> GetData()
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                var model = new DataTableModel();
-
-                model.draw = Request.Form["draw"].FirstOrDefault();
-                model.start = Request.Form["start"].FirstOrDefault();
-                model.length = Request.Form["length"].FirstOrDefault();
-                model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                model.recordsTotal = 0;
-
-                var result = await _menuService.GetListMenuWithSubMenu(model);
-
-                var jsonResult = new
-                {
-                    draw = result.draw,
-                    recordsFiltered = result.recordsFiltered,
-                    recordsTotal = result.recordsTotal,
-                    data = result.data
-                };
-                return Json(jsonResult);
+                var result = await _menuService.GetListMenu(model);
+                return Json(result);
             }
             catch (Exception ex)
             {
                 throw;
             }
         }
-        public async Task<IActionResult> Update(Guid Id)
+        [HttpPost]
+        public async Task<JsonResult> GetPageData(DataTablePostModel model)
         {
-            var data = await _subMenu.GetById(Id);
-            if (data.Count() > 0)
+            try
             {
-                var model = new MstSubmenu();
-                model.SubmenuId = data.FirstOrDefault().SubmenuId;
-                model.Name = data.FirstOrDefault().Name;
-                model.Path = data.FirstOrDefault().Path;
-                model.Sort = data.FirstOrDefault().Sort;
+                model.SubMenuId = new Guid(HttpContext.Session.GetString(nameof(MstSubmenu.SubmenuId)));
+                var result = await _pageService.GetListPage(model);
+                HttpContext.Session.Remove(nameof(MstSubmenu.SubmenuId));
 
-                return View(model);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public override async Task<IActionResult> Update(Guid Id)
+        {
+            var data = await _menuService.GetById(Id);
+            if (data != null)
+            {
+                return View(Const.Form, data);
             }
             else
             {
-                return RedirectToAction("Index", "Menu", new { Area = "UserManage" });
+                return RedirectToIndex();
             }
 
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(MstSubmenu model)
+        public override async Task<IActionResult> Save(MstMenu model)
         {
             int result = 0;
             if (model != null)
             {
-                if (model.SubmenuId != Guid.Empty)
+                if (model.MenuId != Guid.Empty)
                 {
-                    model.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdateDate = DateTime.Now;
-                    result = await _subMenu.Update(model);
+                    result = await _menuService.Update(model);
                 }
             }
-            return RedirectToAction("Index", "Menu", new { Area = "UserManage" });
+            return RedirectToIndex();
         }
+    
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _subMenuService.GetById(Id);
+            ViewBag.TitlePageSubMenu = data.Name;
+
+            HttpContext.Session.SetString(nameof(MstSubmenu.SubmenuId), Id.ToString());
+            return View("SubMenuPageDetail");
+        }
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Menu, new { Area = Const.UserManage });
     }
 }

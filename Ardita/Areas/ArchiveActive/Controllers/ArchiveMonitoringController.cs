@@ -27,7 +27,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             try
             {
                 model.PositionId = AppUsers.CurrentUser(User).PositionId;
-                var result = await _archiveService.GetListForMonitoring(model);
+                var result = await _archiveService.GetList(model);
 
                 return Json(result);
             }

@@ -1,6 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Positions;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -24,50 +25,40 @@ namespace Ardita.Services.Classess
             return await _positionRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstPosition>> GetById(Guid id)
+        public async Task<MstPosition> GetById(Guid id)
         {
             return await _positionRepository.GetById(id);
         }
-        public async Task<MstPosition> GetFirstById(Guid id)
+
+        public async Task<DataTableResponseModel<MstPosition>> GetListPositions(DataTablePostModel model)
         {
-            var result = await _positionRepository.GetById(id);
-            return result.FirstOrDefault();
-        }
-
-        public async Task<PositionListViewModel> GetListPosition(DataTableModel tableModel)
-        {
-            var positionListViewModel = new PositionListViewModel();
-
-            var positionResult = await _positionRepository.GetAll();
-            var results = (from position in positionResult
-                           select new PositionListViewDetailModel
-                           {
-                               PositionId = position.PositionId,
-                               PositionCode = position.Code,
-                               PositionName = position.Name,
-                               IsActive = position.IsActive
-                           });
-            //if (!(string.IsNullOrEmpty(tableModel.sortColumn) && string.IsNullOrEmpty(tableModel.sortColumnDirection)))
-            //{
-            //    results = results.OrderBy(tableModel.sortColumn + " " + tableModel.sortColumnDirection);
-            //}
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x => x.PositionCode.ToUpper().Contains(tableModel.searchValue.ToUpper())
-                    || x.PositionName.ToUpper().Contains(tableModel.searchValue.ToUpper())
-                );
+                var dataCount = await _positionRepository.GetCount();
+
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+
+                var results = await _positionRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstPosition>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
             }
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            positionListViewModel.draw = tableModel.draw;
-            positionListViewModel.recordsFiltered = tableModel.recordsTotal;
-            positionListViewModel.recordsTotal = tableModel.recordsTotal;
-            positionListViewModel.data = data;
-
-            return positionListViewModel;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> Insert(MstPosition model)

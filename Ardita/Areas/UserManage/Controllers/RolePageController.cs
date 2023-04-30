@@ -74,52 +74,52 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save()
-        {
-            string urlRedirect = "";
-            string msg = "";
-            Guid roleId = Guid.Empty;
-            if (Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
-            {
-                var listPageId = Request.Form["listPage[]"];
-                if (listPageId.Count > 0)
-                {
-                    var delete = _rolePageService.DeleteByRoleId(roleId);
+        //public async Task<IActionResult> Save()
+        //{
+        //    string urlRedirect = "";
+        //    string msg = "";
+        //    Guid roleId = Guid.Empty;
+        //    if (Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
+        //    {
+        //        var listPageId = Request.Form["listPage[]"];
+        //        if (listPageId.Count > 0)
+        //        {
+        //            var delete = _rolePageService.DeleteByRoleId(roleId);
 
-                    List<IdxRolePage> models = new();
-                    IdxRolePage objRolePage;
+        //            List<IdxRolePage> models = new();
+        //            IdxRolePage objRolePage;
 
-                    for (int i = 0; i < listPageId.Count; i++)
-                    {
-                        Guid pageId = Guid.Empty;
-                        if (Guid.TryParse(listPageId[i], out pageId))
-                        {
-                            var page = await _pageService.GetById(pageId);
-                            if (page.Count() > 0)
-                            {
-                                objRolePage = new();
-                                objRolePage.RolePageId = Guid.NewGuid();
-                                objRolePage.RoleId = roleId;
-                                objRolePage.PageId = pageId;
-                                objRolePage.CreatedBy = new Guid(User.FindFirst("UserId").Value);
-                                objRolePage.CreatedDate = DateTime.Now;
+        //            for (int i = 0; i < listPageId.Count; i++)
+        //            {
+        //                Guid pageId = Guid.Empty;
+        //                if (Guid.TryParse(listPageId[i], out pageId))
+        //                {
+        //                    var page = await _pageService.GetById(pageId);
+        //                    if (page.Count() > 0)
+        //                    {
+        //                        objRolePage = new();
+        //                        objRolePage.RolePageId = Guid.NewGuid();
+        //                        objRolePage.RoleId = roleId;
+        //                        objRolePage.PageId = pageId;
+        //                        objRolePage.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+        //                        objRolePage.CreatedDate = DateTime.Now;
 
-                                models.Add(objRolePage);
-                            }
-                        }
-                    }
+        //                        models.Add(objRolePage);
+        //                    }
+        //                }
+        //            }
 
-                    await _rolePageService.InsertBulk(models);
-                }
-                msg = "Berhasil Tersimpan";
-            }
-            else
-            {
-                msg = "Role Not Found";
-                urlRedirect = Url.Action("Index", "RolePage", new { Area = "UserManage" });
-            }
-            return Json(new { code = 200, msg = msg, redirect = urlRedirect });
-        }
+        //            await _rolePageService.InsertBulk(models);
+        //        }
+        //        msg = "Berhasil Tersimpan";
+        //    }
+        //    else
+        //    {
+        //        msg = "Role Not Found";
+        //        urlRedirect = Url.Action("Index", "RolePage", new { Area = "UserManage" });
+        //    }
+        //    return Json(new { code = 200, msg = msg, redirect = urlRedirect });
+        //}
         public async Task<IActionResult> Detail(Guid id)
         {
             var rolePageDetails = await _rolePageService.GetListRolePages(id);
