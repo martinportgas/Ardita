@@ -29,5 +29,7 @@ public partial class TrxTypeStorage
 
     public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovements { get; } = new List<TrxArchiveMovement>();
+
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 }

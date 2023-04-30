@@ -31,7 +31,11 @@
         public const string Row = "Row";
         public const string TypeStorage = "TypeStorage";
         public const string Archive = "Archive";
-        
+        public const string ArchiveRetention = "ArchiveRetention";
+        public const string ArchiveExtend = "ArchiveExtend";
+        public const string ArchiveDestroy = "ArchiveDestroy";
+        public const string ArchiveMovement = "ArchiveMovement";
+
         //Action
         public const string Index = "Index";
         public const string Update = "Update";
@@ -73,5 +77,12 @@
         public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
         public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
 
+        public enum Status
+        {
+            Draft = 1,
+            ApprovalProcess = 2,
+            Approved = 3,
+            Rejected = 4
+        }
     }
 }

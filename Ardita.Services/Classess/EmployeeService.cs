@@ -10,10 +10,15 @@ namespace Ardita.Services.Classess
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IPositionRepository _positionRepository;
-        public EmployeeService(IEmployeeRepository employeeRepository, IPositionRepository positionRepository)
+        private readonly IClassificationPermissionRepository _classificationPermissionRepository;
+        public EmployeeService(
+            IEmployeeRepository employeeRepository, 
+            IPositionRepository positionRepository,
+            IClassificationPermissionRepository classificationPermissionRepository)
         {
             _employeeRepository = employeeRepository;
             _positionRepository = positionRepository;
+            _classificationPermissionRepository = classificationPermissionRepository;
         }
 
         public async Task<int> Delete(MstEmployee model)
@@ -96,6 +101,19 @@ namespace Ardita.Services.Classess
             employeeListViewModel.data = data;
 
             return employeeListViewModel;
+        }
+        public async Task<IEnumerable<MstEmployee>> GetListEmployeeBySubSubjectClassificationId(Guid Id)
+        {
+            var listPermission = await _classificationPermissionRepository.GetByMainId(Id);
+            var listPosition = await _positionRepository.GetAll();
+            var listEmp = await _employeeRepository.GetAll();
+
+            var result = (from emp in listEmp
+                          join pos in listPosition on emp.PositionId equals pos.PositionId
+                          join prs in listPermission on pos.PositionId equals prs.PositionId
+                          select emp).ToList();
+
+            return result;
         }
 
         public async Task<int> Insert(MstEmployee model)

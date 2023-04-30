@@ -18,5 +18,6 @@ namespace Ardita.Services.Interfaces
         Task<bool> InsertBulk(List<MstEmployee> employees);
         Task<int> Delete(MstEmployee model);
         Task<int> Update(MstEmployee model);
+        Task<IEnumerable<MstEmployee>> GetListEmployeeBySubSubjectClassificationId(Guid Id);
     }
 }
