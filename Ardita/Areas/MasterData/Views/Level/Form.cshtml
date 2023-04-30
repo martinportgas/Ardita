@@ -63,45 +63,28 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
-                                        <input type="hidden" value="@Model.LevelId" asp-for="LevelId" />
-
-                                        <select asp-items="ViewBag.listArchiveUnits"
-                                                id="txtUnitArchive" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Unit Kearsipan --">
-                                            <option value=""></option>
-                                        </select>
+                                        <input type="hidden" asp-for="LevelId" />
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.Floor.ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Lantai</label>
-                                        <select asp-items="ViewBag.listFloors"
-                                                id="txtFloorId" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Lantai --">
-                                            <option value=""></option>
-                                        </select>
+                                        <select id="txtFloorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.Floor.FloorId" asp-items="ViewBag.listFloors" data-placeholder="-- Pilih Lantai --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Ruangan</label>
-                                        <select asp-items="ViewBag.listRooms"
-                                                id="txtRoomId" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Ruangan --">
-                                            <option value=""></option>
-                                        </select>
+                                        <select id="txtRoomId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.RoomId" asp-items="ViewBag.listRooms" data-placeholder="-- Pilih Ruangan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
-                                        <label>Rack</label>
-                                        <select asp-for="RackId" asp-items="ViewBag.listRooms"
-                                                id="txtRackId" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Rak --">
-                                            <option value=""></option>
-                                        </select>
+                                        <label>Rak</label>
+                                        <select id="txtRackId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.RackId" asp-items="ViewBag.listRakcs" data-placeholder="-- Pilih Rak --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Tingkat</label>
-                                        <input type="text" placeholder="" id="txtLevelCode" class="form-control" asp-for="LevelCode" value="@Model.LevelCode">
+                                        <input type="text" placeholder="" id="txtLevelCode" class="form-control" asp-for="LevelCode" >
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Tingkat</label>
-                                        <input type="text" placeholder="" id="txtLevelName" class="form-control" asp-for="LevelName" value="@Model.LevelName">
+                                        <input type="text" placeholder="" id="txtLevelName" class="form-control" asp-for="LevelName" >
                                     </div>
                                 </div>
                                 <div>
@@ -122,6 +105,129 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        $(document).ready(function () {
+            initForms("@form.CurrentAction");
+            initDropdown();
+        });
 
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $('.confirm').prop('disabled', true);
+                        $('.cancel').prop('disabled', true);
+                        $('.cancel').hide();
+                        $("#frmRow").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+        function initDropdown() {
+            $('#txtArchiveId').on('change', function () {
+                $('#txtFloorId').val('').trigger('change');
+            });
+
+            $('#txtFloorId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Level, new { Area = Const.MasterData })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.floorName,
+                                id: item.floorId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtFloorId').on('change', function () {
+                $('#txtRoomId').val('').trigger('change');
+            });
+            $('#txtRoomId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindRoomByFloorId, Const.Level, new { Area = Const.MasterData })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtFloorId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.roomName,
+                                id: item.roomId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtRoomId').on('change', function () {
+                $('#txtRackId').val('').trigger('change');
+            });
+            $('#txtRackId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindRackByRoomId, Const.Level, new { Area = Const.MasterData })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtRoomId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.rackName,
+                                id: item.rackId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+        }
     </script>
 }
