@@ -40,6 +40,9 @@ public abstract class BaseController<T> : Controller
 
     protected IMediaStorageService _mediaStorageService { get; set; }
     protected ITypeStorageService _typeStorageService { get; set; }
+    protected IArchiveRetentionService _archiveRetentionService { get; set; }
+    protected IArchiveExtendService _archiveExtendService { get; set; }
+    protected IArchiveApprovalService _archiveApprovalService { get; set; }
     #endregion
 
     #region Main Action
@@ -372,6 +375,33 @@ public abstract class BaseController<T> : Controller
         var data = await _typeStorageService.GetAll();
         var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
         return Json(result);
+    }
+    public async Task<List<SelectListItem>> BindEmployeeIdBySubSubjectClassificationId(Guid Id)
+    {
+        var result = await _employeeService.GetListEmployeeBySubSubjectClassificationId(Id);
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.EmployeeId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindEmployee()
+    {
+        var result = await _employeeService.GetAll();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.EmployeeId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindArchiveRetention()
+    {
+        var result = await _archiveRetentionService.GetAll();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveId.ToString(),
+            Text = x.TitleArchive
+        }).ToList();
     }
     #endregion
 }

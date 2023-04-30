@@ -36,6 +36,11 @@
         public const string Employee = "Employee";
         public const string Position = "Position";
         
+        public const string ArchiveRetention = "ArchiveRetention";
+        public const string ArchiveExtend = "ArchiveExtend";
+        public const string ArchiveDestroy = "ArchiveDestroy";
+        public const string ArchiveMovement = "ArchiveMovement";
+
         //Action
         public const string Index = "Index";
         public const string Update = "Update";
@@ -94,5 +99,12 @@
         //Partial View
         public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
+        public enum Status
+        {
+            Draft = 1,
+            ApprovalProcess = 2,
+            Approved = 3,
+            Rejected = 4
+        }
     }
 }
