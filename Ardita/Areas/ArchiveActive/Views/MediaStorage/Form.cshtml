@@ -90,11 +90,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Total Volume</label>
-                                                <input type="number" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" />
+                                                <input type="text" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" readonly/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Difference Volume</label>
-                                                <input type="number" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" />
+                                                <input type="text" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" readonly />
                                             </div>
                                             <div class="form-group">
                                                 <label>Floor</label>
@@ -208,8 +208,12 @@
         var totalCurrentVolume = 0;
 
         $(document).ready(function () {
-            initForms("@form.CurrentAction");
+            $("#listdtl").empty();
+            listArchiveId = [];
 
+            initForms("@form.CurrentAction");
+            $('#txtTotalVolume').prop('readonly', true);
+            $('#txtDifferenceVolume').prop('readonly', true);
             initDropdown();
 
             $('#txtTypeStorageId').on('change', function () {
@@ -226,6 +230,9 @@
 
             if ("@form.CurrentAction" == "@Const.Update" || "@form.CurrentAction" == "@Const.Detail" || "@form.CurrentAction" == "@Const.Remove") 
             {
+                listArchiveId = [];
+                $("#listdtl").empty();
+
                 @foreach (var d in Model.TrxMediaStorageDetails)
                 {
                     @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
@@ -268,6 +275,10 @@
             $('#txtArchiveUnitId').on('change', function () {
                 $('#txtTypeStorageId').val('').trigger('change');
                 $('#txtFloorId').val('').trigger('change');
+                $("#listdtl").empty();
+                listArchiveId = [];
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
             });
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
@@ -570,7 +581,6 @@
             }
             row.closest('tr').remove();
 
-            console.log(volume);
             $("#txtDifferenceVolume").val(parseInt($("#txtDifferenceVolume").val()) + parseInt(volume));
         }
 
@@ -629,6 +639,8 @@
             listArchiveId.forEach((element) => {
                 $("#listArchiveId").append(`<input name=detail[] type=hidden value=${element} >`);
             });
+
+            console.table(listArchiveId);
 
             $("#txtStatusId").val("1");
             if (status == "submit") {

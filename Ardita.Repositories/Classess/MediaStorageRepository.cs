@@ -11,9 +11,23 @@ public class MediaStorageRepository : IMediaStorageRepository
     private readonly BksArditaDevContext _context;
 
     public MediaStorageRepository(BksArditaDevContext context) => _context = context;
-    public Task<int> Delete(TrxMediaStorage model)
+    public async Task<int> Delete(TrxMediaStorage model)
     {
-        throw new NotImplementedException();
+        int result = 0;
+
+        if (model != null && model.MediaStorageId != Guid.Empty)
+        {
+            var data = await _context.TrxMediaStorages.AsNoTracking().FirstAsync(x => x.MediaStorageId == model.MediaStorageId);
+            if (data != null)
+            {
+                data.IsActive = false;
+                data.UpdatedBy = model.UpdatedBy;
+                data.UpdatedDate = model.UpdatedDate;
+                _context.TrxMediaStorages.Update(data);
+                result = await _context.SaveChangesAsync();
+            }
+        }
+        return result;
     }
 
     public async Task<IEnumerable<TrxMediaStorage>> GetAll() => await _context.TrxMediaStorages.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
