@@ -67,6 +67,11 @@
                                     <div class="form-group">
                                         <label>Kode Klasifikasi</label>
                                         <input type="hidden" asp-for="ClassificationId" value="@Model.ClassificationId">
+                                        <input type="hidden" asp-for="IsActive" />
+                                        <input type="hidden" asp-for="CreatedBy" />
+                                        <input type="hidden" asp-for="CreatedDate" />
+                                        <input type="hidden" asp-for="UpdatedBy" />
+                                        <input type="hidden" asp-for="UpdatedDate" />
                                         <input type="text" placeholder="" id="txtPositionClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ClassificationCode">
                                     </div>
                                     <div class="form-group">

@@ -64,7 +64,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Update(Guid Id)
         {
             var model = await _classificationSubSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -74,7 +74,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var model = await _classificationSubSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -94,7 +94,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -104,7 +104,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _classificationSubSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
@@ -114,7 +114,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -359,7 +359,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     model.RetentionActive = (int)row[5];
                     model.RetentionInactive = (int)row[6];
                     model.BasicInformation = row[7].ToString();
-                    model.IsActive = true;
+                    model.IsActive = true;  
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
 

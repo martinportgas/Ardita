@@ -10,7 +10,7 @@ namespace Ardita.Services.Interfaces
 {
     public interface IClassificationSubSubjectService
     {
-        Task<IEnumerable<TrxSubSubjectClassification>> GetById(Guid id);
+        Task<TrxSubSubjectClassification> GetById(Guid id);
         Task<IEnumerable<TrxPermissionClassification>> GetDetailByMainId(Guid id);
         Task<IEnumerable<TrxSubSubjectClassification>> GetAll();
         Task<DataTableResponseModel<TrxSubSubjectClassification>> GetListClassificationSubSubject(DataTablePostModel model);
