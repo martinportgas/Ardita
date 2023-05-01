@@ -15,9 +15,13 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         #region MEMBER AND CTR
         private readonly IArchiveRetentionService _archiveRetentionService;
         public ArchiveRetentionController(
-            IArchiveRetentionService archiveRetentionService)
+            IArchiveRetentionService archiveRetentionService,
+            IArchiveService archiveService,
+            IFileArchiveDetailService fileArchiveDetailService)
         {
             _archiveRetentionService = archiveRetentionService;
+            _fileArchiveDetailService = fileArchiveDetailService;
+            _archiveService = archiveService;
         }
         #endregion
 
@@ -36,6 +40,27 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             {
                 throw;
             }
+        }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var model = await _archiveService.GetById(Id);
+            ViewBag.title = Const.TitleArchiveRetention;
+            ViewBag.backController = Const.ArchiveRetention;
+            ViewBag.backArea = Const.ArchiveActive;
+            return PartialView(Const._ArchiveMonitoringDetail, model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(Guid Id)
+        {
+            var model = await _fileArchiveDetailService.GetById(Id);
+            string path = model.FilePath;
+
+            if (System.IO.File.Exists(path))
+            {
+                return File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
+            }
+            return NotFound();
         }
         #endregion
     }

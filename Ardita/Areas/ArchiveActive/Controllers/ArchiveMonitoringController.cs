@@ -39,6 +39,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _archiveService.GetById(Id);
+            ViewBag.title = Const.TitleArchiveMonitoring;
+            ViewBag.backController = Const.ArchiveMonitoring;
+            ViewBag.backArea = Const.ArchiveActive;
             return PartialView(Const._ArchiveMonitoringDetail, model);
         }
 
