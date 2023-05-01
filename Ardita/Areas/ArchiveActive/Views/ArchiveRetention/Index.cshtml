@@ -4,7 +4,7 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Classification Type</h2>
+        <h2>Retensi Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
@@ -34,6 +34,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Action</th>
                                 <th>Nomor Arsip</th>
                                 <th>Nama Arsip</th>
                                 <th>Jenis Arsip</th>
@@ -79,6 +80,15 @@
                         "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             //console.log(row);
                             return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        "data": "archiveId", "orderable": false, "searchable": false,
+                        "render": function (data, type, row, meta) {
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveRetention, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", row.archiveId);
+
+                            return detail;
                         }
                     },
                     { "data": "archiveId", "autoWidth": true },

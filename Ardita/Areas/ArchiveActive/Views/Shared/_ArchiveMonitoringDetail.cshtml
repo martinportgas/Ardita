@@ -6,20 +6,22 @@
     Layout = Const.ViewStart;
     FormModel form = Html.Form();
     int fileNo = 0;
+    string backController = ViewBag.backController;
+    string backArea = ViewBag.backArea;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Archive Monitoring</h2>
+        <h2>@ViewBag.title</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
-                Archive Monitoring
+                Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.ArchiveMonitoring, new {Area = Const.ArchiveActive})">Archive</a>
+                <a href="@Url.Action(Const.Index, backController, new {Area = backArea})">@ViewBag.title</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -34,7 +36,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Archive Monitoring</h5>
+                    <h5>@ViewBag.title</h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -237,7 +239,12 @@
                                     <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName" readonly>
                                 </div>
                             </div>
+                            <div>
+                                <a href="@Url.Action(Const.Index, backController, new {Area = backArea})" class="btn btn-sm btn-danger float-right m-t-n-xs">Back</a>
+                            </div>
                         </div>
+                        
+                        
                         @*<div class="col-sm-6">
                         <div class="form-group">
                         <table>

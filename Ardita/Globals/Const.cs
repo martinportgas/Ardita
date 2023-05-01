@@ -124,6 +124,10 @@
         //Partial View
         public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
+        //Title
+        public const string TitleArchiveMonitoring = "Archive Monitoring";
+        public const string TitleArchiveRetention = "Archive Retention";
+
         public enum Status
         {
             Draft = 1,

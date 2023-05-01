@@ -56,7 +56,7 @@ public class ArchiveRepository : IArchiveRepository
         {
             result = await _context.TrxArchives
                 .Include(x => x.Gmd)
-                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator)
                 .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true)
                 .OrderBy(x => EF.Property<TrxArchive>(x, propertyName))
@@ -67,7 +67,7 @@ public class ArchiveRepository : IArchiveRepository
         {
             result = await _context.TrxArchives
                 .Include(x => x.Gmd)
-                .Include(x => x.SubSubjectClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator)
                 .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true)
                 .OrderByDescending(x => EF.Property<TrxArchive>(x, propertyName))
