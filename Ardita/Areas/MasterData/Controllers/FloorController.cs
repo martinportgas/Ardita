@@ -17,7 +17,6 @@ using NPOI.XSSF.UserModel;
 using NPOI.XWPF.UserModel;
 using System.Data;
 using System.Text;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -27,11 +26,9 @@ namespace Ardita.Areas.MasterData.Controllers
     {
         #region MEMBER AND CTR
         public FloorController(
-            IHostingEnvironment hostingEnvironment,
             IFloorService floorService, 
             IArchiveUnitService archiveUnitService)
         {
-            _hostingEnvironment = hostingEnvironment;
             _floorService = floorService;
             _archiveUnitService = archiveUnitService;
         }
@@ -128,7 +125,7 @@ namespace Ardita.Areas.MasterData.Controllers
             {
                 IFormFile file = Request.Form.Files[0];
 
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
                 var ArchiveUnits = await _archiveUnitService.GetAll();
 
 

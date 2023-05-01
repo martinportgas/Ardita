@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -17,14 +16,12 @@ namespace Ardita.Areas.MasterData.Controllers
     public class RackController : BaseController<TrxRack>
     {
         public RackController(
-            IHostingEnvironment hostingEnvironment,
             IRackService rackService,
             IRoomService roomService,
             IFloorService floorService,
             IArchiveUnitService archiveUnitService
             )
         {
-            _hostingEnvironment = hostingEnvironment;
             _rackService = rackService;
             _roomService = roomService;
             _floorService = floorService;
@@ -139,7 +136,7 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
 
                 var rooms = await _roomService.GetAll();
                 var floors = await _floorService.GetAll();

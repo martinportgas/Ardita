@@ -9,6 +9,7 @@ public interface ICompanyService
     Task<IEnumerable<MstCompany>> GetAll();
     Task<DataTableResponseModel<MstCompany>> GetListCompanies(DataTablePostModel tableModel);
     Task<int> Insert(MstCompany model);
+    Task<bool> InsertBulk(List<MstCompany> companies);
     Task<int> Delete(MstCompany model);
     Task<int> Update(MstCompany model);
 }

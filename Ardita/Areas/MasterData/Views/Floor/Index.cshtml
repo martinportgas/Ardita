@@ -1,7 +1,10 @@
 ﻿@using Ardita.Globals;
+@using Ardita.Models.ViewModels;
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = Const.ViewStart;
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">

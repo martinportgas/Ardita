@@ -56,5 +56,10 @@ public class GmdService : IGmdService
 
     public async Task<int> Insert(MstGmd model) => await _GmdRepository.Insert(model);
 
+    public async Task<bool> InsertBulk(List<MstGmd> mstGmds)
+    {
+        return await _GmdRepository.InsertBulk(mstGmds);
+    }
+
     public async Task<int> Update(MstGmd model) => await _GmdRepository.Update(model);
 }

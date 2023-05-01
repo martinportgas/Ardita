@@ -6,7 +6,9 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
@@ -125,7 +127,114 @@ public class CompanyController : BaseController<MstCompany>
         }
         return RedirectToIndex();
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Upload()
+    {
+        try
+        {
+            IFormFile file = Request.Form.Files[0];
 
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+
+            List<MstCompany> companies = new();
+            MstCompany company;
+
+            foreach (DataRow row in result.Rows)
+            {
+                company = new();
+                company.CompanyId = Guid.NewGuid();
+
+                company.CompanyCode = row[1].ToString();
+                company.CompanyName = row[2].ToString();
+                company.Address = row[3].ToString();
+                company.Telepone = row[4].ToString();
+                company.Email = row[5].ToString();
+                company.IsActive = true;
+                company.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                company.CreatedDate = DateTime.Now;
+
+                companies.Add(company);
+            }
+            await _companyService.InsertBulk(companies);
+            return RedirectToIndex();
+        }
+        catch (Exception)
+        {
+
+            throw new Exception();
+        }
+
+    }
+    public async Task Export()
+    {
+        try
+        {
+            string fileName = nameof(MstCompany).ToCleanNameOf();
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            var companies = await _companyService.GetAll();
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstCompany).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
+            row.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
+            row.CreateCell(3).SetCellValue(nameof(MstCompany.Address));
+            row.CreateCell(4).SetCellValue(nameof(MstCompany.Telepone));
+            row.CreateCell(5).SetCellValue(nameof(MstCompany.Email));
+
+            int no = 1;
+            foreach (var item in companies)
+            {
+                row = excelSheet.CreateRow(no);
+                row.CreateCell(0).SetCellValue(no);
+                row.CreateCell(1).SetCellValue(item.CompanyCode);
+                row.CreateCell(2).SetCellValue(item.CompanyName);
+                row.CreateCell(3).SetCellValue(item.Address);
+                row.CreateCell(4).SetCellValue(item.Telepone);
+                row.CreateCell(5).SetCellValue(item.Email);
+
+                no += 1;
+            }
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+    }
+    public async Task DownloadTemplate()
+    {
+        try
+        {
+            string fileName = $"{Const.Template}-{nameof(MstCompany).ToCleanNameOf()}";
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstCompany).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
+            row.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
+            row.CreateCell(3).SetCellValue(nameof(MstCompany.Address));
+            row.CreateCell(4).SetCellValue(nameof(MstCompany.Telepone));
+            row.CreateCell(5).SetCellValue(nameof(MstCompany.Email));
+
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Company, new { Area = Const.MasterData });
 
 }
