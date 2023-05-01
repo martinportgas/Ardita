@@ -6,132 +6,125 @@ using Ardita.Models.ViewModels;
 using Ardita.Areas.UserManage.Models;
 using Ardita.Models.DbModels;
 using Ardita.Areas.UserManage.Models;
+using Ardita.Globals;
+using Ardita.Controllers;
+using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("UserManage")]
-    public class PositionController : Controller
+    [Area(Const.UserManage)]
+    public class PositionController : BaseController<MstPosition>
     {
-        private readonly IPositionService _positionService;
         public PositionController(IPositionService positionService)
         {
             _positionService = positionService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public override async Task<ActionResult> Index() => await base.Index();
 
-        public async Task<JsonResult> GetData()
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
+
             try
             {
-                var model = new DataTableModel();
-
-                model.draw = Request.Form["draw"].FirstOrDefault();
-                model.start = Request.Form["start"].FirstOrDefault();
-                model.length = Request.Form["length"].FirstOrDefault();
-                model.sortColumn = Request.Form["columns[" + Request.Form["order[1][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                model.recordsTotal = 0;
-
-                var result = await _positionService.GetListPosition(model);
-
-                var jsonResult = new
-                {
-                    draw = result.draw,
-                    recordsFiltered = result.recordsFiltered,
-                    recordsTotal = result.recordsTotal,
-                    data = result.data
-                };
-                return Json(jsonResult);
+                var result = await _positionService.GetListPositions(model);
+                return Json(result);
             }
             catch (Exception ex)
             {
                 throw;
             }
         }
-        public IActionResult Add()
+        public override async Task<IActionResult> Add()
         {
-            return View();
+
+            return View(Const.Form, new MstPosition());
         }
-        public async Task<IActionResult> Update(Guid Id)
+
+        public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _positionService.GetById(Id);
-            if (data.Count() > 0)
+
+            if (data != null)
             {
-                var model = new MstPosition();
-                model.PositionId = data.FirstOrDefault().PositionId;
-                model.Code = data.FirstOrDefault().Code;
-                model.Name = data.FirstOrDefault().Name;
-                model.IsActive = data.FirstOrDefault().IsActive;
-                return View(model);
+                return View(Const.Form, data);
             }
             else
             {
-                return RedirectToAction("Index", "Position", new { Area = "UserManage" });
+                return RedirectToIndex();
             }
-
         }
-        public async Task<IActionResult> Remove(Guid Id)
+
+        public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _positionService.GetById(Id);
-            if (data.Count() > 0)
+
+            if (data != null)
             {
-                var model = new MstPosition();
-                model.PositionId = data.FirstOrDefault().PositionId;
-                model.Code = data.FirstOrDefault().Code;
-                model.Name = data.FirstOrDefault().Name;
-                model.IsActive = data.FirstOrDefault().IsActive;
-                return View(model);
+                return View(Const.Form, data);
             }
             else
             {
-                return RedirectToAction("Index", "Position", new { Area = "UserManage" });
+                return RedirectToIndex();
             }
-
         }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _positionService.GetById(Id);
+
+            if (data != null)
+            {
+                return View(Const.Form, data);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(MstPosition model)
+        public  override async Task<IActionResult> Save(MstPosition model)
         {
-            int result = 0;
             if (model != null)
             {
+
                 if (model.PositionId != Guid.Empty)
                 {
-                    model.UpdateBy = User.FindFirst("UserId").Value.ToString();
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId.ToString();
                     model.UpdateDate = DateTime.Now;
-                    result = await _positionService.Update(model);
+                     await _positionService.Update(model);
                 }
-
-                else 
+                else
                 {
-                    model.CreatedBy = User.FindFirst("UserId").Value.ToString();
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId.ToString();
                     model.CreatedDate = DateTime.Now;
-                    result = await _positionService.Insert(model);
+                    await _positionService.Insert(model);
                 }
-                    
 
             }
-            return RedirectToAction("Index", "Position", new { Area = "UserManage" });
+            return RedirectToIndex();
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Delete(MstPosition model)
         {
-            int result = 0;
-            if (model != null && model.PositionId != Guid.Empty)
+            if (model != null)
             {
-                model.UpdateBy = User.FindFirst("UserId").Value.ToString();
-                model.UpdateDate = DateTime.Now;
-                result = await _positionService.Delete(model);
+
+                if (model.PositionId != Guid.Empty)
+                {
+
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId.ToString();
+                    model.UpdateDate = DateTime.Now;
+
+                    await _positionService.Delete(model);
+                }
+
+
             }
-            return RedirectToAction("Index", "Position", new { Area = "UserManage" });
+            return RedirectToIndex();
         }
+
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Position, new { Area = Const.UserManage });
     }
 }

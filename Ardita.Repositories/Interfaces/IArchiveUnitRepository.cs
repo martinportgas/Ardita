@@ -10,6 +10,7 @@ public interface IArchiveUnitRepository
     Task<IEnumerable<TrxArchiveUnit>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxArchiveUnit model);
+    Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits);
     Task<int> Delete(TrxArchiveUnit model);
     Task<int> Update(TrxArchiveUnit model);
 }

@@ -54,5 +54,10 @@ public class SecurityClassificationService : ISecurityClassificationService
 
     public async Task<int> Insert(MstSecurityClassification model) => await _SecurityClassificationRepository.Insert(model);
 
+    public async Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications)
+    {
+        return await _SecurityClassificationRepository.InsertBulk(mstSecurityClassifications);
+    }
+
     public async Task<int> Update(MstSecurityClassification model) => await _SecurityClassificationRepository.Update(model);
 }

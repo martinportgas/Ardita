@@ -75,6 +75,18 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
         return result;
     }
 
+    public async Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications)
+    {
+        bool result = false;
+        if (mstSecurityClassifications.Count() > 0)
+        {
+            await _context.AddRangeAsync(mstSecurityClassifications);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
+        return result;
+    }
+
     public async Task<int> Update(MstSecurityClassification model)
     {
         int result = 0;

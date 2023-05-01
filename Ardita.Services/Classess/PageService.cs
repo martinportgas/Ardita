@@ -47,7 +47,7 @@ namespace Ardita.Services.Classess
             return await _pageRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstPage>> GetById(Guid id)
+        public async Task<MstPage> GetById(Guid id)
         {
             return await _pageRepository.GetById(id);
         }
@@ -56,49 +56,44 @@ namespace Ardita.Services.Classess
             return await _pageDetailRepository.GetByMainId(id);
         }
 
-        public async Task<PageListViewModel> GetListPage(DataTableModel tableModel)
+        public async Task<DataTableResponseModel<MstPage>> GetListPage(DataTablePostModel model)
         {
-            var pageListViewModel = new PageListViewModel();
-            
-            var pageResult = await _pageRepository.GetAll();
-            var subMenuResult = await _subMenuRepository.GetAll();
-            var menuResult = await _menuRepository.GetAll();
-
-            var results = (from page in pageResult
-                           join subMenu in subMenuResult on page.SubmenuId equals subMenu.SubmenuId
-                           join menu in menuResult on subMenu.MenuId equals menu.MenuId
-                           select new PageListViewDetailModel
-                           {
-                              PageId = page.PageId,
-                              PageName = page.Name,
-                              PagePath = page.Path,
-                              PageIsActive = page.IsActive,
-                              SubMenuId = subMenu.SubmenuId,
-                              SubMenuName = subMenu.Name,
-                              SubMenuPath = subMenu.Path,
-                              SubmIsActive = subMenu.IsActive,
-                              MenuId = menu.MenuId,
-                              MenuName = menu.Name,
-                              MenuPath = menu.Path,
-                           });
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x =>
-                     (x.PageName != null ? x.PageName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.SubMenuName != null ? x.SubMenuName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                );
+                int dataCount = 0;
+                if (model.SubMenuId != null)
+                {
+                    dataCount = await _pageRepository.GetCountBySubMenuId(model.SubMenuId);
+                }
+                else 
+                {
+                    dataCount = await _pageRepository.GetCount();
+                }
+
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+                filterData.SubMenuId = model.SubMenuId;
+
+                var results = await _pageRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstPage>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
             }
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            pageListViewModel.draw = tableModel.draw;
-            pageListViewModel.recordsFiltered = tableModel.recordsTotal;
-            pageListViewModel.recordsTotal = tableModel.recordsTotal;
-            pageListViewModel.data = data;
-
-            return pageListViewModel;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> Insert(MstPage model)

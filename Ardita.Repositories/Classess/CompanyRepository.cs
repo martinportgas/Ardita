@@ -110,4 +110,16 @@ public class CompanyRepository : ICompanyRepository
         var results = await _context.MstCompanies.CountAsync(x => x.IsActive == true);
         return results;
     }
+
+    public async Task<bool> InsertBulk(List<MstCompany> companies)
+    {
+        bool result = false;
+        if (companies.Count() > 0)
+        {
+            await _context.AddRangeAsync(companies);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
+        return result;
+    }
 }

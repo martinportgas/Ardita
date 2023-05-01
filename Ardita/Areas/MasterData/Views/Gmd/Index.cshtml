@@ -1,8 +1,11 @@
 ﻿@using Ardita.Globals;
-
+@using Ardita.Models.ViewModels;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = Const.ViewStart;
+    FormModel form = Html.Form();
 }
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>General Material Designation</h2>
@@ -29,6 +32,8 @@
                     <h5>Classification</h5>
                     <div class="ibox-tools">
                         <a href="@Url.Action(Const.Add, Const.Gmd, new { Area = Const.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.Export, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -46,7 +51,40 @@
                 </div>
             </div>
         </div>
+        <!--Modal-->
+        <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated fadeIn">
+                    <form id="frmGmdUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Gmd" asp-action="@Const.Upload" asp-area="@Const.MasterData">
+                        @Html.AntiForgeryToken();
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">GMD Upload</h4>
+                            <small>Pastikan format file anda sudah benar.</small>
+                        </div>
+                        <div class="modal-body">
 
+                            <div class="row">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
+                        </div>
+                        <div class="modal-footer">
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Gmd, new { Area = Const.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @section Scripts {
@@ -98,6 +136,22 @@
                 buttons: [
                     { extend: 'excel', title: 'user-data' },
                 ]
+            });
+            $('#btnUpload').on('click', function () {
+                var fileExtension = ['xls', 'xlsx'];
+                var filename = $('#fUpload').val();
+                if (filename.length == 0) {
+                    alert("Please select a file.");
+                    return false;
+                }
+                else {
+                    var extension = filename.replace(/^.*\./, '');
+                    if ($.inArray(extension, fileExtension) == -1) {
+                        alert("Please select only excel files.");
+                        return false;
+                    }
+                }
+                $("#frmGmdUpload").submit();
             });
         });
     </script>

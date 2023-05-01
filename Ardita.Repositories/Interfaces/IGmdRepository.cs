@@ -10,6 +10,7 @@ public interface IGmdRepository
     Task<IEnumerable<MstGmd>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(MstGmd model);
+    Task<bool> InsertBulk(List<MstGmd> mstGmds);
     Task<int> Delete(MstGmd model);
     Task<int> Update(MstGmd model);
 }

@@ -485,6 +485,7 @@ input.form-control:disabled, input.form-control:read-only {
 textarea.form-control:disabled, textarea.form-control:read-only {
     background-color: transparent !important;
     border: unset !important;
+    border-bottom: dotted 1px gray !important;
 }
 
 .form-control:hover:enabled:read-write, .text-box:hover:enabled:read-write, .single-line:hover:enabled:read-write {

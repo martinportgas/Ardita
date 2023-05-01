@@ -115,14 +115,26 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtl">
-                                                @if (ViewBag.subDetail.Count > 0)
+                                                @if (ViewBag.subDetail != null)
                                                 {
-                                                    foreach (Ardita.Models.DbModels.TrxPermissionClassification item in ViewBag.subDetail)
+                                                    @if (ViewBag.subDetail.Count > 0)
+                                                    {
+                                                        foreach (Ardita.Models.DbModels.TrxPermissionClassification item in ViewBag.subDetail)
+                                                        {
+                                                            <tr>
+                                                                <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                                <td style="width:95%">
+                                                                    <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                            <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:95%">
-                                                                <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
+                                                                <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
                                                             </td>
                                                         </tr>
                                                     }

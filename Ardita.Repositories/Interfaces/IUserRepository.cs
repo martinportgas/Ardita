@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,10 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<MstUser>> GetById(Guid id);
+        Task<MstUser> GetById(Guid id);
         Task<IEnumerable<MstUser>> GetAll();
+        Task<IEnumerable<MstUser>> GetByFilterModel(DataTableModel model);
+        Task<int> GetCount();
         Task<int> Insert(MstUser model);
         Task<bool> InsertBulk(List<MstUser> users);
         Task<int> Delete(MstUser model);

@@ -27,7 +27,7 @@ namespace Ardita.Views.ViewComponents
 
             var getMenu = await _userService.GetUserMenu(guid);
             var menu = getMenu.GroupBy(x=> x.MenuId)
-                .Select(x => new MstMenu { MenuId = x.Key, Name = x.FirstOrDefault().MenuName, Path = x.FirstOrDefault().MenuPath, Sort = x.FirstOrDefault().MenuSort })
+                .Select(x => new MstMenu { MenuId = x.Key, Name = x.FirstOrDefault().MenuName, Path = x.FirstOrDefault().MenuPath, Sort = x.FirstOrDefault().MenuSort, Icon = x.FirstOrDefault().MenuIcon })
                 .OrderBy(x => x.Sort)
                 .ToList();
 

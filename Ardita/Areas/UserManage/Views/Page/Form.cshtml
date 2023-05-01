@@ -1,0 +1,137 @@
+﻿@model Ardita.Models.DbModels.MstPage
+@using Ardita.Models.ViewModels;
+@using Ardita.Globals;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
+
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Page</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                User Management
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Page", new {Area = "UserManage"})">Page</i></a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Create</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Page</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="Page" asp-area="UserManage" asp-action="Save">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label>Page Name</label>
+                                                <input type="text" asp-for="Name" asp-for="page.Name" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add"><i class="fa fa-plus"></i> Add</button>
+                                        <input type="hidden" id="counttbl" value="1" />
+                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Path Name</th>
+                                                    <th>Page Path</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listdtl">
+                                                <tr>
+                                                    <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                    <td style="width:35%"><input type="text" name="namePath[]" class="form-control name" /></td>
+                                                    <td style="width:60%"><input type="text" name="pagePath[]" class="form-control path" /></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        function removeRow(e) {
+            e.parent().parent().remove();
+            var countClass = $('.min').length;
+            if (countClass < 2) {
+                $('#listdtl').children("tr:first-child").children('td:first-child').children().hide();
+            }
+        }
+        $(document).ready(function () {
+            $("#txtMenu").select2({
+                theme: 'bootstrap4',
+            });
+            $("#txtSubMenu").select2({
+                theme: 'bootstrap4',
+            });
+            $("#txtPageName").select2({
+                theme: 'bootstrap4',
+            });
+            $("#txtPagePath").select2({
+                theme: 'bootstrap4',
+            });
+            $('#add').off('click').on('click', function () {
+                var elClone = $('#listdtl').children("tr:first-child").clone();
+                elClone.find('.name').val('');
+                elClone.find('.path').val('');
+                elClone.appendTo("#listdtl");
+                $('.min').show();
+            });
+        });
+    </script>
+}

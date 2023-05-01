@@ -1,12 +1,16 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@using Ardita.Models.ViewModels;
+@using Ardita.Globals;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Menu</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 User Management
@@ -31,10 +35,11 @@
                     <table id="tblMenu" class="table table-striped table-hover dataTables-example" style="width:100%">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Menu Name</th>
-                                <th>Path</th>
+                                <th>Name</th>
+                                <th>Area</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -67,26 +72,83 @@
                 ],
                 fixedColumns: true,
                 columns: [
+                     {
+                        "className": "details-control",
+                        "orderable": false,
+                        "searchable": false,
+                        "data": "menuId",
+                        "defaultContent": '',
+                        "render": function () {
+                            return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
+                        },
+
+                     },
                     {
-                        "data": "subMenuId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "menuId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "subMenuId",
+                        "data": "menuId",
                         "render": function (data, type, row, meta) {
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Menu", new { Area = "UserManage", Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
 
-                            console.log(edit);
-                            edit = edit.replace("-1", row.subMenuId);
-                            console.log(row.subMenuId, edit);
+                            edit = edit.replace("-1", row.menuId);
                             return edit;
                         }
                     },
-                    { "data": "subMenuName", "name": "subMenuName", "autoWidth": true },
-                    { "data": "subMenuPath", "name": "subMenuPath", "autoWidth": true },
+                    { "data": "name", "name": "name", "autoWidth": true },
+                    { "data": "path", "name": "path", "autoWidth": true },
                 ]
             });
+
+            var detailRows = [];
+
+            $('#tblMenu tbody').on('click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+                var idx = detailRows.indexOf(tr.attr('id'));
+
+                if (row.child.isShown()) {
+                    tr.removeClass('details');
+                    row.child.hide();
+                    detailRows.splice(idx, 1);
+                } else {
+                    tr.addClass('details');
+                    row.child(format(row.data())).show();
+
+                    if (idx === -1) {
+                        detailRows.push(tr.attr('id'));
+                    }
+                }
+            });
+            table.on('draw', function () {
+                detailRows.forEach(function (id, i) {
+                    $('#' + id + ' td.details-control').trigger('click');
+                });
+            });
         });
+
+        function format(data) {
+            var table = '<table><tr><td><b>Action</b></td><td><b>Sub Menu Name</b></td><td><b>Sub Menu Path</b></td></tr>';
+            
+            $.each(data.mstSubmenus, function (key, val) {
+                var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.UpdateSubMenu, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
+                edit = edit.replace("-1", val.submenuId);
+
+                var detail = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-eye"></i> </a>`;
+                detail = detail.replace("-1", val.submenuId);
+
+                var JoinButton = edit.concat(" ", detail);
+
+                table += ('<tr>');
+                table += ('<td>' + JoinButton + '</td>');
+                table += ('<td>' + val.name + '</td>');
+                table += ('<td>' + val.path + '</td>');
+                table += ('</tr>');
+            });
+            table += '</table>';
+            return table;
+        }
     </script>
 }

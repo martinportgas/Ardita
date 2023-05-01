@@ -6,6 +6,12 @@
         public const string Add = "Add";
         public const string UserId = "UserId";
         public const string Submit = "Submit";
+        public const string SubMenuPageDetail = "SubMenuPageDetail";
+        public const string SubMenuForm = "SubMenuForm";
+        public const string PageForm = "PageForm";
+        public const string AddPage = "AddPage";
+        public const string SavePage = "SavePage";
+        public const string PageUpdateForm = "PageUpdateForm";
 
         //Area
         public const string MasterData = "MasterData";
@@ -33,20 +39,38 @@
         public const string TypeStorage = "TypeStorage";
         public const string Archive = "Archive";
         public const string ArchiveMonitoring = "ArchiveMonitoring";
+        public const string Employee = "Employee";
+        public const string Position = "Position";
+        public const string Menu = "Menu";
+        public const string User = "User";
+        public const string Page = "Page";
+        public const string RolePage = "RolePage";
         
+        public const string ArchiveRetention = "ArchiveRetention";
+        public const string ArchiveExtend = "ArchiveExtend";
+        public const string ArchiveDestroy = "ArchiveDestroy";
+        public const string ArchiveMovement = "ArchiveMovement";
+        public const string ArchiveApproval = "ArchiveApproval";
+
         //Action
         public const string Index = "Index";
         public const string Update = "Update";
         public const string Delete = "Delete";
         public const string Detail = "Detail";
+        public const string Preview = "Preview";
         public const string Remove = "Remove";
         public const string Save = "Save";
         public const string Create = "Create";
+        public const string Approval = "Approval";
+        public const string SubmitApproval = "SubmitApproval";
         public const string Export = "Export";
         public const string Upload = "Upload";
         public const string GetData = "GetData";
         public const string DownloadTemplate = "DownloadTemplate";
         public const string DownloadFile = "DownloadFile";
+        public const string UpdateSubMenu = "UpdateSubMenu";
+        public const string SaveSubMenu = "SaveSubMenu";
+        public const string UpdatePage = "UpdatePage";
 
         //Html helper
         public const string Required = "required";
@@ -59,6 +83,7 @@
         public const string Files = "files";
         public const string DetailArray = "detail[]";
         public const string IdFileDeletedArray = "idFileDeleted[]";
+        public const string InitialCode = "Auto Generated";
 
         //Prefix
         public const string Trx = "Trx";
@@ -86,6 +111,9 @@
         public const string BindRowByLevelId = "BindRowByLevelId";
         public const string BindTypeStorageById = "BindTypeStorageById";
         public const string BindDownload = "BindDownload";
+        public const string BindArchiveRetention = "BindArchiveRetention";
+        public const string BindArchiveRetentionByParam = "BindArchiveRetentionByParam";
+        public const string BindEmployeeByParam = "BindEmployeeByParam";
 
         //Web Component
         public const string GET = "GET";
@@ -96,5 +124,12 @@
         //Partial View
         public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
+        public enum Status
+        {
+            Draft = 1,
+            ApprovalProcess = 2,
+            Approved = 3,
+            Rejected = 4
+        }
     }
 }

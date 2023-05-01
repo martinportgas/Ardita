@@ -16,6 +16,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Data;
 using Ardita.Globals;
 using Ardita.Controllers;
+using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
@@ -36,30 +37,11 @@ namespace Ardita.Areas.UserManage.Controllers
         public override async Task<ActionResult> Index() => await base.Index();
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
+
             try
             {
-                var dtModel = new DataTableModel();
-
-                dtModel.draw = Request.Form["draw"].FirstOrDefault();
-                dtModel.start = Request.Form["start"].FirstOrDefault();
-                dtModel.length = Request.Form["length"].FirstOrDefault();
-                dtModel.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                dtModel.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                dtModel.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                dtModel.pageSize = model.length != null ? Convert.ToInt32(dtModel.length) : 0;
-                dtModel.skip = model.start != null ? Convert.ToInt32(dtModel.start) : 0;
-                dtModel.recordsTotal = 0;
-
-                var result = await _employeeService.GetListEmployee(dtModel);
-
-                var jsonResult = new
-                {
-                    draw = result.draw,
-                    recordsFiltered = result.recordsFiltered,
-                    recordsTotal = result.recordsTotal,
-                    data = result.data
-                };
-                return Json(jsonResult);
+                var result = await _employeeService.GetListEmployee(model);
+                return Json(result);
             }
             catch (Exception ex)
             {
@@ -68,60 +50,52 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
+            ViewBag.listPositions = await BindPositions();
 
-            var Positions = await _positionService.GetAll();
-            var Employee = new MstEmployee();
-
-            viewModels.Positions = Positions;
-            viewModels.Employee = Employee;
-
-            return View(viewModels);
+            return View(Const.Form, new MstEmployee());
         }
 
         public override async Task<IActionResult> Update(Guid Id)
         {
-            EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
+            var data = await _employeeService.GetById(Id);
 
-            var Positions = await _positionService.GetAll();
-            var dataEmployee = await _employeeService.GetById(Id);
-            var Employee = new MstEmployee();
-
-            if (dataEmployee.Count() > 0)
+            if (data != null)
             {
-                Employee = dataEmployee.FirstOrDefault();
-
-                viewModels.Positions = Positions;
-                viewModels.Employee = Employee;
-
-                return View(viewModels);
+                ViewBag.listPositions = await BindPositions();
+                return View(Const.Form, data);
             }
             else
             {
-                return RedirectToAction("Index", "Employee", new { Area = "Employee" });
+                return RedirectToIndex();
             }
         }
 
         public override async Task<IActionResult> Remove(Guid Id)
         {
-            EmployeeInserViewModel viewModels = new EmployeeInserViewModel();
+            var data = await _employeeService.GetById(Id);
 
-            var Positions = await _positionService.GetAll();
-            var dataEmployee = await _employeeService.GetById(Id);
-            var Employee = new MstEmployee();
-
-            if (dataEmployee.Count() > 0)
+            if (data != null)
             {
-                Employee = dataEmployee.FirstOrDefault();
-
-                viewModels.Positions = Positions;
-                viewModels.Employee = Employee;
-
-                return View(viewModels);
+                ViewBag.listPositions = await BindPositions();
+                return View(Const.Form, data);
             }
             else
             {
-                return RedirectToAction("Index", "Employee", new { Area = "Employee" });
+                return RedirectToIndex();
+            }
+        }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _employeeService.GetById(Id);
+
+            if (data != null)
+            {
+                ViewBag.listPositions = await BindPositions();
+                return View(Const.Form, data);
+            }
+            else
+            {
+                return RedirectToIndex();
             }
         }
 
@@ -135,20 +109,20 @@ namespace Ardita.Areas.UserManage.Controllers
 
                 if (model.Employee.EmployeeId != Guid.Empty)
                 {
-                    model.Employee.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.Employee.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.Employee.UpdateDate = DateTime.Now;
 
                     result = await _employeeService.Update(model.Employee);
                 }
                 else
                 {
-                    model.Employee.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                    model.Employee.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.Employee.CreatedDate = DateTime.Now;
                     result = await _employeeService.Insert(model.Employee);
                 }
 
             }
-            return RedirectToAction("Index", "Employee", new { Area = "Employee" });
+            return RedirectToIndex();
         }
 
         public async Task<IActionResult> Delete(EmployeeInserViewModel model)
@@ -160,7 +134,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 if (model.Employee.EmployeeId != Guid.Empty)
                 {
                  
-                    model.Employee.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.Employee.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.Employee.UpdateDate = DateTime.Now;
 
                     result = await _employeeService.Delete(model.Employee);
@@ -168,49 +142,40 @@ namespace Ardita.Areas.UserManage.Controllers
 
 
             }
-            return RedirectToAction("Index", "Employee", new { Area = "Employee" });
+            return RedirectToIndex();
         }
 
-        public async Task<IActionResult> DownloadTemplate()
+        public async Task DownloadTemplate()
         {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"EmployeeTemplate.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            try
             {
+                string fileName = $"{Const.Template}-{nameof(MstEmployee).ToCleanNameOf()}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("Employee");
-                ISheet excelSheetPosition = workbook.CreateSheet("Position");
+                ISheet excelSheet = workbook.CreateSheet(nameof(MstEmployee).ToCleanNameOf());
+                ISheet excelSheetPosition = workbook.CreateSheet(nameof(MstPosition).Replace(Const.Trx, string.Empty));
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowPosition = excelSheetPosition.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("NIK");
-                row.CreateCell(1).SetCellValue("Name");
-                row.CreateCell(2).SetCellValue("Email");
-                row.CreateCell(3).SetCellValue("Gender");
-                row.CreateCell(4).SetCellValue("PlaceOfBirth");
-                row.CreateCell(5).SetCellValue("DateOfBirth");
-                row.CreateCell(6).SetCellValue("Address");
-                row.CreateCell(7).SetCellValue("Phone");
-                row.CreateCell(8).SetCellValue("PositionCode");
+                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(1).SetCellValue(nameof(MstEmployee.Nik));
+                row.CreateCell(2).SetCellValue(nameof(MstEmployee.Name));
+                row.CreateCell(3).SetCellValue(nameof(MstEmployee.Email));
+                row.CreateCell(4).SetCellValue(nameof(MstEmployee.Gender));
+                row.CreateCell(5).SetCellValue(nameof(MstEmployee.PlaceOfBirth));
+                row.CreateCell(6).SetCellValue(nameof(MstEmployee.DateOfBirth));
+                row.CreateCell(7).SetCellValue(nameof(MstEmployee.Address));
+                row.CreateCell(8).SetCellValue(nameof(MstEmployee.Phone));
+                row.CreateCell(9).SetCellValue(nameof(MstPosition.Code));
 
-                row = excelSheet.CreateRow(1);
-                row.CreateCell(0).SetCellValue("202304090001");
-                row.CreateCell(1).SetCellValue("Sample Name");
-                row.CreateCell(2).SetCellValue("Sample@Mail.com");
-                row.CreateCell(3).SetCellValue("Male");
-                row.CreateCell(4).SetCellValue("Jakarta");
-                row.CreateCell(5).SetCellValue("1980-01-01");
-                row.CreateCell(6).SetCellValue("Jl. Pangeran Antasari");
-                row.CreateCell(7).SetCellValue("82175521432");
-                row.CreateCell(8).SetCellValue("IT-0006");
 
-                rowPosition.CreateCell(0).SetCellValue("Code");
-                rowPosition.CreateCell(1).SetCellValue("Name");
+
+                rowPosition.CreateCell(0).SetCellValue(Const.No);
+                rowPosition.CreateCell(1).SetCellValue(nameof(MstPosition.Code));
+                rowPosition.CreateCell(2).SetCellValue(nameof(MstPosition.Name));
 
                 var dataPosition = await _positionService.GetAll();
 
@@ -219,109 +184,109 @@ namespace Ardita.Areas.UserManage.Controllers
                 {
                     rowPosition = excelSheetPosition.CreateRow(no);
 
-                    rowPosition.CreateCell(0).SetCellValue(item.Code);
-                    rowPosition.CreateCell(1).SetCellValue(item.Name);
+                    rowPosition.CreateCell(0).SetCellValue(no);
+                    rowPosition.CreateCell(1).SetCellValue(item.Code);
+                    rowPosition.CreateCell(2).SetCellValue(item.Name);
                     no += 1;
                 }
-                workbook.Write(fs);
+                workbook.WriteExcelToResponse(HttpContext, fileName);
             }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            catch (Exception)
             {
-                await stream.CopyToAsync(memory);
+                throw new Exception();
             }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }
-        public async Task<IActionResult> Export()
+        public async Task Export()
         {
-            string sWebRootFolder = _hostingEnvironment.WebRootPath;
-            string sFileName = @"EmployeeData.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            var data = await _employeeService.GetAll();
-            var positions = await _positionService.GetAll();
-
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            var memory = new MemoryStream();
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            try
             {
+                string fileName = nameof(MstEmployee).ToCleanNameOf();
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                var data = await _employeeService.GetAll();
+
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("Employee");
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("NIK");
-                row.CreateCell(1).SetCellValue("Name");
-                row.CreateCell(2).SetCellValue("Email");
-                row.CreateCell(3).SetCellValue("Gender");
-                row.CreateCell(4).SetCellValue("PlaceOfBirth");
-                row.CreateCell(5).SetCellValue("DateOfBirth");
-                row.CreateCell(6).SetCellValue("Address");
-                row.CreateCell(7).SetCellValue("Phone");
-                row.CreateCell(8).SetCellValue("Position");
+                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(1).SetCellValue(nameof(MstEmployee.Nik));
+                row.CreateCell(2).SetCellValue(nameof(MstEmployee.Name));
+                row.CreateCell(3).SetCellValue(nameof(MstEmployee.Email));
+                row.CreateCell(4).SetCellValue(nameof(MstEmployee.Gender));
+                row.CreateCell(5).SetCellValue(nameof(MstEmployee.PlaceOfBirth));
+                row.CreateCell(6).SetCellValue(nameof(MstEmployee.DateOfBirth));
+                row.CreateCell(7).SetCellValue(nameof(MstEmployee.Address));
+                row.CreateCell(8).SetCellValue(nameof(MstEmployee.Phone));
+                row.CreateCell(9).SetCellValue(nameof(MstPosition) + nameof(MstPosition.Name));
 
                 int no = 1;
-                foreach (var item in data) 
+                foreach (var item in data)
                 {
                     row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(item.Nik);
-                    row.CreateCell(1).SetCellValue(item.Name);
-                    row.CreateCell(2).SetCellValue(item.Email);
-                    row.CreateCell(3).SetCellValue(item.Gender);
-                    row.CreateCell(4).SetCellValue(item.PlaceOfBirth);
+                    row.CreateCell(0).SetCellValue(no);
+                    row.CreateCell(1).SetCellValue(item.Nik);
+                    row.CreateCell(2).SetCellValue(item.Name);
+                    row.CreateCell(3).SetCellValue(item.Email);
+                    row.CreateCell(4).SetCellValue(item.Gender);
+                    row.CreateCell(5).SetCellValue(item.PlaceOfBirth);
+                    row.CreateCell(6).SetCellValue(item.DateOfBirth.ToString());
+                    row.CreateCell(7).SetCellValue(item.Address);
+                    row.CreateCell(8).SetCellValue(item.Phone);
+                    row.CreateCell(9).SetCellValue(item.Position.Name);
 
-                    DateTime? dtDob = item.DateOfBirth;
-                    row.CreateCell(5).SetCellValue(dtDob?.ToString("dd/MM/yyyy"));
-                    row.CreateCell(6).SetCellValue(item.Address);
-                    row.CreateCell(7).SetCellValue(item.Phone);
-
-                    var positionCode = positions.Where(x => x.PositionId == item.PositionId).FirstOrDefault().Name;
-                    row.CreateCell(8).SetCellValue(positionCode);
                     no += 1;
                 }
-                workbook.Write(fs);
+                workbook.WriteExcelToResponse(HttpContext, fileName);
             }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            catch (Exception ex)
             {
-                await stream.CopyToAsync(memory);
+                throw new Exception();
             }
-            memory.Position = 0;
-            return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }
         public async Task<ActionResult> Upload()
         {
-            IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, "Upload", _hostingEnvironment.WebRootPath);
-
-            var positions = await _positionService.GetAll();
-
-            List<MstEmployee> employees = new();
-            MstEmployee employee;
-
-            foreach (DataRow row in result.Rows)
+            try
             {
-                employee = new();
-                employee.EmployeeId = Guid.NewGuid();
-                employee.Nik = row[0].ToString();
-                employee.Name = row[1].ToString();
-                employee.Email = row[2].ToString();
-                employee.Gender = row[3].ToString();
-                employee.PlaceOfBirth = row[4].ToString();
-                employee.DateOfBirth = Convert.ToDateTime(row[5].ToString());
-                employee.Address = row[6].ToString();
-                employee.Phone = row[7].ToString();
+                IFormFile file = Request.Form.Files[0];
+                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var positions = await _positionService.GetAll();
 
-                employee.PositionId = positions.Where(x => x.Code == row[8].ToString()).FirstOrDefault().PositionId;
+                List<MstEmployee> employees = new();
+                MstEmployee employee;
 
-                employee.IsActive = true;
-                employee.CreatedBy = new Guid(User.FindFirst("UserId").Value);
-                employee.CreatedDate = DateTime.Now;
+                foreach (DataRow row in result.Rows)
+                {
+                    employee = new();
+                    employee.EmployeeId = Guid.NewGuid();
+                    employee.Nik = row[1].ToString();
+                    employee.Name = row[2].ToString();
+                    employee.Email = row[3].ToString();
+                    employee.Gender = row[4].ToString();
+                    employee.PlaceOfBirth = row[5].ToString();
+                    employee.DateOfBirth = Convert.ToDateTime(row[6].ToString());
+                    employee.Address = row[7].ToString();
+                    employee.Phone = row[8].ToString();
 
-                employees.Add(employee);
+                    employee.PositionId = positions.Where(x => x.Code.Contains(row[9].ToString())).FirstOrDefault().PositionId;
+                    employee.IsActive = true;
+                    employee.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    employee.CreatedDate = DateTime.Now;
+
+                    employees.Add(employee);
+                }
+                await _employeeService.InsertBulk(employees);
+                return RedirectToIndex();
             }
-            await _employeeService.InsertBulk(employees);
+            catch (Exception)
+            {
 
-            return RedirectToAction("Index", "Employee", new { Area = "UserManage" });
+                throw new Exception();
+            }
         }
+
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Employee, new { Area = Const.UserManage });
     }
 }

@@ -75,41 +75,13 @@ public class ArchiveRepository : IArchiveRepository
                 .ToListAsync();
         }
 
+        if (model.PositionId != Guid.Empty)
+        {
+            result = result.Where(x => x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId);
+        }
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetByFilterModelForMonitoring(DataTableModel model)
-    {
-        IEnumerable<TrxArchive> result;
-
-        var propertyInfo = typeof(TrxArchive).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(TrxArchive).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.TrxArchives
-                .Include(x => x.Gmd)
-                .Include(x => x.SubSubjectClassification)
-                .Include(x => x.Creator)
-                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId)
-                .OrderBy(x => EF.Property<TrxArchive>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-        }
-        else
-        {
-            result = await _context.TrxArchives
-                .Include(x => x.Gmd)
-                .Include(x => x.SubSubjectClassification)
-                .Include(x => x.Creator)
-                .Where(x => (x.TitleArchive).Contains(model.searchValue) && x.IsActive == true && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId)
-                .OrderByDescending(x => EF.Property<TrxArchive>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-        }
-
-        return result;
-    }
 
     public async Task<TrxArchive> GetById(Guid id)
     {

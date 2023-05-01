@@ -63,28 +63,12 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
-                                        <input type="hidden" value="@Model.RoomId" asp-for="RoomId" />
-
-                                        <select 
-                                                asp-items="ViewBag.listArchiveUnits"
-                                                asp-for="Floor.ArchiveUnit.ArchiveUnitId"
-                                                id="txtUnitArchive" 
-                                                class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Unit Kearsipan --"
-                                                onchange="loadFloors(this)"
-                                        >
-                                            <option value=""></option>
-                                        </select>
+                                        <input type="hidden" asp-for="RoomId" />
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Floor.ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Lantai</label>
-                                        <select 
-                                            asp-for="FloorId" 
-                                            asp-items="ViewBag.listFloors"
-                                                id="txtFloorId" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Pilih Lantai --">
-                                            <option value=""></option>
-                                        </select>
+                                        <select id="txtFloorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Floor.FloorId" asp-items="ViewBag.listFloors" data-placeholder="-- Pilih Lantai --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Ruangan</label>
@@ -98,7 +82,7 @@
                                         <label>Tipe Ruangan</label>
 
                                         <select asp-for="ArchiveRoomType" asp-items="ViewBag.listTypeOfRooms"
-                                                id="txtUnitArchive" class="select2_demo_1 form-control"
+                                                id="txtArchiveRoomType" class="select2_demo_1 form-control"
                                                 data-placeholder="-- Pilih Tipe Ruangan --">
                                             <option value=""></option>
                                             <option value="Unit Pengelola">Unit Pengelola</option>
@@ -123,11 +107,8 @@
     <script type="text/javascript">
         $(function () {
             initForms("@form.CurrentAction");
-
-            $("#txtUnitArchive").select2({
-                theme: 'bootstrap4',
-            });
-            $("#txtFloorId").select2({
+            initDropdown();
+            $("#txtArchiveRoomType").select2({
                 theme: 'bootstrap4',
             });
         });
@@ -169,24 +150,40 @@
                     }
                 });
         }
-        
-        
-        function loadFloors(obj) {
-            var value = obj.value;
-            var url = '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Room, new { Area = Const.MasterData })';
 
-            $.post(url, { id: value }, function (data) {
-                console.log(data);
-                PopulateDropDown("#txtFloorId", data);
+        function initDropdown() {
+            $('#txtArchiveId').on('change', function () {
+                $('#txtFloorId').val('').trigger('change');
             });
-        }
-        function PopulateDropDown(dropDownId, list, selectedId) {
-            $(dropDownId).empty();
-            $(dropDownId).append("<option>-- Silahkan Pilih --</option>")
-            $.each(list, function (index, row) {
-                console.log(row);
-                $(dropDownId).append("<option value='" + row.floorId + "'>" + row.floorName + "</option>")
+
+            $('#txtFloorId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Room, new { Area = Const.MasterData })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.floorName,
+                                id: item.floorId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
             });
+
+
         }
     </script>
 }

@@ -41,6 +41,14 @@ public static class ServiceExtension
         services.AddScoped<ILevelRepository, LevelRepository>();
         services.AddScoped<IRowRepository, RowRepository>();
         services.AddScoped<IArchiveRepository, ArchiveRepository>();
+        services.AddScoped<IArchiveExtendRepository, ArchiveExtendRepository>();
+        services.AddScoped<IArchiveExtendDetailRepository, ArchiveExtendDetailRepository>();
+        services.AddScoped<IArchiveDestroyRepository, ArchiveDestroyRepository>();
+        services.AddScoped<IArchiveDestroyDetailRepository, ArchiveDestroyDetailRepository>();
+        services.AddScoped<IArchiveMovementRepository, ArchiveMovementRepository>();
+        services.AddScoped<IArchiveMovementDetailRepository, ArchiveMovementDetailRepository>();
+        services.AddScoped<IArchiveRetentionRepository, ArchiveRetentionRepository>();
+        services.AddScoped<IArchiveApprovalRepository, ArchiveApprovalRepository>();
         services.AddScoped<IFileArchiveDetailRepository, FileArchiveDetailRepository>();
         services.AddScoped<IMediaStorageRepository, MediaStorageRepository>();
 

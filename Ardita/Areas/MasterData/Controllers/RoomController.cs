@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -19,9 +18,8 @@ namespace Ardita.Areas.MasterData.Controllers
     [Area(Const.MasterData)]
     public class RoomController : BaseController<TrxRoom>
     {
-        public RoomController(IHostingEnvironment hostingEnvironment, IRoomService roomService, IFloorService floorService, IArchiveUnitService archiveUnitService)
+        public RoomController(IRoomService roomService, IFloorService floorService, IArchiveUnitService archiveUnitService)
         {
-            _hostingEnvironment = hostingEnvironment;
             _roomService = roomService;
             _floorService = floorService;
             _archiveUnitService = archiveUnitService;
@@ -125,7 +123,7 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
 
                 var floors = await _floorService.GetAll();
 

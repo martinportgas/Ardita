@@ -11,9 +11,17 @@ namespace Ardita.Services.Classess;
 
 public class ArchiveService : IArchiveService
 {
+    private readonly IArchiveUnitRepository _archiveUnitRepository;
     private readonly IArchiveRepository _archiveRepository;
 
-    public ArchiveService(IArchiveRepository archiveRepository) => _archiveRepository = archiveRepository;
+    public ArchiveService(
+        IArchiveUnitRepository archiveUnitRepository,
+        IArchiveRepository archiveRepository
+        )
+    {
+        _archiveUnitRepository = archiveUnitRepository;
+        _archiveRepository = archiveRepository;
+    }
 
     public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
 
@@ -28,40 +36,15 @@ public class ArchiveService : IArchiveService
     {
         try
         {
-            var dataCount = await _archiveRepository.GetCount();
-
-            var filterData = new DataTableModel
+            int dataCount = 0;
+            if (model.PositionId != Guid.Empty)
             {
-                sortColumn = model.columns[model.order[0].column].data,
-                sortColumnDirection = model.order[0].dir,
-                searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
-                pageSize = model.length,
-                skip = model.start
-            };
-
-            var results = await _archiveRepository.GetByFilterModel(filterData);
-
-            var responseModel = new DataTableResponseModel<TrxArchive>
+                dataCount = await _archiveRepository.GetCountForMonitoring(model.PositionId);
+            }
+            else
             {
-                draw = model.draw,
-                recordsTotal = dataCount,
-                recordsFiltered = dataCount,
-                data = results.ToList()
-            };
-
-            return responseModel;
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
-
-    public async Task<DataTableResponseModel<TrxArchive>> GetListForMonitoring(DataTablePostModel model)
-    {
-        try
-        {
-            var dataCount = await _archiveRepository.GetCountForMonitoring(model.PositionId);
+                dataCount = await _archiveRepository.GetCount();
+            }
 
             var filterData = new DataTableModel
             {
@@ -73,7 +56,7 @@ public class ArchiveService : IArchiveService
                 PositionId = model.PositionId
             };
 
-            var results = await _archiveRepository.GetByFilterModelForMonitoring(filterData);
+            var results = await _archiveRepository.GetByFilterModel(filterData);
 
             var responseModel = new DataTableResponseModel<TrxArchive>
             {

@@ -1,4 +1,7 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Controllers;
+using Ardita.Extensions;
+using Ardita.Globals;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +10,8 @@ namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
     [Area("UserManage")]
-    public class RolePageController : Controller
+    public class RolePageController : BaseController<IdxRolePage>
     {
-        private readonly IRolePageService _rolePageService;
-        private readonly IRoleService _roleService;
-        private readonly IPageService _pageService;
         public RolePageController(
             IRolePageService rolePageService,
             IRoleService roleService,
@@ -22,37 +22,16 @@ namespace Ardita.Areas.UserManage.Controllers
             _roleService = roleService;
             _pageService = pageService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public override async Task<ActionResult> Index() => await base.Index();
         [HttpPost]
-        public async Task<JsonResult> GetData()
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                var model = new DataTableModel();
+                var result = await _roleService.GetListRoles(model);
 
-                model.draw = Request.Form["draw"].FirstOrDefault();
-                model.start = Request.Form["start"].FirstOrDefault();
-                model.length = Request.Form["length"].FirstOrDefault();
-                model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                model.recordsTotal = 0;
+                return Json(result);
 
-                var result = await _roleService.GetListRole(model);
-
-                var jsonResult = new
-                {
-                    draw = result.draw,
-                    recordsFiltered = result.recordsFiltered,
-                    recordsTotal = result.recordsTotal,
-                    data = result.data
-                };
-                return Json(jsonResult);
             }
             catch (Exception ex)
             {
@@ -73,54 +52,61 @@ namespace Ardita.Areas.UserManage.Controllers
             }
         }
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save()
+        public override async Task<IActionResult> Save(IdxRolePage model)
         {
-            string urlRedirect = "";
-            string msg = "";
-            Guid roleId = Guid.Empty;
-            if (Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
-            {
-                var listPageId = Request.Form["listPage[]"];
-                if (listPageId.Count > 0)
+            try {
+
+                string urlRedirect = "";
+                string msg = "";
+                Guid roleId = Guid.Empty;
+                if (Guid.TryParse(Request.Form["role"].FirstOrDefault(), out roleId))
                 {
-                    var delete = _rolePageService.DeleteByRoleId(roleId);
-
-                    List<IdxRolePage> models = new();
-                    IdxRolePage objRolePage;
-
-                    for (int i = 0; i < listPageId.Count; i++)
+                    var listPageId = Request.Form["listPage[]"];
+                    if (listPageId.Count > 0)
                     {
-                        Guid pageId = Guid.Empty;
-                        if (Guid.TryParse(listPageId[i], out pageId))
-                        {
-                            var page = await _pageService.GetById(pageId);
-                            if (page.Count() > 0)
-                            {
-                                objRolePage = new();
-                                objRolePage.RolePageId = Guid.NewGuid();
-                                objRolePage.RoleId = roleId;
-                                objRolePage.PageId = pageId;
-                                objRolePage.CreatedBy = new Guid(User.FindFirst("UserId").Value);
-                                objRolePage.CreatedDate = DateTime.Now;
+                        var delete = _rolePageService.DeleteByRoleId(roleId);
 
-                                models.Add(objRolePage);
+                        List<IdxRolePage> models = new();
+                        IdxRolePage objRolePage;
+
+                        for (int i = 0; i < listPageId.Count; i++)
+                        {
+                            Guid pageId = Guid.Empty;
+                            if (Guid.TryParse(listPageId[i], out pageId))
+                            {
+                                var page = await _pageService.GetById(pageId);
+                                if (page != null)
+                                {
+                                    objRolePage = new();
+                                    objRolePage.RolePageId = Guid.NewGuid();
+                                    objRolePage.RoleId = roleId;
+                                    objRolePage.PageId = pageId;
+                                    objRolePage.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                    objRolePage.CreatedDate = DateTime.Now;
+
+                                    models.Add(objRolePage);
+                                }
                             }
                         }
-                    }
 
-                    await _rolePageService.InsertBulk(models);
+                        await _rolePageService.InsertBulk(models);
+                    }
+                    msg = "Berhasil Tersimpan";
                 }
-                msg = "Berhasil Tersimpan";
-            }
-            else
+                else
+                {
+                    msg = "Role Not Found";
+                    urlRedirect = Url.Action(Const.Index, Const.RolePage, new { Area = Const.UserManage });
+                }
+                return Json(new { code = 200, msg = msg, redirect = urlRedirect });
+            } catch (Exception ex) 
             {
-                msg = "Role Not Found";
-                urlRedirect = Url.Action("Index", "RolePage", new { Area = "UserManage" });
+                return Json(new { code = 400, msg = ex.Message, redirect = Url.Action(Const.Index, Const.RolePage, new { Area = Const.UserManage }) });
             }
-            return Json(new { code = 200, msg = msg, redirect = urlRedirect });
         }
-        public async Task<IActionResult> Detail(Guid id)
+
+        [HttpGet]
+        public override async Task<IActionResult> Detail(Guid id)
         {
             var rolePageDetails = await _rolePageService.GetListRolePages(id);
             return View(rolePageDetails);

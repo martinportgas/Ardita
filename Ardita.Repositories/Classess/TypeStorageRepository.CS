@@ -12,9 +12,9 @@ public class TypeStorageRepository : ITypeStorageRepository
     
     public TypeStorageRepository(BksArditaDevContext context) => _context = context;
     
-    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Include(x => x.ArchiveUnit).Where(x => x.IsActive == true).ToListAsync();
     
-    public async Task<TrxTypeStorage> GetById(Guid id) => await _context.TrxTypeStorages.Where(x => x.TypeStorageId == id).FirstAsync();
+    public async Task<TrxTypeStorage> GetById(Guid id) => await _context.TrxTypeStorages.FirstAsync(x => x.TypeStorageId == id);
     
     public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync(x => x.IsActive == true);
 
@@ -91,7 +91,6 @@ public class TypeStorageRepository : ITypeStorageRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.TrxTypeStorages.Update(model);
                 result = await _context.SaveChangesAsync();
-
             }
         }
         return result;

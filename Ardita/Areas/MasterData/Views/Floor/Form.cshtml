@@ -64,12 +64,7 @@
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
                                         <input type="hidden" asp-for="FloorId" />
-
-                                        <select asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnits"
-                                            id="txtUnitArchive" class="select2_demo_1 form-control" 
-                                            data-placeholder="-- Pilih Unit Kearsipan --">
-                                            <option value=""></option>
-                                        </select>
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Lantai</label>
@@ -140,5 +135,7 @@
                     }
                 });
         }
+
+
     </script>
 }

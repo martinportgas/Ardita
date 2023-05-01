@@ -68,6 +68,11 @@ public class CompanyService : ICompanyService
         return await _companyRepository.Insert(model);
     }
 
+    public async Task<bool> InsertBulk(List<MstCompany> companies)
+    {
+        return await _companyRepository.InsertBulk(companies);
+    }
+
     public async Task<int> Update(MstCompany model)
     {
         return await _companyRepository.Update(model);

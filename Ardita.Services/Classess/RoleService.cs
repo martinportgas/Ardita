@@ -36,38 +36,37 @@ namespace Ardita.Services.Classess
             return await _roleRepository.GetById(id);
         }
 
-        public async Task<RoleListViewModel> GetListRole(DataTableModel tableModel)
+    
+
+        public async Task<DataTableResponseModel<MstRole>> GetListRoles(DataTablePostModel model)
         {
-            var roleListViewModel = new RoleListViewModel();
-
-            var roleResult = await _roleRepository.GetAll();
-            var results = (from role in roleResult
-                           select new RoleListViewDetailModel
-                           {
-                               RoleId = role.RoleId,
-                               RoleCode = role.Code,
-                               RoleName = role.Name,
-                               IsActive = role.IsActive
-                           });
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x =>
-                    (x.RoleCode != null ? x.RoleCode.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.RoleName != null ? x.RoleName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                );
+                var dataCount = await _roleRepository.GetCount();
+
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+
+                var results = await _roleRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstRole>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
             }
-
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            roleListViewModel.draw = tableModel.draw;
-            roleListViewModel.recordsFiltered = tableModel.recordsTotal;
-            roleListViewModel.recordsTotal = tableModel.recordsTotal;
-            roleListViewModel.data = data;
-
-            return roleListViewModel;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> Insert(MstRole model)

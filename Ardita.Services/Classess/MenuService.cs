@@ -18,13 +18,10 @@ namespace Ardita.Services.Classess
     public class MenuService : IMenuService
     {
         private readonly IMenuRepository _menuRepository;
-        private readonly ISubMenuRepository _subMenuRepository;
         public MenuService(
-            IMenuRepository menuRepository,
-            ISubMenuRepository subMenuRepository)
+            IMenuRepository menuRepository)
         {
             _menuRepository = menuRepository;
-            _subMenuRepository = subMenuRepository;
         }
 
         public async Task<int> Delete(MstMenu model)
@@ -37,49 +34,40 @@ namespace Ardita.Services.Classess
             return _menuRepository.GetAll();
         }
 
-        public Task<IEnumerable<MstMenu>> GetById(Guid id)
+        public Task<MstMenu> GetById(Guid id)
         {
             return _menuRepository.GetById(id);
         }
 
-        public async Task<MenuListViewModel> GetListMenuWithSubMenu(DataTableModel tableModel)
+        public async Task<DataTableResponseModel<MstMenu>> GetListMenu(DataTablePostModel model)
         {
-            var menuListViewModel = new MenuListViewModel();
-
-            var menuResult = await _menuRepository.GetAll();
-            var SubMenuResult = await _subMenuRepository.GetAll();
-
-            var results = (from menu in menuResult
-                           join subMenu in SubMenuResult on menu.MenuId equals subMenu.MenuId
-                           select new MenuListViewDetailModel
-                           {
-                               MenuId = menu.MenuId,
-                               SubMenuId = subMenu.SubmenuId,
-                               SubMenuName = subMenu.Name,
-                               SubMenuPath = subMenu.Path,
-                               SubMenuSort = subMenu.Sort
-                           });
-            //if (!(string.IsNullOrEmpty(tableModel.sortColumn) && string.IsNullOrEmpty(tableModel.sortColumnDirection)))
-            //{
-            //    results = results.OrderBy(tableModel.sortColumn + " " + tableModel.sortColumnDirection);
-            //}
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x => x.SubMenuName.ToUpper().Contains(tableModel.searchValue.ToUpper())
-                );
+                var dataCount = await _menuRepository.GetCount();
+
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+
+                var results = await _menuRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstMenu>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
             }
-
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            menuListViewModel.draw = tableModel.draw;
-            menuListViewModel.recordsFiltered = tableModel.recordsTotal;
-            menuListViewModel.recordsTotal = tableModel.recordsTotal;
-            menuListViewModel.data = data;
-
-            return menuListViewModel;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<List<MenuTypes>> GetMenuToLookUp()
