@@ -11,22 +11,11 @@ namespace Ardita.Services.Classess;
 
 public class ArchiveService : IArchiveService
 {
-    private readonly IArchiveUnitRepository _archiveUnitRepository;
     private readonly IArchiveRepository _archiveRepository;
 
-    public ArchiveService(
-        IArchiveUnitRepository archiveUnitRepository,
-        IArchiveRepository archiveRepository
-        )
-    {
-        _archiveUnitRepository = archiveUnitRepository;
-        _archiveRepository = archiveRepository;
-    }
+    public ArchiveService(IArchiveRepository archiveRepository) => _archiveRepository = archiveRepository;
 
-    public Task<int> Delete(TrxArchive model)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
 
     public async Task<IEnumerable<TrxArchive>> GetAll() => await _archiveRepository.GetAll();
 
@@ -101,6 +90,7 @@ public class ArchiveService : IArchiveService
             return null;
         }
     }
+
     public async Task<int> Insert(TrxArchive model, StringValues files)
     {
         List<FileModel> file = new();
@@ -126,8 +116,37 @@ public class ArchiveService : IArchiveService
         return await _archiveRepository.Insert(model, file);
     }
 
-    public Task<int> Update(TrxArchive model)
+    public async Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted)
     {
-        throw new NotImplementedException();
+        List<Guid> filesDeletedId = new();
+        List<FileModel> file = new();
+        FileModel temp;
+        string name;
+        string type;
+        string data;
+
+        if (files[0] != string.Empty)
+        {
+            foreach (var item in files)
+            {
+                temp = new();
+                JObject json = JObject.Parse(item);
+
+                temp.FileName = (string)json[nameof(name)];
+                temp.FileType = (string)json[nameof(type)];
+                temp.Base64 = (string)json[nameof(data)];
+                file.Add(temp);
+            }
+        }
+
+        if (filesDeleted.Any())
+        {
+            foreach (var item in filesDeleted)
+            {
+                filesDeletedId.Add(new Guid(item));
+            }
+        }
+
+        return await _archiveRepository.Update(model, file, filesDeletedId);
     }
 }

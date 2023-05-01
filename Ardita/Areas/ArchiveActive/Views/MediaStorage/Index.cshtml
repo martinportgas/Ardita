@@ -1,8 +1,9 @@
 ﻿@using Ardita.Globals;
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = Const.ViewStart;
 }
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Media Storage</h2>
@@ -49,3 +50,70 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+            function showMsg() {
+                alert("asd");
+            }
+            var table = $('#tbl').DataTable({
+                processing: true,
+                serverSide: true,
+                scrollX: true,
+                filter: true,
+                ajax: {
+                    "url": '@Url.Action(Const.GetData, Const.MediaStorage, new { Area = Const.ArchiveActive})',
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                columnDefs: [
+                    {
+                        width: 50, targets: 0
+                    }
+                ],
+                fixedColumns: true,
+                columns: [
+                    {
+                        "data": "mediaStorageId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        "data": "mediaStorageId",
+                        "render": function (data, type, row, meta) {
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", row.mediaStorageId);
+
+                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
+
+                            if (row.statusId == 1) {
+                                 edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                 edit = edit.replace("-1", row.mediaStorageId);
+                            }
+
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            remove = remove.replace("-1", row.mediaStorageId);
+
+                            var download = `<a class="btn btn-sm btn-info" data-toggle="tooltip" title="Data Still Draft" href="#"><i class="fa fa-download"></i> </a>`;
+                            if (row.statusId == 5) {
+                                download = `<a class="btn btn-sm btn-info" href="@Url.Action("BindQrCode", Const.MediaStorage, new { Area = Const.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
+                                download = download.replace("-1", row.mediaStorageCode);
+                            }
+
+                            
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", download);
+                            return JoinButton;
+                        }
+                    },
+                    { "data": "mediaStorageCode", "Code": "mediaStorageCode", "autoWidth": true },
+                    { "data": "mediaStorageName", "Name": "mediaStorageName", "autoWidth": true }
+                ]
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

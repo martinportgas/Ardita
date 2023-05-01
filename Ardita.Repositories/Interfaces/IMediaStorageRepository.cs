@@ -11,5 +11,5 @@ public interface IMediaStorageRepository
     Task<int> GetCount();
     Task<int> Insert(TrxMediaStorage model, List<TrxMediaStorageDetail> detail);
     Task<int> Delete(TrxMediaStorage model);
-    Task<int> Update(TrxMediaStorage model);
+    Task<int> Update(TrxMediaStorage model, List<TrxMediaStorageDetail> detail);
 }

@@ -108,7 +108,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Archive Creator</label>
-                                        <input type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
+                                        <input asp-for="Creator.CreatorName" type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
                                         <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
                                     </div>
                                     <div class="form-group">
@@ -119,17 +119,43 @@
                                         <input type="radio" placeholder="" id="txtCopy" value="Copy" asp-for="TypeArchive">
                                         <label>Copy</label>
                                     </div>
-                                    <div class="form-group">
-                                        <label>File</label>
-                                        <input type="file" class="filepond" id ="filepond" name="files" multiple data-allow-reorder="true" data-max-file-size="10MB"
-                                               data-max-files="10">
-                                    </div>
+                                    @if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+                                    {
+                                        <div class="form-group">
+                                            <label>File</label>
+                                            <input type="file" class="filepond" id="filepond" name="files" multiple data-allow-reorder="true" data-max-file-size="10MB"
+                                                   data-max-files="10">
+                                        </div>
+                                    }
+                                    @if (form.CurrentAction != Const.Add)
+                                    {
+                                        <div class="form-group">
+                                            <label>File Existing</label>
+
+                                            @if (Model.TrxFileArchiveDetails.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var item in Model.TrxFileArchiveDetails)
+                                                    {
+                                                        <li id="@item.FileArchiveDetailId.ToString()">
+                                                            <a href="@Url.Action(Const.BindDownload, Const.Archive, new { Area = Const.ArchiveActive, path = item.FilePath })">@item.FileName</a>
+                                                            @if (form.CurrentAction == Const.Update)
+                                                            {
+                                                                <a onclick="deleteFile('@item.FileArchiveDetailId.ToString()')"><i class="fa fa-trash"></i></a>
+                                                                
+                                                            }
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+
+                                        <div id="temp-file-deleted"></div>
+                                    }
+
                                     <div class="form-group" id="created_date">
                                         <label class="font-normal">Created Date</label>
-                                        <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" class="form-control"  asp-for="CreatedDateArchive" id="txtCreatedDateArchive" value="">
-                                        </div>
+                                        <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive">
                                     </div>
                                     <div class="form-group">
                                         <label>Active Retention</label>
@@ -146,7 +172,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
-                                    <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
                                 </div>
                             </form>
                         </div>
@@ -170,7 +196,10 @@
 
 @section Scripts {
     <script type="text/javascript">
+        var listFileArchiveDetailId = [];
+
         $(function () {
+            listFileArchiveDetailId = [];
             initForms("@form.CurrentAction");
 
             var mem = $('#created_date .input-group.date').datepicker({
@@ -214,34 +243,84 @@
                     }
                 });
             });
-           
+
+            if ("@form.CurrentAction" == "@Const.Add") {
+                $('#txtCreatedDateArchive').val("");
+            }
         });
+
+        function deleteFile(id) {
+            listFileArchiveDetailId.push(id);
+            $(`#${id}`).remove();
+        }
 
         function validate() {
             let result = true;
 
-            if ($('#txtCreatedDateArchive').val() == "") 
-            {
-                swal("Please enter Created Date Archive !");
-                result = false;
-            } 
-            if ($('#txtCreatorName').val() == "") 
-            {
-                swal("Please enter Creator Name !");
+            if ($('#txtVolume').val() == "0") {
+                swal("Please enter Volume !");
                 result = false;
             }
-            if ($('#txtArchiveUnitId').val() == "") {
-                swal("Please select Archive Unit !");
+
+            if ($('#txtInactiveRetention').val() == "0") {
+                swal("Please enter In Active Retention !");
                 result = false;
             }
-            
+
+            if ($('#txtActiveRetention').val() == "0") {
+                swal("Please enter Active Retention !");
+                result = false;
+            }
+
+            if ($('#txtCreatedDateArchive').val() == "0001-01-01" || $('#txtCreatedDateArchive').val() == "") {
+                swal("Please select Created Date Archive!");
+                $('#txtCreatedDateArchive').val("");
+                result = false;
+            }
+
+            if (!($("#txtOriginal").is(':checked')) && !($("#txtCopy").is(':checked'))) {
+                swal("Please select Archive Type !");
+                result = false;
+            }
+
+            if ($('#txtSecurityClassificationId').val() == "") {
+                swal("Please select Security Classification !");
+                result = false;
+            }
+
+            if ($('#txtTitleArchive').val() == "") {
+                swal("Please enter Archive Title !");
+                result = false;
+            }
+
+            if ($('#txtSubSubjectClassificationId').val() == "") {
+                swal("Please select Sub Subject Classification !");
+                result = false;
+            }
+
+            if (!($("#txtInternal").is(':checked')) && !($("#txtExternal").is(':checked'))) {
+                swal("Please select Sender First !");
+                result = false;
+            }
+
+            if ($('#txtGmdId').val() == "") {
+                swal("Please select GMD First !");
+                result = false;
+            }
+
+
             return result;
         }
 
-        function onSubmit(ctl, event, currentAction) {
+        function onSubmit(ctl, event) {
+
+            listFileArchiveDetailId.forEach((element) => {
+                $("#temp-file-deleted").append(`<input name=idFileDeleted[] type=hidden value=${element} >`);
+            });
+
             event.preventDefault();
             swal({
-                title: "Do You Want To " + currentAction + " It?",
+                title: "Do You Want To " + "@form.CurrentAction" + " It?",
                 text: "Please check Information before Submiting!",
                 type: "warning",
                 showCancelButton: true,

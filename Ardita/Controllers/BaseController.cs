@@ -37,7 +37,6 @@ public abstract class BaseController<T> : Controller
 
     //Trx
     protected IFileArchiveDetailService _fileArchiveDetailService { get; set; }
-
     protected IMediaStorageService _mediaStorageService { get; set; }
     protected ITypeStorageService _typeStorageService { get; set; }
     #endregion
@@ -372,6 +371,11 @@ public abstract class BaseController<T> : Controller
         var data = await _typeStorageService.GetAll();
         var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
         return Json(result);
+    }
+    public async Task<JsonResult> BindTypeStorageById(Guid Id)
+    {
+        var data = await _typeStorageService.GetById(Id);
+        return Json(data);
     }
     #endregion
 }

@@ -57,6 +57,8 @@
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
         public const string Template = "Template";
         public const string Files = "files";
+        public const string DetailArray = "detail[]";
+        public const string IdFileDeletedArray = "idFileDeleted[]";
 
         //Prefix
         public const string Trx = "Trx";
@@ -82,6 +84,8 @@
         public const string BindRackByRoomId = "BindRackByRoomId";
         public const string BindLevelByRackId = "BindLevelByRackId";
         public const string BindRowByLevelId = "BindRowByLevelId";
+        public const string BindTypeStorageById = "BindTypeStorageById";
+        public const string BindDownload = "BindDownload";
 
         //Web Component
         public const string GET = "GET";

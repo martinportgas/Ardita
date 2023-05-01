@@ -27,9 +27,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
         try
         {
             var result = await _typeStorageService.GetList(model);
-
             return Json(result);
-
         }
         catch (Exception ex)
         {
@@ -48,12 +46,12 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     public override async Task<IActionResult> Update(Guid Id)
     {
         var data = await _typeStorageService.GetById(Id);
-        if (data.Any())
+        if (data is not null)
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {
@@ -64,12 +62,12 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     public override async Task<IActionResult> Remove(Guid Id)
     {
         var data = await _typeStorageService.GetById(Id);
-        if (data.Any())
+        if (data is not null)
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {
@@ -80,12 +78,12 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     public override async Task<IActionResult> Detail(Guid Id)
     {
         var data = await _typeStorageService.GetById(Id);
-        if (data.Any())
+        if (data is not null)
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(Const.Form, data);
         }
         else
         {

@@ -12,5 +12,5 @@ public interface IArchiveService
     Task<int> Insert(TrxArchive model, StringValues modelDetail);
     Task<DataTableResponseModel<TrxArchive>> GetListForMonitoring(DataTablePostModel model);
     Task<int> Delete(TrxArchive model);
-    Task<int> Update(TrxArchive model);
+    Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted);
 }

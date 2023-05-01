@@ -13,5 +13,5 @@ public interface IArchiveRepository
     Task<int> GetCountForMonitoring(Guid? PositionId);
     Task<int> Insert(TrxArchive model, List<FileModel> files);
     Task<int> Delete(TrxArchive model);
-    Task<int> Update(TrxArchive model);
+    Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId);
 }

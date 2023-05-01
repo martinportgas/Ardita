@@ -1,6 +1,6 @@
 ﻿@using Ardita.Globals;
 @using Ardita.Models.ViewModels;
-@model Ardita.Models.ViewModels.MediaStorage.MediaStorageInsertViewModel;
+@model Ardita.Models.DbModels.TrxMediaStorage;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = Const.ViewStart;
@@ -58,22 +58,24 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                            <form role="form" id="formInput" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
                                             <div class="form-group">
                                                 <label>Media Storage Code</label>
-                                                <input type="text" asp-for="MediaStorage.MediaStorageCode" id="txtMediaStorageCode" class="form-control" />
+                                                <input type="text" asp-for="MediaStorageCode" id="txtMediaStorageCode" class="form-control" />
+                                                <input type="hidden" asp-for="StatusId" id="txtStatusId"/>
+                                                <input type="hidden" asp-for="MediaStorageId" value="@Model.MediaStorageId">
                                             </div>
                                             <div class="form-group">
-                                                <label>Media Storage</label>
-                                                <input type="text" asp-for="MediaStorage.MediaStorageName" id="txtMediaStorageName" class="form-control" />
+                                                <label>Media Storage Name</label>
+                                                <input type="text" asp-for="MediaStorageName" id="txtMediaStorageName" class="form-control" />
                                             </div>
                                             <div class="form-group">
                                                 <label>Archive Unit</label>
-                                                <select asp-items="ViewBag.listArchiveUnit" (form.isInput ? Const.Required : Const.Disabled)
-                                                        id="txtArchiveUnitId" class="select2_demo_1 form-control"
+                                                <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtArchiveUnitId" class="select2_demo_1 form-control" 
                                                         data-placeholder="-- Select Archive Unit --">
                                                     <option value=""></option>
                                                 </select>
@@ -81,22 +83,22 @@
                                             <div class="form-group">
                                                 <label>Type Storage</label>
                                                 <select asp-items="ViewBag.listTypeStorage" (form.isInput ? Const.Required : Const.Disabled)
-                                                        id="txtTypeStorageId" class="select2_demo_1 form-control"
+                                                        id="txtTypeStorageId" class="select2_demo_1 form-control" asp-for="TypeStorageId"
                                                         data-placeholder="-- Select Type Storage --">
                                                     <option value=""></option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Total Volume</label>
-                                                <input type="number" asp-for="MediaStorage.TotalVolume" id="txtTotalVolume" class="form-control" />
+                                                <input type="number" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" />
                                             </div>
                                             <div class="form-group">
                                                 <label>Difference Volume</label>
-                                                <input type="number" asp-for="MediaStorage.DifferenceVolume" id="txtDifferenceVolume" class="form-control" />
+                                                <input type="number" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" />
                                             </div>
                                             <div class="form-group">
                                                 <label>Floor</label>
-                                                <select asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row.Level.Rack.Room.FloorId" asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtFloorId" class="select2_demo_1 form-control m-1"
                                                         data-placeholder="-- Select Floor --">
                                                     <option value=""></option>
@@ -104,7 +106,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Room</label>
-                                                <select asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row.Level.Rack.RoomId" asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtRoomId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Room --">
                                                     <option value=""></option>
@@ -112,7 +114,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Rack</label>
-                                                <select asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row.Level.RackId" asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtRackId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Rack --">
                                                     <option value=""></option>
@@ -120,23 +122,40 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Level</label>
-                                                <select asp-items="ViewBag.listLevel" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row.LevelId" asp-items="ViewBag.listLevel" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtLevelId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Level --">
                                                     <option value=""></option>
                                                 </select>
                                             </div>
+
+
+
                                             <div class="form-group">
                                                 <label>Row</label>
-                                                <select asp-items="ViewBag.listRow" (form.isInput ? Const.Required : Const.Disabled)
-                                                        id="txtRowId" asp-for="MediaStorage.RowId" class="select2_demo_1 form-control"
+                                                <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtRowId" asp-for="RowId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Row --">
                                                     <option value=""></option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                                <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                                @if (form.CurrentAction == Const.Detail)
+                                                {
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                                }
+                                                else if (form.CurrentAction == Const.Remove)
+                                                {
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                                    <button onclick="onSubmit(this, event, 'submit');" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Delete</button>
+                                                }
+                                                else 
+                                                {
+                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                                    <button onclick="onSubmit(this, event, 'draft');" class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Save As Draft</button>
+                                                    <button onclick="onSubmit(this, event, 'submit');" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Submit</button>
+                                                }
+
                                             </div>
                                         </div>
                                     </div>
@@ -154,7 +173,7 @@
                                             <select id="txtArchiveId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-items="ViewBag.listArchive" data-placeholder="-- Select Archive --"><option value=""></option></select>
                                         </div>
 
-                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add"><i class="fa fa-plus"></i> Add</button>
+                                        <button class="btn btn-success btn-sm pull-right mb-5" type="button" id="add"><i class="fa fa-plus"></i> Add Archive</button>
                                         <table id="table-archive" class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -168,6 +187,9 @@
                                             <tbody id="listdtl">
                                             </tbody>
                                         </table>
+                                        <div id="listArchiveId">
+
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -182,16 +204,40 @@
 
 @section Scripts {
     <script type="text/javascript">
+        var listArchiveId = [];
+        var totalCurrentVolume = 0;
+
         $(document).ready(function () {
+            initForms("@form.CurrentAction");
+
+            initDropdown();
+
+            $('#txtTypeStorageId').on('change', function () {
+                if($(this).val() != ''){
+                    getTypeStorageById($('#txtTypeStorageId').val());
+                    $("#listdtl").empty();
+                    listArchiveId = [];
+                }
+            });
+          
+            $("#add").click(function () {
+                addArchive();
+            });
+
+            if ("@form.CurrentAction" == "@Const.Update" || "@form.CurrentAction" == "@Const.Detail" || "@form.CurrentAction" == "@Const.Remove") 
+            {
+                @foreach (var d in Model.TrxMediaStorageDetails)
+                {
+                    @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
+
+                }
+            }
+        });
+
+        function initDropdown() {
             $('#txtSubSubjectClassificationId').on('change', function () {
                 $('#txtArchiveId').val('').trigger('change');
             });
-
-            $('#txtArchiveUnitId').on('change', function () {
-                $('#txtTypeStorageId').val('').trigger('change');
-                $('#txtFloorId').val('').trigger('change');
-            });
-
             $('#txtArchiveId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -219,6 +265,10 @@
                 }
             });
 
+            $('#txtArchiveUnitId').on('change', function () {
+                $('#txtTypeStorageId').val('').trigger('change');
+                $('#txtFloorId').val('').trigger('change');
+            });
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -234,6 +284,7 @@
                     },
                     processResults: function (data) {
                         var dataResult = $.map(data, function (item) {
+                            
                             return {
                                 text: item.typeStorageName,
                                 id: item.typeStorageId
@@ -245,7 +296,6 @@
                     }
                 }
             });
-
             $('#txtFloorId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -273,16 +323,230 @@
                 }
             });
 
-            $("#add").click(function () {
-                addArchive();
+            $('#txtFloorId').on('change', function () {
+                $('#txtRoomId').val('').trigger('change');
             });
-        });
+            $('#txtRoomId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindRoomByFloorId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtFloorId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.roomName,
+                                id: item.roomId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtRoomId').on('change', function () {
+                $('#txtRackId').val('').trigger('change');
+            });
+            $('#txtRackId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindRackByRoomId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtRoomId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.rackName,
+                                id: item.rackId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtRackId').on('change', function () {
+                $('#txtLevelId').val('').trigger('change');
+            });
+            $('#txtLevelId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindLevelByRackId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtRackId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.levelName,
+                                id: item.levelId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtLevelId').on('change', function () {
+                $('#txtRowId').val('').trigger('change');
+            });
+            $('#txtRowId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Floor --',
+                ajax: {
+                    url: '@Url.Action(Const.BindRowByLevelId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtLevelId').val(),
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.rowName,
+                                id: item.rowId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+        }
+        
+        function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
+            var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-danger btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
+            var view = `<a id="btn-view-archive" onclick ="viewArchive($(this))" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
+
+            listArchiveId.push(archiveId);
+            remove = remove.replace("-1", archiveId);
+            remove = remove.replace("-2", volume);
+            $('#table-archive > tbody:last-child').append(`<tr id=${archiveId}><td> ${typeArchive} </td><td> ${titleArchive} </td><td> ${archiveCreator} </td><td> ${volume} </td><td> ${remove} ${view}</td></tr>`);
+
+            if(isEdit == false) {
+                $("#txtDifferenceVolume").val($("#txtDifferenceVolume").val() - volume);
+            }
+        }
 
         function addArchive() {
             var id = $('#txtArchiveId').val();
+            var typeStorageId = $('#txtTypeStorageId').val();
             var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
-            var remove = `<a class="btn btn-sm btn-danger" id="-1""><i class="fa fa-trash"></i> </a>`;
 
+            if (typeStorageId == "") {
+                swal({
+                    title: "Type Storage Not Found!",
+                    text: "Please Select Type Storage First",
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    type: "warning"
+                });
+
+                return false;
+            }
+
+            if (id == "") {
+                swal({
+                    title: "Data Not Completed!",
+                    text: "Please Select Sub Subject Classification and Archive First!",
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    type: "warning"
+                });
+
+                return false;
+            }
+
+            if (validateArchive(id) == true) {
+                swal({
+                    title: "Please Wait",
+                    text: "Insert Data In Progress",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    icon: "~/img/bks.png"
+                });
+
+                $.ajax({
+                    url: url,
+                    type: "@Const.GET",
+                    data: { Id: id },
+                    dataType: "@Const.JSON",
+                    contentType: "@Const.APPLICATIONJSON",
+                    success: function (data) 
+                    {
+                        if ($("#txtDifferenceVolume").val() <= data.volume) {
+                            swal({
+                                title: "Volume Is Full",
+                                text: "Please Select Another Archives With Minimun Volume",
+                                showConfirmButton: true,
+                                allowOutsideClick: false,
+                                type: "warning"
+                            });
+
+                            return false;
+                        }
+                        initListArchive(data.archiveId, data.volume, data.typeArchive, data.titleArchive, data.archiveCreator, false);
+                        swal({
+                            title: "Success",
+                            type: "success",
+                            timer: 1000
+                        });
+                    },
+                    error: function () {
+                        swal({
+                            title: "Data Not Found",
+                            text: "Data Archive Not Found! Call Administrator",
+                            showConfirmButton: true,
+                            allowOutsideClick: false,
+                            type: "warning"
+                        });
+                    }
+                });
+            }
+            else
+            {
+                swal({
+                    title: "Duplicated",
+                    text: "The Archive Has Been Inserted, Please Select Another",
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    type: "warning"
+                });
+            }
+        }
+
+        function getTypeStorageById(id) {
+            var url = '@Url.Action(Const.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
             $.ajax({
                 url: url,
                 type: "@Const.GET",
@@ -290,14 +554,111 @@
                 dataType: "@Const.JSON",
                 contentType: "@Const.APPLICATIONJSON",
                 success: function (data) {
-                    remove = remove.replace("-1", data.archiveId);
-                    console.warn(remove);
-                    $('#table-archive > tbody:last-child').append(`<tr id="${data.ArchiveId}"><td> ${data.typeArchive} </td><td> ${data.titleArchive} </td><td> ${data.archiveCreator} </td><td> ${data.volume} </td><td> ${remove}</td></tr>`);
+                    $("#txtTotalVolume").val(data.volume);
+                    $("#txtDifferenceVolume").val(data.volume);
                 },
                 error: function () {
-                    alert("Archive Not Found");
+                    alert("Type Storage Found");
                 }
             });
+        }
+
+        function deleteArchive(row, id, volume) {
+            var index = listArchiveId.indexOf(id);
+            if (index >= 0) {
+                listArchiveId.splice(index, 1);
+            }
+            row.closest('tr').remove();
+
+            console.log(volume);
+            $("#txtDifferenceVolume").val(parseInt($("#txtDifferenceVolume").val()) + parseInt(volume));
+        }
+
+        function viewArchive(row) {
+            row.closest('tr').remove();
+        }
+
+        function validateArchive(archiveId) {
+            for (i in listArchiveId) {
+                if (listArchiveId[i] == archiveId) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function validate() {
+            let result = true;
+            if (listArchiveId.length == 0) {
+                swal("Please input Archive!");
+                result = false;
+            }
+            if ($('#txtRowId').val() == "") {
+                swal("Please select Row!");
+                result = false;
+            }
+            if ($('#txtDifferenceVolume').val() == "") {
+                swal("Please enter Difference Volume!");
+                result = false;
+            }
+            if ($('#txtTotalVolume').val() == "") {
+                swal("Please enter Total Volume!");
+                result = false;
+            }
+            if ($('#txtTypeStorageId').val() == "") {
+                swal("Please select Type Storage!");
+                result = false;
+            }
+            if ($('#txtArchiveUnitId').val() == "") {
+                swal("Please select Archive Unit!");
+                result = false;
+            }
+            if ($('#txtMediaStorageName').val() == "") {
+                swal("Please enter Media Storage Name!");
+                result = false;
+            }
+            if ($('#txtMediaStorageCode').val() == "") {
+                swal("Please enter Media Storage Code!");
+                result = false;
+            }
+            return result;
+        }
+
+        function onSubmit(ctl, event, status) 
+        {
+            listArchiveId.forEach((element) => {
+                $("#listArchiveId").append(`<input name=detail[] type=hidden value=${element} >`);
+            });
+
+            $("#txtStatusId").val("1");
+            if (status == "submit") {
+                $("#txtStatusId").val("5");
+            }
+
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + "@form.CurrentAction" + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#formInput").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
         }
     </script>
 }
