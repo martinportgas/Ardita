@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -19,7 +18,6 @@ namespace Ardita.Areas.MasterData.Controllers
     {
         #region MEMBER AND CTR
         public ClassificationSubSubjectController(
-            IHostingEnvironment hostingEnvironment,
             IClassificationSubSubjectService classificationSubSubjectService,
             IClassificationSubjectService classificationSubjectService,
             IClassificationTypeService classificationTypeService,
@@ -28,7 +26,6 @@ namespace Ardita.Areas.MasterData.Controllers
             IArchiveCreatorService archiveCreatorService,
             ISecurityClassificationService securityClassificationService)
         {
-            _hostingEnvironment = hostingEnvironment;
             _classificationSubSubjectService = classificationSubSubjectService;
             _classificationSubjectService = classificationSubjectService;
             _classificationTypeService = classificationTypeService;
@@ -335,7 +332,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
 
             var dataSubjects = await _classificationSubjectService.GetAll();
             var dataCreators = await _archiveCreatorService.GetAll();

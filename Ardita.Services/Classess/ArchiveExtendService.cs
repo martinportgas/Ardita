@@ -33,8 +33,12 @@ namespace Ardita.Services.Classess
         {
             return await _archiveExtendRepository.GetAll();
         }
+        public async Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailAll()
+        {
+            return await _archiveExtendDetailRepository.GetAll();
+        }
 
-        public async Task<IEnumerable<TrxArchiveExtend>> GetById(Guid id)
+        public async Task<TrxArchiveExtend> GetById(Guid id)
         {
             return await _archiveExtendRepository.GetById(id);
         }
@@ -90,6 +94,16 @@ namespace Ardita.Services.Classess
                 return null;
             }
 
+        }
+
+        public async Task<int> InsertDetail(TrxArchiveExtendDetail model)
+        {
+            return await _archiveExtendDetailRepository.Insert(model);
+        }
+
+        public async Task<int> Submit(TrxArchiveExtend model)
+        {
+            return await _archiveExtendRepository.Submit(model);
         }
     }
 }

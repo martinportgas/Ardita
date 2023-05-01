@@ -36,7 +36,26 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
+        public async Task<int> Submit(TrxArchiveExtend model)
+        {
+            int result = 0;
 
+            if (model.ArchiveExtendId != Guid.Empty)
+            {
+                var data = await _context.TrxArchiveExtends.AsNoTracking().FirstAsync(x => x.ArchiveExtendId == model.ArchiveExtendId);
+                if (data != null)
+                {
+                    data.ApproveLevel = model.ApproveLevel;
+                    data.IsActive = model.IsActive;
+                    data.StatusId = model.StatusId;
+                    data.UpdatedBy = model.UpdatedBy;
+                    data.UpdatedDate = model.UpdatedDate;
+                    _context.Update(data);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
+        }
         public async Task<IEnumerable<TrxArchiveExtend>> GetAll()
         {
             var results = await _context.TrxArchiveExtends.Where(x => x.IsActive == true).ToListAsync();
@@ -48,9 +67,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxArchiveExtend>> GetById(Guid id)
+        public async Task<TrxArchiveExtend> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveExtends.AsNoTracking().Where(x => x.ArchiveExtendId == id).ToListAsync();
+            var result = await _context.TrxArchiveExtends.AsNoTracking().FirstAsync(x => x.ArchiveExtendId == id);
             return result;
         }
         public async Task<IEnumerable<TrxArchiveExtend>> GetByFilterModel(DataTableModel model)
@@ -98,9 +117,12 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
+            var count = await _context.TrxArchiveExtends.CountAsync();
+
             if (model != null)
             {
                 model.IsActive = true;
+                model.ExtendCode = $"EXT.{++count}/{DateTime.Now.Month}/{DateTime.Now.Year}";
                 _context.TrxArchiveExtends.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -122,12 +144,16 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.ArchiveExtendId != Guid.Empty)
             {
-                var data = await _context.TrxArchiveExtends.AsNoTracking().Where(x => x.ArchiveExtendId == model.ArchiveExtendId).ToListAsync();
+                var data = await _context.TrxArchiveExtends.AsNoTracking().FirstAsync(x => x.ArchiveExtendId == model.ArchiveExtendId);
                 if (data != null)
                 {
-                    model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.ExtendCode = data.ExtendCode;
+                    model.ApproveLevel = data.ApproveLevel;
+                    model.ApproveMax = data.ApproveMax;
+                    model.StatusId = data.StatusId;
+                    model.IsActive = data.IsActive;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

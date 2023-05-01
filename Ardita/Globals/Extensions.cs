@@ -51,7 +51,20 @@ namespace Ardita.Globals
                 LastBreadcrumb = Const.Delete;
             }
 
+            if (currentAction == Const.Preview)
+            {
+                FormAction = Const.Submit;
+                LastBreadcrumb = Const.Submit;
+            }
+
+            if (currentAction == Const.Approval)
+            {
+                FormAction = Const.SubmitApproval;
+                LastBreadcrumb = Const.Approval;
+            }
+
             var isInput = currentAction == Const.Add || currentAction == Const.Update;
+            var isSubmitForm = isInput || currentAction == Const.Remove || currentAction == Const.Preview|| currentAction == Const.Approval;
 
             FormModel model = new FormModel();
             model.CurrentArea = currentArea;
@@ -60,7 +73,9 @@ namespace Ardita.Globals
             model.FormAction = FormAction;
             model.LastBreadcrumb = LastBreadcrumb;
             model.isInput = isInput;
+            model.isSubmitForm = isSubmitForm;
             model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
+            model.SaveText = currentAction == Const.Remove ? Const.Delete : Const.Save;
 
             return model;
         }

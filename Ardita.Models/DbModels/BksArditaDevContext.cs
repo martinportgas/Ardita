@@ -101,6 +101,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
 
+    public virtual DbSet<VwArchiveApproval> VwArchiveApprovals { get; set; }
+
     public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1196,12 +1198,10 @@ public partial class BksArditaDevContext : DbContext
 
             entity.HasOne(d => d.ArchiveUnitIdDestinationNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdDestinationNavigations)
                 .HasForeignKey(d => d.ArchiveUnitIdDestination)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT");
 
             entity.HasOne(d => d.ArchiveUnitIdFromNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdFromNavigations)
                 .HasForeignKey(d => d.ArchiveUnitIdFrom)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT1");
 
             entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveMovements)
@@ -1757,6 +1757,46 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_ARCHIVE_UNIT_ID_TYPE_STORAGE");
         });
 
+        modelBuilder.Entity<VwArchiveApproval>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_ARCHIVE_APPROVAL");
+
+            entity.Property(e => e.ApprovalCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("approval_code");
+            entity.Property(e => e.ApprovalDate)
+                .HasColumnType("datetime")
+                .HasColumnName("approval_date");
+            entity.Property(e => e.ApprovalId).HasColumnName("approval_id");
+            entity.Property(e => e.ApprovalLevel).HasColumnName("approval_level");
+            entity.Property(e => e.ApprovalType)
+                .HasMaxLength(18)
+                .IsUnicode(false)
+                .HasColumnName("approval_type");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+            entity.Property(e => e.Note)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("note");
+            entity.Property(e => e.RegistrationNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("registration_number");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.Title)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("title");
+            entity.Property(e => e.TransId).HasColumnName("trans_id");
+        });
+
         modelBuilder.Entity<VwArchiveRetention>(entity =>
         {
             entity
@@ -1765,7 +1805,7 @@ public partial class BksArditaDevContext : DbContext
 
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.ArchiveNumber)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("archive_number");
             entity.Property(e => e.ArchiveType)

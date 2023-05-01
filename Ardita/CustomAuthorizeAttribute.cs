@@ -89,7 +89,7 @@ namespace Ardita
 
 
             var fullPath = $"{areaName}/{controllerName}/{actionName}";
-            if (fullPath != "General/Home/Index")
+            if (fullPath != "General/Home/Index" && !actionName.ToString().ToLower().Contains("approval"))
             {
                 var results = (from page in pages
                                join pageDetail in pageDetails on page.PageId equals pageDetail.PageId

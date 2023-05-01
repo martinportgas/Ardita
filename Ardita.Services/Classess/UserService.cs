@@ -118,8 +118,9 @@ namespace Ardita.Services.Classess
                               RoleName = r.Name,
                               EmployeeNIK = e.Nik,
                               EmployeeName = e.Name,
-                              PositionId = p.PositionId
-                              
+                              PositionId = p.PositionId,
+                              CompanyId = e.CompanyId,
+                              EmployeeId = e.EmployeeId,
                           }
                 ).ToList().FirstOrDefault();
 
@@ -136,7 +137,9 @@ namespace Ardita.Services.Classess
                     new Claim("RoleName", result.RoleName),
                     new Claim("EmployeeNIK", result.EmployeeNIK),
                     new Claim("EmployeeName", result.EmployeeName),
-                    new Claim("PositionId", result.PositionId.ToString())
+                    new Claim("PositionId", result.PositionId.ToString()),
+                    new Claim("CompanyId", result.CompanyId.ToString()),
+                    new Claim("EmployeeId", result.EmployeeId.ToString())
                 };
             }
        
@@ -164,6 +167,7 @@ namespace Ardita.Services.Classess
                              MenuId = menu.MenuId,
                              MenuName = menu.Name,
                              MenuPath = menu.Path,
+                             MenuIcon = menu.Icon,
                              MenuSort = menu.Sort,
                              SubMenuId = subMenu.SubmenuId,
                              SubMenuName = subMenu.Name,

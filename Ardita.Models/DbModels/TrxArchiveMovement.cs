@@ -19,9 +19,9 @@ public partial class TrxArchiveMovement
 
     public int? DifferenceVolume { get; set; }
 
-    public Guid ArchiveUnitIdDestination { get; set; }
+    public Guid? ArchiveUnitIdDestination { get; set; }
 
-    public Guid ArchiveUnitIdFrom { get; set; }
+    public Guid? ArchiveUnitIdFrom { get; set; }
 
     public DateTime? DateSchedule { get; set; }
 
@@ -47,9 +47,9 @@ public partial class TrxArchiveMovement
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual TrxArchiveUnit ArchiveUnitIdDestinationNavigation { get; set; } = null!;
+    public virtual TrxArchiveUnit? ArchiveUnitIdDestinationNavigation { get; set; }
 
-    public virtual TrxArchiveUnit ArchiveUnitIdFromNavigation { get; set; } = null!;
+    public virtual TrxArchiveUnit? ArchiveUnitIdFromNavigation { get; set; }
 
     public virtual MstStatus Status { get; set; } = null!;
 

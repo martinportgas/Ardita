@@ -18,6 +18,10 @@ $(document).ready(function () {
     });
 });
 
+function toCapitalCase(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function GetClock() {
     d = new Date();
     nday = d.getDay();

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers;
 
@@ -18,11 +17,10 @@ namespace Ardita.Areas.MasterData.Controllers;
 public class ClassificationController : BaseController<TrxClassification>
 {
     #region MEMBER AND CTR
-    public ClassificationController(IHostingEnvironment hostingEnvironment, IClassificationService classificationService, IClassificationTypeService classificationTypeService)
+    public ClassificationController(IClassificationService classificationService, IClassificationTypeService classificationTypeService)
     {
         _classificationService = classificationService;
         _classificationTypeService = classificationTypeService;
-        _hostingEnvironment = hostingEnvironment;
     }
     #endregion
     #region MAIN ACTION
@@ -210,7 +208,7 @@ public class ClassificationController : BaseController<TrxClassification>
         try
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
 
             var type = await _classificationTypeService.GetAll();
 

@@ -22,9 +22,43 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<TrxApproval>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<VwArchiveApproval>> GetByFilterModel(DataTableModel model)
     {
-        throw new NotImplementedException();
+        IEnumerable<VwArchiveApproval> result;
+
+        var propertyInfo = typeof(VwArchiveApproval).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        var propertyName = propertyInfo == null ? typeof(VwArchiveApproval).GetProperties()[0].Name : propertyInfo.Name;
+
+        if (model.sortColumnDirection.ToLower() == "asc")
+        {
+            result = await _context.VwArchiveApprovals
+            .Where(x => x.EmployeeId == model.EmployeeId &&
+            (
+            x.Title
+            + x.RegistrationNumber
+            + x.ApprovalType
+            )
+            .Contains(model.searchValue))
+            .OrderBy(x => EF.Property<VwArchiveApproval>(x, propertyName))
+            .Skip(model.skip).Take(model.pageSize)
+            .ToListAsync();
+        }
+        else
+        {
+            result = await _context.VwArchiveApprovals
+            .Where(x => x.EmployeeId == model.EmployeeId &&
+            (
+            x.Title
+            + x.RegistrationNumber
+            + x.ApprovalType
+            )
+            .Contains(model.searchValue))
+            .OrderByDescending(x => EF.Property<VwArchiveApproval>(x, propertyName))
+            .Skip(model.skip).Take(model.pageSize)
+            .ToListAsync();
+        }
+
+        return result;
     }
 
     public Task<IEnumerable<TrxApproval>> GetById(Guid id)
@@ -33,7 +67,7 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
     }
     public async Task<IEnumerable<TrxApproval>> GetByTransIdandApprovalCode(Guid id, string approvalCode)
     {
-        return await _context.TrxApprovals.Include(x => x.Employee).Where(x => x.TransId == id && x.ApprovalCode == approvalCode).ToListAsync();
+        return await _context.TrxApprovals.Include(x => x.Employee).Where(x => x.TransId == id && x.ApprovalCode == approvalCode).OrderBy(x => x.ApprovalLevel).ToListAsync();
     }
     public async Task<int> DeleteByTransIdandApprovalCode(Guid id, string approvalCode)
     {
@@ -46,14 +80,21 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
         return result;
     }
 
-    public Task<int> GetCount()
+    public async Task<int> GetCount()
     {
-        throw new NotImplementedException();
+        return await _context.VwArchiveApprovals.CountAsync();
     }
 
-    public Task<int> Insert(TrxApproval model)
+    public async Task<int> Insert(TrxApproval model)
     {
-        throw new NotImplementedException();
+        int result = 0;
+
+        if (model != null)
+        {
+            _context.TrxApprovals.Add(model);
+            result = await _context.SaveChangesAsync();
+        }
+        return result;
     }
     public async Task<bool> InsertBulk(List<TrxApproval> models)
     {

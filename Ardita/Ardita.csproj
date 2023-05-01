@@ -46,8 +46,6 @@
   <ItemGroup>
     <Folder Include="Areas\ArchiveActive\Data\" />
     <Folder Include="Areas\ArchiveActive\Models\" />
-    <Folder Include="Areas\ArchiveActive\Views\ArchiveDestroy\" />
-    <Folder Include="Areas\ArchiveActive\Views\ArchiveMovement\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />

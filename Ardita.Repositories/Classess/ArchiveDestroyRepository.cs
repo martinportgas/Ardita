@@ -36,7 +36,26 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
+        public async Task<int> Submit(TrxArchiveDestroy model)
+        {
+            int result = 0;
 
+            if (model.ArchiveDestroyId != Guid.Empty)
+            {
+                var data = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == model.ArchiveDestroyId);
+                if (data != null)
+                {
+                    data.ApproveLevel = model.ApproveLevel;
+                    data.IsActive = model.IsActive;
+                    data.StatusId = model.StatusId;
+                    data.UpdatedBy = model.UpdatedBy;
+                    data.UpdatedDate = model.UpdatedDate;
+                    _context.Update(data);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
+        }
         public async Task<IEnumerable<TrxArchiveDestroy>> GetAll()
         {
             var results = await _context.TrxArchiveDestroys.Where(x => x.IsActive == true).ToListAsync();
@@ -48,9 +67,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxArchiveDestroy>> GetById(Guid id)
+        public async Task<TrxArchiveDestroy> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveDestroys.AsNoTracking().Where(x => x.ArchiveDestroyId == id).ToListAsync();
+            var result = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == id);
             return result;
         }
         public async Task<IEnumerable<TrxArchiveDestroy>> GetByFilterModel(DataTableModel model)
@@ -63,7 +82,14 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxArchiveDestroys
-                //.Where(x => x.IsActive == true && x.Archive.TitleArchive.Contains(model.searchValue))
+                .Include(x => x.Status)
+                .Where(x => x.IsActive == true &&
+                (
+                x.DestroyCode
+                + x.DestroyName
+                + x.Status.Name
+                )
+                .Contains(model.searchValue))
                 .OrderBy(x => EF.Property<TrxArchiveDestroy>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -71,7 +97,14 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxArchiveDestroys
-                //.Where(x => x.IsActive == true && x.Archive.TitleArchive.Contains(model.searchValue))
+                .Include(x => x.Status)
+                .Where(x => x.IsActive == true &&
+                (
+                x.DestroyCode
+                + x.DestroyName
+                + x.Status.Name
+                )
+                .Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<TrxArchiveDestroy>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -84,9 +117,12 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
+            var count = await _context.TrxArchiveDestroys.CountAsync();
+
             if (model != null)
             {
                 model.IsActive = true;
+                model.DestroyCode = $"DST.{++count}/{DateTime.Now.Month}/{DateTime.Now.Year}";
                 _context.TrxArchiveDestroys.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -108,12 +144,16 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.ArchiveDestroyId != Guid.Empty)
             {
-                var data = await _context.TrxArchiveDestroys.AsNoTracking().Where(x => x.ArchiveDestroyId == model.ArchiveDestroyId).ToListAsync();
+                var data = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == model.ArchiveDestroyId);
                 if (data != null)
                 {
-                    model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.DestroyCode = data.DestroyCode;
+                    model.ApproveLevel = data.ApproveLevel;
+                    model.ApproveMax = data.ApproveMax;
+                    model.StatusId = data.StatusId;
+                    model.IsActive = data.IsActive;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

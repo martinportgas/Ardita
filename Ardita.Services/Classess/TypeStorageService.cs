@@ -15,7 +15,7 @@ public class TypeStorageService : ITypeStorageService
 
     public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _TypeStorageRepository.GetAll();
 
-    public async Task<IEnumerable<TrxTypeStorage>> GetById(Guid id)
+    public async Task<TrxTypeStorage> GetById(Guid id)
     => await _TypeStorageRepository.GetById(id);
 
     public async Task<DataTableResponseModel<TrxTypeStorage>> GetList(DataTablePostModel model)

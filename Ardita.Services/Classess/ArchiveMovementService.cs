@@ -14,9 +14,12 @@ namespace Ardita.Services.Classess
     public class ArchiveMovementService : IArchiveMovementService
     {
         private readonly IArchiveMovementRepository _archiveMovementRepository;
-        public ArchiveMovementService(IArchiveMovementRepository archiveMovementRepository)
+        private readonly IArchiveMovementDetailRepository _archiveMovementDetailRepository;
+        public ArchiveMovementService(IArchiveMovementRepository archiveMovementRepository,
+            IArchiveMovementDetailRepository archiveMovementDetailRepository)
         {
             _archiveMovementRepository = archiveMovementRepository;
+            _archiveMovementDetailRepository = archiveMovementDetailRepository;
         }
         public async Task<int> Delete(TrxArchiveMovement model)
         {
@@ -28,7 +31,7 @@ namespace Ardita.Services.Classess
             return await _archiveMovementRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxArchiveMovement>> GetById(Guid id)
+        public async Task<TrxArchiveMovement> GetById(Guid id)
         {
             return await _archiveMovementRepository.GetById(id);
         }
@@ -46,7 +49,7 @@ namespace Ardita.Services.Classess
         {
             return await _archiveMovementRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxArchiveMovement>> GetListArchiveMovement(DataTablePostModel model)
+        public async Task<DataTableResponseModel<TrxArchiveMovement>> GetList(DataTablePostModel model)
         {
             try
             {
@@ -76,6 +79,36 @@ namespace Ardita.Services.Classess
                 return null;
             }
 
+        }
+
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetDetailByMainId(Guid id)
+        {
+            return await _archiveMovementDetailRepository.GetByMainId(id);
+        }
+
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetDetailAll()
+        {
+            return await _archiveMovementDetailRepository.GetAll();
+        }
+
+        public async Task<bool> InsertBulkDetail(List<TrxArchiveMovementDetail> models)
+        {
+            return await _archiveMovementDetailRepository.InsertBulk(models);
+        }
+
+        public async Task<int> DeleteDetailByMainId(Guid Id)
+        {
+            return await _archiveMovementDetailRepository.DeleteByMainId(Id);
+        }
+
+        public async Task<int> InsertDetail(TrxArchiveMovementDetail model)
+        {
+            return await _archiveMovementDetailRepository.Insert(model);
+        }
+
+        public async Task<int> Submit(TrxArchiveMovement model)
+        {
+            return await _archiveMovementRepository.Submit(model);
         }
     }
 }
