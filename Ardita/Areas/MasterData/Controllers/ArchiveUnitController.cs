@@ -223,7 +223,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 
             IWorkbook workbook;
             workbook = new XSSFWorkbook();
-            ISheet excelSheet = workbook.CreateSheet(nameof(TrxArchiveUnit).Replace(Const.Trx, string.Empty));
+            ISheet excelSheet = workbook.CreateSheet(nameof(TrxArchiveUnit).ToCleanNameOf());
             ISheet excelSheetCompanies = workbook.CreateSheet(nameof(MstCompany).ToCleanNameOf());
 
             IRow row = excelSheet.CreateRow(0);

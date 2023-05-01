@@ -37,7 +37,7 @@ public class ArchiveService : IArchiveService
         try
         {
             int dataCount = 0;
-            if (model.PositionId != Guid.Empty)
+            if (model.PositionId != null)
             {
                 dataCount = await _archiveRepository.GetCountForMonitoring(model.PositionId);
             }

@@ -45,6 +45,7 @@
         public const string User = "User";
         public const string Page = "Page";
         public const string RolePage = "RolePage";
+        public const string Role = "Role";
         
         public const string ArchiveRetention = "ArchiveRetention";
         public const string ArchiveExtend = "ArchiveExtend";
@@ -128,6 +129,8 @@
         public const string TitleArchiveMonitoring = "Archive Monitoring";
         public const string TitleArchiveRetention = "Archive Retention";
 
+        //Others
+        public const string Password = "Password";
         public enum Status
         {
             Draft = 1,

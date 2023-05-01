@@ -31,7 +31,7 @@ namespace Ardita.Services.Classess
             return await _roleRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstRole>> GetById(Guid id)
+        public async Task<MstRole> GetById(Guid id)
         {
             return await _roleRepository.GetById(id);
         }

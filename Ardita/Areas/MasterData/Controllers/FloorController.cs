@@ -160,14 +160,14 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxFloor).Replace(Const.Trx, string.Empty);
+                string fileName = nameof(TrxFloor).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var floors = await _floorService.GetAll();
                
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxFloor).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxFloor).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
@@ -196,13 +196,13 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxFloor).Replace(Const.Trx, string.Empty)}";
+                string fileName = $"{Const.Template}-{nameof(TrxFloor).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxFloor).Replace(Const.Trx, string.Empty));
-                ISheet excelSheetArchiceUnit = workbook.CreateSheet(nameof(TrxArchiveUnit).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxFloor).ToCleanNameOf());
+                ISheet excelSheetArchiceUnit = workbook.CreateSheet(nameof(TrxArchiveUnit).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowArchive = excelSheetArchiceUnit.CreateRow(0);

@@ -68,7 +68,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                            <a href="@Url.Action(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = @Model.page.SubmenuId })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
                                             <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
                                         </div>
                                     </div>

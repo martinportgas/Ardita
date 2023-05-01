@@ -93,7 +93,7 @@ namespace Ardita.Repositories.Classess
 
             if (model.PositionId == Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.Code.ToUpper() == model.Code.ToUpper());
+                var data = await _context.MstPositions.AsNoTracking().FirstOrDefaultAsync(x => x.Code.ToUpper() == model.Code.ToUpper());
                 model.IsActive = true;
                 if (data != null)
                 {
@@ -115,7 +115,7 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.PositionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.PositionId == model.PositionId);
+                var data = await _context.MstPositions.AsNoTracking().FirstOrDefaultAsync(x => x.PositionId == model.PositionId);
                 if (data != null)
                 {
                     model.CreatedBy = data.CreatedBy;

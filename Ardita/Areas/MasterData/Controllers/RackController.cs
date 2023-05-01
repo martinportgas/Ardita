@@ -171,14 +171,14 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxRack).Replace(Const.Trx, string.Empty);
+                string fileName = nameof(TrxRack).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var racks = await _rackService.GetAll();
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
@@ -216,13 +216,13 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxRack).Replace(Const.Trx, string.Empty)}";
+                string fileName = $"{Const.Template}-{nameof(TrxRack).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).Replace(Const.Trx, string.Empty));
-                ISheet excelSheetRooms = workbook.CreateSheet(nameof(TrxRoom).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).ToCleanNameOf());
+                ISheet excelSheetRooms = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowRoom = excelSheetRooms.CreateRow(0);

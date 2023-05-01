@@ -218,7 +218,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
 
             IWorkbook workbook;
             workbook = new XSSFWorkbook();
-            ISheet excelSheet = workbook.CreateSheet(nameof(MstCreator).Replace(Const.Trx, string.Empty));
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstCreator).ToCleanNameOf());
             ISheet excelSheetArchiveUnits = workbook.CreateSheet(nameof(TrxArchiveUnit).ToCleanNameOf());
 
             IRow row = excelSheet.CreateRow(0);

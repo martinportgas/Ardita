@@ -101,43 +101,41 @@ namespace Ardita.Areas.UserManage.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(EmployeeInserViewModel model)
+        public async Task<IActionResult> Save(MstEmployee model)
         {
-            int result = 0;
-            if (model.Employee != null)
+            if (model != null)
             {
 
-                if (model.Employee.EmployeeId != Guid.Empty)
+                if (model.EmployeeId != Guid.Empty)
                 {
-                    model.Employee.UpdateBy = AppUsers.CurrentUser(User).UserId;
-                    model.Employee.UpdateDate = DateTime.Now;
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId;
+                    model.UpdateDate = DateTime.Now;
 
-                    result = await _employeeService.Update(model.Employee);
+                    await _employeeService.Update(model);
                 }
                 else
                 {
-                    model.Employee.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    model.Employee.CreatedDate = DateTime.Now;
-                    result = await _employeeService.Insert(model.Employee);
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.CreatedDate = DateTime.Now;
+                    await _employeeService.Insert(model);
                 }
 
             }
             return RedirectToIndex();
         }
 
-        public async Task<IActionResult> Delete(EmployeeInserViewModel model)
+        public override async Task<IActionResult> Delete(MstEmployee model)
         {
-            int result = 0;
-            if (model.Employee != null)
+            if (model != null)
             {
 
-                if (model.Employee.EmployeeId != Guid.Empty)
+                if (model.EmployeeId != Guid.Empty)
                 {
                  
-                    model.Employee.UpdateBy = AppUsers.CurrentUser(User).UserId;
-                    model.Employee.UpdateDate = DateTime.Now;
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId;
+                    model.UpdateDate = DateTime.Now;
 
-                    result = await _employeeService.Delete(model.Employee);
+                    await _employeeService.Delete(model);
                 }
 
 
@@ -155,7 +153,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet(nameof(MstEmployee).ToCleanNameOf());
-                ISheet excelSheetPosition = workbook.CreateSheet(nameof(MstPosition).Replace(Const.Trx, string.Empty));
+                ISheet excelSheetPosition = workbook.CreateSheet(nameof(MstPosition).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowPosition = excelSheetPosition.CreateRow(0);
@@ -207,7 +205,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(MstEmployee).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 

@@ -24,12 +24,12 @@ namespace Ardita.Repositories.Classess
 
             if (model.RoleId != Guid.Empty)
             {
-                var data = await _context.MstRoles.AsNoTracking().Where(x => x.RoleId == model.RoleId).ToListAsync();
+                var data = await _context.MstRoles.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == model.RoleId);
                 if (data != null)
                 {
                     model.IsActive = false;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.MstRoles.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
@@ -39,7 +39,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstRole>> GetAll()
         {
-            var result = await _context.MstRoles.Where(x => x.IsActive == true).ToListAsync();
+            var result = await _context.MstRoles.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
 
@@ -78,10 +78,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstRole>> GetById(Guid id)
+        public async Task<MstRole> GetById(Guid id)
         {
             
-            var result = await _context.MstRoles.AsNoTracking().Where(x => x.RoleId == id).ToListAsync();
+            var result = await _context.MstRoles.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == id);
             return result;
         }
 
@@ -96,12 +96,12 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (model != null)
             {
-                var data = await _context.MstRoles.AsNoTracking().Where(x => x.Code == model.Code).ToListAsync();
+                var data = await _context.MstRoles.AsNoTracking().FirstOrDefaultAsync(x => x.Code == model.Code);
                 model.IsActive = true;
 
-                if (data.Count > 0)
+                if (data != null)
                 {
-                    model.RoleId = data.FirstOrDefault().RoleId;
+                    model.RoleId = data.RoleId;
                     model.UpdateBy = model.CreatedBy;
                     model.UpdateDate = DateTime.Now;
                     _context.MstRoles.Update(model);
@@ -123,12 +123,12 @@ namespace Ardita.Repositories.Classess
 
             if (model.RoleId != Guid.Empty)
             {
-                var data = await _context.MstRoles.AsNoTracking().Where(x => x.RoleId == model.RoleId).ToListAsync();
+                var data = await _context.MstRoles.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == model.RoleId);
                 if (data != null)
                 {
                     model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.MstRoles.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

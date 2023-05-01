@@ -54,7 +54,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="UserManage" asp-action="Save">
+                            <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="UserManage" asp-action="@form.FormAction">
                                 <div class="form-group">
                                     <label>Employee</label>
                                     <select asp-for="EmployeeId" id="txtEmployeeId" asp-items="ViewBag.listEmployees" class="select2_demo_1 form-control"></select>
@@ -62,6 +62,7 @@
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="Username">
+                                    <input type="hidden" asp-for="UserId" />
                                 </div>
                                 <div class="form-group">
                                     <label>Password</label>
@@ -69,7 +70,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.User, new { Area = Const.UserManage })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.CurrentAction</button>
                                 </div>
                             </form>
                         </div>
@@ -94,9 +95,6 @@
             if ($('#txtUserName').val() == "") {
                 swal("Please enter Username !");
                 return false;
-            } else if ($('#txtUserPassword').val() == "") {
-                swal("Please enter Employee Name !");
-                return false;
             } else if ($('#txtEmployeeId').val() == "") {
                 swal("Please enter Employee!");
                 return false;
@@ -108,8 +106,8 @@
         function onSubmit(ctl, event) {
             event.preventDefault();
             swal({
-                title: "Do you want to save it?",
-                text: "Please check Information before Submiting!",
+                title: "Do you want to @form.CurrentAction it?",
+                text: "Please check Information before @form.CurrentAction",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",

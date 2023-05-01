@@ -102,7 +102,7 @@
             var table = $('#tblEmployee').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollX: true,
+                scrollY: true,
                 filter: true,
                 ajax: {
                     "url": '@Url.Action(Const.GetData, Const.Employee, new { Area = Const.UserManage})',
@@ -111,7 +111,10 @@
                 }, 
                 columnDefs: [
                     {
-                        width: 50, targets: 0
+                        width: 10, targets: 0
+                    },
+                    {
+                        width: 100, targets: 1
                     }
                 ],
                 fixedColumns: true,

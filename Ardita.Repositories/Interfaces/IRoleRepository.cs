@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IRoleRepository
     {
-        Task<IEnumerable<MstRole>> GetById(Guid id);
+        Task<MstRole> GetById(Guid id);
         Task<IEnumerable<MstRole>> GetAll();
         Task<IEnumerable<MstRole>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
