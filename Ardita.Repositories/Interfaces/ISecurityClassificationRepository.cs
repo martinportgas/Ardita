@@ -10,6 +10,7 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<MstSecurityClassification>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(MstSecurityClassification model);
+        Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications);
         Task<int> Delete(MstSecurityClassification model);
         Task<int> Update(MstSecurityClassification model);
     }

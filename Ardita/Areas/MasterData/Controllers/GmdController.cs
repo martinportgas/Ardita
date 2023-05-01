@@ -5,6 +5,9 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace Ardita.Areas.MasterData.Controllers;
 
@@ -113,6 +116,103 @@ public class GmdController : BaseController<MstGmd>
             await _gmdService.Delete(model);
         }
         return RedirectToIndex();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Upload()
+    {
+        try
+        {
+            IFormFile file = Request.Form.Files[0];
+
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+
+            List<MstGmd> gmds = new();
+            MstGmd gmd;
+
+            foreach (DataRow row in result.Rows)
+            {
+                gmd = new();
+                gmd.GmdId = Guid.NewGuid();
+
+                gmd.GmdCode = row[1].ToString();
+                gmd.GmdName = row[2].ToString();
+
+                gmd.IsActive = true;
+                gmd.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                gmd.CreatedDate = DateTime.Now;
+
+                gmds.Add(gmd);
+            }
+            await _gmdService.InsertBulk(gmds);
+            return RedirectToIndex();
+        }
+        catch (Exception)
+        {
+
+            throw new Exception();
+        }
+
+    }
+    public async Task Export()
+    {
+        try
+        {
+            string fileName = nameof(MstGmd).ToCleanNameOf();
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            var gmds = await _gmdService.GetAll();
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstGmd).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode));
+            row.CreateCell(2).SetCellValue(nameof(MstGmd.GmdName));
+
+            int no = 1;
+            foreach (var item in gmds)
+            {
+                row = excelSheet.CreateRow(no);
+                row.CreateCell(0).SetCellValue(no);
+                row.CreateCell(1).SetCellValue(item.GmdCode);
+                row.CreateCell(2).SetCellValue(item.GmdName);
+
+                no += 1;
+            }
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+    }
+    public async Task DownloadTemplate()
+    {
+        try
+        {
+            string fileName = $"{Const.Template}-{nameof(MstGmd).ToCleanNameOf()}";
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstGmd).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode));
+            row.CreateCell(2).SetCellValue(nameof(MstGmd.GmdName));
+
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
     }
     #endregion
 

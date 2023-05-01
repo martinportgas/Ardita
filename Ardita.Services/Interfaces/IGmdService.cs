@@ -9,6 +9,7 @@ public interface IGmdService
     Task<IEnumerable<MstGmd>> GetAll();
     Task<DataTableResponseModel<MstGmd>> GetList(DataTablePostModel model);
     Task<int> Insert(MstGmd model);
+    Task<bool> InsertBulk(List<MstGmd> mstGmds);
     Task<int> Delete(MstGmd model);
     Task<int> Update(MstGmd model);
 }

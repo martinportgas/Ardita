@@ -9,6 +9,7 @@ public interface IArchiveCreatorService
     Task<IEnumerable<MstCreator>> GetAll();
     Task<DataTableResponseModel<MstCreator>> GetList(DataTablePostModel model);
     Task<int> Insert(MstCreator model);
+    Task<bool> InsertBulk(List<MstCreator> mstCreators);
     Task<int> Delete(MstCreator model);
     Task<int> Update(MstCreator model);
 }

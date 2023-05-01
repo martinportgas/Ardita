@@ -10,6 +10,7 @@ public interface IArchiveCreatorRepository
     Task<IEnumerable<MstCreator>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(MstCreator model);
+    Task<bool> InsertBulk(List<MstCreator> mstCreators);
     Task<int> Delete(MstCreator model);
     Task<int> Update(MstCreator model);
 }

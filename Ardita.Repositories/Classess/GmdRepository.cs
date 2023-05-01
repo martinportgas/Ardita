@@ -79,6 +79,18 @@ public class GmdRepository : IGmdRepository
         return result;
     }
 
+    public async Task<bool> InsertBulk(List<MstGmd> mstGmds)
+    {
+        bool result = false;
+        if (mstGmds.Count() > 0)
+        {
+            await _context.AddRangeAsync(mstGmds);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
+        return result;
+    }
+
     public async Task<int> Update(MstGmd model)
     {
         int result = 0;

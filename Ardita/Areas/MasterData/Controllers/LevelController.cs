@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.MasterData.Controllers
 {
@@ -19,7 +18,6 @@ namespace Ardita.Areas.MasterData.Controllers
     public class LevelController : BaseController<TrxLevel>
     {
         public LevelController(
-            IHostingEnvironment hostingEnvironment,
             ILevelService levelService,
             IRackService rackService,
             IRoomService roomService,
@@ -27,7 +25,6 @@ namespace Ardita.Areas.MasterData.Controllers
             IArchiveUnitService archiveUnitService
             )
         {
-            _hostingEnvironment = hostingEnvironment;
             _levelService = levelService;
             _rackService = rackService;
             _roomService = roomService;
@@ -147,7 +144,7 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
                 var racks = await _rackService.GetAll();
 
                 List<TrxLevel> levels = new();

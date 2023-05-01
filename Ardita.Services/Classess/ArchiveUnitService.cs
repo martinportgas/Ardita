@@ -53,5 +53,10 @@ public class ArchiveUnitService : IArchiveUnitService
 
     public async Task<int> Insert(TrxArchiveUnit model) => await _archiveUnitRepository.Insert(model);
 
+    public async Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits)
+    {
+        return await _archiveUnitRepository.InsertBulk(trxArchiveUnits);
+    }
+
     public async Task<int> Update(TrxArchiveUnit model) => await _archiveUnitRepository.Update(model);
 }

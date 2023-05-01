@@ -9,6 +9,7 @@ public interface ISecurityClassificationService
     Task<IEnumerable<MstSecurityClassification>> GetAll();
     Task<DataTableResponseModel<MstSecurityClassification>> GetList(DataTablePostModel model);
     Task<int> Insert(MstSecurityClassification model);
+    Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications);
     Task<int> Delete(MstSecurityClassification model);
     Task<int> Update(MstSecurityClassification model);
 }

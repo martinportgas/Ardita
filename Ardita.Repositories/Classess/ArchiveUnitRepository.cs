@@ -31,7 +31,7 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() => await _context.TrxArchiveUnits.Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() => await _context.TrxArchiveUnits.Include(x=> x.Company).Where(x => x.IsActive == true).ToListAsync();
 
     public async Task<IEnumerable<TrxArchiveUnit>> GetByFilterModel(DataTableModel model)
     {
@@ -72,6 +72,18 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
             model.IsActive = true;
             _context.TrxArchiveUnits.Add(model);
             result = await _context.SaveChangesAsync();
+        }
+        return result;
+    }
+
+    public async Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits)
+    {
+        bool result = false;
+        if (trxArchiveUnits.Count() > 0)
+        {
+            await _context.AddRangeAsync(trxArchiveUnits);
+            await _context.SaveChangesAsync();
+            result = true;
         }
         return result;
     }

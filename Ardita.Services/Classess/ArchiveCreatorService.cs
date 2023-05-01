@@ -53,5 +53,10 @@ public class ArchiveCreatorService : IArchiveCreatorService
 
     public async Task<int> Insert(MstCreator model) => await _archiveCreatorRepository.Insert(model);
 
+    public async Task<bool> InsertBulk(List<MstCreator> mstCreators)
+    {
+        return await _archiveCreatorRepository.InsertBulk(mstCreators);
+    }
+
     public async Task<int> Update(MstCreator model) => await _archiveCreatorRepository.Update(model);
 }

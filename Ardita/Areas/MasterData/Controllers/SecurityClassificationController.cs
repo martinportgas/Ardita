@@ -5,6 +5,9 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace Ardita.Areas.MasterData.Controllers;
 
@@ -113,6 +116,103 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
             await _securityClassificationService.Delete(model);
         }
         return RedirectToIndex();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Upload()
+    {
+        try
+        {
+            IFormFile file = Request.Form.Files[0];
+
+            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+
+            List<MstSecurityClassification> securityClassifications = new();
+            MstSecurityClassification securityClassification;
+
+            foreach (DataRow row in result.Rows)
+            {
+                securityClassification = new();
+                securityClassification.SecurityClassificationId = Guid.NewGuid();
+
+                securityClassification.SecurityClassificationCode = row[1].ToString();
+                securityClassification.SecurityClassificationName = row[2].ToString();
+
+                securityClassification.IsActive = true;
+                securityClassification.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                securityClassification.CreatedDate = DateTime.Now;
+
+                securityClassifications.Add(securityClassification);
+            }
+            await _securityClassificationService.InsertBulk(securityClassifications);
+            return RedirectToIndex();
+        }
+        catch (Exception)
+        {
+
+            throw new Exception();
+        }
+
+    }
+    public async Task Export()
+    {
+        try
+        {
+            string fileName = nameof(MstSecurityClassification).ToCleanNameOf();
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            var securityClassifications = await _securityClassificationService.GetAll();
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstSecurityClassification).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+            row.CreateCell(2).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+
+            int no = 1;
+            foreach (var item in securityClassifications)
+            {
+                row = excelSheet.CreateRow(no);
+                row.CreateCell(0).SetCellValue(no);
+                row.CreateCell(1).SetCellValue(item.SecurityClassificationCode);
+                row.CreateCell(2).SetCellValue(item.SecurityClassificationName);
+
+                no += 1;
+            }
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+    }
+    public async Task DownloadTemplate()
+    {
+        try
+        {
+            string fileName = $"{Const.Template}-{nameof(MstSecurityClassification).ToCleanNameOf()}";
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            ISheet excelSheet = workbook.CreateSheet(nameof(MstSecurityClassification).ToCleanNameOf());
+
+            IRow row = excelSheet.CreateRow(0);
+
+            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+            row.CreateCell(2).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+
+            workbook.WriteExcelToResponse(HttpContext, fileName);
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
     }
     #endregion
 
