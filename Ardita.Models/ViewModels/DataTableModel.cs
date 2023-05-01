@@ -18,6 +18,7 @@ namespace Ardita.Models.ViewModels
         public int skip { get; set; }
         public int recordsTotal { get; set; }
         public Guid? PositionId { get; set; }
+        public Guid? SubMenuId { get; set; }
         public Guid? EmployeeId { get; set; }
 
     }

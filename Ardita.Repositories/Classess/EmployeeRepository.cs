@@ -88,7 +88,8 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.MstEmployees
                 .Include(x => x.Position)
-                .AsNoTracking().FirstAsync(x => x.EmployeeId == id);
+                .AsNoTracking()
+                .FirstAsync(x => x.EmployeeId == id && x.IsActive == true);
             return result;
         }
 

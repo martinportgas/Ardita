@@ -58,50 +58,40 @@ namespace Ardita.Services.Classess
             return await _userRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstUser>> GetById(Guid id)
+        public async Task<MstUser> GetById(Guid id)
         {
             return await _userRepository.GetById(id);
         }
 
-        public async Task<UserListViewModel> GetListUsers(DataTableModel tableModel)
+        public async Task<DataTableResponseModel<MstUser>> GetListUsers(DataTablePostModel model)
         {
-            var userListViewModel = new UserListViewModel();
-            var userResult = await _userRepository.GetAll();
-            var employeeResult = await _employeeRepository.GetAll();
-            var positionResult = await _positionRepository.GetAll();
-
-            var results = (from user in userResult
-                        join employee in employeeResult on user.EmployeeId equals employee.EmployeeId
-                        join position in positionResult on employee.PositionId equals position.PositionId
-                        select new UserListViewDetailModel
-                        {
-                            UserId = user.UserId,
-                            UserName = user.Username,
-                            EmployeeName = employee.Name,
-                            EmployeePosition = position.Name,
-                            IsActive = user.IsActive
-                        });
-
-            if (!string.IsNullOrEmpty(tableModel.searchValue))
+            try
             {
-                results = results.Where(
-                    x =>
-                    (x.UserName != null ? x.UserName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeeName != null ? x.EmployeeName.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                    || (x.EmployeePosition != null ? x.EmployeePosition.ToUpper().Contains(tableModel.searchValue.ToUpper()) : false)
-                );
+                var dataCount = await _userRepository.GetCount();
+
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+
+                var results = await _userRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstUser>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
             }
-
-            tableModel.recordsTotal = results.Count();
-            var data = results.Skip(tableModel.skip).Take(tableModel.pageSize).ToList();
-
-            userListViewModel.draw = tableModel.draw;
-            userListViewModel.recordsFiltered = tableModel.recordsTotal;
-            userListViewModel.recordsTotal = tableModel.recordsTotal;
-            userListViewModel.data = data;
-
-
-            return userListViewModel;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<List<Claim>> GetLogin(string username, string password)

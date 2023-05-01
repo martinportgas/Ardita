@@ -6,74 +6,40 @@ using Ardita.Areas.UserManage.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Ardita.Models.DbModels;
 using Ardita.Services.Classess;
+using Ardita.Controllers;
+using Ardita.Globals;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("UserManage")]
-    public class PageController : Controller
+    [Area(Const.UserManage)]
+    public class PageController : BaseController<MstPage>
     {
-        private readonly IPageService _pageService;
-        private readonly IMenuService _menuService;
-        private readonly ISubMenuService _subMenuService;
 
         public PageController(
-            IPageService pageService,
-            ISubMenuService subMenuService,
-            IMenuService menuService
+            IPageService pageService
             )
         {
             _pageService = pageService;
-            _menuService = menuService;
-            _subMenuService = subMenuService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public override async Task<ActionResult> Index() => await base.Index();
         [HttpPost]
-        public async Task<JsonResult> GetData()
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
+
             try
             {
-                var model = new DataTableModel();
-
-                model.draw = Request.Form["draw"].FirstOrDefault();
-                model.start = Request.Form["start"].FirstOrDefault();
-                model.length = Request.Form["length"].FirstOrDefault();
-                model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                model.recordsTotal = 0;
-
                 var result = await _pageService.GetListPage(model);
-
-                var jsonResult = new
-                {
-                    draw = result.draw,
-                    recordsFiltered = result.recordsFiltered,
-                    recordsTotal = result.recordsTotal,
-                    data = result.data
-                };
-                return Json(jsonResult);
+                return Json(result);
             }
             catch (Exception ex)
             {
                 throw;
             }
         }
-        public async Task<IActionResult> Add()
+        public override async Task<IActionResult> Add()
         {
-
-            var MenuResult = await _menuService.GetMenuToLookUp();
-            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
-            var viewModel = new PageInsertViewModel();
-            viewModel.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
-            viewModel.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
-
-            return View(viewModel);
+            return View(Const.Form);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -138,46 +104,48 @@ namespace Ardita.Areas.UserManage.Controllers
             }
             return RedirectToAction("Index", "Page", new { Area = "UserManage" });
         }
-        public async Task<IActionResult> Update(Guid Id)
-        {
-            PageInsertViewModel model = new();
-            var MenuResult = await _menuService.GetMenuToLookUp();
-            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
 
-            model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
-            model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
-            model.pageDetail = await _pageService.GetDetailByMainId(Id);
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Page, new { Area = Const.UserManage });
+        //public async Task<IActionResult> Update(Guid Id)
+        //{
+        //    PageInsertViewModel model = new();
+        //    var MenuResult = await _menuService.GetMenuToLookUp();
+        //    var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
 
-            var pages = await _pageService.GetById(Id);
-            if (pages.Count() > 0)
-            {
-                model.page = pages.FirstOrDefault();
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Page", new { Area = "UserManage" });
-            }
-        }
-        public async Task<IActionResult> Remove(Guid Id)
-        {
-            PageInsertViewModel model = new();
-            var MenuResult = await _menuService.GetMenuToLookUp();
-            var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
+        //    model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+        //    model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+        //    model.pageDetail = await _pageService.GetDetailByMainId(Id);
 
-            model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
-            model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+        //    var pages = await _pageService.GetById(Id);
+        //    if (pages.Count() > 0)
+        //    {
+        //        model.page = pages.FirstOrDefault();
+        //        return View(model);
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Page", new { Area = "UserManage" });
+        //    }
+        //}
+        //public async Task<IActionResult> Remove(Guid Id)
+        //{
+        //    PageInsertViewModel model = new();
+        //    var MenuResult = await _menuService.GetMenuToLookUp();
+        //    var subMenuResult = await _subMenuService.GetSubMenuTypeToLookUp();
 
-            var pages = await _pageService.GetById(Id);
-            if (pages.Count() > 0)
-            {
-                model.page = pages.FirstOrDefault();
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Page", new { Area = "UserManage" });
-            }
-        }
+        //    model.MenuTypes = MenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+        //    model.subMenuTypes = subMenuResult.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+
+        //    var pages = await _pageService.GetById(Id);
+        //    if (pages.Count() > 0)
+        //    {
+        //        model.page = pages.FirstOrDefault();
+        //        return View(model);
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Page", new { Area = "UserManage" });
+        //    }
+        //}
     }
 }

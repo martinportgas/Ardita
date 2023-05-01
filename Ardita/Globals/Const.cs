@@ -6,6 +6,12 @@
         public const string Add = "Add";
         public const string UserId = "UserId";
         public const string Submit = "Submit";
+        public const string SubMenuPageDetail = "SubMenuPageDetail";
+        public const string SubMenuForm = "SubMenuForm";
+        public const string PageForm = "PageForm";
+        public const string AddPage = "AddPage";
+        public const string SavePage = "SavePage";
+        public const string PageUpdateForm = "PageUpdateForm";
 
         //Area
         public const string MasterData = "MasterData";
@@ -35,6 +41,10 @@
         public const string ArchiveMonitoring = "ArchiveMonitoring";
         public const string Employee = "Employee";
         public const string Position = "Position";
+        public const string Menu = "Menu";
+        public const string User = "User";
+        public const string Page = "Page";
+        public const string RolePage = "RolePage";
         
         public const string ArchiveRetention = "ArchiveRetention";
         public const string ArchiveExtend = "ArchiveExtend";
@@ -58,6 +68,9 @@
         public const string GetData = "GetData";
         public const string DownloadTemplate = "DownloadTemplate";
         public const string DownloadFile = "DownloadFile";
+        public const string UpdateSubMenu = "UpdateSubMenu";
+        public const string SaveSubMenu = "SaveSubMenu";
+        public const string UpdatePage = "UpdatePage";
 
         //Html helper
         public const string Required = "required";

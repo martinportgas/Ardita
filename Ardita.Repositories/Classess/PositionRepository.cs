@@ -1,9 +1,11 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,8 +25,8 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.PositionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == model.PositionId).ToListAsync();
-                if (data.Count > 0)
+                var data = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.PositionId == model.PositionId);
+                if (data != null)
                 {
                     model.IsActive = false;
                     _context.MstPositions.Update(model);
@@ -36,14 +38,53 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstPosition>> GetAll()
         {
-            var results = await _context.MstPositions.Where(x=>x.IsActive == true).ToListAsync();
+            var results = await _context.MstPositions.AsNoTracking().Where(x=>x.IsActive == true).ToListAsync();
             return results;
         }
 
-        public async Task<IEnumerable<MstPosition>> GetById(Guid id)
+        public async Task<IEnumerable<MstPosition>> GetByFilterModel(DataTableModel model)
         {
-            var result = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == id).ToListAsync();
+            IEnumerable<MstPosition> result;
+
+            var propertyInfo = typeof(MstPosition).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var propertyName = propertyInfo == null ? typeof(MstPosition).GetProperties()[0].Name : propertyInfo.Name;
+
+            if (model.sortColumnDirection.ToLower() == "asc")
+            {
+                result = await _context.MstPositions
+                .Where(
+                    x => (x.Name).Contains(model.searchValue) &&
+                    x.IsActive == true
+                    )
+                .OrderBy(x => EF.Property<MstPosition>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+            else
+            {
+                result = await _context.MstPositions
+                .Where(
+                    x => (x.Name).Contains(model.searchValue) &&
+                    x.IsActive == true
+                    )
+                .OrderByDescending(x => EF.Property<MstPosition>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+
             return result;
+        }
+
+        public async Task<MstPosition> GetById(Guid id)
+        {
+            var result = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.PositionId == id);
+            return result;
+        }
+
+        public async Task<int> GetCount()
+        {
+            var results = await _context.MstPositions.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
+            return results;
         }
 
         public async Task<int> Insert(MstPosition model)
@@ -52,11 +93,11 @@ namespace Ardita.Repositories.Classess
 
             if (model.PositionId == Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().Where(x => x.Code.ToUpper() == model.Code.ToUpper()).ToListAsync();
+                var data = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.Code.ToUpper() == model.Code.ToUpper());
                 model.IsActive = true;
-                if (data.Count > 0)
+                if (data != null)
                 {
-                    model.PositionId = data.FirstOrDefault().PositionId;
+                    model.PositionId = data.PositionId;
                     _context.MstPositions.Update(model);
                 }
                 else 
@@ -74,9 +115,11 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.PositionId != Guid.Empty)
             {
-                var data = await _context.MstPositions.AsNoTracking().Where(x => x.PositionId == model.PositionId).ToListAsync();
+                var data = await _context.MstPositions.AsNoTracking().FirstAsync(x => x.PositionId == model.PositionId);
                 if (data != null)
                 {
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     model.IsActive = true;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();

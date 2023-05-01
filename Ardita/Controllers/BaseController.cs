@@ -18,6 +18,12 @@ public abstract class BaseController<T> : Controller
     //User Manage
     protected IEmployeeService _employeeService { get; set; }
     protected IPositionService _positionService { get; set; }
+    protected IMenuService _menuService { get; set; }
+    protected ISubMenuService _subMenuService { get; set; }
+    protected IUserService _userService { get; set; }
+    protected IPageService _pageService { get; set; }
+    protected IRoleService _roleService { get; set; }
+    protected IRolePageService _rolePageService { get; set; }
 
     //Master Data
     protected IArchiveUnitService _archiveUnitService { get; set; }

@@ -14,9 +14,9 @@ namespace Ardita.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<MstUser>> GetById(Guid id);
+        Task<MstUser> GetById(Guid id);
         Task<IEnumerable<MstUser>> GetAll();
-        Task<UserListViewModel> GetListUsers(DataTableModel tableModel);
+        Task<DataTableResponseModel<MstUser>> GetListUsers(DataTablePostModel tableModel);
         Task<List<Claim>> GetLogin(string username, string password);
         Task<List<UserMenuListViewModel>> GetUserMenu(Guid id);
         Task<int> Insert(MstUser model);

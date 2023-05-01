@@ -9,7 +9,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface ISubMenuRepository
     {
-        Task<IEnumerable<MstSubmenu>> GetById(Guid id);
+        Task<MstSubmenu> GetById(Guid id);
         Task<IEnumerable<MstSubmenu>> GetAll();
         Task<int> Insert(MstSubmenu model);
         Task<int> Delete(MstSubmenu model);

@@ -1,5 +1,10 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@model Ardita.Models.DbModels.MstUser
+@using Ardita.Models.ViewModels;
+@using Ardita.Globals;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Const.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -26,8 +31,8 @@
                 <div class="ibox-title">
                     <h5>Users</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action("Add", "User", new { Area = "UserManage"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action("Export", "User", new { Area = "UserManage"})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(Const.Add, Const.User, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.Export, Const.User, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
@@ -51,13 +56,14 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">User Upload</h4>
-                        <small>Pastikan format file anda sudah benar.</small>
-                    </div>
-                    <div class="modal-body">
-                        <form>
+                    <form id="frmUserUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Employee" asp-action="@Const.Upload" asp-area="@Const.UserManage">
+                        @Html.AntiForgeryToken()
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">User Upload</h4>
+                            <small>Pastikan format file anda sudah benar.</small>
+                        </div>
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="input-group">
                                     <div class="custom-file">
@@ -67,13 +73,13 @@
                                 </div>
                             </div>
                             <br />
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <a id="btnDownloadTemplate" href="@Url.Action("DownloadTemplate", "User", new { Area="UserManage"})" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                        <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.User, new { Area = Const.UserManage })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>>
                 </div>
             </div>
         </div>
@@ -109,19 +115,22 @@
                     {
                         "data": "userId",
                         "render": function (data, type, row, meta) {
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "User", new { Area = "UserManage", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            detail = detail.replace("-1", data);
+
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.userId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "User", new { Area = "UserManage", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.userId);
 
-                            var JoinButton = edit.concat(" ", remove);
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
-                    { "data": "userName", "name": "Username", "autoWidth": true },
-                    { "data": "employeeName", "name": "Name", "autoWidth": true },
-                    { "data": "employeePosition", "name": "Position", "autoWidth": true },
+                    { "data": "username", "name": "username", "autoWidth": true },
+                    { "data": "employee.name", "name": "Name", "autoWidth": true },
+                    { "data": "employee.position.name", "name": "Position", "autoWidth": true },
                 ]
             });
 
@@ -139,27 +148,7 @@
                         return false;
                     }
                 }
-                var fdata = new FormData();
-                var fileUpload = $("#fUpload").get(0);
-                var files = fileUpload.files;
-                fdata.append(files[0].name, files[0]);
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("Upload", "User", new { Area = "UserManage" })',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: fdata,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        window.location.reload();
-                    },
-                    error: function (e) {
-                        alert(e.responseText);
-                    }
-                });
+                $("#frmUserUpload").submit();
             });
         
 

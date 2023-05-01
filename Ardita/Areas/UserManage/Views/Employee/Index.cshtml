@@ -65,7 +65,7 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <form id="frmRoomUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Employee" asp-action="@Const.Upload" asp-area="@Const.UserManage">
+                    <form id="frmEmployeeUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Employee" asp-action="@Const.Upload" asp-area="@Const.UserManage">
                         @Html.AntiForgeryToken()
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -170,7 +170,7 @@
                         return false;
                     }
                 }
-                $("#frmRoomUpload").submit();
+                $("#frmEmployeeUpload").submit();
             });
 
 

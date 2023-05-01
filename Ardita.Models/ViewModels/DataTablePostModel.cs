@@ -16,6 +16,7 @@ namespace Ardita.Models.ViewModels
         public Search search { get; set; }
         public List<Order> order { get; set; }
         public Guid? PositionId { get; set; }
+        public Guid? SubMenuId { get; set; }
         public Guid? EmployeeId { get; set; }
     }
 

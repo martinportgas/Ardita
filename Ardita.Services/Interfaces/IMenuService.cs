@@ -13,12 +13,12 @@ namespace Ardita.Services.Interfaces
 {
     public interface IMenuService
     {
-        Task<IEnumerable<MstMenu>> GetById(Guid id);
+        Task<MstMenu> GetById(Guid id);
         Task<IEnumerable<MstMenu>> GetAll();
+        Task<DataTableResponseModel<MstMenu>> GetListMenu(DataTablePostModel model);
         Task<int> Insert(MstMenu model);
         Task<int> Delete(MstMenu model);
         Task<int> Update(MstMenu model);
         Task<List<MenuTypes>> GetMenuToLookUp();
-        Task<MenuListViewModel> GetListMenuWithSubMenu(DataTableModel tableModel);
     }
 }
