@@ -21,6 +21,8 @@ public abstract class BaseController<T> : Controller
     protected ISubMenuService _subMenuService { get; set; }
     protected IUserService _userService { get; set; }
     protected IPageService _pageService { get; set; }
+    protected IRoleService _roleService { get; set; }
+    protected IRolePageService _rolePageService { get; set; }
 
     //Master Data
     protected IArchiveUnitService _archiveUnitService { get; set; }

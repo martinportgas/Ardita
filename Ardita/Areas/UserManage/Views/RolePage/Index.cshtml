@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Ardita.Models.ViewModels;
+@using Ardita.Globals;
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -61,27 +63,27 @@
                         }
                     ],
                     ajax: {
-                        "url": '@Url.Action("GetData", "RolePage", new { Area = "UserManage"})',
+                        "url": '@Url.Action(Const.GetData, Const.RolePage, new { Area = Const.UserManage})',
                         "type": "POST",
                         "datatype": "json"
                     },
                     columns: [
                         {
-                            "data": "UserId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            "data": "user.userId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                                 return meta.row + meta.settings._iDisplayStart + 1;
                             }
                         },
                         {
-                            "data": "UserId",
+                            "data": "user.userId",
                             "render": function (data, type, row, meta) {
 
-                                var view = `<a class="btn btn-sm btn-default" href="@Url.Action("Detail", "RolePage", new { Area = "UserManage", Id = -1 })"><i class="fa fa-eye"></i></a>`;
+                                var view = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.RolePage, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i></a>`;
                                 view = view.replace("-1", row.roleId);
                                 return view;
                             }
                         },
-                        { "data": "roleCode", "name": "Role Code", "autoWidth": true },
-                        { "data": "roleName", "name": "Role Name", "autoWidth": true }
+                        { "data": "code", "name": "Code", "autoWidth": true },
+                        { "data": "name", "name": "Name", "autoWidth": true }
                     ]
             });
 

@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<IEnumerable<MstRole>> GetById(Guid id);
         Task<IEnumerable<MstRole>> GetAll();
-        Task<RoleListViewModel> GetListRole(DataTableModel tableModel);
+        Task<DataTableResponseModel<MstRole>> GetListRoles(DataTablePostModel model);
         Task<int> Insert(MstRole model);
         Task<int> Delete(MstRole model);
         Task<int> Update(MstRole model);

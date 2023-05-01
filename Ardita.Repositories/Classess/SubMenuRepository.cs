@@ -30,7 +30,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<MstSubmenu> GetById(Guid id)
         {
-            var result = await _context.MstSubmenus.AsNoTracking().FirstAsync(x => x.SubmenuId == id);
+            var result = await _context.MstSubmenus.AsNoTracking().FirstAsync(x => x.SubmenuId == id && x.IsActive == true);
             return result;
         }
 
@@ -49,13 +49,15 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Update(MstSubmenu model)
         {
             int result = 0;
-            var menus = await _context.MstSubmenus.AsNoTracking().Where(x => x.SubmenuId == model.SubmenuId).ToListAsync();
-            if (menus.Count > 0)
+            var menus = await _context.MstSubmenus.AsNoTracking().FirstAsync(x => x.SubmenuId == model.SubmenuId && x.IsActive == true);
+            if (menus != null)
             {
-                model.MenuId = menus.FirstOrDefault().MenuId;
-                model.Path = menus.FirstOrDefault().Path;
-                model.CreatedBy = menus.FirstOrDefault().CreatedBy;
-                model.CreatedDate = menus.FirstOrDefault().CreatedDate;
+                model.MenuId = menus.MenuId;
+                model.Path = menus.Path;
+                model.CreatedBy = menus.CreatedBy;
+                model.CreatedDate = menus.CreatedDate;
+                model.IsActive = true;
+                model.Sort = menus.Sort;
 
                 _context.MstSubmenus.Update(model);
                 result = await _context.SaveChangesAsync();

@@ -133,11 +133,16 @@
             var table = '<table><tr><td><b>Action</b></td><td><b>Sub Menu Name</b></td><td><b>Sub Menu Path</b></td></tr>';
             
             $.each(data.mstSubmenus, function (key, val) {
-                var action = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
-                action = action.replace("-1", val.submenuId);
+                var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.UpdateSubMenu, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-pencil"></i> </a>`;
+                edit = edit.replace("-1", val.submenuId);
+
+                var detail = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = "-1" })"><i class="fa fa-eye"></i> </a>`;
+                detail = detail.replace("-1", val.submenuId);
+
+                var JoinButton = edit.concat(" ", detail);
 
                 table += ('<tr>');
-                table += ('<td>' + action + '</td>');
+                table += ('<td>' + JoinButton + '</td>');
                 table += ('<td>' + val.name + '</td>');
                 table += ('<td>' + val.path + '</td>');
                 table += ('</tr>');

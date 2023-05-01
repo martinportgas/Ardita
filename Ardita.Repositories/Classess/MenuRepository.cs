@@ -102,6 +102,9 @@ namespace Ardita.Repositories.Classess
                 model.CreatedBy = data.CreatedBy;
                 model.CreatedDate = data.CreatedDate;
                 model.IsActive = true;
+                model.Sort = data.Sort;
+                model.Icon = data.Icon;
+
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
             }

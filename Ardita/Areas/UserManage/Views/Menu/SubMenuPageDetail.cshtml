@@ -31,7 +31,7 @@
                 <div class="ibox-title">
                     <h5>@ViewBag.TitlePageSubMenu</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.Page, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(Const.AddPage, Const.Menu, new { Area = Const.UserManage, Id = ViewBag.SubMenuId})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -84,7 +84,7 @@
                     {
                         "data": "pageId",
                         "render": function (data, type, row, meta) {
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Page, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.UpdatePage, Const.Menu, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Page, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;

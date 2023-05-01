@@ -100,7 +100,7 @@ namespace Ardita.Repositories.Classess
                     .Include(x => x.MstPageDetails)
                     .Include(x => x.IdxRolePages).ThenInclude(x => x.Role)
                 .AsNoTracking()
-                .FirstAsync(x=> x.PageId == id && x.IsActive == true);
+                .FirstOrDefaultAsync(x=> x.PageId == id && x.IsActive == true);
 
             return result;
         }
@@ -119,10 +119,9 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (model != null)
             {
-                var data = await _context.MstPages.AsNoTracking().FirstAsync(
+                var data = await _context.MstPages.AsNoTracking().FirstOrDefaultAsync(
                     x => x.SubmenuId == model.SubmenuId &&
-                    x.Name == model.Name &&
-                    x.Path == model.Path
+                    x.Name == model.Name
                     );
 
                 model.IsActive = true;

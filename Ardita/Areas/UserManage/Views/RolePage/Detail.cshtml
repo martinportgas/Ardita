@@ -29,6 +29,7 @@
                     <div class="row">
                         <div class="col-sm-6 b-r">
                             <form role="form" enctype="multipart/form-data" asp-controller="RolePage" asp-area="UserManage" asp-action="Save">
+                      
                                 <div class="form-group">
                                     <label>Role</label>
                                     <input type="hidden" asp-for="rolePage.RoleId" value="@(Model.role.RoleId)" />
@@ -156,9 +157,9 @@
 
             var url = '@Url.Action("Save", "RolePage", new { Area = "UserManage" })';
             var param = new Object();
+
             param.role = '@Model.role.RoleId';
             param.listPage = selectedElmsIds;
-
             ajaxcallreturn(url, 'POST', param, '', 'multipart/form-data').then(function (result) {
                 $('body').toggleClass('sk-loading');
                 if(result.code == 200){

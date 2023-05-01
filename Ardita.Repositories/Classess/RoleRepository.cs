@@ -1,9 +1,11 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,12 +42,55 @@ namespace Ardita.Repositories.Classess
             var result = await _context.MstRoles.Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
+
+        public async Task<IEnumerable<MstRole>> GetByFilterModel(DataTableModel model)
+        {
+            IEnumerable<MstRole> result;
+
+            var propertyInfo = typeof(MstRole).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var propertyName = propertyInfo == null ? typeof(MstRole).GetProperties()[0].Name : propertyInfo.Name;
+
+            if (model.sortColumnDirection.ToLower() == "asc")
+            {
+                result = await _context.MstRoles
+                .Include(x => x.IdxUserRoles).ThenInclude(x => x.User)
+                .Where(
+                    x => (x.Name).Contains(model.searchValue) &&
+                    x.IsActive == true
+                    )
+                .OrderBy(x => EF.Property<MstRole>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+            else
+            {
+                result = await _context.MstRoles
+                .Include(x => x.IdxUserRoles).ThenInclude(x => x.User)
+                .Where(
+                    x => (x.Name).Contains(model.searchValue) &&
+                    x.IsActive == true
+                    )
+                .OrderByDescending(x => EF.Property<MstRole>(x, propertyName))
+                .Skip(model.skip).Take(model.pageSize)
+                .ToListAsync();
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<MstRole>> GetById(Guid id)
         {
             
             var result = await _context.MstRoles.AsNoTracking().Where(x => x.RoleId == id).ToListAsync();
             return result;
         }
+
+        public async Task<int> GetCount()
+        {
+            var results = await _context.MstRoles.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
+            return results;
+        }
+
         public async Task<int> Insert(MstRole model)
         {
             int result = 0;
