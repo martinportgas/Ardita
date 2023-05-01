@@ -15,7 +15,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
     {
         #region MEMBER AND CTR
         public ArchiveExtendController(
+            IArchiveDestroyService archiveDestroyService,
             IArchiveExtendService archiveExtendService,
+            IArchiveMovementService archiveMovementService,
             IArchiveService archiveService,
             IEmployeeService employeeService,
             IArchiveRetentionService archiveRetentionService,
@@ -26,6 +28,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _archiveRetentionService = archiveRetentionService;
             _archiveApprovalService = archiveApprovalService;
             _archiveService = archiveService;
+            _archiveDestroyService = archiveDestroyService;
+            _archiveMovementService = archiveMovementService;
         }
         #endregion
         #region MAIN ACTION
@@ -51,7 +55,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             {
                 var result = await _archiveService.GetById(Guid.Parse(Id));
 
-                return Json(result.FirstOrDefault());
+                return Json(result);
 
             }
             catch (Exception ex)
@@ -61,20 +65,21 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            ViewBag.listApproval = await BindEmployee();
-            ViewBag.listArchiveRetention = await BindArchiveRetention();
-            return View(Const.Form, new TrxArchiveExtend());
+            var model = new TrxArchiveExtend();
+            model.ExtendCode = Const.InitialCode;
+            Guid Id = Guid.Empty;
+            ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+            ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
+            return View(Const.Form, model);
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
             var model = await _archiveExtendService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
-                ViewBag.listApproval = await BindEmployee();
-                ViewBag.listArchiveRetention = await BindArchiveRetention();
                 ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -84,11 +89,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var model = await _archiveExtendService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
-                ViewBag.listApproval = await BindEmployee();
-                ViewBag.listArchiveRetention = await BindArchiveRetention();
-                return View(Const.Form, model.FirstOrDefault());
+                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
+                return View(Const.Form, model);
             }
             else
             {
@@ -98,18 +103,45 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _archiveExtendService.GetById(Id);
-            if (model.Any())
+            if (model  != null)
             {
-                ViewBag.listApproval = await BindEmployee();
-                ViewBag.listArchiveRetention = await BindArchiveRetention();
-                return View(Const.Form, model.FirstOrDefault());
+                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
+                return View(Const.Form, model);
             }
             else
             {
                 return RedirectToIndex();
             }
         }
-
+        public override async Task<IActionResult> Preview(Guid Id)
+        {
+            var model = await _archiveExtendService.GetById(Id);
+            if (model != null)
+            {
+                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
+                return View(Const.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+        public override async Task<IActionResult> Approval(Guid Id, int Level)
+        {
+            var model = await _archiveExtendService.GetById(Id);
+            if (model != null)
+            {
+                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
+                return View(Const.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Save(TrxArchiveExtend model)
@@ -119,10 +151,6 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             {
                 var listApproval = Request.Form["approval[]"].ToArray();
 
-                model.StatusId = (int)Const.Status.Draft;
-                model.ApproveLevel = 1;
-                model.ApproveMax = listApproval.Length;
-
                 if (model.ArchiveExtendId != Guid.Empty)
                 {
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
@@ -131,6 +159,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 }
                 else
                 {
+                    model.StatusId = (int)Const.Status.Draft;
+                    model.ApproveLevel = 1;
+                    model.ApproveMax = listApproval.Length;
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
                     result = await _archiveExtendService.Insert(model);
@@ -160,12 +191,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                             modelApr.CreatedBy = AppUsers.CurrentUser(User).UserId;
                             modelApr.CreatedDate = DateTime.Now;
 
-                            modelsApr.Add(modelApr);
+                            await _archiveApprovalService.Insert(modelApr);
                             approvalLevel++;
                         }
                     }
-
-                    await _archiveApprovalService.InsertBulk(modelsApr);
                 }
 
                 var listArchive = Request.Form["archive[]"].ToArray();
@@ -197,11 +226,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                             modelDetail.CreatedBy = AppUsers.CurrentUser(User).UserId;
                             modelDetail.CreatedDate = DateTime.Now;
 
-                            modelsDetail.Add(modelDetail);
+                            await _archiveExtendService.InsertDetail(modelDetail);
                         }
                     }
-
-                    await _archiveExtendService.InsertBulkDetail(modelsDetail);
                 }
             }
             return RedirectToIndex();
@@ -211,11 +238,43 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Delete(TrxArchiveExtend model)
         {
-            int result = 0;
             if (model != null && model.ArchiveExtendId != Guid.Empty)
             {
+                await _archiveExtendService.DeleteDetailByMainId(model.ArchiveExtendId);
+
+                model.IsActive = false;
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
-                result = await _archiveExtendService.Delete(model);
+                model.UpdatedDate = DateTime.Now;
+                await _archiveExtendService.Submit(model);
+            }
+            return RedirectToIndex();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public override async Task<IActionResult> Submit(TrxArchiveExtend model)
+        {
+            if (model != null && model.ArchiveExtendId != Guid.Empty)
+            {
+                model.StatusId = (int)Const.Status.ApprovalProcess;
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                await _archiveExtendService.Submit(model);
+            }
+            return RedirectToIndex();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public override async Task<IActionResult> SubmitApproval(TrxArchiveExtend model)
+        {
+            if (model != null && model.ArchiveExtendId != Guid.Empty)
+            {
+                if (model.ApproveLevel == model.ApproveMax)
+                    model.StatusId = (int)Const.Status.ApprovalProcess;
+                else
+                    model.ApproveLevel += 1;
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                await _archiveExtendService.Submit(model);
             }
             return RedirectToIndex();
         }

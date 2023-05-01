@@ -10,12 +10,18 @@ namespace Ardita.Services.Interfaces
 {
     public interface IArchiveMovementService
     {
-        Task<IEnumerable<TrxArchiveMovement>> GetById(Guid id);
+        Task<TrxArchiveMovement> GetById(Guid id);
+        Task<IEnumerable<TrxArchiveMovementDetail>> GetDetailByMainId(Guid id);
         Task<IEnumerable<TrxArchiveMovement>> GetAll();
-        Task<DataTableResponseModel<TrxArchiveMovement>> GetListArchiveMovement(DataTablePostModel model);
+        Task<IEnumerable<TrxArchiveMovementDetail>> GetDetailAll();
+        Task<DataTableResponseModel<TrxArchiveMovement>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxArchiveMovement model);
+        Task<int> InsertDetail(TrxArchiveMovementDetail model);
         Task<bool> InsertBulk(List<TrxArchiveMovement> models);
+        Task<bool> InsertBulkDetail(List<TrxArchiveMovementDetail> models);
         Task<int> Delete(TrxArchiveMovement model);
+        Task<int> DeleteDetailByMainId(Guid Id);
         Task<int> Update(TrxArchiveMovement model);
+        Task<int> Submit(TrxArchiveMovement model);
     }
 }

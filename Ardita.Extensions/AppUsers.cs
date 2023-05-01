@@ -11,10 +11,14 @@ namespace Ardita.Extensions
             Guid userId = Guid.Empty;
             Guid roleId = Guid.Empty;
             Guid positionId = Guid.Empty;
+            Guid companyId = Guid.Empty;
+            Guid employeeId = Guid.Empty;
 
             Guid.TryParse(claims.FindFirst("UserId").Value, out userId);
             Guid.TryParse(claims.FindFirst("RoleId").Value, out roleId);
             Guid.TryParse(claims.FindFirst("PositionId").Value, out positionId);
+            Guid.TryParse(claims.FindFirst("CompanyId").Value, out companyId);
+            Guid.TryParse(claims.FindFirst("EmployeeId").Value, out employeeId);
 
             SessionModel session = new SessionModel();
             session.UserId = userId;
@@ -25,6 +29,8 @@ namespace Ardita.Extensions
             session.EmployeeNIK = claims.FindFirst("EmployeeNIK").Value;
             session.EmployeeName = claims.FindFirst("EmployeeName").Value;
             session.PositionId = positionId;
+            session.CompanyId = companyId;
+            session.EmployeeId = employeeId;
 
             return session;
         }

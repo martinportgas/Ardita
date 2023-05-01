@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Globals;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Archive;
 using Ardita.Models.ViewModels.SubSubjectClasscification;
@@ -42,6 +43,8 @@ public abstract class BaseController<T> : Controller
     protected ITypeStorageService _typeStorageService { get; set; }
     protected IArchiveRetentionService _archiveRetentionService { get; set; }
     protected IArchiveExtendService _archiveExtendService { get; set; }
+    protected IArchiveDestroyService _archiveDestroyService { get; set; }
+    protected IArchiveMovementService _archiveMovementService { get; set; }
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
     #endregion
 
@@ -81,6 +84,16 @@ public abstract class BaseController<T> : Controller
         await Task.Delay(0);
         throw new NotImplementedException();
     }
+    public virtual async Task<IActionResult> Preview(Guid Id)
+    {
+        await Task.Delay(0);
+        throw new NotImplementedException();
+    }
+    public virtual async Task<IActionResult> Approval(Guid Id, int Level)
+    {
+        await Task.Delay(0);
+        throw new NotImplementedException();
+    }
 
     public virtual async Task<IActionResult> Save(T model)
     {
@@ -89,6 +102,16 @@ public abstract class BaseController<T> : Controller
     }
 
     public virtual async Task<IActionResult> Delete(T model)
+    {
+        await Task.Delay(0);
+        throw new NotImplementedException();
+    }
+    public virtual async Task<IActionResult> Submit(T model)
+    {
+        await Task.Delay(0);
+        throw new NotImplementedException();
+    }
+    public virtual async Task<IActionResult> SubmitApproval(T model)
     {
         await Task.Delay(0);
         throw new NotImplementedException();
@@ -376,6 +399,16 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
         return Json(result);
     }
+    public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
+    {
+        var data = await _typeStorageService.GetAll();
+        var result = data.Where(x => x.ArchiveUnit.CompanyId == Id).ToList();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.TypeStorageId.ToString(),
+            Text = x.TypeStorageName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindEmployeeIdBySubSubjectClassificationId(Guid Id)
     {
         var result = await _employeeService.GetListEmployeeBySubSubjectClassificationId(Id);
@@ -402,6 +435,54 @@ public abstract class BaseController<T> : Controller
             Value = x.ArchiveId.ToString(),
             Text = x.TitleArchive
         }).ToList();
+    }
+    public async Task<JsonResult> BindArchiveRetentionByParam(string param)
+    {
+        string[] arrParam = param.Split(',');
+
+        var keyword = string.IsNullOrEmpty(arrParam[0]) ? string.Empty : arrParam[0];
+        Guid DetailId = Guid.Empty;
+        Guid.TryParse(arrParam[1], out DetailId);
+        var type = arrParam[2];
+
+        var data = await _archiveRetentionService.GetAll();
+
+        var dataExt = await _archiveExtendService.GetDetailAll();
+        var dataDst = await _archiveDestroyService.GetDetailAll();
+        var dataMove = await _archiveMovementService.GetDetailAll();
+
+        var detailExt = type == Const.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
+        var detailDst = type == Const.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
+        var detailMove = type == Const.ArchiveMovement ? dataMove.Where(x => x.ArchiveMovementId != DetailId) : dataMove;
+
+        var result =
+            (from dataALl in data
+             join dataDetailExt in detailExt on dataALl.ArchiveId equals dataDetailExt.ArchiveId into a
+             from dataDetailExt in a.DefaultIfEmpty()
+             join dataDetailDst in detailDst on dataALl.ArchiveId equals dataDetailDst.ArchiveId into b
+             from dataDetailDst in b.DefaultIfEmpty()
+             join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
+             from dataDetailMove in c.DefaultIfEmpty()
+             where dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && dataALl.TitleArchive.ToLower().Contains(keyword.ToLower())
+             select new
+             {
+                 id = dataALl.ArchiveId,
+                 text = dataALl.TitleArchive
+             }
+             ).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindEmployeeByParam(string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _employeeService.GetAll();
+        var result = data.Where(x => x.Name.ToLower().Contains(param.ToLower())).Select(x =>
+            new {
+                id = x.EmployeeId,
+                text = x.Name
+            }
+            ).ToList();
+        return Json(result);
     }
     #endregion
 }

@@ -14,9 +14,12 @@ namespace Ardita.Services.Classess
     public class ArchiveDestroyService : IArchiveDestroyService
     {
         private readonly IArchiveDestroyRepository _archiveDestroyRepository;
-        public ArchiveDestroyService(IArchiveDestroyRepository archiveDestroyRepository)
+        private readonly IArchiveDestroyDetailRepository _archiveDestroyDetailRepository;
+        public ArchiveDestroyService(IArchiveDestroyRepository archiveDestroyRepository,
+            IArchiveDestroyDetailRepository archiveDestroyDetailRepository)
         {
             _archiveDestroyRepository = archiveDestroyRepository;
+            _archiveDestroyDetailRepository = archiveDestroyDetailRepository;
         }
         public async Task<int> Delete(TrxArchiveDestroy model)
         {
@@ -28,7 +31,7 @@ namespace Ardita.Services.Classess
             return await _archiveDestroyRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxArchiveDestroy>> GetById(Guid id)
+        public async Task<TrxArchiveDestroy> GetById(Guid id)
         {
             return await _archiveDestroyRepository.GetById(id);
         }
@@ -46,7 +49,7 @@ namespace Ardita.Services.Classess
         {
             return await _archiveDestroyRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxArchiveDestroy>> GetListArchiveDestroy(DataTablePostModel model)
+        public async Task<DataTableResponseModel<TrxArchiveDestroy>> GetList(DataTablePostModel model)
         {
             try
             {
@@ -76,6 +79,36 @@ namespace Ardita.Services.Classess
                 return null;
             }
 
+        }
+
+        public async Task<IEnumerable<TrxArchiveDestroyDetail>> GetDetailByMainId(Guid id)
+        {
+            return await _archiveDestroyDetailRepository.GetByMainId(id);
+        }
+
+        public async Task<IEnumerable<TrxArchiveDestroyDetail>> GetDetailAll()
+        {
+            return await _archiveDestroyDetailRepository.GetAll();
+        }
+
+        public async Task<bool> InsertBulkDetail(List<TrxArchiveDestroyDetail> models)
+        {
+            return await _archiveDestroyDetailRepository.InsertBulk(models);
+        }
+
+        public async Task<int> DeleteDetailByMainId(Guid Id)
+        {
+            return await _archiveDestroyDetailRepository.DeleteByMainId(Id);
+        }
+
+        public async Task<int> InsertDetail(TrxArchiveDestroyDetail model)
+        {
+            return await _archiveDestroyDetailRepository.Insert(model);
+        }
+
+        public async Task<int> Submit(TrxArchiveDestroy model)
+        {
+            return await _archiveDestroyRepository.Submit(model);
         }
     }
 }

@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Classess
 {
-    public class ArchiveExtendDetailRepository : IArchiveExtendDetailRepository
+    public class ArchiveMovementDetailRepository : IArchiveMovementDetailRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveExtendDetailRepository(BksArditaDevContext context)
+        public ArchiveMovementDetailRepository(BksArditaDevContext context)
         {
             _context = context;
         }
-        public async Task<int> Delete(TrxArchiveExtendDetail model)
+        public async Task<int> Delete(TrxArchiveMovementDetail model)
         {
             int result = 0;
 
-            if (model.ArchiveExtendDetailId != Guid.Empty)
+            if (model.ArchiveMovementDetailId != Guid.Empty)
             {
-                var data = _context.TrxArchiveExtendDetails.AsNoTracking().Where(x => x.ArchiveExtendDetailId == model.ArchiveExtendDetailId).FirstOrDefault();
+                var data = _context.TrxArchiveMovementDetails.AsNoTracking().Where(x => x.ArchiveMovementDetailId == model.ArchiveMovementDetailId).FirstOrDefault();
                 if (data != null)
                 {
                     data.IsActive = false;
@@ -39,50 +39,50 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (id != null)
             {
-                _context.Database.ExecuteSqlRaw($" delete from dbo.TRX_ARCHIVE_EXTEND_DETAIL where archive_extend_id='{id}'");
+                _context.Database.ExecuteSqlRaw($" delete from dbo.TRX_ARCHIVE_MOVEMENT_DETAIL where archive_movement_id='{id}'");
                 result = await _context.SaveChangesAsync();
             }
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveExtendDetail>> GetAll()
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetAll()
         {
-            var results = await _context.TrxArchiveExtendDetails.Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxArchiveMovementDetails.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()
         {
-            var results = await _context.TrxArchiveExtendDetails.Where(x => x.IsActive == true).CountAsync();
+            var results = await _context.TrxArchiveMovementDetails.Where(x => x.IsActive == true).CountAsync();
             return results;
         }
 
-        public async Task<IEnumerable<TrxArchiveExtendDetail>> GetById(Guid id)
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveExtendDetails.AsNoTracking().Where(x => x.ArchiveExtendDetailId == id).ToListAsync();
+            var result = await _context.TrxArchiveMovementDetails.AsNoTracking().Where(x => x.ArchiveMovementDetailId == id).ToListAsync();
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveExtendDetail>> GetByMainId(Guid id)
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetByMainId(Guid id)
         {
-            var result = await _context.TrxArchiveExtendDetails.Include(x => x.Archive).AsNoTracking().Where(x => x.ArchiveExtendId == id).ToListAsync();
+            var result = await _context.TrxArchiveMovementDetails.Include(x => x.Archive.Creator).AsNoTracking().Where(x => x.ArchiveMovementId == id).ToListAsync();
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveExtendDetail>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<TrxArchiveMovementDetail>> GetByFilterModel(DataTableModel model)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<int> Insert(TrxArchiveExtendDetail model)
+        public async Task<int> Insert(TrxArchiveMovementDetail model)
         {
             int result = 0;
 
             if (model != null)
             {
                 model.IsActive = true;
-                _context.TrxArchiveExtendDetails.Add(model);
+                _context.TrxArchiveMovementDetails.Add(model);
                 result = await _context.SaveChangesAsync();
             }
             return result;
         }
-        public async Task<bool> InsertBulk(List<TrxArchiveExtendDetail> models)
+        public async Task<bool> InsertBulk(List<TrxArchiveMovementDetail> models)
         {
             bool result = false;
             if (models.Count() > 0)
@@ -92,13 +92,13 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
-        public async Task<int> Update(TrxArchiveExtendDetail model)
+        public async Task<int> Update(TrxArchiveMovementDetail model)
         {
             int result = 0;
 
-            if (model != null && model.ArchiveExtendDetailId != Guid.Empty)
+            if (model != null && model.ArchiveMovementDetailId != Guid.Empty)
             {
-                var data = await _context.TrxArchiveExtendDetails.AsNoTracking().Where(x => x.ArchiveExtendDetailId == model.ArchiveExtendDetailId).ToListAsync();
+                var data = await _context.TrxArchiveMovementDetails.AsNoTracking().Where(x => x.ArchiveMovementDetailId == model.ArchiveMovementDetailId).ToListAsync();
                 if (data != null)
                 {
                     model.IsActive = true;

@@ -40,15 +40,19 @@
         public const string ArchiveExtend = "ArchiveExtend";
         public const string ArchiveDestroy = "ArchiveDestroy";
         public const string ArchiveMovement = "ArchiveMovement";
+        public const string ArchiveApproval = "ArchiveApproval";
 
         //Action
         public const string Index = "Index";
         public const string Update = "Update";
         public const string Delete = "Delete";
         public const string Detail = "Detail";
+        public const string Preview = "Preview";
         public const string Remove = "Remove";
         public const string Save = "Save";
         public const string Create = "Create";
+        public const string Approval = "Approval";
+        public const string SubmitApproval = "SubmitApproval";
         public const string Export = "Export";
         public const string Upload = "Upload";
         public const string GetData = "GetData";
@@ -64,6 +68,7 @@
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";
         public const string Template = "Template";
         public const string Files = "files";
+        public const string InitialCode = "Auto Generated";
 
         //Prefix
         public const string Trx = "Trx";
@@ -89,6 +94,9 @@
         public const string BindRackByRoomId = "BindRackByRoomId";
         public const string BindLevelByRackId = "BindLevelByRackId";
         public const string BindRowByLevelId = "BindRowByLevelId";
+        public const string BindArchiveRetention = "BindArchiveRetention";
+        public const string BindArchiveRetentionByParam = "BindArchiveRetentionByParam";
+        public const string BindEmployeeByParam = "BindEmployeeByParam";
 
         //Web Component
         public const string GET = "GET";

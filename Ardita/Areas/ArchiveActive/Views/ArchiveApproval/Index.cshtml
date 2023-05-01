@@ -13,7 +13,7 @@
                 Archive Active
             </li>
             <li class="active breadcrumb-item">
-                <strong>Perpanjangan Arsip</strong>
+                <strong>Persetujuan Arsip</strong>
             </li>
         </ol>
     </div>
@@ -25,9 +25,8 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Perpanjangan Arsip</h5>
+                    <h5>Persetujuan Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.ArchiveExtend, new { Area = Const.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -37,8 +36,8 @@
                                 <th>No</th>
                                 <th>Action</th>
                                 <th>Nomor registrasi</th>
-                                <th>Nama Perpanjangan</th>
-                                <th>Status</th>
+                                <th>Judul</th>
+                                <th>Jenis Persetujuan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -59,7 +58,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.ArchiveExtend, new { Area = Const.ArchiveActive })',
+                    "url": '@Url.Action(Const.GetData, Const.ArchiveApproval, new { Area = Const.ArchiveActive })',
                     "type": "POST",
                     "datatype": "json",
                     //"complete": function (xhr, responseText) {
@@ -75,33 +74,23 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "archiveExtendId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveApprovalId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             //console.log(row);
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     }, 
                     {
-                        "data": "archiveExtendId", "orderable": false, "searchable": false,
+                        "data": "archiveApprovalId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveExtend, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
-                            detail = detail.replace("-1", data);
+                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Approval, "Controller", new { Area = Const.ArchiveActive, Id = -1, Level = -99 })"><i class="fa fa-paper-plane"></i> </a>`;
+                            submit = submit.replace("-1", row.transId).replace('Controller', row.approvalCode).replace('-99', row.approvalLevel);
 
-                            var edit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.ArchiveExtend, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
-                            edit = edit.replace("-1", data);
-
-                            var remove = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.ArchiveExtend, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
-                            remove = remove.replace("-1", data);
-
-                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Preview, Const.ArchiveExtend, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
-                            submit = submit.replace("-1", data);
-
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit);
-                            return JoinButton;
+                            return submit;
                         }
                     },
-                    { "data": "extendCode", "autoWidth": true },
-                    { "data": "extendName", "autoWidth": true },
-                    { "data": "status.name", "name": "titleArchive", "autoWidth": true },
+                    { "data": "registrationNumber", "autoWidth": true },
+                    { "data": "title", "autoWidth": true },
+                    { "data": "approvalType", "autoWidth": true },
                 ]
             });
         });

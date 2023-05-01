@@ -24,12 +24,29 @@ namespace Ardita.Repositories.Classess
 
             if (model.ArchiveMovementId != Guid.Empty)
             {
-                var data = _context.TrxArchiveMovements.AsNoTracking().Where(x => x.ArchiveMovementId == model.ArchiveMovementId).FirstOrDefault();
+                var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
                 if (data != null)
                 {
-                    data.IsActive = false;
+                    _context.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
+        }
+        public async Task<int> Submit(TrxArchiveMovement model)
+        {
+            int result = 0;
+
+            if (model.ArchiveMovementId != Guid.Empty)
+            {
+                var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
+                if (data != null)
+                {
+                    data.ApproveLevel = model.ApproveLevel;
+                    data.IsActive = model.IsActive;
+                    data.StatusId = model.StatusId;
                     data.UpdatedBy = model.UpdatedBy;
-                    data.UpdatedDate = DateTime.Now;
+                    data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
                 }
@@ -48,9 +65,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxArchiveMovement>> GetById(Guid id)
+        public async Task<TrxArchiveMovement> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveMovements.AsNoTracking().Where(x => x.ArchiveMovementId == id).ToListAsync();
+            var result = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == id);
             return result;
         }
         public async Task<IEnumerable<TrxArchiveMovement>> GetByFilterModel(DataTableModel model)
@@ -63,7 +80,14 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxArchiveMovements
-                //.Where(x => x.IsActive == true && x.Archive.TitleArchive.Contains(model.searchValue))
+                .Include(x => x.Status)
+                .Where(x => x.IsActive == true &&
+                (
+                x.MovementCode
+                + x.MovementName
+                + x.Status.Name
+                )
+                .Contains(model.searchValue))
                 .OrderBy(x => EF.Property<TrxArchiveMovement>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -71,7 +95,14 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxArchiveMovements
-                //.Where(x => x.IsActive == true && x.Archive.TitleArchive.Contains(model.searchValue))
+                .Include(x => x.Status)
+                .Where(x => x.IsActive == true &&
+                (
+                x.MovementCode
+                + x.MovementName
+                + x.Status.Name
+                )
+                .Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<TrxArchiveMovement>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -84,9 +115,12 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
+            var count = await _context.TrxArchiveMovements.CountAsync();
+
             if (model != null)
             {
                 model.IsActive = true;
+                model.MovementCode = $"MOVE.{++count}/{DateTime.Now.Month}/{DateTime.Now.Year}";
                 _context.TrxArchiveMovements.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -108,12 +142,9 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.ArchiveMovementId != Guid.Empty)
             {
-                var data = await _context.TrxArchiveMovements.AsNoTracking().Where(x => x.ArchiveMovementId == model.ArchiveMovementId).ToListAsync();
+                var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
                 if (data != null)
                 {
-                    model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

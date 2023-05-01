@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IArchiveMovementRepository
     {
-        Task<IEnumerable<TrxArchiveMovement>> GetById(Guid id);
+        Task<TrxArchiveMovement> GetById(Guid id);
         Task<IEnumerable<TrxArchiveMovement>> GetAll();
         Task<IEnumerable<TrxArchiveMovement>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
@@ -18,5 +18,6 @@ namespace Ardita.Repositories.Interfaces
         Task<bool> InsertBulk(List<TrxArchiveMovement> models);
         Task<int> Delete(TrxArchiveMovement model);
         Task<int> Update(TrxArchiveMovement model);
+        Task<int> Submit(TrxArchiveMovement model);
     }
 }

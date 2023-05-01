@@ -8,7 +8,7 @@ public interface IArchiveApprovalRepository
     Task<IEnumerable<TrxApproval>> GetById(Guid id);
     Task<IEnumerable<TrxApproval>> GetByTransIdandApprovalCode(Guid id, string approvalCode);
     Task<IEnumerable<TrxApproval>> GetAll();
-    Task<IEnumerable<TrxApproval>> GetByFilterModel(DataTableModel model);
+    Task<IEnumerable<VwArchiveApproval>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxApproval model);
     Task<bool> InsertBulk(List<TrxApproval> models);
