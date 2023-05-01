@@ -63,6 +63,11 @@
                                     <div class="form-group">
                                         <label>Kode Jenis Klasifikasi</label>
                                         <input type="hidden" asp-for="TypeClassificationId" value="@Model.TypeClassificationId">
+                                        <input type="hidden" asp-for="IsActive" />
+                                        <input type="hidden" asp-for="CreatedBy" />
+                                        <input type="hidden" asp-for="CreatedDate" />
+                                        <input type="hidden" asp-for="UpdatedBy" />
+                                        <input type="hidden" asp-for="UpdatedDate" />
                                         <input type="text" placeholder="" id="txtTypeClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TypeClassificationCode">
                                     </div>
                                     <div class="form-group">

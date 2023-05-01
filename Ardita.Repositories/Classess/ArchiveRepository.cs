@@ -75,7 +75,7 @@ public class ArchiveRepository : IArchiveRepository
                 .ToListAsync();
         }
 
-        if (model.PositionId != Guid.Empty)
+        if (model.PositionId != null)
         {
             result = result.Where(x => x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId);
         }

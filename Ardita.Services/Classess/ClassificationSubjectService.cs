@@ -34,7 +34,7 @@ namespace Ardita.Services.Classess
             return await _classificationSubjectRepository.GetAll();
         }
 
-        public async Task<IEnumerable<TrxSubjectClassification>> GetById(Guid id)
+        public async Task<TrxSubjectClassification> GetById(Guid id)
         {
             return await _classificationSubjectRepository.GetById(id);
         }

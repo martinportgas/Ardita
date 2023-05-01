@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IClassificationTypeRepository
     {
-        Task<IEnumerable<MstTypeClassification>> GetById(Guid id);
+        Task<MstTypeClassification> GetById(Guid id);
         Task<IEnumerable<MstTypeClassification>> GetAll();
         Task<IEnumerable<MstTypeClassification>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();

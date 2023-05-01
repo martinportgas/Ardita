@@ -57,11 +57,11 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Update(Guid Id)
         {
             var model = await _classificationSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -71,11 +71,11 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var model = await _classificationSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {
@@ -85,11 +85,11 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _classificationSubjectService.GetById(Id);
-            if (model.Any())
+            if (model != null)
             {
                 ViewBag.listClassificationType = await BindClassificationTypes();
                 ViewBag.listClassification = await BindClasscifications();
-                return View(Const.Form, model.FirstOrDefault());
+                return View(Const.Form, model);
             }
             else
             {

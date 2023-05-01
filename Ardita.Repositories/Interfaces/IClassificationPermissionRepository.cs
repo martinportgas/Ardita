@@ -9,7 +9,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IClassificationPermissionRepository
     {
-        Task<IEnumerable<TrxPermissionClassification>> GetById(Guid id);
+        Task<TrxPermissionClassification> GetById(Guid id);
         Task<IEnumerable<TrxPermissionClassification>> GetByMainId(Guid id);
         Task<IEnumerable<TrxPermissionClassification>> GetAll();
         Task<int> Insert(TrxPermissionClassification model);

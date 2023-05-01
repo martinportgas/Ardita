@@ -357,22 +357,18 @@ public abstract class BaseController<T> : Controller
         Guid SubSubjectClasscificationId = new(Id);
 
         var data = await _classificationSubSubjectService.GetById(SubSubjectClasscificationId);
-        var subSubjectClassification = from d in data
-                                       where d.SubSubjectClassificationId == SubSubjectClasscificationId
-                                       select new SubSubjectClasscificationViewModel
+        var subSubjectClassification = new SubSubjectClasscificationViewModel
                                        {
-                                           SubSubjectClassificationId = d.SubSubjectClassificationId,
-                                           SubSubjectClassificationCode = d.SubSubjectClassificationCode,
-                                           CreatorId = d.CreatorId,
-                                           CreatorName = d.Creator?.CreatorName,
-                                           RetentionActive = d.RetentionActive,
-                                           RetentionInactive = d.RetentionInactive,
-                                           SubSubjectClassificationName = d.SubSubjectClassificationName
+                                           SubSubjectClassificationId = data.SubSubjectClassificationId,
+                                           SubSubjectClassificationCode = data.SubSubjectClassificationCode,
+                                           CreatorId = data.CreatorId,
+                                           CreatorName = data.Creator?.CreatorName,
+                                           RetentionActive = data.RetentionActive,
+                                           RetentionInactive = data.RetentionInactive,
+                                           SubSubjectClassificationName = data.SubSubjectClassificationName
                                        };
 
-
-
-        return Json(subSubjectClassification.FirstOrDefault());
+        return Json(subSubjectClassification);
 
     }
     public async Task<JsonResult> BindArchiveById(string Id)

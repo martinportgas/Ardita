@@ -10,7 +10,7 @@ namespace Ardita.Services.Interfaces
 {
     public interface IClassificationTypeService
     {
-        Task<IEnumerable<MstTypeClassification>> GetById(Guid id);
+        Task<MstTypeClassification> GetById(Guid id);
         Task<IEnumerable<MstTypeClassification>> GetAll();
         Task<DataTableResponseModel<MstTypeClassification>> GetListClassificationType(DataTablePostModel model);
         Task<int> Insert(MstTypeClassification model);

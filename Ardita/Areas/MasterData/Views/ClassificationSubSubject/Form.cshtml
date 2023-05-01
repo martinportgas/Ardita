@@ -65,6 +65,11 @@
                                             <div class="form-group">
                                                 <label>Pencipta Arsip</label>
                                                 <input type="hidden" asp-for="SubSubjectClassificationId" value="@Model.SubSubjectClassificationId" />
+                                                <input type="hidden" asp-for="IsActive" />
+                                                <input type="hidden" asp-for="CreatedBy" />
+                                                <input type="hidden" asp-for="CreatedDate" />
+                                                <input type="hidden" asp-for="UpdatedBy" />
+                                                <input type="hidden" asp-for="UpdatedDate" />
                                                 <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
