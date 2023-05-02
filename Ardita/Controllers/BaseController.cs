@@ -391,13 +391,8 @@ public abstract class BaseController<T> : Controller
         };
         return Json(result);
     }
-    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id)
-    {
-        var data = await _archiveService.GetAll();
+    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id) => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id));
 
-        var result = data.Where(x => x.SubSubjectClassificationId == Id).ToList();
-        return Json(result);
-    }
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id)
     {
         var data = await _typeStorageService.GetAll();

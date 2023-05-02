@@ -82,7 +82,6 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-
     public async Task<TrxArchive> GetById(Guid id)
     {
         var result = await _context.TrxArchives.AsNoTracking()
@@ -267,4 +266,17 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
+
+    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId)
+    {
+        var listNotAvailableArchive = from archive in _context.TrxArchives
+                                      join mediaDetail in _context.TrxMediaStorageDetails on archive.ArchiveId equals mediaDetail.ArchiveId
+                                      join media in _context.TrxMediaStorages on mediaDetail.MediaStorageId equals media.MediaStorageId 
+                                      where archive.IsActive == true && media.IsActive == true
+                                      select archive;
+
+        return await _context.TrxArchives.Where(x => x.IsActive == true && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId).ToListAsync();
+
+    }
+
 }

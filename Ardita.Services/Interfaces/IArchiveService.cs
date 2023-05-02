@@ -12,4 +12,5 @@ public interface IArchiveService
     Task<int> Insert(TrxArchive model, StringValues modelDetail);
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted);
+    Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId);
 }

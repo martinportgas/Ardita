@@ -132,4 +132,7 @@ public class ArchiveService : IArchiveService
 
         return await _archiveRepository.Update(model, file, filesDeletedId);
     }
+
+    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId) => await _archiveRepository.GetAvailableArchiveBySubSubjectId(subSubjectId);
+
 }
