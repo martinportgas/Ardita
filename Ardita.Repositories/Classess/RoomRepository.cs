@@ -117,7 +117,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (rooms.Count() > 0)
             {
-                await _context.BulkInsertAsync(rooms);
+                await _context.AddRangeAsync(rooms);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;

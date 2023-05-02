@@ -119,7 +119,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (racks.Count() > 0)
             {
-                await _context.BulkInsertAsync(racks);
+                await _context.AddRangeAsync(racks);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;

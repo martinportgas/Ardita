@@ -131,7 +131,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (models.Count() > 0)
             {
-                await _context.BulkInsertAsync(models);
+                await _context.AddRangeAsync(models);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;

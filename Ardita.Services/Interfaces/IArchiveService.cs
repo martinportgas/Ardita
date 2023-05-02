@@ -10,6 +10,7 @@ public interface IArchiveService
     Task<IEnumerable<TrxArchive>> GetAll();
     Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxArchive model, StringValues modelDetail);
+    Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted);
 }

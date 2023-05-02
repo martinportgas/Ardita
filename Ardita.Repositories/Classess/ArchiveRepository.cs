@@ -42,7 +42,13 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<TrxArchive>> GetAll()
     {
-        return await _context.TrxArchives.Where(x => x.IsActive == true).ToListAsync();
+        return await _context.TrxArchives
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator)
+            .AsNoTracking()
+            .Where(x => x.IsActive == true).ToListAsync();
     }
 
     public async Task<IEnumerable<TrxArchive>> GetByFilterModel(DataTableModel model)
@@ -181,6 +187,18 @@ public class ArchiveRepository : IArchiveRepository
             }
         }
 
+        return result;
+    }
+
+    public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
+    {
+        bool result = false;
+        if (trxArchives.Count() > 0)
+        {
+            await _context.AddRangeAsync(trxArchives);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
         return result;
     }
 
