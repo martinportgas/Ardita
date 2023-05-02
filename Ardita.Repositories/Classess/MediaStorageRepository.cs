@@ -67,13 +67,14 @@ public class MediaStorageRepository : IMediaStorageRepository
                 .ThenInclude(s => s.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
             .Include(t => t.TypeStorage).ThenInclude(a => a.ArchiveUnit)
-            .Include(r => r.Row.Level.Rack.Room.Floor).AsNoTracking()
+            .Include(r => r.Row!.Level!.Rack!.Room!.Floor).AsNoTracking()
             .Where(x => x.MediaStorageId == id)
             .FirstAsync();
     }
+    
     public async Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id)
     {
-        return await _context.TrxMediaStorageDetails.FirstOrDefaultAsync(x => x.ArchiveId == id);
+        return await _context.TrxMediaStorageDetails.FirstOrDefaultAsync(x => x.ArchiveId == id) ?? new TrxMediaStorageDetail();
     }
 
     public async Task<int> GetCount() => await _context.TrxMediaStorages.CountAsync(x => x.IsActive == true);
@@ -94,8 +95,8 @@ public class MediaStorageRepository : IMediaStorageRepository
                 e.State = EntityState.Detached;
             }
 
-            model.RowId = Row.RowId;
-            model.TypeStorageId = TypeStorage.TypeStorageId;
+            model.RowId = Row!.RowId;
+            model.TypeStorageId = TypeStorage!.TypeStorageId;
 
             _context.Entry(model).State = EntityState.Added;
             await _context.SaveChangesAsync();
@@ -134,24 +135,30 @@ public class MediaStorageRepository : IMediaStorageRepository
                     e.State = EntityState.Detached;
                 }
 
-                model.RowId = Row.RowId;
-                model.TypeStorageId = TypeStorage.TypeStorageId;
+                model.RowId = Row!.RowId;
+                model.TypeStorageId = TypeStorage!.TypeStorageId;
                 _context.Entry(model).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
                 //Update Detail
                 var dataDetail = await _context.TrxMediaStorageDetails.AsNoTracking().Where(x => x.MediaStorageId == model.MediaStorageId).ToListAsync();
-
-                _context.TrxMediaStorageDetails.RemoveRange(dataDetail);
-                result += await _context.SaveChangesAsync();
-
-                foreach (var item in detail)
+                if (dataDetail.Any())
                 {
-                    item.CreatedDate = (DateTime)model.UpdatedDate;
-                    item.CreatedBy = (Guid)model.UpdatedBy;
-                    item.MediaStorageId = model.MediaStorageId;
-                    _context.TrxMediaStorageDetails.Add(item);
+                    _context.TrxMediaStorageDetails.RemoveRange(dataDetail);
                     result += await _context.SaveChangesAsync();
+                }
+
+                if (detail.Any())
+                {
+                    foreach (var item in detail)
+                    {
+                        item.CreatedDate = (DateTime)model.UpdatedDate!;
+                        item.CreatedBy = (Guid)model.UpdatedBy!;
+                        item.MediaStorageId = model.MediaStorageId;
+                        item.IsActive = true;
+                        _context.TrxMediaStorageDetails.Add(item);
+                        result += await _context.SaveChangesAsync();
+                    }
                 }
             }
         }

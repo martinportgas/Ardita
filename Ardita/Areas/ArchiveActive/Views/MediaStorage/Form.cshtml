@@ -485,11 +485,13 @@
         function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) 
         {
             var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-danger btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
-            var view = `<a id="btn-view-archive" onclick ="viewArchive($(this))" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
+            var view = `<a id="btn-view-archive" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
 
             listArchiveId.push(archiveId);
             remove = remove.replace("-1", archiveId);
             remove = remove.replace("-2", volume);
+            view = view.replace("-1", archiveId);
+
             $('#table-archive > tbody:last-child').append(`<tr id=${archiveId}><td> ${typeArchive} </td><td> ${titleArchive} </td><td> ${archiveCreator} </td><td> ${volume} </td><td> ${remove} ${view}</td></tr>`);
 
             if(isEdit == false) {
