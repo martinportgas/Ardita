@@ -5,6 +5,12 @@
 @{
     Layout = Const.ViewStart;
     FormModel form = Html.Form();
+
+    bool isEditable = false;
+    if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+    {
+        isEditable = true;
+    }
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -65,7 +71,7 @@
                                             <div class="form-group">
                                                 <label>Media Storage Code</label>
                                                 <input type="text" asp-for="MediaStorageCode" id="txtMediaStorageCode" class="form-control" />
-                                                <input type="hidden" asp-for="StatusId" id="txtStatusId"/>
+                                                <input type="hidden" asp-for="StatusId" id="txtStatusId" />
                                                 <input type="hidden" asp-for="MediaStorageId" value="@Model.MediaStorageId">
                                             </div>
                                             <div class="form-group">
@@ -75,7 +81,7 @@
                                             <div class="form-group">
                                                 <label>Archive Unit</label>
                                                 <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? Const.Required : Const.Disabled)
-                                                        id="txtArchiveUnitId" class="select2_demo_1 form-control" 
+                                                        id="txtArchiveUnitId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Archive Unit --">
                                                     <option value=""></option>
                                                 </select>
@@ -90,7 +96,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Total Volume</label>
-                                                <input type="text" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" readonly/>
+                                                <input type="text" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" readonly />
                                             </div>
                                             <div class="form-group">
                                                 <label>Difference Volume</label>
@@ -98,7 +104,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Floor</label>
-                                                <select asp-for="Row.Level.Rack.Room.FloorId" asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtFloorId" class="select2_demo_1 form-control m-1"
                                                         data-placeholder="-- Select Floor --">
                                                     <option value=""></option>
@@ -106,7 +112,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Room</label>
-                                                <select asp-for="Row.Level.Rack.RoomId" asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.Rack!.RoomId!" asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtRoomId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Room --">
                                                     <option value=""></option>
@@ -114,7 +120,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Rack</label>
-                                                <select asp-for="Row.Level.RackId" asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.RackId!" asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
                                                         id="txtRackId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Rack --">
                                                     <option value=""></option>
@@ -139,40 +145,37 @@
                                             <div>
                                                 @if (form.CurrentAction == Const.Detail)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
-                                                        class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
                                                 }
                                                 else if (form.CurrentAction == Const.Remove)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
-                                                        class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
-                                                    <button 
-                                                        onclick="onSubmit(this, event, 'submit');" 
-                                                        class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" 
-                                                        type="submit" id="btn-submit">
+                                                    <button onclick="onSubmit(this, event, 'submit');"
+                                                            class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                            type="submit" id="btn-submit">
                                                         Delete
                                                     </button>
                                                 }
-                                                else 
+                                                else
                                                 {
-                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
-                                                         class="btn btn-sm btn-danger float-right m-t-n-xs">
-                                                         Cancel
-                                                     </a>
-                                                    <button 
-                                                        onclick="onSubmit(this, event, 'draft');" 
-                                                        class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" 
-                                                        type="submit" id="btn-submit">
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                        Cancel
+                                                    </a>
+                                                    <button onclick="onSubmit(this, event, 'draft');"
+                                                            class="btn btn-sm btn-warning float-right m-t-n-xs mr-1"
+                                                            type="submit" id="btn-submit">
                                                         Save As Draft
                                                     </button>
-                                                    <button 
-                                                        onclick="onSubmit(this, event, 'submit');" 
-                                                        class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" 
-                                                        type="submit" id="btn-submit">
+                                                    <button onclick="onSubmit(this, event, 'submit');"
+                                                            class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                            type="submit" id="btn-submit">
                                                         Submit
                                                     </button>
                                                 }
@@ -180,26 +183,32 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Sub Subject Classifications</label>
-                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? Const.Required : Const.Disabled)
-                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Sub Subject Classification --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Archive</label>
-                                            <select 
-                                                id="txtArchiveId" 
-                                                class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" 
-                                                asp-items="ViewBag.listArchive" 
-                                                data-placeholder="-- Select Archive --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
 
-                                        <button class="btn btn-success btn-sm pull-right mb-5" type="button" id="add"><i class="fa fa-plus"></i> Add Archive</button>
+                                        @if (isEditable)
+                                        {
+                                            <div class="form-group">
+                                                <label>Sub Subject Classifications</label>
+                                                <select asp-items="ViewBag.listSubSubject" (form.isInput ? Const.Required : Const.Disabled)
+                                                        id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Sub Subject Classification --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Archive</label>
+                                                <select id="txtArchiveId"
+                                                        class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)"
+                                                    asp-items="ViewBag.listArchive"
+                                                        data-placeholder="-- Select Archive --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+
+                                            <button class="btn btn-success btn-sm pull-right mb-5"
+                                                    type="button" id="add-archive">
+                                                <i class="fa fa-plus"></i> Add Archive
+                                            </button>
+                                        }
                                         <table id="table-archive" class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -213,9 +222,7 @@
                                             <tbody id="listdtl">
                                             </tbody>
                                         </table>
-                                        <div id="listArchiveId">
-
-                                        </div>
+                                        <div id="listArchiveId"></div> @*this div for containing list archive id values send to controller*@
                                     </div>
                                 </div>
                             </form>
@@ -234,41 +241,31 @@
         var totalCurrentVolume = 0;
 
         $(document).ready(function () {
-            $("#listdtl").empty();
-            listArchiveId = [];
-
             initForms("@form.CurrentAction");
+            initDropdown();
+            resetTableArchive();
+
             $('#txtTotalVolume').prop('readonly', true);
             $('#txtDifferenceVolume').prop('readonly', true);
-            initDropdown();
 
             $('#txtTypeStorageId').on('change', function () {
-                if($(this).val() != ''){
+                if ($(this).val() != '') {
                     getTypeStorageById($('#txtTypeStorageId').val());
-                    $("#listdtl").empty();
-                    listArchiveId = [];
+                    resetTableArchive();
                 }
             });
-          
-            $("#add").click(function () {
+
+            $("#add-archive").click(function () {
                 addArchive();
             });
 
-            if ("@form.CurrentAction" == "@Const.Update" || "@form.CurrentAction" == "@Const.Detail" || "@form.CurrentAction" == "@Const.Remove") 
-            {
-                listArchiveId = [];
-                $("#listdtl").empty();
-
-                @foreach (var d in Model.TrxMediaStorageDetails)
-                {
-                    @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
-
-                }
+            if ("@form.CurrentAction" != "@Const.Add") {
+                initTableArchive();
             }
+
         });
 
-        function initDropdown() 
-        {
+        function initDropdown() {
             $('#txtSubSubjectClassificationId').on('change', function () {
                 $('#txtArchiveId').val('').trigger('change');
             });
@@ -322,7 +319,7 @@
                     },
                     processResults: function (data) {
                         var dataResult = $.map(data, function (item) {
-                            
+
                             return {
                                 text: item.typeStorageName,
                                 id: item.typeStorageId
@@ -481,9 +478,8 @@
                 }
             });
         }
-        
-        function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) 
-        {
+
+        function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
             var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-danger btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
             var view = `<a id="btn-view-archive" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
 
@@ -494,7 +490,7 @@
 
             $('#table-archive > tbody:last-child').append(`<tr id=${archiveId}><td> ${typeArchive} </td><td> ${titleArchive} </td><td> ${archiveCreator} </td><td> ${volume} </td><td> ${remove} ${view}</td></tr>`);
 
-            if(isEdit == false) {
+            if (isEdit == false) {
                 $("#txtDifferenceVolume").val($("#txtDifferenceVolume").val() - volume);
             }
         }
@@ -543,8 +539,7 @@
                     data: { Id: id },
                     dataType: "@Const.JSON",
                     contentType: "@Const.APPLICATIONJSON",
-                    success: function (data) 
-                    {
+                    success: function (data) {
                         if ($("#txtDifferenceVolume").val() <= data.volume) {
                             swal({
                                 title: "Volume Is Full",
@@ -574,8 +569,7 @@
                     }
                 });
             }
-            else
-            {
+            else {
                 swal({
                     title: "Duplicated",
                     text: "The Archive Has Been Inserted, Please Select Another",
@@ -584,6 +578,18 @@
                     type: "warning"
                 });
             }
+        }
+
+        function initTableArchive() {
+            resetTableArchive();
+
+            @foreach (var d in Model.TrxMediaStorageDetails)
+            {
+                @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
+
+            }
+            
+            initBtnDeleteArchive();
         }
 
         function getTypeStorageById(id) {
@@ -612,10 +618,6 @@
             row.closest('tr').remove();
 
             $("#txtDifferenceVolume").val(parseInt($("#txtDifferenceVolume").val()) + parseInt(volume));
-        }
-
-        function viewArchive(row) {
-            row.closest('tr').remove();
         }
 
         function validateArchive(archiveId) {
@@ -664,8 +666,19 @@
             return result;
         }
 
-        function onSubmit(ctl, event, status) 
-        {
+        function initBtnDeleteArchive() {
+            $(".btn-delete-archive").show();
+            if ("@isEditable" === "False") {
+                $(".btn-delete-archive").hide();
+            }
+        }
+
+        function resetTableArchive() {
+            $("#listdtl").empty();
+            listArchiveId = [];
+        }
+
+        function onSubmit(ctl, event, status) {
             listArchiveId.forEach((element) => {
                 $("#listArchiveId").append(`<input name=detail[] type=hidden value=${element} >`);
             });
