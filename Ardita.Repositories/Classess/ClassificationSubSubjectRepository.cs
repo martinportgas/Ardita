@@ -48,14 +48,13 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxSubSubjectClassification>> GetById(Guid id)
+        public async Task<TrxSubSubjectClassification> GetById(Guid id)
         {
             var result = await _context.TrxSubSubjectClassifications
                 .Include(x => x.Creator)
                 .Include(x => x.SubjectClassification.Classification.TypeClassification)
                 .AsNoTracking()
-                .Where(x => x.SubSubjectClassificationId == id && x.IsActive == true)
-                .ToListAsync();
+                .FirstOrDefaultAsync(x => x.SubSubjectClassificationId == id && x.IsActive == true);
             return result;
         }
         public async Task<IEnumerable<TrxSubSubjectClassification>> GetByFilterModel(DataTableModel model)
@@ -102,7 +101,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (models.Count() > 0)
             {
-                await _context.BulkInsertAsync(models);
+                await _context.AddRangeAsync(models);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;
@@ -113,12 +113,9 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.SubSubjectClassificationId != Guid.Empty)
             {
-                var data = await _context.TrxSubSubjectClassifications.AsNoTracking().Where(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId).ToListAsync();
+                var data = await _context.TrxSubSubjectClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 if (data != null)
                 {
-                    model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

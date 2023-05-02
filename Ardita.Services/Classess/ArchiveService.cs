@@ -99,6 +99,11 @@ public class ArchiveService : IArchiveService
         return await _archiveRepository.Insert(model, file);
     }
 
+    public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
+    {
+        return await _archiveRepository.InsertBulk(trxArchives);
+    }
+
     public async Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted)
     {
         List<Guid> filesDeletedId = new();

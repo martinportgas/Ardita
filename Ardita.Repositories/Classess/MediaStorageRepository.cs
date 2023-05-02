@@ -62,7 +62,7 @@ public class MediaStorageRepository : IMediaStorageRepository
     public async Task<TrxMediaStorage> GetById(Guid id) 
     {
         return await _context.TrxMediaStorages
-            .Include(d => d.TrxMediaStorageDetails)
+            .Include(d => d.TrxMediaStorageDetails.Where(w => w.IsActive))
                 .ThenInclude(a => a.Archive)
                 .ThenInclude(s => s.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
@@ -70,6 +70,10 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(r => r.Row.Level.Rack.Room.Floor).AsNoTracking()
             .Where(x => x.MediaStorageId == id)
             .FirstAsync();
+    }
+    public async Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id)
+    {
+        return await _context.TrxMediaStorageDetails.FirstOrDefaultAsync(x => x.ArchiveId == id);
     }
 
     public async Task<int> GetCount() => await _context.TrxMediaStorages.CountAsync(x => x.IsActive == true);
@@ -100,6 +104,7 @@ public class MediaStorageRepository : IMediaStorageRepository
             foreach (var item in detail)
             {
                 item.MediaStorageId = model.MediaStorageId;
+                item.IsActive = true;
                 _context.TrxMediaStorageDetails.Add(item);
                 result += await _context.SaveChangesAsync();
             }
@@ -148,6 +153,33 @@ public class MediaStorageRepository : IMediaStorageRepository
                     _context.TrxMediaStorageDetails.Add(item);
                     result += await _context.SaveChangesAsync();
                 }
+            }
+        }
+        return result;
+    }
+    public async Task<int> UpdateDetail(TrxMediaStorageDetail model)
+    {
+        int result = 0;
+
+        if (model != null && model.MediaStorageDetailId != Guid.Empty)
+        {
+            var data = await _context.TrxMediaStorageDetails.AsNoTracking().FirstAsync(x => x.MediaStorageDetailId == model.MediaStorageDetailId);
+            if (data != null)
+            {
+                _context.Update(model);
+
+                var countByHeader = await _context.TrxMediaStorageDetails.CountAsync(x => x.MediaStorageId == model.MediaStorageId && x.IsActive == true);
+                if(countByHeader == 0)
+                {
+                    var header = await _context.TrxMediaStorages.FirstOrDefaultAsync(x => x.MediaStorageId == model.MediaStorageId);
+                    if(header != null)
+                    {
+                        header.IsActive = false;
+                        _context.Update(header);
+                    }
+                }
+
+                result = await _context.SaveChangesAsync();
             }
         }
         return result;

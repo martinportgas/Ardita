@@ -69,7 +69,7 @@
                 },
                 columnDefs: [
                     { 
-                        width: 50, targets: 0 
+                        width: 10, targets: 0 
                     }
                 ],
                 fixedColumns: true,
@@ -83,14 +83,14 @@
                         "data": "positionId",
                         "render": function (data, type, row, meta) {
 
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.UserManage, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.UserManage, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.UserManage, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

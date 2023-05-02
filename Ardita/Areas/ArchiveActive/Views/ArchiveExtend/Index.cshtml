@@ -68,9 +68,8 @@
                     //}
                 },
                 columnDefs: [
-                    {
-                        width: 50, targets: 0
-                    }
+                    { width: 50, targets: 0 },
+                    { width: 100, targets: 4 }
                 ],
                 fixedColumns: true,
                 columns: [
@@ -101,7 +100,11 @@
                     },
                     { "data": "extendCode", "autoWidth": true },
                     { "data": "extendName", "autoWidth": true },
-                    { "data": "status.name", "name": "titleArchive", "autoWidth": true },
+                    {
+                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        }
+                    },
                 ]
             });
         });

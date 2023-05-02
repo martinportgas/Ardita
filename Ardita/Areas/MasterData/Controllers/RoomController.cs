@@ -157,7 +157,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxRoom).Replace(Const.Trx, string.Empty);
+                string fileName = nameof(TrxRoom).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var rooms = await _roomService.GetAll();
@@ -166,7 +166,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
@@ -202,13 +202,13 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxRoom).Replace(Const.Trx, string.Empty)}";
+                string fileName = $"{Const.Template}-{nameof(TrxRoom).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).Replace(Const.Trx, string.Empty));
-                ISheet excelSheetFloors = workbook.CreateSheet(nameof(TrxFloor).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
+                ISheet excelSheetFloors = workbook.CreateSheet(nameof(TrxFloor).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowFloor = excelSheetFloors.CreateRow(0);

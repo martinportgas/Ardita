@@ -106,7 +106,7 @@ namespace Ardita.Areas.UserManage.Controllers
             return RedirectToIndex();
         }
 
-        public async Task<IActionResult> Delete(MstPosition model)
+        public override async Task<IActionResult> Delete(MstPosition model)
         {
             if (model != null)
             {

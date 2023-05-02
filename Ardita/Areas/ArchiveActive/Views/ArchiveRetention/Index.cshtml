@@ -70,9 +70,8 @@
                     //}
                 },
                 columnDefs: [
-                    {
-                        width: 50, targets: 0
-                    }
+                    { width: 50, targets: 0 },
+                    { width: 120, targets: 6 }
                 ],
                 fixedColumns: true,
                 columns: [
@@ -96,7 +95,29 @@
                     { "data": "archiveType", "autoWidth": true },
                     { "data": "creatorName", "autoWidth": true },
                     { "data": "retentionDateArchive", "name": "titleArchive", "autoWidth": true },
-                    { "data": "status", "name": "titleArchive", "autoWidth": true },
+                    {
+                        "data": "status", "autoWidth": true, "render": function (data, type, row, meta) {
+                            var badge = 'badge-primary';
+
+                            var status = data.toLowerCase();
+                            if (status.contains('pemindahan')) {
+                                badge = 'badge-success';
+                            }
+                            if (status.contains('pemusnahan')) {
+                                badge = 'badge-info';
+                            }
+                            if (status.contains('perpanjangan')) {
+                                badge = 'badge-primary';
+                            }
+                            if (status.contains('tindak')) {
+                                badge = 'badge-warning';
+                            }
+                            if (status.contains('expired')) {
+                                badge = 'badge-danger';
+                            }
+                            return `<span class="badge ${badge}" style="width:100%">${data}</span>`;
+                        }
+                    },
                 ]
             });
         });

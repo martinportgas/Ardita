@@ -48,10 +48,10 @@ public class ClassificationController : BaseController<TrxClassification>
     public override async Task<IActionResult> Update(Guid Id)
     {
         var model = await _classificationService.GetById(Id);
-        if (model.Any())
+        if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes(); 
-            return View(Const.Form, model.FirstOrDefault());
+            return View(Const.Form, model);
         }
         else
         {
@@ -61,10 +61,10 @@ public class ClassificationController : BaseController<TrxClassification>
     public override async Task<IActionResult> Remove(Guid Id)
     {
         var model = await _classificationService.GetById(Id);
-        if (model.Any())
+        if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
-            return View(Const.Form, model.FirstOrDefault());
+            return View(Const.Form, model);
         }
         else
         {
@@ -74,10 +74,10 @@ public class ClassificationController : BaseController<TrxClassification>
     public override async Task<IActionResult> Detail(Guid Id)
     {
         var model = await _classificationService.GetById(Id);
-        if (model.Any())
+        if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
-            return View(Const.Form, model.FirstOrDefault());
+            return View(Const.Form, model);
         }
         else
         {

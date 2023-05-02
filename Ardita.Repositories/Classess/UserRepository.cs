@@ -24,12 +24,14 @@ namespace Ardita.Repositories.Classess
 
             if (model.UserId != Guid.Empty)
             {
-                var data = await _context.MstUsers.AsNoTracking().FirstAsync(x => x.UserId == model.UserId);
+                var data = await _context.MstUsers.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId);
                 if (data != null)
                 {
                     model.IsActive = false;
                     model.CreatedBy = data.CreatedBy;
                     model.CreatedDate = data.CreatedDate;
+                    model.Password = data.Password;
+                    model.EmployeeId = data.EmployeeId;
                     _context.MstUsers.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
@@ -110,7 +112,7 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (model != null)
             {
-                var data = await _context.MstUsers.AsNoTracking().FirstAsync(x => x.EmployeeId == model.EmployeeId);
+                var data = await _context.MstUsers.AsNoTracking().FirstOrDefaultAsync(x => x.EmployeeId == model.EmployeeId);
                 model.IsActive = true;
 
                 if (data != null)
@@ -137,7 +139,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (users.Count() > 0)
             {
-                await _context.BulkInsertAsync(users);
+                await _context.AddRangeAsync(users);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;

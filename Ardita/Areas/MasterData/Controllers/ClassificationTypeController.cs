@@ -49,9 +49,9 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _classificationTypeService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -61,9 +61,9 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Remove(Guid Id)
         {
             var data = await _classificationTypeService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {
@@ -74,9 +74,9 @@ namespace Ardita.Areas.MasterData.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var data = await _classificationTypeService.GetById(Id);
-            if (data.Count() > 0)
+            if (data != null)
             {
-                return View(Const.Form, data.FirstOrDefault());
+                return View(Const.Form, data);
             }
             else
             {

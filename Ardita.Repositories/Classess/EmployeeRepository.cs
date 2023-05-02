@@ -27,7 +27,7 @@ namespace Ardita.Repositories.Classess
 
             if (model.EmployeeId != Guid.Empty)
             {
-                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.EmployeeId == model.EmployeeId);
+                var data = await _context.MstEmployees.AsNoTracking().FirstOrDefaultAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
                     model.IsActive = false;
@@ -104,7 +104,7 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (model != null) 
             {
-                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.Nik == model.Nik);
+                var data = await _context.MstEmployees.AsNoTracking().FirstOrDefaultAsync(x => x.Nik == model.Nik);
                 model.IsActive = true;
                 if (data != null)
                 {
@@ -129,7 +129,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (employees.Count() > 0)
             {
-                await _context.BulkInsertAsync(employees);
+                await _context.AddRangeAsync(employees);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;
@@ -141,7 +142,7 @@ namespace Ardita.Repositories.Classess
 
             if (model.EmployeeId != Guid.Empty)
             {
-                var data = await _context.MstEmployees.AsNoTracking().FirstAsync(x => x.EmployeeId == model.EmployeeId);
+                var data = await _context.MstEmployees.AsNoTracking().FirstOrDefaultAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
                     model.IsActive = true;

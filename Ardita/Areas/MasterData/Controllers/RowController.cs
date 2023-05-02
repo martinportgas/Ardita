@@ -181,14 +181,14 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxRow).Replace(Const.Trx, string.Empty);
+                string fileName = nameof(TrxRow).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var rows = await _rowService.GetAll();
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
@@ -227,13 +227,13 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxRow).Replace(Const.Trx, string.Empty)}";
+                string fileName = $"{Const.Template}-{nameof(TrxRow).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRow).Replace(Const.Trx, string.Empty));
-                ISheet excelSheetLevels = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRow).ToCleanNameOf());
+                ISheet excelSheetLevels = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowLevel = excelSheetLevels.CreateRow(0);

@@ -45,9 +45,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxPermissionClassification>> GetById(Guid id)
+        public async Task<TrxPermissionClassification> GetById(Guid id)
         {
-            var result = await _context.TrxPermissionClassifications.AsNoTracking().Where(x => x.PermissionClassificationId == id).ToListAsync();
+            var result = await _context.TrxPermissionClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.PermissionClassificationId == id);
             return result;
         }
 
@@ -81,7 +81,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (models.Count() > 0)
             {
-                await _context.BulkInsertAsync(models);
+                await _context.AddRangeAsync(models);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;

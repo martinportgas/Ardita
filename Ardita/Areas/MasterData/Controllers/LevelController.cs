@@ -184,7 +184,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
@@ -226,8 +226,8 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).Replace(Const.Trx, string.Empty));
-                ISheet excelSheetRacks = workbook.CreateSheet(nameof(TrxRack).Replace(Const.Trx, string.Empty));
+                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
+                ISheet excelSheetRacks = workbook.CreateSheet(nameof(TrxRack).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowRack = excelSheetRacks.CreateRow(0);

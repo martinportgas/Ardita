@@ -5,126 +5,119 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Models.DbModels;
 using Ardita.Areas.UserManage.Models;
+using Ardita.Controllers;
+using Ardita.Globals;
+using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area("UserManage")]
-    public class RoleController : Controller
+    [Area(Const.UserManage)]
+    public class RoleController : BaseController<MstRole>
     {
-        private readonly IRoleService _roleService;
         public RoleController(IRoleService roleService)
         {
             _roleService = roleService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<JsonResult> GetData()
+        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                //var model = new DataTableModel();
+                var result = await _roleService.GetListRoles(model);
 
-                //model.draw = Request.Form["draw"].FirstOrDefault();
-                //model.start = Request.Form["start"].FirstOrDefault();
-                //model.length = Request.Form["length"].FirstOrDefault();
-                //model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                //model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                //model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-                //model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-                //model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-                //model.recordsTotal = 0;
+                return Json(result);
 
-                //var result = await _roleService.GetListRoles(model);
-
-                //var jsonResult = new
-                //{
-                //    draw = result.draw,
-                //    recordsFiltered = result.recordsFiltered,
-                //    recordsTotal = result.recordsTotal,
-                //    data = result.data
-                //};
-               // return Json(jsonResult);
-                return Json("");
             }
             catch (Exception ex)
             {
                 throw;
             }
         }
-        public IActionResult Add()
+        public override async Task<IActionResult> Add()
         {
-            return View();
+            return View(Const.Form, new MstRole());
         }
-        public async Task<IActionResult> Update(Guid Id)
+        public override async Task<IActionResult> Update(Guid Id)
         {
             MstRole role = new();
 
             var roles = await _roleService.GetById(Id);
-            if (roles.Count() > 0)
-            {
-                role = roles.FirstOrDefault();
-                return View(role);
+            if (roles != null)
+            { 
+                return View(Const.Form, roles);
             }
             else
             {
-                return RedirectToAction("Index", "Role", new { Area = "UserManage" });
+                return RedirectToIndex();
             }
         }
-        public async Task<IActionResult> Remove(Guid Id)
+
+        public override async Task<IActionResult> Detail(Guid Id)
         {
             MstRole role = new();
 
             var roles = await _roleService.GetById(Id);
-            if (roles.Count() > 0)
+            if (roles != null)
             {
-                role = roles.FirstOrDefault();
-                return View(role);
+                return View(Const.Form, roles);
             }
             else
             {
-                return RedirectToAction("Index", "Role", new { Area = "UserManage" });
+                return RedirectToIndex();
+            }
+        }
+        public override async Task<IActionResult> Remove(Guid Id)
+        {
+            MstRole role = new();
+
+            var roles = await _roleService.GetById(Id);
+            if (roles != null)
+            {
+                return View(Const.Form, roles);
+            }
+            else
+            {
+                return RedirectToIndex();
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(MstRole model)
+        public override async Task<IActionResult> Save(MstRole model)
         {
             int result = 0;
             if (model != null)
             {
                 if (model.RoleId != Guid.Empty)
                 {
-                    model.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdateDate = DateTime.Now;
                     result = await _roleService.Update(model);
                 }
                 else
                 {
-                    model.CreatedBy = new Guid(User.FindFirst("UserId").Value);
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
                     result = await _roleService.Insert(model);
                 }
 
             }
-            return RedirectToAction("Index", "Role", new { Area = "UserManage" });
+            return RedirectToIndex();
         }
-        public async Task<IActionResult> Delete(MstRole model)
+        public override async Task<IActionResult> Delete(MstRole model)
         {
             int result = 0;
             if (model != null)
             {
                 if (model.RoleId != Guid.Empty)
                 {
-                    model.UpdateBy = new Guid(User.FindFirst("UserId").Value);
+                    model.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdateDate = DateTime.Now;
                     result = await _roleService.Delete(model);
                 }
             }
-            return RedirectToAction("Index", "Role", new { Area = "UserManage" });
+            return RedirectToIndex();
         }
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Role, new { Area = Const.UserManage });
     }
 }

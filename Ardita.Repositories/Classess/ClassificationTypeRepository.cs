@@ -48,9 +48,9 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<MstTypeClassification>> GetById(Guid id)
+        public async Task<MstTypeClassification> GetById(Guid id)
         {
-            var result = await _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == id && x.IsActive == true).ToListAsync();
+            var result = await _context.MstTypeClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.TypeClassificationId == id && x.IsActive == true);
             return result;
         }
         public async Task<IEnumerable<MstTypeClassification>> GetByFilterModel(DataTableModel model)
@@ -97,7 +97,8 @@ namespace Ardita.Repositories.Classess
             bool result = false;
             if (models.Count() > 0)
             {
-                await _context.BulkInsertAsync(models);
+                await _context.AddRangeAsync(models);
+                await _context.SaveChangesAsync();
                 result = true;
             }
             return result;
@@ -108,12 +109,9 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.TypeClassificationId != Guid.Empty)
             {
-                var data = await _context.MstTypeClassifications.AsNoTracking().Where(x => x.TypeClassificationId == model.TypeClassificationId).ToListAsync();
+                var data = await _context.MstTypeClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.TypeClassificationId == model.TypeClassificationId);
                 if (data != null)
                 {
-                    model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

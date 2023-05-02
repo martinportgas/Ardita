@@ -53,7 +53,9 @@ namespace Ardita.Services.Classess
         {
             var rolePageListViewModel = new RolePageListViewModel();
 
-            var roleResult = await _roleRepository.GetById(id);
+            var roleResult = await _roleRepository.GetAll();
+            roleResult = roleResult.Where(x => x.RoleId == id);
+
             var rolePageResult = await _rolePageRepository.GetAll();
             var pageResult = await _pageRepository.GetAll();
             var subMenuResult = await _subMenuRepository.GetAll();

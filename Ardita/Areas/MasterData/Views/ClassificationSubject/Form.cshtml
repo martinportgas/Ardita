@@ -63,6 +63,11 @@
                                     <div class="form-group">
                                         <label>Jenis Klasifikasi</label>
                                         <input type="hidden" asp-for="SubjectClassificationId" value="@Model.SubjectClassificationId">
+                                        <input type="hidden" asp-for="IsActive" />
+                                        <input type="hidden" asp-for="CreatedBy" />
+                                        <input type="hidden" asp-for="CreatedDate" />
+                                        <input type="hidden" asp-for="UpdatedBy" />
+                                        <input type="hidden" asp-for="UpdatedDate" />
                                         <select class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" id="txtTypeClassificationId" asp-for="Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">

@@ -28,7 +28,7 @@ namespace Ardita.Services.Classess
             return await _classificationTypeRepository.GetAll();
         }
 
-        public async Task<IEnumerable<MstTypeClassification>> GetById(Guid id)
+        public async Task<MstTypeClassification> GetById(Guid id)
         {
             return await _classificationTypeRepository.GetById(id);
         }
