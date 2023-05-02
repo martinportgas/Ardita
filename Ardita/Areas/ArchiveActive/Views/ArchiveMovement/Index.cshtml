@@ -68,9 +68,8 @@
                     //}
                 },
                 columnDefs: [
-                    {
-                        width: 50, targets: 0
-                    }
+                    { width: 50, targets: 0 },
+                    { width: 100, targets: 4 }
                 ],
                 fixedColumns: true,
                 columns: [
@@ -95,13 +94,20 @@
                             var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Preview, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit);
+                            var download = row.statusId != @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.DownloadFile, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            download = download.replace("-1", data);
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);
                             return JoinButton;
                         }
                     },
                     { "data": "movementCode", "autoWidth": true },
                     { "data": "movementName", "autoWidth": true },
-                    { "data": "status.name", "name": "titleArchive", "autoWidth": true },
+                    {
+                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        }
+                    },
                 ]
             });
         });

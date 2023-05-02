@@ -11,6 +11,8 @@ public partial class MstStatus
 
     public string? Name { get; set; }
 
+    public string? Color { get; set; }
+
     public Guid? CreatedBy { get; set; }
 
     public DateTime? CreatedDate { get; set; }

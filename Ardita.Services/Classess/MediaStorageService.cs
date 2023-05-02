@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ardita.Services.Classess;
 
@@ -22,6 +23,10 @@ public class MediaStorageService : IMediaStorageService
     public async Task<TrxMediaStorage> GetById(Guid id)
     {
         return await _mediaStorageRepository.GetById(id);
+    }
+    public async Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id)
+    {
+        return await _mediaStorageRepository.GetDetailByArchiveId(id);
     }
 
     public async Task<DataTableResponseModel<TrxMediaStorage>> GetList(DataTablePostModel model)
@@ -92,5 +97,9 @@ public class MediaStorageService : IMediaStorageService
         }
 
         return await _mediaStorageRepository.Update(model, trxMediaStorageDetail);
+    }
+    public async Task<int> UpdateDetail(TrxMediaStorageDetail model)
+    {
+        return await _mediaStorageRepository.UpdateDetail(model);
     }
 }

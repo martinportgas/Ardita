@@ -269,12 +269,32 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             if (model != null && model.ArchiveExtendId != Guid.Empty)
             {
                 if (model.ApproveLevel == model.ApproveMax)
-                    model.StatusId = (int)Const.Status.ApprovalProcess;
+                    model.StatusId = (int)Const.Status.Approved;
                 else
                     model.ApproveLevel += 1;
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveExtendService.Submit(model);
+
+                if (model.StatusId == (int)Const.Status.Approved)
+                {
+                    var modelDetail = await _archiveExtendService.GetDetailByMainId(model.ArchiveExtendId);
+                    if (modelDetail.Any())
+                    {
+                        foreach (var item in modelDetail)
+                        {
+                            var archive = await _archiveService.GetById(item.ArchiveId);
+                            if (archive != null)
+                            {
+                                archive.ActiveRetention = item.RetensionAfter == null ? archive.ActiveRetention : (int)item.RetensionAfter;
+                                archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                                archive.UpdatedDate = DateTime.Now;
+
+                                await _archiveService.Update(archive, "", new string[] { });
+                            }
+                        }
+                    }
+                }
             }
             return RedirectToIndex();
         }
