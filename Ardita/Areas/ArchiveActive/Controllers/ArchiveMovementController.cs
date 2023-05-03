@@ -314,7 +314,12 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToIndex();
+            return RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
+        }
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(Guid Id)
+        {
+            return File(new byte[] { }, "application/octet-stream", "BeritaAcaraPemindahan.pdf");
         }
         #endregion
         #region HELPER

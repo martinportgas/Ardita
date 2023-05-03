@@ -28,7 +28,7 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             if (roleId != null)
             {
-                _context.Database.ExecuteSqlRaw($" delete from dbo.MST_ROLE_PAGE where role_id='{roleId}'");
+                _context.Database.ExecuteSqlRaw($" delete from dbo.IDX_ROLE_PAGE where role_id='{roleId}'");
                 result = await _context.SaveChangesAsync();
             }
             return result;

@@ -296,7 +296,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToIndex();
+            return RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
         }
         #endregion
         #region HELPER
