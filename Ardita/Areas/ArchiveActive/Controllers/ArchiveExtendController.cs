@@ -133,6 +133,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveExtendService.GetById(Id);
             if (model != null)
             {
+                ViewBag.level = Level;
                 ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
                 return View(Const.Form, model);
@@ -296,7 +297,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToIndex();
+            return RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
         }
         #endregion
         #region HELPER

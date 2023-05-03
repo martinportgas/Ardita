@@ -40,6 +40,7 @@
                                 <th>Action</th>
                                 <th>Media Storage Code</th>
                                 <th>Media Storage Name</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -109,7 +110,12 @@
                         }
                     },
                     { "data": "mediaStorageCode", "Code": "mediaStorageCode", "autoWidth": true },
-                    { "data": "mediaStorageName", "Name": "mediaStorageName", "autoWidth": true }
+                    { "data": "mediaStorageName", "Name": "mediaStorageName", "autoWidth": true },
+                    {
+                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        }
+                    },
                 ]
             });
 

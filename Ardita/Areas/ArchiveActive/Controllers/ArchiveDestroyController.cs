@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace Ardita.Areas.ArchiveActive.Controllers
 {
@@ -132,6 +133,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                ViewBag.level = Level;
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveDestroy);
                 return View(Const.Form, model);
@@ -304,19 +306,12 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToIndex();
+            return RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
         }
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            var model = await _fileArchiveDetailService.GetById(Id);
-            string path = model.FilePath;
-
-            if (System.IO.File.Exists(path))
-            {
-                return File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
-            }
-            return NotFound();
+            return File(new byte[] { }, "application/octet-stream", "BeritaAcaraPemusnahan.pdf");
         }
         #endregion
         #region HELPER
