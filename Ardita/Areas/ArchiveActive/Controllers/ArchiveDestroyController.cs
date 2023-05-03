@@ -133,6 +133,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                ViewBag.level = Level;
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveDestroy);
                 return View(Const.Form, model);

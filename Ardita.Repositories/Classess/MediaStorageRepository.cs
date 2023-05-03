@@ -42,6 +42,7 @@ public class MediaStorageRepository : IMediaStorageRepository
         if (model.sortColumnDirection.ToLower() == "asc")
         {
             result = await _context.TrxMediaStorages
+            .Include(x => x.Status)
             .Where(x => (x.MediaStorageCode + x.MediaStorageName).Contains(model.searchValue) && x.IsActive == true)
             .OrderBy(x => EF.Property<TrxMediaStorage>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)
@@ -50,6 +51,7 @@ public class MediaStorageRepository : IMediaStorageRepository
         else
         {
             result = await _context.TrxMediaStorages
+            .Include(x => x.Status)
             .Where(x => (x.MediaStorageCode + x.MediaStorageName).Contains(model.searchValue) && x.IsActive == true)
             .OrderByDescending(x => EF.Property<TrxMediaStorage>(x, propertyName))
             .Skip(model.skip).Take(model.pageSize)

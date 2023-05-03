@@ -136,7 +136,8 @@
             Draft = 1,
             ApprovalProcess = 2,
             Approved = 3,
-            Rejected = 4
+            Rejected = 4,
+            Submit = 5
         }
     }
 }

@@ -100,19 +100,19 @@
                             var badge = 'badge-primary';
 
                             var status = data.toLowerCase();
-                            if (status.contains('pemindahan')) {
+                            if (status.includes('pemindahan')) {
                                 badge = 'badge-success';
                             }
-                            if (status.contains('pemusnahan')) {
+                            if (status.includes('pemusnahan')) {
                                 badge = 'badge-info';
                             }
-                            if (status.contains('perpanjangan')) {
+                            if (status.includes('perpanjangan')) {
                                 badge = 'badge-primary';
                             }
-                            if (status.contains('tindak')) {
+                            if (status.includes('tindak')) {
                                 badge = 'badge-warning';
                             }
-                            if (status.contains('expired')) {
+                            if (status.includes('expired')) {
                                 badge = 'badge-danger';
                             }
                             return `<span class="badge ${badge}" style="width:100%">${data}</span>`;
