@@ -14,4 +14,5 @@ public interface IArchiveRepository
     Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId);
+    Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId);
 }

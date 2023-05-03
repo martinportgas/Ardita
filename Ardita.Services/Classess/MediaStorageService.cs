@@ -13,10 +13,7 @@ public class MediaStorageService : IMediaStorageService
 
     public MediaStorageService(IMediaStorageRepository mediaStorageRepository) => _mediaStorageRepository = mediaStorageRepository;
 
-    public Task<int> Delete(TrxMediaStorage model)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<int> Delete(TrxMediaStorage model) => await _mediaStorageRepository.Delete(model);
 
     public async Task<IEnumerable<TrxMediaStorage>> GetAll() => await _mediaStorageRepository.GetAll();
 

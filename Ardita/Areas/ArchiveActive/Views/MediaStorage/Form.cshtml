@@ -90,11 +90,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Total Volume</label>
-                                                <input type="number" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" />
+                                                <input type="text" asp-for="TotalVolume" id="txtTotalVolume" class="form-control" readonly/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Difference Volume</label>
-                                                <input type="number" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" />
+                                                <input type="text" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" readonly />
                                             </div>
                                             <div class="form-group">
                                                 <label>Floor</label>
@@ -128,9 +128,6 @@
                                                     <option value=""></option>
                                                 </select>
                                             </div>
-
-
-
                                             <div class="form-group">
                                                 <label>Row</label>
                                                 <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? Const.Required : Const.Disabled)
@@ -142,20 +139,43 @@
                                             <div>
                                                 @if (form.CurrentAction == Const.Detail)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
+                                                        class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                        Cancel
+                                                    </a>
                                                 }
                                                 else if (form.CurrentAction == Const.Remove)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                                    <button onclick="onSubmit(this, event, 'submit');" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Delete</button>
+                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
+                                                        class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                        Cancel
+                                                    </a>
+                                                    <button 
+                                                        onclick="onSubmit(this, event, 'submit');" 
+                                                        class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" 
+                                                        type="submit" id="btn-submit">
+                                                        Delete
+                                                    </button>
                                                 }
                                                 else 
                                                 {
-                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                                    <button onclick="onSubmit(this, event, 'draft');" class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Save As Draft</button>
-                                                    <button onclick="onSubmit(this, event, 'submit');" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">Submit</button>
+                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })" 
+                                                         class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                         Cancel
+                                                     </a>
+                                                    <button 
+                                                        onclick="onSubmit(this, event, 'draft');" 
+                                                        class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" 
+                                                        type="submit" id="btn-submit">
+                                                        Save As Draft
+                                                    </button>
+                                                    <button 
+                                                        onclick="onSubmit(this, event, 'submit');" 
+                                                        class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" 
+                                                        type="submit" id="btn-submit">
+                                                        Submit
+                                                    </button>
                                                 }
-
                                             </div>
                                         </div>
                                     </div>
@@ -170,7 +190,13 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Archive</label>
-                                            <select id="txtArchiveId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-items="ViewBag.listArchive" data-placeholder="-- Select Archive --"><option value=""></option></select>
+                                            <select 
+                                                id="txtArchiveId" 
+                                                class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" 
+                                                asp-items="ViewBag.listArchive" 
+                                                data-placeholder="-- Select Archive --">
+                                                <option value=""></option>
+                                            </select>
                                         </div>
 
                                         <button class="btn btn-success btn-sm pull-right mb-5" type="button" id="add"><i class="fa fa-plus"></i> Add Archive</button>
@@ -208,8 +234,12 @@
         var totalCurrentVolume = 0;
 
         $(document).ready(function () {
-            initForms("@form.CurrentAction");
+            $("#listdtl").empty();
+            listArchiveId = [];
 
+            initForms("@form.CurrentAction");
+            $('#txtTotalVolume').prop('readonly', true);
+            $('#txtDifferenceVolume').prop('readonly', true);
             initDropdown();
 
             $('#txtTypeStorageId').on('change', function () {
@@ -226,6 +256,9 @@
 
             if ("@form.CurrentAction" == "@Const.Update" || "@form.CurrentAction" == "@Const.Detail" || "@form.CurrentAction" == "@Const.Remove") 
             {
+                listArchiveId = [];
+                $("#listdtl").empty();
+
                 @foreach (var d in Model.TrxMediaStorageDetails)
                 {
                     @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
@@ -234,7 +267,8 @@
             }
         });
 
-        function initDropdown() {
+        function initDropdown() 
+        {
             $('#txtSubSubjectClassificationId').on('change', function () {
                 $('#txtArchiveId').val('').trigger('change');
             });
@@ -268,6 +302,10 @@
             $('#txtArchiveUnitId').on('change', function () {
                 $('#txtTypeStorageId').val('').trigger('change');
                 $('#txtFloorId').val('').trigger('change');
+                $("#listdtl").empty();
+                listArchiveId = [];
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
             });
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
@@ -444,13 +482,16 @@
             });
         }
         
-        function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
+        function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) 
+        {
             var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-danger btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
-            var view = `<a id="btn-view-archive" onclick ="viewArchive($(this))" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
+            var view = `<a id="btn-view-archive" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
 
             listArchiveId.push(archiveId);
             remove = remove.replace("-1", archiveId);
             remove = remove.replace("-2", volume);
+            view = view.replace("-1", archiveId);
+
             $('#table-archive > tbody:last-child').append(`<tr id=${archiveId}><td> ${typeArchive} </td><td> ${titleArchive} </td><td> ${archiveCreator} </td><td> ${volume} </td><td> ${remove} ${view}</td></tr>`);
 
             if(isEdit == false) {
@@ -570,7 +611,6 @@
             }
             row.closest('tr').remove();
 
-            console.log(volume);
             $("#txtDifferenceVolume").val(parseInt($("#txtDifferenceVolume").val()) + parseInt(volume));
         }
 
@@ -629,6 +669,8 @@
             listArchiveId.forEach((element) => {
                 $("#listArchiveId").append(`<input name=detail[] type=hidden value=${element} >`);
             });
+
+            console.table(listArchiveId);
 
             $("#txtStatusId").val("1");
             if (status == "submit") {

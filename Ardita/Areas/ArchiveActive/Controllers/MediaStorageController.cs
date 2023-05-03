@@ -132,10 +132,12 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Delete(TrxMediaStorage model)
     {
-        //if (model != null && model.TypeStorageId != Guid.Empty)
-        //{
-        //    await _typeStorageService.Delete(model);
-        //}
+        if (model != null && model.MediaStorageId != Guid.Empty)
+        {
+            model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+            model.UpdatedDate = DateTime.Now;
+            await _mediaStorageService.Delete(model);
+        }
         return RedirectToIndex();
     }
     #region HELPER
