@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-6 b-r">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                            <form id="frmSubjectClassification" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Jenis Klasifikasi</label>
@@ -76,19 +76,16 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Subjek Klasifikasi</label>
-                                        <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationCode">
+                                        <input type="text" placeholder="" id="txtSubClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationCode">
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Subject Klasifikasi</label>
-                                        <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationName">
+                                        <input type="text" placeholder="" id="txtSubClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationName">
                                     </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, Const.ClassificationSubject, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput || form.CurrentAction == Const.Remove)
-                                    {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
-                                    }
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
                                 </div>
                             </form>
                         </div>
@@ -134,5 +131,43 @@
             });
 
         });
+        function validate() {
+            if ($('#txtSubClassificationCode').val() == "") {
+                swal("Please enter Classification Code !");
+                return false;
+            } else if ($('#txtSubClassificationName').val() == "") {
+                swal("Please enter Classification Name !");
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#frmSubjectClassification").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
     </script>
 }
