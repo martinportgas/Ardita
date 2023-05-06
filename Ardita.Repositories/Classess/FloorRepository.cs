@@ -34,6 +34,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedDate = data.CreatedDate;
                         model.IsActive = false;
 
+                        model.ArchiveUnit = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }
@@ -106,6 +107,7 @@ namespace Ardita.Repositories.Classess
             if (model != null)
             {
                 model.IsActive = true;
+                model.ArchiveUnit = null;
                 _context.TrxFloors.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -139,6 +141,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedDate = data.CreatedDate;
                         model.IsActive = true;
 
+                        model.ArchiveUnit = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }
