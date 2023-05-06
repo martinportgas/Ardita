@@ -12,6 +12,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IUserRepository
     {
         Task<MstUser> GetById(Guid id);
+        Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id);
         Task<IEnumerable<MstUser>> GetAll();
         Task<IEnumerable<MstUser>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();

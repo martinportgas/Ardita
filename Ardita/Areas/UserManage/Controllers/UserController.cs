@@ -25,7 +25,7 @@ namespace Ardita.Areas.UserManage.Controllers
             _employeeService = employeeService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
-
+        [HttpPost]
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
 
