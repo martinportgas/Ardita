@@ -1,7 +1,6 @@
 ﻿@using Ardita.Globals;
 @model Ardita.Models.DbModels.TrxLevel
 @using Ardita.Models.ViewModels;
-
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = Const.ViewStart;
@@ -76,7 +75,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Rak</label>
-                                        <select id="txtRackId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.RackId" asp-items="ViewBag.listRakcs" data-placeholder="-- Pilih Rak --"><option value=""></option></select>
+                                        <select id="txtRackId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RackId" asp-items="ViewBag.listRacks" data-placeholder="-- Pilih Rak --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Tingkat</label>

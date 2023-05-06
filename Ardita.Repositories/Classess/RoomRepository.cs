@@ -105,6 +105,7 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                model.Floor = null;
                 model.IsActive = true;
                 _context.TrxRooms.Add(model);
                 result = await _context.SaveChangesAsync();
@@ -139,6 +140,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedBy = data.CreatedBy;
                         model.CreatedDate = data.CreatedDate;
 
+                        model.Floor = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }
