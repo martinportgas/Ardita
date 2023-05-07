@@ -104,6 +104,7 @@
                 serverSide: true,
                 scrollY: true,
                 filter: true,
+                order: [[0, "desc"]],
                 ajax: {
                     "url": '@Url.Action(Const.GetData, Const.Employee, new { Area = Const.UserManage})',
                     "type": "POST",
@@ -121,7 +122,7 @@
                 columns: [
                     {
                         "data": "employeeId",
-                        "name": "employeeId",
+                        "name": "createdDate",
                         "orderable": false, 
                         "searchable": false, 
                         "render": function (data, type, row, meta) {

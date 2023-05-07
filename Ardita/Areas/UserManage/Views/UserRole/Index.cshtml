@@ -56,6 +56,7 @@
             var table = $('#tblUser').DataTable({
                 processing: true,
                 serverSide: true,
+                order:[[0, "desc"]],
                 scrollX: true,
                 filter: true,
                 ajax: {
@@ -75,7 +76,9 @@
                 ],
                 columns: [
                     {
-                        "data": "userId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "userId", 
+                        "name": "createdDate",
+                        "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },

@@ -95,6 +95,7 @@
                 serverSide: true,
                 scrollX: true,
                 filter: true,
+                order: [[0, "desc"]],
                 ajax: {
                     "url": '@Url.Action("GetData", "User", new { Area = "UserManage"})',
                     "type": "POST",
@@ -112,7 +113,7 @@
                 columns: [
                     {
                         "data": "userId", 
-                        "name": "userId",
+                        "name": "createdDate",
                         "orderable": false, 
                         "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
