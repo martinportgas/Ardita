@@ -33,6 +33,8 @@ public partial class TrxArchive
 
     public int Volume { get; set; }
 
+    public long StatusId { get; set; }
+
     public bool IsActive { get; set; }
 
     public DateTime CreatedDate { get; set; }
@@ -48,6 +50,8 @@ public partial class TrxArchive
     public virtual MstGmd Gmd { get; set; } = null!;
 
     public virtual MstSecurityClassification SecurityClassification { get; set; } = null!;
+
+    public virtual MstStatus Status { get; set; } = null!;
 
     public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 

@@ -41,7 +41,9 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
+                                <th>Archive Code</th>
                                 <th>Archive Title</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -119,17 +121,31 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
-                            edit = edit.replace("-1", row.archiveId);
+                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
-                            remove = remove.replace("-1", row.archiveId);
+                            if (row.statusId == 1) {
+                                edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                edit = edit.replace("-1", row.archiveId);
+                            }
+
+                            var remove = `<a class="btn btn-sm btn-danger" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
+                            if (row.statusId == 1) {
+                                remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                                remove = remove.replace("-1", row.archiveId);
+                            }
+                            
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
-                    { "data": "titleArchive", "Title Archive": "TitleArchive", "autoWidth": true }
+                    { "data": "archiveCode", "Archiive Code": "ArchiveCode", "autoWidth": true },
+                    { "data": "titleArchive", "Archive Title": "TitleArchive", "autoWidth": true },
+                    {
+                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        }
+                    }
                 ]
             });
             $('#btnUpload').on('click', function () {

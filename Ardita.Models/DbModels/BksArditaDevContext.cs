@@ -951,6 +951,9 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("keyword");
             entity.Property(e => e.SecurityClassificationId).HasColumnName("security_classification_id");
+            entity.Property(e => e.StatusId)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("status_id");
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.TitleArchive)
                 .HasMaxLength(200)
@@ -984,6 +987,11 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.SecurityClassificationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SECURITY_CLASSIFICATION_ID");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchives)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MST_STATUS");
 
             entity.HasOne(d => d.SubSubjectClassification).WithMany(p => p.TrxArchives)
                 .HasForeignKey(d => d.SubSubjectClassificationId)
@@ -1502,12 +1510,12 @@ public partial class BksArditaDevContext : DbContext
             entity.HasOne(d => d.Archive).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.ArchiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ARCHIVE_ID_MEDIA_STORAGE_DETAIL");
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_DETAIL_TRX_ARCHIVE");
 
             entity.HasOne(d => d.MediaStorage).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.MediaStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MEDIA_STORAGE_ID_MEDIA_STORAGE_DETAIL");
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_DETAIL_TRX_MEDIA_STORAGE");
         });
 
         modelBuilder.Entity<TrxPermissionClassification>(entity =>

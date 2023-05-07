@@ -1,7 +1,10 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Archive;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System.IO;
@@ -61,6 +64,7 @@ public class ArchiveRepository : IArchiveRepository
         if (model.sortColumnDirection.ToLower() == "asc")
         {
             result = await _context.TrxArchives
+                .Include(x => x.Status)
                 .Include(x => x.Gmd)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator)
@@ -72,6 +76,7 @@ public class ArchiveRepository : IArchiveRepository
         else
         {
             result = await _context.TrxArchives
+                .Include(x => x.Status)
                 .Include(x => x.Gmd)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator)
@@ -93,30 +98,32 @@ public class ArchiveRepository : IArchiveRepository
         var result = await _context.TrxArchives.AsNoTracking()
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification)
-            .Include(x => x.SubSubjectClassification.Creator)
+                .ThenInclude(c => c.Creator)
+                .ThenInclude(au => au!.ArchiveUnit)
+                .ThenInclude(cmp => cmp.Company)
             .Include(x => x.SecurityClassification)
             .Include(x => x.Creator)
             .Include(x => x.TrxFileArchiveDetails)
             .Include(x => x.TrxMediaStorageDetails)
-            .ThenInclude(x => x.MediaStorage)
-            .ThenInclude(x => x.Row)
-            .ThenInclude(x => x.Level)
-            .ThenInclude(x => x.Rack)
-            .ThenInclude(x => x.Room)
-            .ThenInclude(x => x.Floor)
-            .ThenInclude(x => x.ArchiveUnit)
+                .ThenInclude(ms => ms.MediaStorage)
+                .ThenInclude(r => r.Row)
+                .ThenInclude(l => l.Level)
+                .ThenInclude(r => r!.Rack)
+                .ThenInclude(room => room!.Room)
+                .ThenInclude(f => f!.Floor)
+                .ThenInclude(aut => aut!.ArchiveUnit)
             .Include(x => x.TrxMediaStorageDetails)
-            .ThenInclude(x => x.MediaStorage)
-            .ThenInclude(x => x.TypeStorage)
+                .ThenInclude(ms => ms.MediaStorage)
+                .ThenInclude(ts => ts.TypeStorage)
             .Where(x => x.ArchiveId == id && x.IsActive == true)
             .FirstAsync();
-
-        
 
         return result;
     }
 
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
+    
+    public async Task<int> GetCountAll() => await _context.TrxArchives.CountAsync();
 
     public async Task<int> GetCountForMonitoring(Guid? PositionId)
     {
@@ -128,18 +135,45 @@ public class ArchiveRepository : IArchiveRepository
              .CountAsync(x => x.IsActive == true
              && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
     }
+    
+    public async Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive)
+    {
+        PathArchiveComponentsModel path = new();
+        string pathResult = string.Empty;
+
+        path = (from company in _context.MstCompanies
+                join unitArchive in _context.TrxArchiveUnits on company.CompanyId equals unitArchive.CompanyId
+                join creator in _context.MstCreators on unitArchive.ArchiveUnitId equals creator.ArchiveUnitId
+                join subSubject in _context.TrxSubSubjectClassifications on creator.CreatorId equals subSubject.CreatorId
+                where subSubject.SubSubjectClassificationId == SubSubjectClassificationId
+                select new PathArchiveComponentsModel
+                {
+                    CompanyCode = company.CompanyCode,
+                    ArchiveUnitCode = unitArchive.ArchiveUnitCode,
+                    CreatorCode = creator.CreatorCode,
+                    SubSubjectClassificationCode = subSubject.SubSubjectClassificationCode!
+                }).FirstOrDefault();
+
+        await Task.Delay(0);
+
+        pathResult = $"{path.CompanyCode}\\{CreatedDateArchive:yyyy}\\{CreatedDateArchive:MM}\\{path.ArchiveUnitCode}\\{path.CreatorCode}\\{path.SubSubjectClassificationCode}\\";
+
+        return pathResult;
+    }
 
     public async Task<int> Insert(TrxArchive model, List<FileModel> files)
     {
         int result = 0;
-        var directory = _configuration["Path:Archive"];
-
+        
         if (model != null)
         {
+            string path = $"{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}\\";
             using var transaction = await _context.Database.BeginTransactionAsync();
+            
             try
             {
                 model.IsActive = true;
+                model.ArchiveCode = $"ARCHIVE-{_context.TrxArchives.Count() + 1}";
 
                 foreach (var e in _context.ChangeTracker.Entries())
                 {
@@ -153,11 +187,13 @@ public class ArchiveRepository : IArchiveRepository
                 {
                     foreach (FileModel file in files)
                     {
+                        var directory = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
+
                         TrxFileArchiveDetail temp = new()
                         {
                             ArchiveId = model.ArchiveId,
                             FileName = file.FileName!,
-                            FilePath = directory + model.ArchiveId.ToString() + "\\" + file.FileName,
+                            FilePath = directory + path + model.ArchiveCode + "\\" + file.FileName,
                             FileType = file.FileType!,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
@@ -165,13 +201,12 @@ public class ArchiveRepository : IArchiveRepository
                         };
 
                         _context.TrxFileArchiveDetails.Add(temp);
-                        directory = directory + model.ArchiveId.ToString();
+                        directory = directory + path + model.ArchiveCode;
 
                         if (!Directory.Exists(directory))
                         {
                             Directory.CreateDirectory(directory);
                         }
-    
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath, bytes);
@@ -185,7 +220,6 @@ public class ArchiveRepository : IArchiveRepository
                 throw;
             }
         }
-
         return result;
     }
 
@@ -204,15 +238,14 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId)
     {
         int result = 0;
-        var directory = _configuration["Path:Archive"];
-
-        
 
         if (model != null && model.ArchiveId != Guid.Empty)
         {
             var data = await _context.TrxArchives.AsNoTracking().FirstAsync(x => x.ArchiveId == model.ArchiveId);
             if (data != null) 
             {
+                string path = $"{data.CreatedDate:yyyy}\\{data.CreatedDate:MM}\\{data.CreatedDate:dd}\\";
+
                 //Update Header
                 model.IsActive = data.IsActive;
                 model.CreatedBy = data.CreatedBy;
@@ -227,9 +260,9 @@ public class ArchiveRepository : IArchiveRepository
                     e.State = EntityState.Detached;
                 }
 
-                model.SubSubjectClassificationId = TrxSubSubjectClassifications.SubSubjectClassificationId;
-                model.SecurityClassificationId = MstSecurityClassifications.SecurityClassificationId;
-                model.CreatorId = MstCreators.CreatorId;
+                model.SubSubjectClassificationId = TrxSubSubjectClassifications!.SubSubjectClassificationId;
+                model.SecurityClassificationId = MstSecurityClassifications!.SecurityClassificationId;
+                model.CreatorId = MstCreators!.CreatorId;
 
                 _context.Entry(model).State = EntityState.Modified;
                 result = await _context.SaveChangesAsync();
@@ -237,13 +270,15 @@ public class ArchiveRepository : IArchiveRepository
                 //Update Detail
                 if (result != 0 && files.Any())
                 {
+                    var directory = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
+
                     foreach (FileModel file in files)
                     {
                         TrxFileArchiveDetail temp = new()
                         {
                             ArchiveId = model.ArchiveId,
                             FileName = file.FileName!,
-                            FilePath = directory + model.ArchiveId.ToString() + "\\" + file.FileName,
+                            FilePath = directory + path + model.ArchiveCode + "\\" + file.FileName,
                             FileType = file.FileType!,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
@@ -251,13 +286,12 @@ public class ArchiveRepository : IArchiveRepository
                         };
 
                         _context.TrxFileArchiveDetails.Add(temp);
-                        directory = directory + model.ArchiveId.ToString();
+                        directory = directory + path + model.ArchiveCode;
 
                         if (!Directory.Exists(directory))
                         {
                             Directory.CreateDirectory(directory);
                         }
-
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath, bytes);
@@ -271,7 +305,7 @@ public class ArchiveRepository : IArchiveRepository
                 {
                     TrxFileArchiveDetail temp = new();
                     temp = await _context.TrxFileArchiveDetails.AsNoTracking().FirstAsync(x => x.FileArchiveDetailId == item);
-
+                    File.Delete(temp.FilePath);
                     listFileDeleted.Add(temp);
                 }
 
@@ -297,4 +331,8 @@ public class ArchiveRepository : IArchiveRepository
 
     }
 
+    public Task<int> Submit(Guid ArchiveId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -678,6 +678,13 @@
             listArchiveId = [];
         }
 
+        function getStatusSubmit(status) {
+            $("#txtStatusId").val("1");
+            if (status == "submit") {
+                $("#txtStatusId").val("5");
+            }
+        }
+
         function onSubmit(ctl, event, status) {
             listArchiveId.forEach((element) => {
                 $("#listArchiveId").append(`<input name=detail[] type=hidden value=${element} >`);
@@ -685,10 +692,7 @@
 
             console.table(listArchiveId);
 
-            $("#txtStatusId").val("1");
-            if (status == "submit") {
-                $("#txtStatusId").val("5");
-            }
+            getStatusSubmit(status);
 
             event.preventDefault();
             swal({
