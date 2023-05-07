@@ -53,7 +53,7 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        var resultx = await _context.TrxArchives
+        var result = await _context.TrxArchives
                 .Include(x => x.Gmd)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
@@ -77,7 +77,7 @@ public class ArchiveRepository : IArchiveRepository
                 })
                 .ToListAsync();
 
-        return resultx;
+        return result;
     }
 
     public async Task<TrxArchive> GetById(Guid id)
@@ -101,7 +101,7 @@ public class ArchiveRepository : IArchiveRepository
             .ThenInclude(x => x.MediaStorage)
             .ThenInclude(x => x.TypeStorage)
             .Where(x => x.ArchiveId == id && x.IsActive == true)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
 
         
 
@@ -110,7 +110,7 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
     public async Task<int> GetCountByFilterData(DataTableModel model)
     {
-        var resultx = await _context.TrxArchives
+        var result = await _context.TrxArchives
                 .Include(x => x.Gmd)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
@@ -118,7 +118,7 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
                 .CountAsync();
 
-        return resultx;
+        return result;
     }
     public async Task<int> Insert(TrxArchive model, List<FileModel> files)
     {

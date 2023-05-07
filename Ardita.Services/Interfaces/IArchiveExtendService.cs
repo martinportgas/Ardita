@@ -14,7 +14,7 @@ namespace Ardita.Services.Interfaces
         Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailByMainId(Guid id);
         Task<IEnumerable<TrxArchiveExtend>> GetAll();
         Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailAll();
-        Task<DataTableResponseModel<TrxArchiveExtend>> GetList(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxArchiveExtend model);
         Task<int> InsertDetail(TrxArchiveExtendDetail model);
         Task<bool> InsertBulkDetail(List<TrxArchiveExtendDetail> models);

@@ -2,8 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -23,31 +22,25 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
         return results;
     }
 
-    public async Task<IEnumerable<VwArchiveRetention>> GetArchiveRetentionByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetArchiveRetentionByFilterModel(DataTableModel model)
     {
-        IEnumerable<VwArchiveRetention> result;
-
-        var propertyInfo = typeof(VwArchiveRetention).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(VwArchiveRetention).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.VwArchiveRetentions
-            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status)
-            .Contains(model.searchValue))
-            .OrderBy(x => EF.Property<VwArchiveRetention>(x, propertyName))
+        var result = await _context.VwArchiveRetentions
+            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new { 
+                x.ArchiveId, x.ArchiveType, x.CreatorName, x.Status, x.ArchiveNumber, x.TitleArchive,
+                RetentionDateArchive = x.RetentionDateArchive.ToString()
+            })
             .ToListAsync();
-        }
-        else
-        {
-            result = await _context.VwArchiveRetentions
-            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status)
-            .Contains(model.searchValue))
-            .OrderByDescending(x => EF.Property<VwArchiveRetention>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
+
+        return result;
+    }
+    public async Task<int> GetCountArchiveRetentionByFilterModel(DataTableModel model)
+    {
+        var result = await _context.VwArchiveRetentions
+            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
+            .CountAsync();
 
         return result;
     }

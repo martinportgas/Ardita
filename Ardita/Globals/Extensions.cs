@@ -76,6 +76,7 @@ namespace Ardita.Globals
             model.isSubmitForm = isSubmitForm;
             model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
             model.SaveText = currentAction == Const.Remove ? Const.Delete : Const.Save;
+            model.ApprovalText = currentAction == Const.Remove ? Const.Delete : Const.Approve;
 
             return model;
         }

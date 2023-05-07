@@ -39,6 +39,7 @@
                                 <th>Nomor registrasi</th>
                                 <th>Nama Pemindahan</th>
                                 <th>Status</th>
+                                <th>Note</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -72,26 +73,27 @@
                     { width: 100, targets: 4 }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveMovementId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveMovementId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             //console.log(row);
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     }, 
                     {
-                        "data": "archiveMovementId", "orderable": false, "searchable": false,
+                        "data": "archiveMovementId", "name": "archiveMovementId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
-                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Preview, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Preview, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
                             var download = row.statusId != @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.DownloadFile, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
@@ -101,13 +103,14 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "movementCode", "autoWidth": true },
-                    { "data": "movementName", "autoWidth": true },
+                    { "data": "movementCode", "name": "movementCode", "autoWidth": true },
+                    { "data": "movementName", "name": "movementName", "autoWidth": true },
                     {
-                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.color}" style="width:100%">${data}</span>`;
                         }
                     },
+                    { "data": "note", "name": "note", "autoWidth": true },
                 ]
             });
         });

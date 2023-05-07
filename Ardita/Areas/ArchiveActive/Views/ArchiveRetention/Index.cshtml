@@ -74,15 +74,16 @@
                     { width: 120, targets: 6 }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveId", "name": "retentionDateArchive", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             //console.log(row);
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "archiveId", "orderable": false, "searchable": false,
+                        "data": "archiveId", "name": "archiveId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveRetention, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
@@ -90,13 +91,13 @@
                             return detail;
                         }
                     },
-                    { "data": "archiveId", "autoWidth": true },
-                    { "data": "titleArchive", "autoWidth": true },
-                    { "data": "archiveType", "autoWidth": true },
-                    { "data": "creatorName", "autoWidth": true },
-                    { "data": "retentionDateArchive", "name": "titleArchive", "autoWidth": true },
+                    { "data": "archiveNumber", "name": "archiveNumber", "autoWidth": true },
+                    { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
+                    { "data": "archiveType", "name": "archiveType", "autoWidth": true },
+                    { "data": "creatorName", "name": "creatorName", "autoWidth": true },
+                    { "data": "retentionDateArchive", "name": "retentionDateArchive", "name": "titleArchive", "autoWidth": true },
                     {
-                        "data": "status", "autoWidth": true, "render": function (data, type, row, meta) {
+                        "data": "status", "name": "status", "autoWidth": true, "render": function (data, type, row, meta) {
                             var badge = 'badge-primary';
 
                             var status = data.toLowerCase();

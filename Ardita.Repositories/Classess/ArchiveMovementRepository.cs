@@ -2,12 +2,8 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -42,6 +38,7 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
                 if (data != null)
                 {
+                    data.Note = model.Note;
                     data.ApproveLevel = model.ApproveLevel;
                     data.IsActive = model.IsActive;
                     data.StatusId = model.StatusId;
@@ -67,46 +64,35 @@ namespace Ardita.Repositories.Classess
 
         public async Task<TrxArchiveMovement> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == id);
+            var result = await _context.TrxArchiveMovements.AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveMovement>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxArchiveMovement> result;
-
-            var propertyInfo = typeof(TrxArchiveMovement).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxArchiveMovement).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxArchiveMovements
+            var result = await _context.TrxArchiveMovements
                 .Include(x => x.Status)
-                .Where(x => x.IsActive == true &&
-                (
-                x.MovementCode
-                + x.MovementName
-                + x.Status.Name
-                )
-                .Contains(model.searchValue))
-                .OrderBy(x => EF.Property<TrxArchiveMovement>(x, propertyName))
+                .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Note + x.Status.Name).Contains(model.searchValue))
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
+                .Select(x => new {
+                    x.ArchiveMovementId,
+                    x.MovementCode,
+                    x.MovementName,
+                    x.StatusId,
+                    x.Note,
+                    Color = x.Status.Color,
+                    Status = x.Status.Name
+                })
                 .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxArchiveMovements
+
+            return result;
+        }
+        public async Task<int> GetCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveMovements
                 .Include(x => x.Status)
-                .Where(x => x.IsActive == true &&
-                (
-                x.MovementCode
-                + x.MovementName
-                + x.Status.Name
-                )
-                .Contains(model.searchValue))
-                .OrderByDescending(x => EF.Property<TrxArchiveMovement>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+                .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Status.Name).Contains(model.searchValue))
+                .CountAsync();
 
             return result;
         }

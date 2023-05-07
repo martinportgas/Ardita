@@ -2,12 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -45,6 +40,7 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == model.ArchiveDestroyId);
                 if (data != null)
                 {
+                    data.Note = model.Note;
                     data.ApproveLevel = model.ApproveLevel;
                     data.IsActive = model.IsActive;
                     data.StatusId = model.StatusId;
@@ -72,47 +68,35 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == id);
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveDestroy>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxArchiveDestroy> result;
-
-            var propertyInfo = typeof(TrxArchiveDestroy).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxArchiveDestroy).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxArchiveDestroys
+            var result = await _context.TrxArchiveDestroys
                 .Include(x => x.Status)
-                .Where(x => x.IsActive == true &&
-                (
-                x.DestroyCode
-                + x.DestroyName
-                + x.Status.Name
-                )
-                .Contains(model.searchValue))
-                .OrderBy(x => EF.Property<TrxArchiveDestroy>(x, propertyName))
+                .Where(x => x.IsActive == true && ( x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
+                .Select(x => new {
+                    x.ArchiveDestroyId,
+                    x.DestroyCode,
+                    x.DestroyName,
+                    x.StatusId,
+                    x.Note,
+                    Color = x.Status.Color,
+                    Status = x.Status.Name
+                })
                 .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxArchiveDestroys
-                .Include(x => x.Status)
-                .Where(x => x.IsActive == true &&
-                (
-                x.DestroyCode
-                + x.DestroyName
-                + x.Status.Name
-                )
-                .Contains(model.searchValue))
-                .OrderByDescending(x => EF.Property<TrxArchiveDestroy>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
 
             return result;
         }
+        public async Task<int> GetCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveDestroys
+                .Include(x => x.Status)
+                .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Status.Name).Contains(model.searchValue))
+                .CountAsync();
 
+            return result;
+        }
         public async Task<int> Insert(TrxArchiveDestroy model)
         {
             int result = 0;
