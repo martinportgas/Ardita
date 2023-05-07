@@ -114,18 +114,19 @@ public class ArchiveRepository : IArchiveRepository
     
     public async Task<int> GetCountAll() => await _context.TrxArchives.CountAsync();
 
-    public async Task<int> GetCountForMonitoring(Guid? PositionId)
     public async Task<int> GetCountByFilterData(DataTableModel model)
     {
-        return await _context
-             .TrxArchives
-             .Include(x => x.Gmd)
-             .Include(x => x.SubSubjectClassification)
-             .Include(x => x.Creator)
-             .CountAsync(x => x.IsActive == true
-             && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
+        var resultx = await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.SecurityClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
+                .Include(x => x.Creator)
+                .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
+                .CountAsync();
+
+        return resultx;
     }
-    
+
     public async Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive)
     {
         PathArchiveComponentsModel path = new();
