@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ardita.Extensions\Ardita.Extensions.csproj" />
     <ProjectReference Include="..\Ardita.Models\Ardita.Models.csproj" />
   </ItemGroup>
 

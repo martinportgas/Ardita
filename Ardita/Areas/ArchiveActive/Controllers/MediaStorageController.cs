@@ -39,6 +39,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     }
     #endregion
 
+    #region MAIN ACTION
     public override async Task<ActionResult> Index() => await base.Index();
     public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
@@ -62,7 +63,6 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         await BindAllDropdown();
         return View(Const.Form, new TrxMediaStorage());
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Save(TrxMediaStorage model)
@@ -140,9 +140,10 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         }
         return RedirectToIndex();
     }
+    #endregion
+
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.MediaStorage, new { Area = Const.ArchiveActive });
-
     protected async Task BindAllDropdown()
     {
         ViewBag.listSubSubject = await BindSubSubjectClasscifications();
@@ -155,7 +156,6 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
     }
-
     public async Task<FileResult> BindQrCode(string text)
     {
         await Task.Delay(0);

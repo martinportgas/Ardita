@@ -1,11 +1,14 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace Ardita.Services.Classess;
 
@@ -13,14 +16,18 @@ public class ArchiveService : IArchiveService
 {
     private readonly IArchiveUnitRepository _archiveUnitRepository;
     private readonly IArchiveRepository _archiveRepository;
+    private readonly IConfiguration _configuration;
+
 
     public ArchiveService(
         IArchiveUnitRepository archiveUnitRepository,
-        IArchiveRepository archiveRepository
+        IArchiveRepository archiveRepository,
+        IConfiguration configuration
         )
     {
         _archiveUnitRepository = archiveUnitRepository;
         _archiveRepository = archiveRepository;
+        _configuration = configuration;
     }
 
     public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
@@ -67,11 +74,14 @@ public class ArchiveService : IArchiveService
 
     public async Task<int> Insert(TrxArchive model, StringValues files)
     {
+        int result;
         List<FileModel> file = new();
         FileModel temp;
         string name;
         string type;
         string data;
+        var basePath = _configuration[GlobalConst.BASE_PATH_ARCHIVE];
+        var basePathTemp = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
 
         if (files[0] != string.Empty)
         {
@@ -87,7 +97,18 @@ public class ArchiveService : IArchiveService
             }
         }
 
-        return await _archiveRepository.Insert(model, file);
+        result = await _archiveRepository.Insert(model, file);
+
+        if (model.StatusId == (int)GlobalConst.STATUS.Submit)
+        {
+            TrxArchive archive = await _archiveRepository.GetById(model.ArchiveId);
+            string dest = $"{basePath}\\{await _archiveRepository.GetPathArchive(archive.SubSubjectClassificationId, archive.CreatedDateArchive)}\\{model.ArchiveCode}\\";
+            string src = $"{basePathTemp}\\{archive.CreatedDate:yyyy}\\{archive.CreatedDate:MM}\\{archive.CreatedDate:dd}\\{archive.ArchiveCode}\\";
+
+            DirectoryMove(src, dest, false);
+        }
+
+        return result;
     }
 
     public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
@@ -97,12 +118,16 @@ public class ArchiveService : IArchiveService
 
     public async Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted)
     {
+        int result;
         List<Guid> filesDeletedId = new();
         List<FileModel> file = new();
         FileModel temp;
         string name;
         string type;
         string data;
+        var basePath = _configuration[GlobalConst.BASE_PATH_ARCHIVE];
+        var basePathTemp = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
+
 
         if (files[0] != string.Empty)
         {
@@ -126,7 +151,58 @@ public class ArchiveService : IArchiveService
             }
         }
 
-        return await _archiveRepository.Update(model, file, filesDeletedId);
+        result = await _archiveRepository.Update(model, file, filesDeletedId);
+
+        if (model.StatusId == (int)GlobalConst.STATUS.Submit)
+        {
+            TrxArchive archive = await _archiveRepository.GetById(model.ArchiveId);
+            string dest = $"{basePath}\\{await _archiveRepository.GetPathArchive(archive.SubSubjectClassificationId, archive.CreatedDateArchive)}\\{model.ArchiveCode}\\";
+            string src = $"{basePathTemp}\\{archive.CreatedDate:yyyy}\\{archive.CreatedDate:MM}\\{archive.CreatedDate:dd}\\{archive.ArchiveCode}\\";
+
+            DirectoryMove(src, dest, false);
+        }
+
+        return result;
+    }
+
+    private static void DirectoryMove(string sourceDirName, string destDirName, bool copySubDirs)
+    {
+        DirectoryInfo dir = new(sourceDirName);
+        DirectoryInfo[] dirs = dir.GetDirectories();
+
+        if (!dir.Exists)
+        {
+            throw new DirectoryNotFoundException(
+                "Source directory does not exist or could not be found: "
+                + sourceDirName);
+        }
+
+        if (!Directory.Exists(destDirName))
+        {
+            Directory.CreateDirectory(destDirName);
+        }
+
+        FileInfo[] files = dir.GetFiles();
+
+        foreach (FileInfo file in files)
+        {
+            string temppath = Path.Combine(destDirName, file.Name);
+
+            file.CopyTo(temppath, false);
+        }
+
+        if (copySubDirs)
+        {
+
+            foreach (DirectoryInfo subdir in dirs)
+            {
+                string temppath = Path.Combine(destDirName, subdir.Name);
+
+                DirectoryMove(subdir.FullName, temppath, copySubDirs);
+            }
+        }
+
+        Directory.Delete(sourceDirName, true);
     }
 
     public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId) => await _archiveRepository.GetAvailableArchiveBySubSubjectId(subSubjectId);

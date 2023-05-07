@@ -31,6 +31,7 @@ public class ArchiveController : BaseController<TrxArchive>
     }
     #endregion
 
+    #region MAIN ACTION
     public override async Task<ActionResult> Index() => await base.Index();
     public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
@@ -129,7 +130,9 @@ public class ArchiveController : BaseController<TrxArchive>
             return RedirectToIndex();
         }
     }
+    #endregion
 
+    #region EXPORT/IMPORT
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -353,16 +356,16 @@ public class ArchiveController : BaseController<TrxArchive>
             throw new Exception();
         }
     }
+    #endregion
+
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Archive, new { Area = Const.ArchiveActive });
-
     protected async Task BindAllDropdown()
     {
         ViewBag.listGmd = await BindGmds();
         ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
     }
-
     [HttpGet]
     public IActionResult BindDownload(string path) => File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
     #endregion 
