@@ -4,10 +4,6 @@ using Ardita.Repositories.Interfaces;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
-using System.IO;
-using System.Reflection;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ardita.Repositories.Classess;
 
@@ -15,6 +11,9 @@ public class ArchiveRepository : IArchiveRepository
 {
     private readonly BksArditaDevContext _context;
     private readonly IConfiguration _configuration;
+    private readonly string _whereClause = @"TitleArchive+TypeSender+Keyword+ActiveRetention.ToString()+CreatedDateArchive.ToString()
+                                            +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
+                                            +Creator.CreatorName+TypeArchive";
 
     public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration) 
     {
@@ -54,22 +53,20 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        //IEnumerable<TrxArchive> result;
-
         var resultx = await _context.TrxArchives
                 .Include(x => x.Gmd)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator)
-                .Where(x => (x.TitleArchive).Contains(model.searchValue))
+                .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
-                .Select(x => new {
+                .Select(x => new {  
                     x.ArchiveId,
                     x.TypeSender,
                     x.Keyword,
                     x.TitleArchive,
-                    x.CreatedDateArchive,
+                    CreatedDateArchive = x.CreatedDateArchive.ToString(),
                     x.ActiveRetention,
                     x.InactiveRetention,
                     x.Volume,
@@ -80,10 +77,6 @@ public class ArchiveRepository : IArchiveRepository
                 })
                 .ToListAsync();
 
-        if (model.PositionId != null)
-        {
-            //result = result.Where(x => x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == model.PositionId);
-        }
         return resultx;
     }
 
@@ -114,20 +107,19 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
-
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
-
-    public async Task<int> GetCountForMonitoring(Guid? PositionId)
+    public async Task<int> GetCountByFilterData(DataTableModel model)
     {
-        return await _context
-             .TrxArchives
-             .Include(x => x.Gmd)
-             .Include(x => x.SubSubjectClassification)
-             .Include(x => x.Creator)
-             .CountAsync(x => x.IsActive == true
-             && x.SubSubjectClassification.TrxPermissionClassifications.FirstOrDefault().PositionId == PositionId);
-    }
+        var resultx = await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.SecurityClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
+                .Include(x => x.Creator)
+                .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
+                .CountAsync();
 
+        return resultx;
+    }
     public async Task<int> Insert(TrxArchive model, List<FileModel> files)
     {
         int result = 0;

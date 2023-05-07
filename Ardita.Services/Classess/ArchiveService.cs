@@ -36,16 +36,6 @@ public class ArchiveService : IArchiveService
     {
         try
         {
-            int dataCount = 0;
-            if (model.PositionId != null)
-            {
-                dataCount = await _archiveRepository.GetCountForMonitoring(model.PositionId);
-            }
-            else
-            {
-                dataCount = await _archiveRepository.GetCount();
-            }
-
             var filterData = new DataTableModel
             {
                 sortColumn = model.columns[model.order[0].column].name,
@@ -56,6 +46,7 @@ public class ArchiveService : IArchiveService
                 PositionId = model.PositionId
             };
 
+            int dataCount = await _archiveRepository.GetCountByFilterData(filterData);
             var results = await _archiveRepository.GetByFilterModel(filterData);
 
             var responseModel = new DataTableResponseModel<object>
@@ -68,7 +59,7 @@ public class ArchiveService : IArchiveService
 
             return responseModel;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return null;
         }
