@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System.Data;
+using System.Text;
 
 namespace Ardita.Extensions
 {
@@ -30,7 +24,7 @@ namespace Ardita.Extensions
             {
                 string sFileExtension = Path.GetExtension(file.FileName).ToLower();
                 ISheet sheet;
-               string fullPath = Path.Combine(newPath, file.FileName);
+                string fullPath = Path.Combine(newPath, file.FileName);
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
                     file.CopyTo(stream);
@@ -46,9 +40,9 @@ namespace Ardita.Extensions
                         sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
                     }
                     IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    int cellCount = headerRow.LastCellNum; 
+                    int cellCount = headerRow.LastCellNum;
 
-                    
+
                     for (int j = 0; j < cellCount; j++)
                     {
                         NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
@@ -66,11 +60,11 @@ namespace Ardita.Extensions
                         dataRow = results.NewRow();
                         for (int j = row.FirstCellNum; j < cellCount; j++)
                         {
-                           
+
                             if (row.GetCell(j) != null)
                             {
                                 dataRow[j] = row.GetCell(j).ToString();
-                                
+
                             }
                         }
                         results.Rows.Add(dataRow.ItemArray);
@@ -93,7 +87,6 @@ namespace Ardita.Extensions
             }
             book.Write(response.Body);
         }
-
         public static string ToDateTimeStringNow(this DateTime dateTime)
         {
             return dateTime.ToString("yyyyMMddhhmmss");
@@ -129,6 +122,5 @@ namespace Ardita.Extensions
             string result = new String(decoded_char);
             return result;
         }
-
     }
 }

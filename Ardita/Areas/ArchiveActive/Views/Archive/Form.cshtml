@@ -5,6 +5,12 @@
 @{
     Layout = Const.ViewStart;
     FormModel form = Html.Form();
+
+    bool isEditable = false;
+    if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+    {
+        isEditable = true;
+    }
 }
 
 <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
@@ -64,7 +70,7 @@
                         <div class="col-sm-12">
                             <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 @Html.AntiForgeryToken()
-                                <div class ="row">
+                                <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
                                             <label>GMD</label>
@@ -94,6 +100,14 @@
                                             <label>Keywords</label>
                                             <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                         </div>
+                                        @if (form.CurrentAction is not Const.Add)
+                                        {
+                                            <div class="form-group">
+                                                <label>Archive Code</label>
+                                                <input type="text" asp-for="ArchiveCode" value="@Model.ArchiveCode" class="form-control" disabled>
+                                                <input type="hidden" asp-for="ArchiveCode" value="@Model.ArchiveCode">
+                                            </div>
+                                        }
                                         <div class="form-group">
                                             <label>Archive Title</label>
                                             <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
@@ -111,6 +125,7 @@
                                             <label>Archive Creator</label>
                                             <input asp-for="Creator.CreatorName" type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
                                             <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
+                                            <input type="hidden" asp-for="StatusId" id="txtStatusId" />
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -141,11 +156,12 @@
                                                         @foreach (var item in Model.TrxFileArchiveDetails)
                                                         {
                                                             <li id="@item.FileArchiveDetailId.ToString()">
-                                                                <a href="@Url.Action(Const.BindDownload, Const.Archive, new { Area = Const.ArchiveActive, path = item.FilePath })">@item.FileName</a>
+                                                                <a href="@Url.Action(Const.BindDownload, Const.Archive, new { Area = Const.ArchiveActive, path = item.FilePath })">
+                                                                    @item.FileName
+                                                                </a>
                                                                 @if (form.CurrentAction == Const.Update)
                                                                 {
                                                                     <a onclick="deleteFile('@item.FileArchiveDetailId.ToString()')"><i class="fa fa-trash"></i></a>
-
                                                                 }
                                                             </li>
                                                         }
@@ -174,13 +190,37 @@
                                         </div>
                                     </div>
                                 </div>
-                                @*<div class="form-group">
-                                    
-                                    
-                                </div>*@
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
+                                    @if (isEditable)
+                                    {
+                                        <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                        <button onclick="onSubmit(this, event, 'submit');"
+                                                class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                type="submit" id="btn-submit">
+                                            Submit
+                                        </button>
+
+                                        <button onclick="onSubmit(this, event, 'draft');"
+                                                class="btn btn-sm btn-warning float-right m-t-n-xs mr-1"
+                                                type="submit" id="btn-submit">
+                                            Save As Draft
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+
+                                        if (form.CurrentAction == Const.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, 'submit');"
+                                                    class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                    type="submit" id="btn-submit">
+                                                Submit
+                                            </button>
+                                        }
+                                        
+                                    }
+
                                 </div>
                             </form>
                         </div>
@@ -316,15 +356,23 @@
                 result = false;
             }
 
-
             return result;
         }
 
-        function onSubmit(ctl, event) {
+        function getStatusSubmit(status) {
+            $("#txtStatusId").val("1");
+            if (status == "submit") {
+                $("#txtStatusId").val("5");
+            }
+        }
+
+        function onSubmit(ctl, event, status) {
 
             listFileArchiveDetailId.forEach((element) => {
                 $("#temp-file-deleted").append(`<input name=idFileDeleted[] type=hidden value=${element} >`);
             });
+
+            getStatusSubmit(status);
 
             event.preventDefault();
             swal({

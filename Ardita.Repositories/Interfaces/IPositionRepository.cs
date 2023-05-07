@@ -13,7 +13,7 @@ namespace Ardita.Repositories.Interfaces
         Task<MstPosition> GetById(Guid id);
         Task<IEnumerable<MstPosition>> GetAll();
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
-        Task<int> GetCount();
+        Task<int> GetCount(DataTableModel model);
         Task<int> Insert(MstPosition model);
         Task<int> Delete(MstPosition model);
         Task<int> Update(MstPosition model);
