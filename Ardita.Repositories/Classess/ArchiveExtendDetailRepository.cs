@@ -46,7 +46,7 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<IEnumerable<TrxArchiveExtendDetail>> GetAll()
         {
-            var results = await _context.TrxArchiveExtendDetails.Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxArchiveExtendDetails.Include(x => x.ArchiveExtend).Where(x => x.IsActive == true && x.ArchiveExtend.StatusId != 4).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()
