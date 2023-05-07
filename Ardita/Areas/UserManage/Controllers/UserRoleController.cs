@@ -1,94 +1,87 @@
-﻿using Ardita.Controllers;
+﻿using Ardita.Areas.UserManage.Models;
+using Ardita.Controllers;
+using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.UserRoles;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.Formula.Atp;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
     [Area(Const.UserManage)]
-    public class UserRoleController : BaseController<MstUser>
+    public class UserRoleController : BaseController<IdxUserRole>
     {
         public UserRoleController(
-            IUserService userService
+            IUserService userService,
+            IRoleService roleService,
+            IUserRoleService userRoleService
             )
         {
             _userService = userService;
+            _roleService = roleService;
+            _userRoleService = userRoleService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
         [HttpPost]
-        //public async Task<JsonResult> GetData()
-        //{
-        //    try
-        //    {
-        //        var model = new DataTableModel();
+        public override async Task<JsonResult> GetData(DataTablePostModel model)
+        {
 
-        //        model.draw = Request.Form["draw"].FirstOrDefault();
-        //        model.start = Request.Form["start"].FirstOrDefault();
-        //        model.length = Request.Form["length"].FirstOrDefault();
-        //        model.sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-        //        model.sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-        //        model.searchValue = Request.Form["search[value]"].FirstOrDefault();
-        //        model.pageSize = model.length != null ? Convert.ToInt32(model.length) : 0;
-        //        model.skip = model.start != null ? Convert.ToInt32(model.start) : 0;
-        //        model.recordsTotal = 0;
+            try
+            {
+                var result = await _userService.GetListUsers(model);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _userService.GetIdxUserRoleByUserId(Id);
 
-        //        var result = await _userService.GetListUsers(model);
+            
+            if (data != null)
+            {
+                ViewBag.listRoles = await BindRoles();
+                return View(data);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+        public override async Task<IActionResult> Save(IdxUserRole model)
+        {
+            Guid UserId = Guid.Empty;
+            if (model != null)
+            {
+                UserId = model.UserId;
+                model.UserRoleId = Guid.NewGuid();
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                model.CreatedDate = DateTime.Now;
+                await _userRoleService.Insert(model);
 
-        //        var jsonResult = new
-        //        {
-        //            draw = result.draw,
-        //            recordsFiltered = result.recordsFiltered,
-        //            recordsTotal = result.recordsTotal,
-        //            data = result.data
-        //        };
-        //        return Json(jsonResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Save(UserRoleListViewModel model)
-        //{
-
-        //    int result = 0;
-        //    if (model != null)
-        //    {
-        //        var objUserRole = new IdxUserRole();
-        //        objUserRole.UserId = model.UserRole.UserId;
-        //        objUserRole.RoleId = model.UserRole.RoleId;
-        //        objUserRole.CreatedBy = model.UserRole.UserId;
-        //        objUserRole.CreatedDate = DateTime.Now;
-
-        //        result = await _userRoleService.Insert(objUserRole);
-        //    }
-        //    return RedirectToIndex();
-        //}
-        //public async Task<IActionResult> Detail(Guid id)
-        //{
-        //    var userRoleDetails = await _userRoleService.GetListUserRoles(id);
-
-        //    return View(userRoleDetails);
-        //}
-        //public async Task<IActionResult> Remove(Guid id)
-        //{
-        //    var userRoleDetails = await _userRoleService.GetById(id);
-        //    var userRoleObj = new IdxUserRole();
-
-        //    if (userRoleDetails.Count() > 0)
-        //    {
-        //        userRoleObj = userRoleDetails.FirstOrDefault();
-
-        //        var delete = await _userRoleService.Delete(userRoleObj);
-        //    }
-        //    return RedirectToIndex();
-        //}
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.User, new { Area = Const.UserManage });
+                ViewBag.listRoles = await BindRoles();
+            }
+            return RedirectToAction(Const.Detail, Const.UserRole, new { Area = Const.UserManage, Id = UserId });
+        }
+        public override async Task<IActionResult> Remove(Guid Id)
+        {
+            var data = await _userRoleService.GetById(Id);
+            
+            if (data != null)
+            {
+               
+                await _userRoleService.Delete(data.FirstOrDefault());
+                ViewBag.listRoles = await BindRoles();
+            }
+            return RedirectToAction(Const.Detail, Const.UserRole, new { Areas = Const.UserManage, Id = data.FirstOrDefault().UserId });
+        }
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.UserRole, new { Area = Const.UserManage });
     }
 }

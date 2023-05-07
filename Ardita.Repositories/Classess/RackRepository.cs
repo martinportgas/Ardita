@@ -108,6 +108,7 @@ namespace Ardita.Repositories.Classess
             if (model != null)
             {
                 model.IsActive = true;
+                model.Room = null;
                 _context.TrxRacks.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -141,6 +142,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedBy = data.CreatedBy;
                         model.CreatedDate = data.CreatedDate;
 
+                        model.Room = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }

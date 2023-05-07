@@ -24,6 +24,7 @@ public abstract class BaseController<T> : Controller
     protected IPageService _pageService { get; set; }
     protected IRoleService _roleService { get; set; }
     protected IRolePageService _rolePageService { get; set; }
+    protected IUserRoleService _userRoleService { get; set; }
 
     //Master Data
     protected IArchiveUnitService _archiveUnitService { get; set; }
@@ -132,6 +133,15 @@ public abstract class BaseController<T> : Controller
         {
             Value = x.CompanyId.ToString(),
             Text = x.CompanyName.ToString()
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindRoles()
+    {
+        var data = await _roleService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.RoleId.ToString(),
+            Text = x.Name.ToString()
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindRacks()

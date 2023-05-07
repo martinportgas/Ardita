@@ -21,6 +21,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -36,11 +38,6 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);//We set Time here 
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-});
-
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddDbContext<BksArditaDevContext>(opts => opts.UseSqlServer(builder.Configuration.GetConnectionString("Default")));

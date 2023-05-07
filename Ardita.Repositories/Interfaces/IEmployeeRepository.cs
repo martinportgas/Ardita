@@ -12,7 +12,7 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<MstEmployee> GetById(Guid id);
         Task<IEnumerable<MstEmployee>> GetAll();
-        Task<IEnumerable<MstEmployee>> GetByFilterModel(DataTableModel model);
+        Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(MstEmployee model);
         Task<bool> InsertBulk(List<MstEmployee> employees);

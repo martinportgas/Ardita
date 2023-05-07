@@ -39,6 +39,8 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(IdxUserRole model)
         {
             int result = 0;
+            model.User = null;
+            model.Role = null;
 
             if (model != null)
             {

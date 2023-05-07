@@ -173,6 +173,7 @@ public class CompanyController : BaseController<MstCompany>
             string fileName = nameof(MstCompany).ToCleanNameOf();
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
+
             var companies = await _companyService.GetAll();
 
             IWorkbook workbook;

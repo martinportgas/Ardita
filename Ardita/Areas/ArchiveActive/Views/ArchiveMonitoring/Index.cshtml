@@ -67,6 +67,7 @@
             var table = $('#tblArchiveMonitoring').DataTable({
                 processing: true,
                 serverSide: true,
+                //deferRender: true,
                 scrollX: true,
                 filter: true,
                 ajax: {
@@ -77,7 +78,12 @@
                         console.log(xhr);
                         console.log(responseText); //*** responseJSON: Array[0]
                     },
+                    "error": function(xhr, responseText){
+                        console.log(xhr);
+                        console.log(responseText); //*** responseJSON: Array[0]
+                    },
                 },
+                //sAjaxDataProp: '',
                 columnDefs: [
                     {
                         width: 50, targets: 0
@@ -86,7 +92,7 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveId", "name": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
@@ -99,12 +105,12 @@
                             return detail;
                         }
                     },
-                    { "data": "gmd.gmdName", "name": "gmdName", "autoWidth": true },
+                    { "data": "gmdName", "name": "gmd.gmdName", "autoWidth": true },
                     { "data": "typeSender", "name": "typeSender", "autoWidth": true },
-                    { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
                     { "data": "keyword", "name": "keyword", "autoWidth": true },
                     { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
-                    { "data": "creator.creatorName", "name": "creatorName", "autoWidth": true },
+                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
                     { "data": "typeArchive", "name": "typeArchive", "autoWidth": true },
                     { "data": "createdDateArchive", "name": "createdDateArchive", "autoWidth": true },
                     { "data": "activeRetention", "name": "activeRetention", "autoWidth": true },

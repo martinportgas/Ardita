@@ -202,7 +202,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationSubject, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationType, new { Area = Const.MasterData });
         #endregion
     }
 }

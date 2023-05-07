@@ -104,6 +104,7 @@
                 serverSide: true,
                 scrollY: true,
                 filter: true,
+                order: [[0, "desc"]],
                 ajax: {
                     "url": '@Url.Action(Const.GetData, Const.Employee, new { Area = Const.UserManage})',
                     "type": "POST",
@@ -120,7 +121,8 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "employeeId", 
+                        "data": "employeeId",
+                        "name": "createdDate",
                         "orderable": false, 
                         "searchable": false, 
                         "render": function (data, type, row, meta) {
@@ -155,7 +157,7 @@
                     { "data": "address", "name": "address", "autoWidth": true },
                     { "data": "phone", "name": "phone", "autoWidth": true },
                     { "data": "employeeLevel", "name": "employeeLevel", "autoWidth": true },
-                    { "data": "position.name", "name": "positionName", "autoWidth": true }
+                    { "data": "positionName", "name": "position.name", "autoWidth": true }
                 ]
             });
 

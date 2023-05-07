@@ -39,23 +39,13 @@ public class ArchiveService : IArchiveService
         return await _archiveRepository.GetById(id);
     }
 
-    public async Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            int dataCount = 0;
-            if (model.PositionId != null)
-            {
-                dataCount = await _archiveRepository.GetCountForMonitoring(model.PositionId);
-            }
-            else
-            {
-                dataCount = await _archiveRepository.GetCount();
-            }
-
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
@@ -63,9 +53,10 @@ public class ArchiveService : IArchiveService
                 PositionId = model.PositionId
             };
 
+            int dataCount = await _archiveRepository.GetCountByFilterData(filterData);
             var results = await _archiveRepository.GetByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<TrxArchive>
+            var responseModel = new DataTableResponseModel<object>
             {
                 draw = model.draw,
                 recordsTotal = dataCount,
@@ -75,7 +66,7 @@ public class ArchiveService : IArchiveService
 
             return responseModel;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return null;
         }

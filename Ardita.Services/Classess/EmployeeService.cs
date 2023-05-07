@@ -36,7 +36,7 @@ namespace Ardita.Services.Classess
         {
             return await _employeeRepository.GetById(id);
         }
-        public async Task<DataTableResponseModel<MstEmployee>> GetListEmployee(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListEmployee(DataTablePostModel model)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Ardita.Services.Classess
 
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
@@ -52,7 +52,7 @@ namespace Ardita.Services.Classess
 
                 var results = await _employeeRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstEmployee>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

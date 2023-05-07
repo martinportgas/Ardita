@@ -2,6 +2,8 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq.Dynamic.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,41 +53,24 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstUser>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<MstUser> result;
-
-            var propertyInfo = typeof(MstUser).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(MstUser).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.MstUsers
-                 .Include(x => x.Employee.Position)
-                .Include(x => x.IdxUserRoles)
-                .ThenInclude(x => x.Role)
-                .Where(
-                    x => (x.Username).Contains(model.searchValue) &&
-                    x.IsActive == true
+            var result = await _context.MstUsers
+                  .Include(x => x.Employee.Position)
+                 .Where(
+                             x => (x.Username).Contains(model.searchValue) &&
+                             x.IsActive == true
                     )
-                .OrderBy(x => EF.Property<MstUser>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.MstUsers
-                    .Include(x => x.Employee.Position)
-                .Include(x => x.IdxUserRoles)
-                .ThenInclude(x => x.Role)
-                .Where(
-                    x => (x.Username).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderByDescending(x => EF.Property<MstUser>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                 .Skip(model.skip).Take(model.pageSize)
+                 .Select(x => new { 
+                    x.UserId,
+                    x.Username,
+                    EmployeeName = x.Employee.Name,
+                    PositionName = x.Employee.Position.Name
+
+                 })
+                 .ToListAsync();
 
             return result;
         }
@@ -105,6 +90,15 @@ namespace Ardita.Repositories.Classess
         {
             var results = await _context.MstUsers.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
             return results;
+        }
+
+        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
+        {
+            var result = await _context.IdxUserRoles
+                .Include(x => x.User)
+                .Include(x => x.Role)
+               .AsNoTracking().Where(x => x.UserId == id).ToListAsync();
+            return result;
         }
 
         public async Task<int> Insert(MstUser model)

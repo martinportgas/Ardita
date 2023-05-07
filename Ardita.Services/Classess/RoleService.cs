@@ -38,7 +38,7 @@ namespace Ardita.Services.Classess
 
     
 
-        public async Task<DataTableResponseModel<MstRole>> GetListRoles(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListRoles(DataTablePostModel model)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace Ardita.Services.Classess
 
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
@@ -54,7 +54,7 @@ namespace Ardita.Services.Classess
 
                 var results = await _roleRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstRole>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

@@ -35,6 +35,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedDate = data.CreatedDate;
                         model.IsActive = false;
 
+                        model.Rack = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }
@@ -111,6 +112,7 @@ namespace Ardita.Repositories.Classess
             if (model != null)
             {
                 model.IsActive = true;
+                model.Rack = null;
                 _context.TrxLevels.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -144,6 +146,7 @@ namespace Ardita.Repositories.Classess
                         model.CreatedDate = data.CreatedDate;
                         model.IsActive = true;
 
+                        model.Rack = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
                     }
