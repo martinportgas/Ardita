@@ -8,7 +8,7 @@ public interface IArchiveService
 {
     Task<TrxArchive> GetById(Guid id);
     Task<IEnumerable<TrxArchive>> GetAll();
-    Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model);
+    Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxArchive model, StringValues modelDetail);
     Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);

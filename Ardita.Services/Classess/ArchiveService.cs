@@ -32,7 +32,7 @@ public class ArchiveService : IArchiveService
         return await _archiveRepository.GetById(id);
     }
 
-    public async Task<DataTableResponseModel<TrxArchive>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
@@ -48,7 +48,7 @@ public class ArchiveService : IArchiveService
 
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
@@ -58,7 +58,7 @@ public class ArchiveService : IArchiveService
 
             var results = await _archiveRepository.GetByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<TrxArchive>
+            var responseModel = new DataTableResponseModel<object>
             {
                 draw = model.draw,
                 recordsTotal = dataCount,

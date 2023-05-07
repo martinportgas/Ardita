@@ -106,9 +106,10 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.STAGGING;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
-
+    {
+        optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+        //optionsBuilder.UseLazyLoadingProxies();
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<IdxRolePage>(entity =>
@@ -1502,12 +1503,12 @@ public partial class BksArditaDevContext : DbContext
             entity.HasOne(d => d.Archive).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.ArchiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ARCHIVE_ID_MEDIA_STORAGE_DETAIL");
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_DETAIL_TRX_ARCHIVE");
 
             entity.HasOne(d => d.MediaStorage).WithMany(p => p.TrxMediaStorageDetails)
                 .HasForeignKey(d => d.MediaStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MEDIA_STORAGE_ID_MEDIA_STORAGE_DETAIL");
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_DETAIL_TRX_MEDIA_STORAGE");
         });
 
         modelBuilder.Entity<TrxPermissionClassification>(entity =>
