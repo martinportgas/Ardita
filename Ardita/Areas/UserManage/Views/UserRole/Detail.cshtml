@@ -1,4 +1,4 @@
-﻿@model Ardita.Models.ViewModels.UserRoles.UserRoleListViewModel
+﻿@model IEnumerable<Ardita.Models.DbModels.IdxUserRole>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -31,17 +31,13 @@
                             <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserManage" asp-action="Save">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input type="hidden" asp-for="UserRole.UserId" value="@(Model.Users == null ? string.Empty : Model.Users.UserId)" />
-                                    <input type="text" placeholder="" class="form-control" value="@(Model.Users == null ? string.Empty : Model.Users.Username)" disabled="">
+                                    <input type="hidden" asp-for="First().UserRoleId" />
+                                    <input type="hidden" asp-for="First().UserId" />
+                                    <input type="text" asp-for="First().User.Username" placeholder="" class="form-control" readonly="">
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select asp-for="UserRole.RoleId" id="RoleId" class="select2_demo_1 form-control">
-                                        @foreach (var item in Model.Roles)
-                                        {
-                                            <option value="@item.RoleId">@item.Name</option>
-                                        }
-                                    </select>
+                                    <select asp-for="First().RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
                                 </div>
                                 <div class="form-group">
                                     <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
@@ -59,12 +55,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model.UserRoles)
+                                    @foreach (var item in Model)
                                     {
                                         <tr>
                                             <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
-                                            <td>@item.RoleCode</td>
-                                            <td>@item.RoleName</td>
+                                            <td>@item.Role.Code</td>
+                                            <td>@item.Role.Name</td>
                                         </tr>
                                     }
                                 </tbody>

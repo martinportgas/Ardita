@@ -84,7 +84,7 @@ namespace Ardita.Extensions
             templateName = $"{templateName}.xlsx";
 
             var response = httpContext.Response;
-            response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            response.ContentType = "application/vnd.ms-excel";
             if (!string.IsNullOrEmpty(templateName))
             {
                 var contentDisposition = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("attachment");

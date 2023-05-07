@@ -43,6 +43,7 @@
         public const string Position = "Position";
         public const string Menu = "Menu";
         public const string User = "User";
+        public const string UserRole = "UserRole";
         public const string Page = "Page";
         public const string RolePage = "RolePage";
         public const string Role = "Role";

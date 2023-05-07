@@ -62,8 +62,8 @@ namespace Ardita.Repositories.Classess
             {
                 result = await _context.MstUsers
                  .Include(x => x.Employee.Position)
-                .Include(x => x.IdxUserRoles)
-                .ThenInclude(x => x.Role)
+                //.Include(x => x.IdxUserRoles)
+                //.ThenInclude(x => x.Role)
                 .Where(
                     x => (x.Username).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -76,8 +76,8 @@ namespace Ardita.Repositories.Classess
             {
                 result = await _context.MstUsers
                     .Include(x => x.Employee.Position)
-                .Include(x => x.IdxUserRoles)
-                .ThenInclude(x => x.Role)
+                //.Include(x => x.IdxUserRoles)
+                //.ThenInclude(x => x.Role)
                 .Where(
                     x => (x.Username).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -105,6 +105,15 @@ namespace Ardita.Repositories.Classess
         {
             var results = await _context.MstUsers.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
             return results;
+        }
+
+        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
+        {
+            var result = await _context.IdxUserRoles
+                .Include(x => x.User)
+                .Include(x => x.Role)
+               .AsNoTracking().Where(x => x.UserId == id).ToListAsync();
+            return result;
         }
 
         public async Task<int> Insert(MstUser model)

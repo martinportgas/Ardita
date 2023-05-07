@@ -63,6 +63,11 @@ namespace Ardita.Services.Classess
             return await _userRepository.GetById(id);
         }
 
+        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
+        {
+            return await _userRepository.GetIdxUserRoleByUserId(id);
+        }
+
         public async Task<DataTableResponseModel<MstUser>> GetListUsers(DataTablePostModel model)
         {
             try
