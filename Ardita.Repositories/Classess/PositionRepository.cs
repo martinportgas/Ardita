@@ -2,9 +2,10 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,36 +43,16 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<MstPosition>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<MstPosition> result;
 
-            var propertyInfo = typeof(MstPosition).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(MstPosition).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.MstPositions
-                .Where(
-                    x => (x.Name).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderBy(x => EF.Property<MstPosition>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.MstPositions
-                .Where(
-                    x => (x.Name).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderByDescending(x => EF.Property<MstPosition>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-
+            var result = await _context.MstPositions
+               .Where(
+                   x => (x.Code + x.Name).Contains(model.searchValue) &&
+                   x.IsActive == true
+                ).OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .ToListAsync();
             return result;
         }
 

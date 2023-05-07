@@ -14,7 +14,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<MstPosition> GetById(Guid id);
         Task<IEnumerable<MstPosition>> GetAll();
-        Task<DataTableResponseModel<MstPosition>> GetListPositions(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListPositions(DataTablePostModel model);
         Task<int> Insert(MstPosition model);
         Task<int> Delete(MstPosition model);
         Task<int> Update(MstPosition model);

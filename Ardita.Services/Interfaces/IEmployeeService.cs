@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<MstEmployee> GetById(Guid id);
         Task<IEnumerable<MstEmployee>> GetAll();
-        Task<DataTableResponseModel<MstEmployee>> GetListEmployee(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListEmployee(DataTablePostModel model);
         Task<int> Insert(MstEmployee model);
         Task<bool> InsertBulk(List<MstEmployee> employees);
         Task<int> Delete(MstEmployee model);

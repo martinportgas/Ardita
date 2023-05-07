@@ -68,7 +68,7 @@ namespace Ardita.Services.Classess
             return await _userRepository.GetIdxUserRoleByUserId(id);
         }
 
-        public async Task<DataTableResponseModel<MstUser>> GetListUsers(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel model)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace Ardita.Services.Classess
 
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
@@ -84,7 +84,7 @@ namespace Ardita.Services.Classess
 
                 var results = await _userRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstUser>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;
