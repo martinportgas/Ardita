@@ -69,12 +69,14 @@
                     },
                     columns: [
                         {
-                            "data": "user.userId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            "data": "roleId", 
+                            "name": "roleId",
+                            "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                                 return meta.row + meta.settings._iDisplayStart + 1;
                             }
                         },
                         {
-                            "data": "user.userId",
+                            "data": "userId",
                             "render": function (data, type, row, meta) {
 
                                 var view = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.RolePage, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i></a>`;
@@ -82,8 +84,8 @@
                                 return view;
                             }
                         },
-                        { "data": "code", "name": "Code", "autoWidth": true },
-                        { "data": "name", "name": "Name", "autoWidth": true }
+                        { "data": "code", "name": "code", "autoWidth": true },
+                        { "data": "name", "name": "name", "autoWidth": true }
                     ]
             });
 

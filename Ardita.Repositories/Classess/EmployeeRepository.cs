@@ -1,7 +1,7 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Extensions;
+using System.Linq.Dynamic.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ardita.Models.ViewModels;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Ardita.Repositories.Classess
 {
@@ -49,37 +50,31 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstEmployee>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<MstEmployee> result;
-
-            var propertyInfo = typeof(MstEmployee).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(MstEmployee).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.MstEmployees
+            var result = await _context.MstEmployees
                 .Include(x => x.Position)
                 .Where(
                     x => (x.Nik + x.Name).Contains(model.searchValue) &&
                     x.IsActive == true
-                    )
-                .OrderBy(x => EF.Property<MstEmployee>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
+            )
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                .Skip(model.skip)
+                .Take(model.pageSize)
+                .Select(x => new { 
+                    x.EmployeeId,
+                    x.Nik,
+                    x.Name,
+                    x.Email,
+                    x.Gender,
+                    x.PlaceOfBirth,
+                    x.DateOfBirth,
+                    x.Address,
+                    x.Phone,
+                    x.EmployeeLevel,
+                    PositionName = x.Position.Name
+                })
                 .ToListAsync();
-            }
-            else
-            {
-                result = await _context.MstEmployees
-                .Include(x => x.Position)
-                .Where(
-                    x => (x.Nik + x.Name).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderByDescending(x => EF.Property<MstEmployee>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
 
             return result;
         }

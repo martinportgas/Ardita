@@ -30,7 +30,7 @@ namespace Ardita.Services.Classess
             return await _positionRepository.GetById(id);
         }
 
-        public async Task<DataTableResponseModel<MstPosition>> GetListPositions(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListPositions(DataTablePostModel model)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace Ardita.Services.Classess
 
                 var results = await _positionRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstPosition>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;
