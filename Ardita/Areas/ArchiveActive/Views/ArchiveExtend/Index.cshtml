@@ -39,6 +39,7 @@
                                 <th>Nomor registrasi</th>
                                 <th>Nama Perpanjangan</th>
                                 <th>Status</th>
+                                <th>Note</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -72,15 +73,16 @@
                     { width: 100, targets: 4 }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveExtendId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveExtendId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             //console.log(row);
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     }, 
                     {
-                        "data": "archiveExtendId", "orderable": false, "searchable": false,
+                        "data": "archiveExtendId", "name": "archiveExtendId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveExtend, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
@@ -98,13 +100,14 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "extendCode", "autoWidth": true },
-                    { "data": "extendName", "autoWidth": true },
+                    { "data": "extendCode", "name": "extendCode", "autoWidth": true },
+                    { "data": "extendName", "name": "extendName", "autoWidth": true },
                     {
-                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.color}" style="width:100%">${data}</span>`;
                         }
                     },
+                    { "data": "note", "name": "note", "autoWidth": true },
                 ]
             });
         });

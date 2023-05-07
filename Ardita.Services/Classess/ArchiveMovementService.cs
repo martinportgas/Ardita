@@ -49,12 +49,10 @@ namespace Ardita.Services.Classess
         {
             return await _archiveMovementRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxArchiveMovement>> GetList(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _archiveMovementRepository.GetCount();
-
                 var filterData = new DataTableModel();
 
                 filterData.sortColumn = model.columns[model.order[0].column].data;
@@ -63,9 +61,10 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
 
+                var dataCount = await _archiveMovementRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveMovementRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<TrxArchiveMovement>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

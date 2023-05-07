@@ -7,5 +7,6 @@ public interface IArchiveRetentionRepository
 {
     Task<IEnumerable<VwArchiveRetention>> GetAll();
     Task<int> GetCount();
-    Task<IEnumerable<VwArchiveRetention>> GetArchiveRetentionByFilterModel(DataTableModel model);
+    Task<IEnumerable<object>> GetArchiveRetentionByFilterModel(DataTableModel model);
+    Task<int> GetCountArchiveRetentionByFilterModel(DataTableModel model);
 }

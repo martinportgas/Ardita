@@ -40,9 +40,10 @@ namespace Ardita.Services.Classess
         {
             try
             {
-                var dataCount = await _employeeRepository.GetCount();
+                
 
                 var filterData = new DataTableModel();
+                
 
                 filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
@@ -53,6 +54,7 @@ namespace Ardita.Services.Classess
                 var results = await _employeeRepository.GetByFilterModel(filterData);
 
                 var responseModel = new DataTableResponseModel<object>();
+                var dataCount = await _employeeRepository.GetCount(filterData);
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

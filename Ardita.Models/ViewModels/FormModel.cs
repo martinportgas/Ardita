@@ -15,6 +15,7 @@ namespace Ardita.Models.ViewModels
         public string LastBreadcrumb { get; set; }
         public bool isInput { get; set; }
         public bool isSubmitForm { get; set; }
+        public string ApprovalText { get; set; }
         public string SubmitText { get; set; }
         public string SaveText { get; set; }
     }

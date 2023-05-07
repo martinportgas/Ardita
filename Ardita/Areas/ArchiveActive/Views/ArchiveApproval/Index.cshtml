@@ -82,8 +82,9 @@
                     {
                         "data": "archiveApprovalId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Approval, "Controller", new { Area = Const.ArchiveActive, Id = -1, Level = -99 })"><i class="fa fa-paper-plane"></i> </a>`;
-                            submit = submit.replace("-1", row.transId).replace('Controller', row.approvalCode).replace('-99', row.approvalLevel);
+                            console.log(row);
+                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Approval, "Controller", new { Area = Const.ArchiveActive, Id = -1, Level = "aprLevel" })"><i class="fa fa-paper-plane"></i> </a>`;
+                            submit = submit.replace("-1", row.transId).replace('Controller', row.approvalCode).replace('aprLevel', row.approvalLevel);
 
                             return submit;
                         }

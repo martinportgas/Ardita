@@ -55,7 +55,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
-                var result = await _archiveService.GetById(Guid.Parse(Id));
+                Guid ID = Guid.Empty;
+                Guid.TryParse(Id, out ID);
+                var result = await _archiveService.GetById(ID);
 
                 return Json(result);
 
@@ -286,10 +288,18 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             if (model != null && model.ArchiveMovementId != Guid.Empty)
             {
-                if (model.ApproveLevel == model.ApproveMax)
-                    model.StatusId = (int)Const.Status.ApprovalProcess;
-                else
-                    model.ApproveLevel += 1;
+                var ApprovalAction = Request.Form[Const.Submit];
+                if(ApprovalAction == Const.Approve)
+                {
+                    if (model.ApproveLevel == model.ApproveMax)
+                        model.StatusId = (int)Const.Status.ApprovalProcess;
+                    else
+                        model.ApproveLevel += 1;
+                }
+                if (ApprovalAction == Const.Reject)
+                {
+                    model.StatusId = (int)Const.Status.Rejected;
+                }
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveMovementService.Submit(model);

@@ -9,6 +9,7 @@ using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ardita.Repositories.Classess
 {
@@ -62,9 +63,12 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(DataTableModel model)
         {
-            var results = await _context.MstPositions.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
+            var results = await _context.MstPositions
+                .AsNoTracking()
+                 .Where($"(Code+Name).Contains(@0) and IsActive = true", model.searchValue)
+                .CountAsync();
             return results;
         }
 

@@ -28,23 +28,22 @@ public class ArchiveRetentionService : IArchiveRetentionService
         throw new NotImplementedException();
     }
 
-    public async Task<DataTableResponseModel<VwArchiveRetention>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            var dataCount = await _archiveRetentionRepository.GetCount();
-
             var filterData = new DataTableModel();
 
-            filterData.sortColumn = model.columns[model.order[0].column].data;
+            filterData.sortColumn = model.columns[model.order[0].column].name;
             filterData.sortColumnDirection = model.order[0].dir;
             filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
             filterData.pageSize = model.length;
             filterData.skip = model.start;
 
+            var dataCount = await _archiveRetentionRepository.GetCountArchiveRetentionByFilterModel(filterData);
             var results = await _archiveRetentionRepository.GetArchiveRetentionByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<VwArchiveRetention>();
+            var responseModel = new DataTableResponseModel<object>();
 
             responseModel.draw = model.draw;
             responseModel.recordsTotal = dataCount;

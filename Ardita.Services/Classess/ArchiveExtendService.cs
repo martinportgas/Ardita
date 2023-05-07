@@ -64,23 +64,22 @@ namespace Ardita.Services.Classess
         {
             return await _archiveExtendRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxArchiveExtend>> GetList(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _archiveExtendRepository.GetCount();
-
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
 
+                var dataCount = await _archiveExtendRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveExtendRepository.GetByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<TrxArchiveExtend>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

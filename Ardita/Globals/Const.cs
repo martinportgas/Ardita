@@ -64,6 +64,8 @@
         public const string Save = "Save";
         public const string Create = "Create";
         public const string Approval = "Approval";
+        public const string Approve = "Approve";
+        public const string Reject = "Reject";
         public const string SubmitApproval = "SubmitApproval";
         public const string Export = "Export";
         public const string Upload = "Upload";
