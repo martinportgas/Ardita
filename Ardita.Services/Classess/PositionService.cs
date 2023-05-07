@@ -34,7 +34,7 @@ namespace Ardita.Services.Classess
         {
             try
             {
-                var dataCount = await _positionRepository.GetCount();
+                
 
                 var filterData = new DataTableModel();
 
@@ -47,6 +47,7 @@ namespace Ardita.Services.Classess
                 var results = await _positionRepository.GetByFilterModel(filterData);
 
                 var responseModel = new DataTableResponseModel<object>();
+                var dataCount = await _positionRepository.GetCount(filterData);
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

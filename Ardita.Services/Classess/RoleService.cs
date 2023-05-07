@@ -42,7 +42,7 @@ namespace Ardita.Services.Classess
         {
             try
             {
-                var dataCount = await _roleRepository.GetCount();
+                
 
                 var filterData = new DataTableModel();
 
@@ -55,7 +55,7 @@ namespace Ardita.Services.Classess
                 var results = await _roleRepository.GetByFilterModel(filterData);
 
                 var responseModel = new DataTableResponseModel<object>();
-
+                var dataCount = await _roleRepository.GetCount(filterData);
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;
                 responseModel.recordsFiltered = dataCount;
