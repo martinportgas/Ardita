@@ -3,9 +3,10 @@ using Ardita.Extensions;
 using Ardita.Globals;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using Ardita.Models.ViewModels.MediaStorage;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+
 
 namespace Ardita.Areas.ArchiveActive.Controllers;
 
@@ -24,7 +25,8 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         IRackService rackService,
         ILevelService levelService,
         IRowService rowService,
-        IMediaStorageService mediaStorageService)
+        IMediaStorageService mediaStorageService,
+        IHostingEnvironment hostingEnvironment)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
         _archiveService = archiveService;
@@ -36,6 +38,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _levelService = levelService;
         _rowService = rowService;
         _mediaStorageService = mediaStorageService;
+        _hostingEnvironment = hostingEnvironment;
     }
     #endregion
 
@@ -163,6 +166,15 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         var file = QRCodeExtension.Generate(text);
 
         return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, "QRCode.svg");
+    }
+    public async Task<FileResult> BindLabel(string MediaStorageId)
+    {
+        Guid Id = new(MediaStorageId);
+        TrxMediaStorage data = await _mediaStorageService.GetById(Id);
+        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchive.docx");
+        var file = Label.GenerateLabelArchive(FilePath, data);
+
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, "Label.pdf");
     }
     #endregion
 }

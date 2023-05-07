@@ -33,6 +33,8 @@
                     </div>
                 </div>
                 <div class="ibox-content">
+                    <a class="btn btn-sm btn-info" href="@Url.Action("BindLabel", Const.MediaStorage, new { Area = Const.ArchiveActive })"><i class="fa fa-download"></i> </a>
+
                     <table id="tbl" class="table table-striped table-hover dataTables-example" style="width:100%">
                         <thead>
                             <tr>
@@ -97,15 +99,16 @@
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.mediaStorageId);
 
-                            var download = `<a class="btn btn-sm btn-info" data-toggle="tooltip" title="Data Still Draft" href="#"><i class="fa fa-download"></i> </a>`;
+                            var downloadQr = `<a class="btn btn-sm btn-info" data-toggle="tooltip" title="Data Still Draft" href="#"><i class="fa fa-download"></i> </a>`;
                             if (row.statusId == 5) {
-                                download = `<a class="btn btn-sm btn-info" href="@Url.Action("BindQrCode", Const.MediaStorage, new { Area = Const.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
-                                download = download.replace("-1", row.mediaStorageCode);
+                                downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(Const.BindQrCode, Const.MediaStorage, new { Area = Const.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
+                                downloadQr = downloadQr.replace("-1", row.mediaStorageCode);
                             }
 
-                            
+                            var downloadLbl = `<a class="btn btn-sm btn-info" href="@Url.Action(Const.BindLabel, Const.MediaStorage, new { Area = Const.ArchiveActive, MediaStorageId = -1})"><i class="fa fa-download"></i> </a>`;
+                            downloadLbl = downloadLbl.replace("-1", row.mediaStorageId);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", download);
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr).concat(" ", downloadLbl);
                             return JoinButton;
                         }
                     },

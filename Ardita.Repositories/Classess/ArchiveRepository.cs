@@ -3,10 +3,9 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Archive;
 using Ardita.Repositories.Interfaces;
-using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -18,7 +17,7 @@ public class ArchiveRepository : IArchiveRepository
                                             +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
                                             +Creator.CreatorName+TypeArchive";
 
-    public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration) 
+    public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration)
     {
         _context = context;
         _configuration = configuration;
@@ -64,7 +63,8 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
-                .Select(x => new {  
+                .Select(x => new
+                {
                     x.ArchiveId,
                     x.TypeSender,
                     x.Keyword,
@@ -76,7 +76,11 @@ public class ArchiveRepository : IArchiveRepository
                     x.Gmd.GmdName,
                     x.SubSubjectClassification.SubSubjectClassificationName,
                     x.Creator.CreatorName,
-                    x.TypeArchive
+                    x.TypeArchive,
+                    x.StatusId,
+                    x.Status.Color,
+                    x.ArchiveCode,
+                    Status = x.Status.Name
                 })
                 .ToListAsync();
 
@@ -110,8 +114,9 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
+
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
-    
+
     public async Task<int> GetCountAll() => await _context.TrxArchives.CountAsync();
 
     public async Task<int> GetCountByFilterData(DataTableModel model)
@@ -155,12 +160,12 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<int> Insert(TrxArchive model, List<FileModel> files)
     {
         int result = 0;
-        
+
         if (model != null)
         {
             string path = $"{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}\\";
             using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             try
             {
                 model.IsActive = true;
@@ -217,8 +222,15 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
     {
         bool result = false;
+        var lastCOunt = _context.TrxArchives.Count();
         if (trxArchives.Count() > 0)
         {
+            foreach (var item in trxArchives)
+            {
+                lastCOunt = lastCOunt + 1;
+                item.ArchiveCode = $"ARCHIVE-{lastCOunt}";
+            }
+
             await _context.AddRangeAsync(trxArchives);
             await _context.SaveChangesAsync();
             result = true;
@@ -233,7 +245,7 @@ public class ArchiveRepository : IArchiveRepository
         if (model != null && model.ArchiveId != Guid.Empty)
         {
             var data = await _context.TrxArchives.AsNoTracking().FirstAsync(x => x.ArchiveId == model.ArchiveId);
-            if (data != null) 
+            if (data != null)
             {
                 string path = $"{data.CreatedDate:yyyy}\\{data.CreatedDate:MM}\\{data.CreatedDate:dd}\\";
 
@@ -314,7 +326,7 @@ public class ArchiveRepository : IArchiveRepository
     {
         var listNotAvailableArchive = from archive in _context.TrxArchives
                                       join mediaDetail in _context.TrxMediaStorageDetails on archive.ArchiveId equals mediaDetail.ArchiveId
-                                      join media in _context.TrxMediaStorages on mediaDetail.MediaStorageId equals media.MediaStorageId 
+                                      join media in _context.TrxMediaStorages on mediaDetail.MediaStorageId equals media.MediaStorageId
                                       where archive.IsActive == true && media.IsActive == true
                                       select archive;
 

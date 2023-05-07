@@ -147,10 +147,8 @@ public class ArchiveController : BaseController<TrxArchive>
             var SecurityClassifications = await _securityClassificationService.GetAll();
             var Creators = await _archiveCreatorService.GetAll();
 
-
             List<TrxArchive> trxArchives = new();
             TrxArchive trxArchive;
-
             foreach (DataRow row in result.Rows)
             {
                 trxArchive = new();
@@ -168,11 +166,10 @@ public class ArchiveController : BaseController<TrxArchive>
                 trxArchive.ActiveRetention = Convert.ToInt32(row[11]);
                 trxArchive.InactiveRetention = Convert.ToInt32(row[12]);
                 trxArchive.Volume = Convert.ToInt32(row[13]);
-
-
                 trxArchive.IsActive = true;
                 trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 trxArchive.CreatedDate = DateTime.Now;
+                trxArchive.StatusId = 1;
 
                 trxArchives.Add(trxArchive);
             }

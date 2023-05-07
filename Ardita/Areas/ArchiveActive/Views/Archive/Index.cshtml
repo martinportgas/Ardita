@@ -109,9 +109,10 @@
                     }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
@@ -139,11 +140,11 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "archiveCode", "Archiive Code": "ArchiveCode", "autoWidth": true },
-                    { "data": "titleArchive", "Archive Title": "TitleArchive", "autoWidth": true },
+                    { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
+                    { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
                     {
-                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge ${row.color}" style="width:100%">${data}</span>`;
                         }
                     }
                 ]
