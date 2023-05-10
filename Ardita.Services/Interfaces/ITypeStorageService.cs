@@ -9,6 +9,7 @@ public interface ITypeStorageService
     Task<IEnumerable<TrxTypeStorage>> GetAll();
     Task<DataTableResponseModel<TrxTypeStorage>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxTypeStorage model);
+    Task<bool> InsertBulk(List<TrxTypeStorage> model);
     Task<int> Delete(TrxTypeStorage model);
     Task<int> Update(TrxTypeStorage model);
 }

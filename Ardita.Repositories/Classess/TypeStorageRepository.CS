@@ -76,6 +76,17 @@ public class TypeStorageRepository : ITypeStorageRepository
         }
         return result;
     }
+    public async Task<bool> InsertBulk(List<TrxTypeStorage> rows)
+    {
+        bool result = false;
+        if (rows.Count() > 0)
+        {
+            await _context.AddRangeAsync(rows);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
+        return result;
+    }
 
     public async Task<int> Update(TrxTypeStorage model)
     {

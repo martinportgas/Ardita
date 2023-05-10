@@ -10,6 +10,7 @@ public interface ITypeStorageRepository
     Task<IEnumerable<TrxTypeStorage>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxTypeStorage model);
+    Task<bool> InsertBulk(List<TrxTypeStorage> rows);
     Task<int> Delete(TrxTypeStorage model);
     Task<int> Update(TrxTypeStorage model);
 }

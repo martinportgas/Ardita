@@ -189,8 +189,6 @@ namespace Ardita.Areas.MasterData.Controllers
             IFormFile file = Request.Form.Files[0];
             var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
 
-            var type = await _classificationTypeService.GetAll();
-
             List<MstTypeClassification> models = new();
             MstTypeClassification model;
 

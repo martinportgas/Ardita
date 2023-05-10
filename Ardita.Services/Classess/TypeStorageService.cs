@@ -53,6 +53,7 @@ public class TypeStorageService : ITypeStorageService
     }
 
     public async Task<int> Insert(TrxTypeStorage model) => await _TypeStorageRepository.Insert(model);
+    public async Task<bool> InsertBulk(List<TrxTypeStorage> model) => await _TypeStorageRepository.InsertBulk(model);
 
     public async Task<int> Update(TrxTypeStorage model) => await _TypeStorageRepository.Update(model);
 }

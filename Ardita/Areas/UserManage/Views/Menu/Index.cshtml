@@ -113,6 +113,7 @@
                     tr.removeClass('details');
                     row.child.hide();
                     detailRows.splice(idx, 1);
+                    $(this).children().removeClass('fa-minus-square').addClass('fa-plus-square');
                 } else {
                     tr.addClass('details');
                     row.child(format(row.data())).show();
@@ -120,6 +121,7 @@
                     if (idx === -1) {
                         detailRows.push(tr.attr('id'));
                     }
+                    $(this).children().removeClass('fa-plus-square').addClass('fa-minus-square');
                 }
             });
             table.on('draw', function () {

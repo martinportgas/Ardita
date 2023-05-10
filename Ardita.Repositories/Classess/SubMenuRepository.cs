@@ -57,7 +57,6 @@ namespace Ardita.Repositories.Classess
                 model.CreatedBy = menus.CreatedBy;
                 model.CreatedDate = menus.CreatedDate;
                 model.IsActive = true;
-                model.Sort = menus.Sort;
 
                 _context.MstSubmenus.Update(model);
                 result = await _context.SaveChangesAsync();
