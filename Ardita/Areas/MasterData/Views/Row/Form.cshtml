@@ -238,7 +238,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindLevelByRackId, Const.Row, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(Const.BindLevelByRackId, Const.Row, new { Area = Const.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {
