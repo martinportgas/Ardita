@@ -116,6 +116,8 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxSubSubjectClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 if (data != null)
                 {
+                    model.Creator = null;
+                    model.SubjectClassification = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

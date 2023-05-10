@@ -336,8 +336,6 @@ namespace Ardita.Areas.MasterData.Controllers
                 throw new Exception();
             }
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
         {
             IFormFile file = Request.Form.Files[0];
@@ -353,7 +351,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
             foreach (DataRow row in result.Rows)
             {
-                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[3].ToString()).FirstOrDefault();
+                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[2].ToString()).FirstOrDefault();
                 var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault();
                 var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).FirstOrDefault();
 
@@ -366,8 +364,8 @@ namespace Ardita.Areas.MasterData.Controllers
                     model.CreatorId = dataCreator.CreatorId;
                     model.SubjectClassificationId = dataSubject.SubjectClassificationId;
                     model.SecurityClassificationId = dataSecurity.SecurityClassificationId;
-                    model.RetentionActive = (int)row[5];
-                    model.RetentionInactive = (int)row[6];
+                    model.RetentionActive = int.Parse(row[5].ToString());
+                    model.RetentionInactive = int.Parse(row[6].ToString());
                     model.BasicInformation = row[7].ToString();
                     model.IsActive = true;  
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
