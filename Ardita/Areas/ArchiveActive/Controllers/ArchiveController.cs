@@ -238,7 +238,7 @@ public class ArchiveController : BaseController<TrxArchive>
             {
                 workbook.Write(exportData);
                 byte[] bytes = exportData.ToArray();
-                return File(bytes, "application/vnd.ms-excel", $"{fileName}.xlsx");
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
             }
         }
         catch (Exception ex)

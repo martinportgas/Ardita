@@ -45,7 +45,7 @@ namespace Ardita.Areas.UserManage.Controllers
             var data = await _userService.GetIdxUserRoleByUserId(Id);
 
             
-            if (data != null)
+            if (data.Count() > 0)
             {
                 ViewBag.listRoles = await BindRoles();
                 return View(data);

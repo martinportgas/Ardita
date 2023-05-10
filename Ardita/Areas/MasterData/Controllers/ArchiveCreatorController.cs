@@ -170,7 +170,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         }
 
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -202,14 +202,19 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                 row.CreateCell(4).SetCellValue(item.CreatorName);
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
@@ -257,7 +262,12 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                 rowArchiveUnits.CreateCell(7).SetCellValue(item.ArchiveUnitEmail);
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception)
         {

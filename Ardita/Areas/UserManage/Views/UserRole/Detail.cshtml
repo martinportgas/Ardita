@@ -31,13 +31,13 @@
                             <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserManage" asp-action="Save">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input type="hidden" asp-for="First().UserRoleId" />
-                                    <input type="hidden" asp-for="First().UserId" />
-                                    <input type="text" asp-for="First().User.Username" placeholder="" class="form-control" readonly="">
+                                    <input type="hidden" asp-for="FirstOrDefault().UserRoleId" />
+                                    <input type="hidden" asp-for="FirstOrDefault().UserId" />
+                                    <input type="text" asp-for="FirstOrDefault().User.Username" placeholder="" class="form-control" readonly="">
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select asp-for="First().RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
+                                    <select asp-for="FirstOrDefault().RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
                                 </div>
                                 <div class="form-group">
                                     <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>

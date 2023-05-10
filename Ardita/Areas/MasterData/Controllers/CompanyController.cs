@@ -166,7 +166,7 @@ public class CompanyController : BaseController<MstCompany>
         }
 
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -202,14 +202,19 @@ public class CompanyController : BaseController<MstCompany>
 
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
@@ -229,7 +234,12 @@ public class CompanyController : BaseController<MstCompany>
             row.CreateCell(4).SetCellValue(nameof(MstCompany.Telepone));
             row.CreateCell(5).SetCellValue(nameof(MstCompany.Email));
 
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception)
         {

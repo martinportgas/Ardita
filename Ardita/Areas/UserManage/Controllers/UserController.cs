@@ -124,7 +124,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 return RedirectToIndex();
             }
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
@@ -175,14 +175,19 @@ namespace Ardita.Areas.UserManage.Controllers
                     rowEmployee.CreateCell(9).SetCellValue(item.Position.Name);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception)
             {
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -227,7 +232,13 @@ namespace Ardita.Areas.UserManage.Controllers
 
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
