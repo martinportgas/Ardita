@@ -107,7 +107,7 @@ public partial class BksArditaDevContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+        optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.STAGGING;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
         //optionsBuilder.UseLazyLoadingProxies();
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

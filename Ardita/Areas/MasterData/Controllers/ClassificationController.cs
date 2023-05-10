@@ -121,7 +121,7 @@ public class ClassificationController : BaseController<TrxClassification>
         }
         return RedirectToIndex();
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
@@ -154,14 +154,19 @@ public class ClassificationController : BaseController<TrxClassification>
                 rowParent.CreateCell(1).SetCellValue(item.TypeClassificationName);
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -196,7 +201,12 @@ public class ClassificationController : BaseController<TrxClassification>
                     no += 1;
                 }
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {

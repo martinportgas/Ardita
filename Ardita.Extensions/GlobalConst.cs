@@ -4,7 +4,7 @@ public static class GlobalConst
 {
     public const string BASE_PATH_ARCHIVE = "Path:Archive";
     public const string BASE_PATH_TEMP_ARCHIVE = "Path:TempArchive";
-
+    public const string EXCEL_FORMAT_TYPE = "application/vnd.ms-excel";
     public enum STATUS
     {
         Draft = 1,
@@ -13,4 +13,6 @@ public static class GlobalConst
         Rejected = 4,
         Submit = 5
     }
+
+
 }
