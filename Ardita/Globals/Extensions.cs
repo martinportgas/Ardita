@@ -63,7 +63,7 @@ namespace Ardita.Globals
                 LastBreadcrumb = Const.Approval;
             }
 
-            var isInput = currentAction == Const.Add || currentAction == Const.Update;
+            var isInput = currentAction == Const.Add || currentAction == Const.Update || currentAction == Const.Remove;
             var isSubmitForm = isInput || currentAction == Const.Remove || currentAction == Const.Preview|| currentAction == Const.Approval;
 
             FormModel model = new FormModel();

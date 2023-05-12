@@ -168,11 +168,11 @@ function ajaxcallreturn(urlstring, method, param, auth, content_type) {
 }
 
 function initForms(action){
-    $('#btn-submit').show();
+    //$('#btn-submit').show();
     initFormReadOnly(false);
     
     if(action == "Detail"){
-        $('#btn-submit').hide();
+        //$('#btn-submit').hide();
          initFormReadOnly(true);
     }
 

@@ -62,7 +62,10 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = @form.CurrentArea })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                    @if (form.isInput)
+                                    {
+                                        <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                    }
                                 </div>
                             </form>
                         </div>
