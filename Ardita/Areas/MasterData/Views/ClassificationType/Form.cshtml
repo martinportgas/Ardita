@@ -76,10 +76,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ClassificationType, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    <a href="@Url.Action(Const.Index, Const.ClassificationType, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isInput || form.CurrentAction == Const.Remove)
                                     {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
+                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                     }
                                 </div>
                             </form>

@@ -73,8 +73,8 @@
 
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Level, new { Area = Const.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Level, new { Area = Const.MasterData })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -117,7 +117,7 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Level", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.levelId);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action("Update", "Level", new { Area = "MasterData", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action("Update", "Level", new { Area = "MasterData", Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.levelId);
 
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Level", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;

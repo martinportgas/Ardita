@@ -173,12 +173,10 @@ function initForms(action){
     
     if(action == "Detail"){
         $('#btn-submit').hide();
-        $('#btn-cancel').html("Back");
          initFormReadOnly(true);
     }
 
     if(action == "Remove"){
-        $('#btn-submit').html("Delete");
         initFormReadOnly(true);
     }
 }

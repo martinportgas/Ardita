@@ -89,10 +89,10 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.mediaStorageId);
 
-                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
 
                             if (row.statusId == 1) {
-                                 edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                 edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.Update, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                  edit = edit.replace("-1", row.mediaStorageId);
                             }
 

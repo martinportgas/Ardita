@@ -88,7 +88,7 @@
                               var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Role, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Role, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.Update, Const.Role, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.roleId);
 
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Role, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;

@@ -64,8 +64,6 @@
         public const string Save = "Save";
         public const string Create = "Create";
         public const string Approval = "Approval";
-        public const string Approve = "Approve";
-        public const string Reject = "Reject";
         public const string SubmitApproval = "SubmitApproval";
         public const string Export = "Export";
         public const string Upload = "Upload";
@@ -80,6 +78,19 @@
         public const string Required = "required";
         public const string Disabled = "disabled";
         public const string Hidden = "hidden";
+        public const string Approve = "Approve";
+        public const string Reject = "Reject";
+        public const string Cancel = "Cancel";
+        public const string Back = "Back";
+        public const string IconBack = "<i class='fa fa-chevron-circle-left'></i> ";
+        public const string IconSave = "<i class='fa fa-save'></i> ";
+        public const string IconSubmit = "<i class='fa fa-paper-plane'></i> ";
+        public const string IconApprove = "<i class='fa fa-check-circle'></i> ";
+        public const string IconReject = "<i class='fa fa-times-circle'></i> ";
+        public const string IconRefresh = "<i class='fa fa-refresh'></i> ";
+        public const string IconDelete = "<i class='fa fa-trash'></i> ";
+        public const string BtnPrimary = "btn-primary";
+        public const string BtnDanger = "btn-danger";
 
         //Other
         public const string ViewStart = "~/Views/Shared/_Layout.cshtml";

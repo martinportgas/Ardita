@@ -74,9 +74,12 @@ namespace Ardita.Globals
             model.LastBreadcrumb = LastBreadcrumb;
             model.isInput = isInput;
             model.isSubmitForm = isSubmitForm;
-            model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
-            model.SaveText = currentAction == Const.Remove ? Const.Delete : Const.Save;
-            model.ApprovalText = currentAction == Const.Remove ? Const.Delete : Const.Approve;
+            model.SubmitText = currentAction == Const.Remove ? string.Concat(Const.IconDelete, Const.Delete) : string.Concat(Const.IconSubmit, Const.Submit);
+            model.SaveText = currentAction == Const.Remove ? string.Concat(Const.IconDelete, Const.Delete) : string.Concat(Const.IconSave, Const.Save);
+            model.ApprovalText = string.Concat(Const.IconApprove, Const.Approve);
+            model.CancelText = string.Concat(Const.IconBack, Const.Cancel);
+            model.BackText = string.Concat(Const.IconBack, Const.Back);
+            model.ButtonSubmitClass = currentAction == Const.Remove ? Const.BtnDanger : Const.BtnPrimary;
 
             return model;
         }

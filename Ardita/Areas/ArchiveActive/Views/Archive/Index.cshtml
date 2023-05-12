@@ -76,8 +76,8 @@
 
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Archive, new { Area = Const.ArchiveActive })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Archive, new { Area = Const.ArchiveActive })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -122,10 +122,10 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
 
-                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
 
                             if (row.statusId == 1) {
-                                edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                 edit = edit.replace("-1", row.archiveId);
                             }
 

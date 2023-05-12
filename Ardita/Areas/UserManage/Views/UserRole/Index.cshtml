@@ -85,7 +85,7 @@
                     {
                         "data": "userId",
                         "render": function (data, type, row, meta) {
-                            var view = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Detail, Const.UserRole, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i></a>`;
+                            var view = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Detail, Const.UserRole, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i></a>`;
                             view = view.replace("-1", row.userId);
                             return view;
                         }

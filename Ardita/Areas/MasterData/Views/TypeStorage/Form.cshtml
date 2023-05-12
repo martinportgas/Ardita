@@ -90,8 +90,8 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.TypeStorage, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
+                                    <a href="@Url.Action(Const.Index, Const.TypeStorage, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
                                 </div>
                             </form>
                         </div>

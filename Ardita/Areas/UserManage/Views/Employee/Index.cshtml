@@ -84,8 +84,8 @@
                             <br />
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Employee, new { Area = Const.UserManage })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Employee, new { Area = Const.UserManage })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>>
@@ -138,14 +138,15 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Employee, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Employee, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.Update, Const.Employee, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.employeeId);
 
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Employee, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.employeeId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
-                            return JoinButton;
+                            var div = `<div style="width:100px">${JoinButton}</div>`
+                            return div;
                         }
                     },
                     { "data": "nik", "name": "nik", "autoWidth": true },

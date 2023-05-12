@@ -87,7 +87,7 @@
                             var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.UpdatePage, Const.Menu, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Page, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Remove, Const.Page, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
                             var JoinButton = edit.concat(" ", remove);

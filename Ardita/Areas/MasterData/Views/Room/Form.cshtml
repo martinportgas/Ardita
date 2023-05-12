@@ -85,14 +85,14 @@
                                                 id="txtArchiveRoomType" class="select2_demo_1 form-control"
                                                 data-placeholder="-- Pilih Tipe Ruangan --">
                                             <option value=""></option>
-                                            <option value="Unit Pengelola">Unit Pengelola</option>
+                                            <option value="Unit Pengolah">Unit Pengolah</option>
                                             <option value="Unit Kearsipan">Unit Kearsipan</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Room, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.FormAction</button>
+                                    <a href="@Url.Action(Const.Index, Const.Room, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
                                 </div>
                             </form>
                         </div>

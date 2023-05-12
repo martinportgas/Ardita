@@ -146,18 +146,18 @@
                                                 @if (form.CurrentAction == Const.Detail)
                                                 {
                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
-                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                       class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
                                                 }
                                                 else if (form.CurrentAction == Const.Remove)
                                                 {
                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
-                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                       class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
                                                     <button onclick="onSubmit(this, event, 'submit');"
-                                                            class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                            class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                             type="submit" id="btn-submit">
                                                         Delete
                                                     </button>
@@ -165,7 +165,7 @@
                                                 else
                                                 {
                                                     <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
-                                                       class="btn btn-sm btn-danger float-right m-t-n-xs">
+                                                       class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
                                                     <button onclick="onSubmit(this, event, 'draft');"
@@ -174,7 +174,7 @@
                                                         Save As Draft
                                                     </button>
                                                     <button onclick="onSubmit(this, event, 'submit');"
-                                                            class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                            class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                             type="submit" id="btn-submit">
                                                         Submit
                                                     </button>
@@ -480,7 +480,7 @@
         }
 
         function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
-            var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-danger btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
+            var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-default btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
             var view = `<a id="btn-view-archive" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
 
             listArchiveId.push(archiveId);
