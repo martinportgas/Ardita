@@ -31,10 +31,10 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.MstEmployees.AsNoTracking().FirstOrDefaultAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
-                    model.IsActive = false;
-                    model.CreatedBy = data.CreatedBy;
-                    model.CreatedDate = data.CreatedDate;
-                    _context.Update(model);
+                    data.IsActive = false;
+                    data.UpdateBy = data.UpdateBy;
+                    data.UpdateDate = data.UpdateDate;
+                    _context.Update(data);
                     result = await _context.SaveChangesAsync();
                 }
             }
@@ -143,6 +143,7 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.MstEmployees.AsNoTracking().FirstOrDefaultAsync(x => x.EmployeeId == model.EmployeeId);
                 if (data != null)
                 {
+                    model.Position = null;
                     model.IsActive = true;
                     model.CreatedBy = data.CreatedBy;
                     model.CreatedDate = data.CreatedDate;
