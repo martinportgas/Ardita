@@ -49,8 +49,6 @@
     <Folder Include="Areas\ArchiveActive\Data\" />
     <Folder Include="Areas\ArchiveActive\Models\" />
     <Folder Include="Areas\ArchiveInActive\Controllers\" />
-    <Folder Include="Areas\ArchiveInActive\Data\" />
-    <Folder Include="Areas\ArchiveInActive\Models\" />
     <Folder Include="Areas\ArchiveInActive\Views\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
