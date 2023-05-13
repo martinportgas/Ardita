@@ -9,24 +9,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\ArchiveInActive\**" />
     <Compile Remove="Areas\Page\**" />
     <Compile Remove="Areas\Position\**" />
     <Compile Remove="Areas\RolePage\**" />
     <Compile Remove="Areas\Role\**" />
     <Compile Remove="Areas\UserRole\**" />
     <Compile Remove="Areas\User\**" />
+    <Content Remove="Areas\ArchiveInActive\**" />
     <Content Remove="Areas\Page\**" />
     <Content Remove="Areas\Position\**" />
     <Content Remove="Areas\RolePage\**" />
     <Content Remove="Areas\Role\**" />
     <Content Remove="Areas\UserRole\**" />
     <Content Remove="Areas\User\**" />
+    <EmbeddedResource Remove="Areas\ArchiveInActive\**" />
     <EmbeddedResource Remove="Areas\Page\**" />
     <EmbeddedResource Remove="Areas\Position\**" />
     <EmbeddedResource Remove="Areas\RolePage\**" />
     <EmbeddedResource Remove="Areas\Role\**" />
     <EmbeddedResource Remove="Areas\UserRole\**" />
     <EmbeddedResource Remove="Areas\User\**" />
+    <None Remove="Areas\ArchiveInActive\**" />
     <None Remove="Areas\Page\**" />
     <None Remove="Areas\Position\**" />
     <None Remove="Areas\RolePage\**" />
@@ -49,6 +53,8 @@
     <Folder Include="Areas\ArchiveActive\Data\" />
     <Folder Include="Areas\ArchiveActive\Models\" />
     <Folder Include="Areas\ArchiveInActive\Controllers\" />
+    <Folder Include="Areas\ArchiveInActive\Data\" />
+    <Folder Include="Areas\ArchiveInActive\Models\" />
     <Folder Include="Areas\ArchiveInActive\Views\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
