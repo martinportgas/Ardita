@@ -25,5 +25,7 @@ public partial class TrxRow
 
     public virtual TrxLevel? Level { get; set; }
 
+    public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();
+
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 }

@@ -68,14 +68,6 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>Type Storage Parent</label>
-                                        <select asp-for="ParentId" asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                id="txtTypeStorage" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Select Type Sotage Parent --">
-                                            <option value=""></option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
                                         <label>Type Storage Code</label>
                                         <input type="hidden" asp-for="TypeStorageId" value="@Model.TypeStorageId">
                                         <input type="text" placeholder="" id="txtTypeStorageCode" class="form-control" asp-for="TypeStorageCode">

@@ -230,16 +230,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
                 row.CreateCell(1).SetCellValue(item.TypeStorageName);
                 row.CreateCell(2).SetCellValue(string.Empty);
                 row.CreateCell(3).SetCellValue(string.Empty);
-                if (item.ParentId != null)
-                {
-                    Guid parentId = (Guid)item.ParentId;
-                    var parent = await _typeStorageService.GetById(parentId);
-                    if(parent != null)
-                    {
-                        row.CreateCell(2).SetCellValue(parent.TypeStorageCode);
-                        row.CreateCell(3).SetCellValue(parent.TypeStorageName);
-                    }
-                }
+                
 
                 var archiveUnit = await _archiveUnitService.GetById(item.ArchiveUnitId);
                 if (archiveUnit != null)
@@ -282,10 +273,6 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
                 model.TypeStorageId = Guid.NewGuid();
                 model.TypeStorageCode = row[0].ToString();
                 model.TypeStorageName = row[1].ToString();
-                if (!string.IsNullOrEmpty(row[2].ToString()))
-                {
-                    model.ParentId = type.Where(x => x.TypeStorageCode.Contains(row[2].ToString())).FirstOrDefault().TypeStorageId;
-                }
                 model.ArchiveUnitId = archiveUnit.Where(x => x.ArchiveUnitCode.Contains(row[3].ToString())).FirstOrDefault().ArchiveUnitId;
                 int volume = 0;
                 int.TryParse(row[4].ToString(), out volume);

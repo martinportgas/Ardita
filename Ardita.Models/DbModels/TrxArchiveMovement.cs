@@ -55,5 +55,7 @@ public partial class TrxArchiveMovement
 
     public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
 
+    public virtual ICollection<TrxArchiveReceived> TrxArchiveReceiveds { get; } = new List<TrxArchiveReceived>();
+
     public virtual TrxTypeStorage TypeStorage { get; set; } = null!;
 }
