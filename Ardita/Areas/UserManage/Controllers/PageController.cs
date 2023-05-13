@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Ardita.Models.DbModels;
 using Ardita.Services.Classess;
 using Ardita.Controllers;
-using Ardita.Globals;
+
 using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class PageController : BaseController<MstPage>
     {
 
@@ -40,7 +40,7 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            return View(Const.Form);
+            return View(GlobalConst.Form);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -106,7 +106,7 @@ namespace Ardita.Areas.UserManage.Controllers
             return RedirectToAction("Index", "Page", new { Area = "UserManage" });
         }
 
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Page, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Page, new { Area = GlobalConst.UserManage });
         //public async Task<IActionResult> Update(Guid Id)
         //{
         //    PageInsertViewModel model = new();

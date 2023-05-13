@@ -12,7 +12,7 @@ public class TypeStorageRepository : ITypeStorageRepository
     
     public TypeStorageRepository(BksArditaDevContext context) => _context = context;
     
-    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Include(x => x.ArchiveUnit).Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _context.TrxTypeStorages.Include(x => x.ArchiveUnit.Company).Where(x => x.IsActive == true).ToListAsync();
     
     public async Task<TrxTypeStorage> GetById(Guid id) => await _context.TrxTypeStorages.FirstAsync(x => x.TypeStorageId == id);
     

@@ -1,6 +1,6 @@
 ﻿@model Ardita.Areas.UserManage.Models.PageInsertViewModel
 @using Ardita.Models.ViewModels;
-@using Ardita.Globals;
+@using Ardita.Extensions;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -57,7 +57,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="@Const.Menu" asp-area="@Const.UserManage" asp-action="@Const.SavePage">
+                            <form role="form" id="frmPage" enctype="multipart/form-data" asp-controller="@GlobalConst.Menu" asp-area="@GlobalConst.UserManage" asp-action="@GlobalConst.SavePage">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
@@ -69,7 +69,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <a href="@Url.Action(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = @Model.page.SubmenuId })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                            <a href="@Url.Action(GlobalConst.Detail, GlobalConst.Menu, new { Area = GlobalConst.UserManage, Id = @Model.page.SubmenuId })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                             <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                         </div>
                                     </div>

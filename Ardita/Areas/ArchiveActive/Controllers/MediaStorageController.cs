@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -11,7 +11,7 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace Ardita.Areas.ArchiveActive.Controllers;
 
 [CustomAuthorize]
-[Area(Const.ArchiveActive)]
+[Area(GlobalConst.ArchiveActive)]
 public class MediaStorageController : BaseController<TrxMediaStorage>
 {
     #region CTR
@@ -64,7 +64,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     {
 
         await BindAllDropdown();
-        return View(Const.Form, new TrxMediaStorage());
+        return View(GlobalConst.Form, new TrxMediaStorage());
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -72,7 +72,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     {
         if (model is not null)
         {
-            string[] archiveId = Request.Form[Const.DetailArray].ToArray();
+            string[] archiveId = Request.Form[GlobalConst.DetailArray].ToArray();
 
             if (model.MediaStorageId != Guid.Empty)
             {
@@ -96,7 +96,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -110,7 +110,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -124,7 +124,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -146,7 +146,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.MediaStorage, new { Area = Const.ArchiveActive });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive });
     protected async Task BindAllDropdown()
     {
         ViewBag.listSubSubject = await BindSubSubjectClasscifications();

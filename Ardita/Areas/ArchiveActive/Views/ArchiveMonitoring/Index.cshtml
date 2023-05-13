@@ -1,7 +1,7 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -9,7 +9,7 @@
         <h2>Archive Monitoring</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new { Area = Const.General })"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive 
@@ -71,7 +71,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.ArchiveMonitoring, new { Area = Const.ArchiveActive})',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveMonitoring, new { Area = GlobalConst.ArchiveActive})',
                     "type": "POST",
                     "datatype": "json",
                     "complete": function(xhr, responseText){
@@ -99,7 +99,7 @@
                     {
                         "data": "archiveId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveMonitoring, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveMonitoring, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                                 detail = detail.replace("-1", row.archiveId);
 
                             return detail;

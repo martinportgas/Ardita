@@ -1,7 +1,7 @@
 ﻿using Ardita.Areas.UserManage.Models;
 using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.UserRoles;
@@ -13,7 +13,7 @@ using NPOI.SS.Formula.Atp;
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class UserRoleController : BaseController<IdxUserRole>
     {
         public UserRoleController(
@@ -75,7 +75,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(UserId);
                 ViewBag.listRoles = await BindRoles();
             }
-            return RedirectToAction(Const.Detail, Const.UserRole, new { Area = Const.UserManage, Id = UserId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Area = GlobalConst.UserManage, Id = UserId });
         }
         public override async Task<IActionResult> Remove(Guid Id)
         {
@@ -88,8 +88,8 @@ namespace Ardita.Areas.UserManage.Controllers
                 ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(data.FirstOrDefault().UserId);
                 ViewBag.listRoles = await BindRoles();
             }
-            return RedirectToAction(Const.Detail, Const.UserRole, new { Areas = Const.UserManage, Id = data.FirstOrDefault().UserId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Areas = GlobalConst.UserManage, Id = data.FirstOrDefault().UserId });
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.UserRole, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.UserRole, new { Area = GlobalConst.UserManage });
     }
 }

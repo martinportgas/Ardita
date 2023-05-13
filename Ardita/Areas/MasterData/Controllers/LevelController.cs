@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -14,7 +14,7 @@ namespace Ardita.Areas.MasterData.Controllers
 {
 
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class LevelController : BaseController<TrxLevel>
     {
         public LevelController(
@@ -51,7 +51,7 @@ namespace Ardita.Areas.MasterData.Controllers
             ViewBag.listRooms = await BindRooms();
             ViewBag.listRacks = await BindRacks();
 
-            return View(Const.Form, new TrxLevel());
+            return View(GlobalConst.Form, new TrxLevel());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -64,7 +64,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRooms = await BindRooms();
                 ViewBag.listRacks = await BindRacks();
 
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRooms = await BindRooms();
                 ViewBag.listRacks = await BindRacks();
 
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -98,7 +98,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.listRooms = await BindRooms();
                 ViewBag.listRacks = await BindRacks();
 
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -144,7 +144,7 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var racks = await _rackService.GetAll();
 
                 List<TrxLevel> levels = new();
@@ -188,7 +188,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
                 row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
                 row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
@@ -226,7 +226,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxLevel).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(TrxLevel).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -237,13 +237,13 @@ namespace Ardita.Areas.MasterData.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowRack = excelSheetRacks.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(TrxRack.RackCode));
                 row.CreateCell(2).SetCellValue(nameof(TrxLevel.LevelCode));
                 row.CreateCell(3).SetCellValue(nameof(TrxLevel.LevelName));
 
 
-                rowRack.CreateCell(0).SetCellValue(Const.No);
+                rowRack.CreateCell(0).SetCellValue(GlobalConst.No);
                 rowRack.CreateCell(1).SetCellValue(nameof(TrxRack.RackCode));
                 rowRack.CreateCell(2).SetCellValue(nameof(TrxRack.RackName));
                 rowRack.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
@@ -277,7 +277,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
         }
 
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Level, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Level, new { Area = GlobalConst.MasterData });
 
     }
 }

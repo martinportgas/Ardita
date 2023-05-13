@@ -47,7 +47,7 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
             var result = await _context.MstRoles
-                 .Include(x => x.IdxUserRoles).ThenInclude(x => x.User)
+                 //.Include(x => x.IdxUserRoles).ThenInclude(x => x.User)
                  .Where(
                      x => (x.Name).Contains(model.searchValue) &&
                      x.IsActive == true
@@ -57,8 +57,8 @@ namespace Ardita.Repositories.Classess
                  .Select(x => new {
                     x.RoleId,
                     x.Code,
-                    x.Name,
-                    UserId = x.IdxUserRoles.FirstOrDefault().UserId
+                    x.Name
+                    //UserId = x.IdxUserRoles.FirstOrDefault().UserId
                  })
                  .ToListAsync();
 

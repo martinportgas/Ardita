@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxArchive;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
     int fileNo = 0;
     string backController = ViewBag.backController;
@@ -15,13 +15,13 @@
         <h2>@ViewBag.title</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, backController, new {Area = backArea})">@ViewBag.title</a>
+                <a href="@Url.Action(GlobalConst.Index, backController, new {Area = backArea})">@ViewBag.title</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -80,7 +80,7 @@
                             </div>
                            
                            @* <div>
-                                <a href="@Url.Action(Const.Index, Const.ArchiveMonitoring, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveMonitoring, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
 
                             </div>*@
                         </div>
@@ -151,7 +151,7 @@
                                         @foreach (var item in Model.TrxFileArchiveDetails)
                                         {
                                             <tr>
-                                                <td><a href="@Url.Action(Const.DownloadFile, Const.ArchiveMonitoring,  new { area = Const.ArchiveActive, Id = item.FileArchiveDetailId })">@item.FileName</a></td>
+                                                <td><a href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveMonitoring,  new { area = GlobalConst.ArchiveActive, Id = item.FileArchiveDetailId })">@item.FileName</a></td>
                                             </tr>
                                         }
                                     </tbody>
@@ -240,7 +240,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a href="@Url.Action(Const.Index, backController, new {Area = backArea})" class="btn btn-sm btn-danger float-right m-t-n-xs">Back</a>
+                                <a href="@Url.Action(GlobalConst.Index, backController, new {Area = backArea})" class="btn btn-sm btn-danger float-right m-t-n-xs">Back</a>
                             </div>
                         </div>
                         

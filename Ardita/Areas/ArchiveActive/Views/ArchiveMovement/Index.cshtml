@@ -1,4 +1,4 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,7 +7,7 @@
         <h2>Pemindahan Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new { Area = Const.General })"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
@@ -27,7 +27,7 @@
                 <div class="ibox-title">
                     <h5>Pemindahan Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.ArchiveMovement, new { Area = Const.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -60,7 +60,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.ArchiveMovement, new { Area = Const.ArchiveActive })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
                     "type": "POST",
                     "datatype": "json",
                     //"complete": function (xhr, responseText) {
@@ -84,19 +84,19 @@
                     {
                         "data": "archiveMovementId", "name": "archiveMovementId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Update, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
-                            var submit = row.statusId == @((int)Const.Status.Rejected) || row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Preview, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Preview, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
-                            var download = row.statusId != @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.DownloadFile, Const.ArchiveMovement, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            var download = row.statusId != @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
                             download = download.replace("-1", data);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);

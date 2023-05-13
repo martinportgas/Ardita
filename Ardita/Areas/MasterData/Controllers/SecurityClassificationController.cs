@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -12,7 +12,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class SecurityClassificationController : BaseController<MstSecurityClassification>
 {
 
@@ -42,7 +42,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
     public override async Task<IActionResult> Add()
     {
         await Task.Delay(0);
-        return View(Const.Form, new MstSecurityClassification());
+        return View(GlobalConst.Form, new MstSecurityClassification());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
@@ -50,7 +50,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
         var data = await _securityClassificationService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -63,7 +63,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
         var data = await _securityClassificationService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -76,7 +76,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
         var data = await _securityClassificationService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -125,7 +125,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             List<MstSecurityClassification> securityClassifications = new();
             MstSecurityClassification securityClassification;
@@ -169,7 +169,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
             row.CreateCell(2).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
 
@@ -199,7 +199,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(MstSecurityClassification).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(MstSecurityClassification).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -208,7 +208,7 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
             row.CreateCell(2).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
 
@@ -227,6 +227,6 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.SecurityClassification, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData });
     #endregion
 }

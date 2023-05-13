@@ -1,4 +1,4 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,7 +7,7 @@
         <h2>Subject Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new { Area = Const.General })"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data

@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @model Ardita.Models.DbModels.TrxLevel
 @using Ardita.Models.ViewModels;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 }
 
@@ -12,13 +12,13 @@
         <h2>Level</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Level, new {Area = Const.MasterData})">Level</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Level, new {Area = GlobalConst.MasterData})">Level</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -63,19 +63,19 @@
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
                                         <input type="hidden" asp-for="LevelId" />
-                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.Floor.ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Rack.Room.Floor.ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Lantai</label>
-                                        <select id="txtFloorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.Floor.FloorId" asp-items="ViewBag.listFloors" data-placeholder="-- Pilih Lantai --"><option value=""></option></select>
+                                        <select id="txtFloorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Rack.Room.Floor.FloorId" asp-items="ViewBag.listFloors" data-placeholder="-- Pilih Lantai --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Ruangan</label>
-                                        <select id="txtRoomId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Rack.Room.RoomId" asp-items="ViewBag.listRooms" data-placeholder="-- Pilih Ruangan --"><option value=""></option></select>
+                                        <select id="txtRoomId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Rack.Room.RoomId" asp-items="ViewBag.listRooms" data-placeholder="-- Pilih Ruangan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Rak</label>
-                                        <select id="txtRackId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RackId" asp-items="ViewBag.listRacks" data-placeholder="-- Pilih Rak --"><option value=""></option></select>
+                                        <select id="txtRackId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RackId" asp-items="ViewBag.listRacks" data-placeholder="-- Pilih Rak --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Tingkat</label>
@@ -87,7 +87,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Level, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.Level, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isInput)
                                     {
                                         <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
@@ -145,7 +145,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.Level, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindFloorsByArchiveUnitId, GlobalConst.Level, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -175,7 +175,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindRoomByFloorId, Const.Level, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.Level, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -205,7 +205,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindRackByRoomId, Const.Level, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindRackByRoomId, GlobalConst.Level, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {

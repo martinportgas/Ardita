@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -13,7 +13,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class ClassificationSubSubjectController : BaseController<TrxSubSubjectClassification>
     {
         #region MEMBER AND CTR
@@ -59,7 +59,7 @@ namespace Ardita.Areas.MasterData.Controllers
             ViewBag.listPosition = await BindPositions();
             ViewBag.ListArchiveCreator = await BindArchiveCreators();
             ViewBag.ListSecurityClassification = await BindSecurityClassifications();
-            return View(Const.Form, new TrxSubSubjectClassification());
+            return View(GlobalConst.Form, new TrxSubSubjectClassification());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -74,7 +74,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -94,7 +94,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -114,7 +114,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -185,7 +185,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxSubSubjectClassification).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(TrxSubSubjectClassification).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -340,7 +340,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             var dataSubjects = await _classificationSubjectService.GetAll();
             var dataCreators = await _archiveCreatorService.GetAll();
@@ -380,7 +380,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationSubSubject, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ClassificationSubSubject, new { Area = GlobalConst.MasterData });
         #endregion
     }
 }

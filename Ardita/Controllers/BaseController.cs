@@ -1,4 +1,5 @@
-﻿using Ardita.Globals;
+﻿using Ardita.Extensions;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.Archive;
@@ -457,9 +458,9 @@ public abstract class BaseController<T> : Controller
         var dataDst = await _archiveDestroyService.GetDetailAll();
         var dataMove = await _archiveMovementService.GetDetailAll();
 
-        var detailExt = type == Const.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
-        var detailDst = type == Const.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
-        var detailMove = type == Const.ArchiveMovement ? dataMove.Where(x => x.ArchiveMovementId != DetailId) : dataMove;
+        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
+        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
+        var detailMove = type == GlobalConst.ArchiveMovement ? dataMove.Where(x => x.ArchiveMovementId != DetailId) : dataMove;
 
         var result =
             (from dataALl in data

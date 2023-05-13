@@ -1,13 +1,13 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxMediaStorage;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 
     bool isEditable = false;
-    if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+    if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
     {
         isEditable = true;
     }
@@ -18,13 +18,13 @@
         <h2>Media Storage</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.MediaStorage, new {Area = Const.ArchiveActive})">Media Storage</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.MediaStorage, new {Area = GlobalConst.ArchiveActive})">Media Storage</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -80,7 +80,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Archive Unit</label>
-                                                <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtArchiveUnitId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Archive Unit --">
                                                     <option value=""></option>
@@ -88,7 +88,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Type Storage</label>
-                                                <select asp-items="ViewBag.listTypeStorage" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtTypeStorageId" class="select2_demo_1 form-control" asp-for="TypeStorageId"
                                                         data-placeholder="-- Select Type Storage --">
                                                     <option value=""></option>
@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Floor</label>
-                                                <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtFloorId" class="select2_demo_1 form-control m-1"
                                                         data-placeholder="-- Select Floor --">
                                                     <option value=""></option>
@@ -112,7 +112,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Room</label>
-                                                <select asp-for="Row!.Level!.Rack!.RoomId!" asp-items="ViewBag.listRoom" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.Rack!.RoomId!" asp-items="ViewBag.listRoom" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtRoomId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Room --">
                                                     <option value=""></option>
@@ -120,7 +120,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Rack</label>
-                                                <select asp-for="Row!.Level!.RackId!" asp-items="ViewBag.listRack" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row!.Level!.RackId!" asp-items="ViewBag.listRack" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtRackId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Rack --">
                                                     <option value=""></option>
@@ -128,7 +128,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Level</label>
-                                                <select asp-for="Row.LevelId" asp-items="ViewBag.listLevel" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="Row.LevelId" asp-items="ViewBag.listLevel" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtLevelId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Level --">
                                                     <option value=""></option>
@@ -136,23 +136,23 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Row</label>
-                                                <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtRowId" asp-for="RowId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Row --">
                                                     <option value=""></option>
                                                 </select>
                                             </div>
                                             <div>
-                                                @if (form.CurrentAction == Const.Detail)
+                                                @if (form.CurrentAction == GlobalConst.Detail)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                    <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                                        class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
                                                 }
-                                                else if (form.CurrentAction == Const.Remove)
+                                                else if (form.CurrentAction == GlobalConst.Remove)
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                    <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                                        class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
@@ -164,7 +164,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <a href="@Url.Action(Const.Index, form.CurrentController, new { Area = form.CurrentArea })"
+                                                    <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                                        class="btn btn-sm btn-default float-right m-t-n-xs">
                                                         Cancel
                                                     </a>
@@ -188,7 +188,7 @@
                                         {
                                             <div class="form-group">
                                                 <label>Sub Subject Classifications</label>
-                                                <select asp-items="ViewBag.listSubSubject" (form.isInput ? Const.Required : Const.Disabled)
+                                                <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
                                                         data-placeholder="-- Select Sub Subject Classification --">
                                                     <option value=""></option>
@@ -197,7 +197,7 @@
                                             <div class="form-group">
                                                 <label>Archive</label>
                                                 <select id="txtArchiveId"
-                                                        class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)"
+                                                        class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     asp-items="ViewBag.listArchive"
                                                         data-placeholder="-- Select Archive --">
                                                     <option value=""></option>
@@ -259,7 +259,7 @@
                 addArchive();
             });
 
-            if ("@form.CurrentAction" != "@Const.Add") {
+            if ("@form.CurrentAction" != "@GlobalConst.Add") {
                 initTableArchive();
             }
 
@@ -274,7 +274,7 @@
                 allowClear: true,
                 placeholder: '-- Select Archive --',
                 ajax: {
-                    url: '@Url.Action(Const.BindArchivesBySubSubjectClassificationId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindArchivesBySubSubjectClassificationId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -309,7 +309,7 @@
                 allowClear: true,
                 placeholder: '-- Select Type Storage --',
                 ajax: {
-                    url: '@Url.Action(Const.BindTypeStorageByArchiveUnitId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindTypeStorageByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -336,7 +336,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindFloorsByArchiveUnitId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindFloorsByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -366,7 +366,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindRoomByFloorId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -396,7 +396,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindRackByRoomId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindRackByRoomId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -426,7 +426,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindLevelByRackId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindLevelByRackId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -456,7 +456,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(Const.BindRowByLevelId, Const.MediaStorage, new { Area = Const.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindRowByLevelId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -481,7 +481,7 @@
 
         function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
             var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-default btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
-            var view = `<a id="btn-view-archive" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
+            var view = `<a id="btn-view-archive" href="@Url.Action(GlobalConst.Detail, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
 
             listArchiveId.push(archiveId);
             remove = remove.replace("-1", archiveId);
@@ -535,10 +535,10 @@
 
                 $.ajax({
                     url: url,
-                    type: "@Const.GET",
+                    type: "@GlobalConst.GET",
                     data: { Id: id },
-                    dataType: "@Const.JSON",
-                    contentType: "@Const.APPLICATIONJSON",
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
                     success: function (data) {
                         if ($("#txtDifferenceVolume").val() <= data.volume) {
                             swal({
@@ -593,13 +593,13 @@
         }
 
         function getTypeStorageById(id) {
-            var url = '@Url.Action(Const.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
             $.ajax({
                 url: url,
-                type: "@Const.GET",
+                type: "@GlobalConst.GET",
                 data: { Id: id },
-                dataType: "@Const.JSON",
-                contentType: "@Const.APPLICATIONJSON",
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
                 success: function (data) {
                     $("#txtTotalVolume").val(data.volume);
                     $("#txtDifferenceVolume").val(data.volume);

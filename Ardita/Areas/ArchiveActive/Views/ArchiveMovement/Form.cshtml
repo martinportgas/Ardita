@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxArchiveMovement
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
 }
@@ -13,13 +13,13 @@
         <h2>Pemindahan Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.ArchiveMovement, new {Area = Const.ArchiveActive})">Pemindahan Arsip</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveMovement, new {Area = GlobalConst.ArchiveActive})">Pemindahan Arsip</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -77,15 +77,15 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Nama Pemindahan</label>
-                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="MovementName">
+                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="MovementName">
                                             </div>
                                             <div class="form-group">
                                                 <label>Jenis Penyimpanan</label>
-                                                <select onchange="getTypeStorageDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                <select onchange="getTypeStorageDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Total Volume</label>
-                                                <input readonly type="text" placeholder="" id="txtTotal" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="TotalVolume">
+                                                <input readonly type="text" placeholder="" id="txtTotal" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TotalVolume">
                                             </div>
                                             <div class="form-group">
                                                 <label>Sisa Volume</label>
@@ -93,16 +93,16 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Jadwal Pemindahan</label>
-                                                <input type="date" id="txtSchedule" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="DateSchedule">
+                                                <input type="date" id="txtSchedule" min="@(DateTime.Now.ToString("yyyy-MM-dd"))" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DateSchedule">
                                             </div>
                                             <div class="form-group">
                                                 <label>Deskripsi</label>
-                                                <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="Description"></textarea>
+                                                <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : Const.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -116,9 +116,9 @@
                                                     foreach (Ardita.Models.DbModels.TrxApproval item in ViewBag.approval)
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : Const.Hidden) @Html.Raw(ViewBag.approval.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
+                                                            <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.approval.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:95%">
-                                                                <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="approval[]" asp-items="ViewBag.listApproval" data-placeholder="-- Pilih Approval --"><option value="@item.EmployeeId" selected>@item.Employee.Name</option></select>
+                                                                <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="approval[]" asp-items="ViewBag.listApproval" data-placeholder="-- Pilih Approval --"><option value="@item.EmployeeId" selected>@item.Employee.Name</option></select>
                                                             </td>
                                                         </tr>
                                                     }
@@ -126,9 +126,9 @@
                                                 else
                                                 {
                                                     <tr>
-                                                        <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : Const.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
+                                                        <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
                                                         <td style="width:95%">
-                                                            <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="approval[]" asp-items="ViewBag.listApproval" data-placeholder="-- Pilih Approval --"><option value=""></option></select>
+                                                            <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="approval[]" asp-items="ViewBag.listApproval" data-placeholder="-- Pilih Approval --"><option value=""></option></select>
                                                         </td>
                                                     </tr>
                                                 }
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ars')" id="addArs" @Html.Raw(form.isInput ? string.Empty : Const.Hidden)><i class="fa fa-plus"></i> Tambah Arsip</button>
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ars')" id="addArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Arsip</button>
                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -154,9 +154,9 @@
                                                     foreach (Ardita.Models.DbModels.TrxArchiveMovementDetail item in ViewBag.subDetail)
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : Const.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
+                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:55%">
-                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
+                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
                                                             </td>
                                                             <td style="width:20%">
                                                                 <input readonly type="text" class="form-control creator" value="@item.Archive.Creator.CreatorName" />
@@ -170,9 +170,9 @@
                                                 else
                                                 {
                                                     <tr>
-                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : Const.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
+                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
                                                         <td style="width:55%">
-                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="archive[]" asp-items="ViewBag.listArchiveRetention" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
+                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" asp-items="ViewBag.listArchiveRetention" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
                                                         </td>
                                                         <td style="width:20%">
                                                             <input readonly type="text" class="form-control creator" />
@@ -187,25 +187,25 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ArchiveMovement, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveMovement, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        if(form.CurrentAction != Const.Approval)
+                                        if(form.CurrentAction != GlobalConst.Approval)
                                         {
-                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == Const.Preview ? form.SubmitText : form.SaveText)</button>
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))</button>
                                         }
 
-                                        if (form.CurrentAction == Const.Approval && ViewBag.level == Model.ApproveLevel)
+                                        if (form.CurrentAction == GlobalConst.Approval && ViewBag.level == Model.ApproveLevel)
                                         {
-                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">@form.ApprovalText</button>
-                                            <button class="btn btn-sm btn-default float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="submit" name="submit" value="Reject">Reject</button>
-                                            <button class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" type="button" onclick="showReason($(this))">Reject</button>
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">@Html.Raw(form.ApprovalText)</button>
+                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="submit" name="submit" value="Reject">@Html.Raw(form.RejectText)</button>
+                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" type="button" onclick="showReason(this.id)" id="btnReason">@Html.Raw(form.RejectText)</button>
+                                            <button class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" style="display:none" type="button" onclick="showReason(this.id)" id="btnRefresh">@Html.Raw($"{GlobalConst.IconRefresh}{GlobalConst.Cancel} {GlobalConst.Reject}")</button>
                                             <div style="width:100%;display:flex;justify-content:end">
                                                 <div style="width:30%;">
                                                     <br />
                                                     <textarea asp-for="Note" class="form-control" placeholder="Alasan Reject" id="txtNote"></textarea>
                                                 </div>
-                                                
                                             </div>
                                         }
                                     }
@@ -222,17 +222,19 @@
 @section Scripts {
     <script type="text/javascript">
 
-        function showReason(e){
-            if(e.html().toLowerCase() == 'reject'){
+        function showReason(e) {
+            if (e.toLowerCase() == 'btnreason') {
                 $('#txtNote').show().prop('required', true).next().show();;
                 $('#btnReject').show();
                 $('#btnApprove').hide();
-                e.html('Cancel Reject');
-            }else{
+                $('#btnReason').hide();
+                $('#btnRefresh').show();
+            } else {
                 $('#txtNote').hide().val('').prop('required', false).next().hide();;
                 $('#btnReject').hide();
                 $('#btnApprove').show();
-                e.html('Reject');
+                $('#btnReason').show();
+                $('#btnRefresh').hide();
             }
         }
 
@@ -247,7 +249,7 @@
             }
             elClone.appendTo(`#listdtl${nameCapital}`);
             $(`.min${nameCapital}`).show();
-            var bindName = name == 'ars' ? '@Const.BindArchiveRetentionByParam' : '@Const.BindEmployeeByParam';
+            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindEmployeeByParam';
             initSelect2(name, bindName);
         }
 
@@ -266,11 +268,11 @@
                     theme: 'bootstrap4',
                     allowClear: true,
                     ajax: {
-                        url: '@Url.Action("action", Const.ArchiveMovement, new { Area = Const.ArchiveActive })'.replace('action', act),
+                        url: '@Url.Action("action", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })'.replace('action', act),
                         type: "POST",
                         data: function (params) {
                             var query = {
-                                param: act == '@Const.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveMovementId'},${'@Const.ArchiveMovement'}` : params.term
+                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveMovementId'},${'@GlobalConst.ArchiveMovement'}` : params.term
                             }
                             return query;
                         },
@@ -328,7 +330,7 @@
         }
 
         function getArchiveDetail(e, Id, totalVolume){
-            var url = '@Url.Action("GetDetailArchive", Const.ArchiveMovement, new { Area = Const.ArchiveActive })';
+            var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
             var param = new Object();
             param.Id = Id;
 
@@ -355,7 +357,7 @@
         }
 
         function getTypeStorageDetail(e){
-            var url = '@Url.Action("GetDetailTypeStorage", Const.ArchiveMovement, new { Area = Const.ArchiveActive })';
+            var url = '@Url.Action("GetDetailTypeStorage", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
             var param = new Object();
             param.Id = e.val();
 
@@ -385,12 +387,12 @@
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
-            if ('@form.CurrentAction' == '@Const.Approval' && '@ViewBag.level' != '@Model.ApproveLevel'){
+            if ('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel'){
                 swal({ title: "Attention!", text: 'Approval Sudah Ditindaklanjuti!', type: "info" });
             }
 
-            initSelect2('ars', '@Const.BindArchiveRetentionByParam');
-            initSelect2('apr', '@Const.BindEmployeeByParam');
+            initSelect2('ars', '@GlobalConst.BindArchiveRetentionByParam');
+            initSelect2('apr', '@GlobalConst.BindEmployeeByParam');
         });
     </script>
 }

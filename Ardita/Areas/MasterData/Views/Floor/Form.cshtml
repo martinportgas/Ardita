@@ -1,25 +1,25 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @model Ardita.Models.DbModels.TrxFloor
 @using Ardita.Models.ViewModels;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>@Const.Floor</h2>
+        <h2>@GlobalConst.Floor</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})">@Const.Floor</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Floor, new {Area = GlobalConst.MasterData})">@GlobalConst.Floor</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -64,7 +64,7 @@
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
                                         <input type="hidden" asp-for="FloorId" />
-                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Lantai</label>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Floor, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.Floor, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
                                     @if (form.isInput)
                                     {
                                         <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>

@@ -1,10 +1,10 @@
 ﻿@model Ardita.Models.DbModels.MstMenu
 @using Ardita.Models.ViewModels;
-@using Ardita.Globals;
+@using Ardita.Extensions;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
 }
@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.Menu, new { Area = Const.UserManage })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.Menu, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" onclick="onSubmit(this, event);">@Html.Raw(form.SaveText)</button>
                                 </div>
                             </form>

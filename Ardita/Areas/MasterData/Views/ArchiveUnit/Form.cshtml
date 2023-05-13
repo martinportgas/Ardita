@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxArchiveUnit;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 }
 
@@ -12,13 +12,13 @@
         <h2>Archive Unit</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.ArchiveUnit, new {Area = Const.MasterData})">Master Archive Unit</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveUnit, new {Area = GlobalConst.MasterData})">Master Archive Unit</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Company</label>
-                                        <select asp-for="CompanyId" asp-items="ViewBag.listCompany" (form.isInput ? Const.Required : Const.Disabled)
+                                        <select asp-for="CompanyId" asp-items="ViewBag.listCompany" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                 id="txtCompany" class="select2_demo_1 form-control"
                                                 data-placeholder="-- Select Company --">
                                             <option value=""></option>
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ArchiveUnit, new {Area = Const.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveUnit, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
                                     @if (form.isInput)
                                     {
                                         <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>

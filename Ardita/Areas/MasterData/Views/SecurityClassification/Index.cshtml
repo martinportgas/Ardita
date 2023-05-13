@@ -1,8 +1,8 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 }
 
@@ -11,7 +11,7 @@
         <h2>Security Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new { Area = Const.General })"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
@@ -31,8 +31,8 @@
                 <div class="ibox-title">
                     <h5>Classification</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.SecurityClassification, new { Area = Const.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action(Const.Export, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Export, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <form id="frmSecurityClassificationUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.SecurityClassification" asp-action="@Const.Upload" asp-area="@Const.MasterData">
+                    <form id="frmSecurityClassificationUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.SecurityClassification" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.MasterData">
                         @Html.AntiForgeryToken();
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -76,7 +76,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.SecurityClassification, new { Area = Const.MasterData })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
                             <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
@@ -98,7 +98,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.SecurityClassification, new { Area = Const.MasterData})',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -117,13 +117,13 @@
                     {
                         "data": "securityClassificationId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.SecurityClassification, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.securityClassificationId);
 
-                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(Const.Update, Const.SecurityClassification, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.securityClassificationId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.SecurityClassification, new { Area = Const.MasterData, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.securityClassificationId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

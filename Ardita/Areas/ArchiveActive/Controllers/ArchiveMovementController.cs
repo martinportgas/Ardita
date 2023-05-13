@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -10,7 +10,7 @@ using NPOI.SS.Formula.Functions;
 namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
-    [Area(Const.ArchiveActive)]
+    [Area(GlobalConst.ArchiveActive)]
     public class ArchiveMovementController : BaseController<TrxArchiveMovement>
     {
         #region MEMBER AND CTR
@@ -22,7 +22,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IEmployeeService employeeService,
             IArchiveRetentionService archiveRetentionService,
             IArchiveApprovalService archiveApprovalService,
-            ITypeStorageService typeStorageService)
+            ITypeStorageService typeStorageService,
+            IMediaStorageService mediaStorageService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -32,6 +33,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _archiveDestroyService = archiveDestroyService;
             _archiveMovementService = archiveMovementService;
             _typeStorageService = typeStorageService;
+            _mediaStorageService = mediaStorageService;
         }
         #endregion
         #region MAIN ACTION
@@ -86,11 +88,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
             var model = new TrxArchiveMovement();
-            model.MovementCode = Const.InitialCode;
+            model.MovementCode = GlobalConst.InitialCode;
             Guid Id = Guid.Empty;
             ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-            ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveExtend);
-            return View(Const.Form, model);
+            ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
+            return View(GlobalConst.Form, model);
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -99,8 +101,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             {
                 ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveMovement);
-                return View(Const.Form, model);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -112,10 +114,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                ViewBag.listTypeStorage = await BindTypeStorage();
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveMovement);
-                return View(Const.Form, model);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -127,10 +129,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                ViewBag.listTypeStorage = await BindTypeStorage();
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveMovement);
-                return View(Const.Form, model);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -142,10 +144,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                ViewBag.listTypeStorage = await BindTypeStorage();
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveMovement);
-                return View(Const.Form, model);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -158,10 +160,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             if (model != null)
             {
                 ViewBag.level = Level;
-                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                ViewBag.listTypeStorage = await BindTypeStorage();
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, Const.ArchiveMovement);
-                return View(Const.Form, model);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -180,14 +182,14 @@ namespace Ardita.Areas.ArchiveActive.Controllers
 
                 if (model.ArchiveMovementId != Guid.Empty)
                 {
-                    model.StatusId = (int)Const.Status.Draft;
+                    model.StatusId = (int)GlobalConst.STATUS.Draft;
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdatedDate = DateTime.Now;
                     result = await _archiveMovementService.Update(model);
                 }
                 else
                 {
-                    model.StatusId = (int)Const.Status.Draft;
+                    model.StatusId = (int)GlobalConst.STATUS.Draft;
                     model.ApproveLevel = 1;
                     model.ApproveMax = listApproval.Length;
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
@@ -197,7 +199,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
 
                 if (listApproval.Length > 0)
                 {
-                    result = await _archiveApprovalService.DeleteByTransIdandApprovalCode(model.ArchiveMovementId, Const.ArchiveMovement);
+                    result = await _archiveApprovalService.DeleteByTransIdandApprovalCode(model.ArchiveMovementId, GlobalConst.ArchiveMovement);
 
                     List<TrxApproval> modelsApr = new();
                     TrxApproval modelApr;
@@ -213,7 +215,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                         {
                             modelApr = new();
                             modelApr.TransId = model.ArchiveMovementId;
-                            modelApr.ApprovalCode = Const.ArchiveMovement;
+                            modelApr.ApprovalCode = GlobalConst.ArchiveMovement;
                             modelApr.EmployeeId = employeeId;
                             modelApr.ApprovalLevel = approvalLevel;
                             modelApr.CreatedBy = AppUsers.CurrentUser(User).UserId;
@@ -275,7 +277,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             if (model != null && model.ArchiveMovementId != Guid.Empty)
             {
-                model.StatusId = (int)Const.Status.ApprovalProcess;
+                model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveMovementService.Submit(model);
@@ -288,23 +290,23 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             if (model != null && model.ArchiveMovementId != Guid.Empty)
             {
-                var ApprovalAction = Request.Form[Const.Submit];
-                if(ApprovalAction == Const.Approve)
+                var ApprovalAction = Request.Form[GlobalConst.Submit];
+                if(ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)
-                        model.StatusId = (int)Const.Status.ApprovalProcess;
+                        model.StatusId = (int)GlobalConst.STATUS.Approved;
                     else
                         model.ApproveLevel += 1;
                 }
-                if (ApprovalAction == Const.Reject)
+                if (ApprovalAction == GlobalConst.Reject)
                 {
-                    model.StatusId = (int)Const.Status.Rejected;
+                    model.StatusId = (int)GlobalConst.STATUS.Rejected;
                 }
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveMovementService.Submit(model);
 
-                if (model.StatusId == (int)Const.Status.Approved)
+                if (model.StatusId == (int)GlobalConst.STATUS.Approved)
                 {
                     var modelDetail = await _archiveMovementService.GetDetailByMainId(model.ArchiveMovementId);
                     if (modelDetail.Any())
@@ -324,7 +326,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
+            return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive });
         }
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
@@ -333,7 +335,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveMovement, new { Area = Const.ArchiveActive });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive });
         #endregion
     }
 }

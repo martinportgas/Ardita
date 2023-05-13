@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -13,7 +13,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class TypeStorageController : BaseController<TrxTypeStorage>
 {
     public TypeStorageController(IArchiveUnitService archiveUnitService, IRoomService roomService, ITypeStorageService typeStorage)
@@ -44,7 +44,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
         ViewBag.listArchiveUnit = await BindArchiveUnits();
         ViewBag.listTypeStorage = await BindTypeStorage();
 
-        return View(Const.Form, new TrxTypeStorage());
+        return View(GlobalConst.Form, new TrxTypeStorage());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
@@ -55,7 +55,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -71,7 +71,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -87,7 +87,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
             ViewBag.listArchiveUnit = await BindArchiveUnits();
             ViewBag.listTypeStorage = await BindTypeStorage();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -132,7 +132,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(TrxTypeStorage).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(TrxTypeStorage).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -266,7 +266,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     public async Task<IActionResult> Upload()
     {
         IFormFile file = Request.Form.Files[0];
-        var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+        var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
         var type = await _typeStorageService.GetAll();
         var archiveUnit = await _archiveUnitService.GetAll();
@@ -304,7 +304,7 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.TypeStorage, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData });
 
     #endregion
 }

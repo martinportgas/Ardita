@@ -6,13 +6,13 @@ using Ardita.Services.Classess;
 using Ardita.Models.DbModels;
 using Ardita.Areas.UserManage.Models;
 using Ardita.Controllers;
-using Ardita.Globals;
+
 using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class RoleController : BaseController<MstRole>
     {
         public RoleController(IRoleService roleService)
@@ -36,7 +36,7 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            return View(Const.Form, new MstRole());
+            return View(GlobalConst.Form, new MstRole());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -45,7 +45,7 @@ namespace Ardita.Areas.UserManage.Controllers
             var roles = await _roleService.GetById(Id);
             if (roles != null)
             { 
-                return View(Const.Form, roles);
+                return View(GlobalConst.Form, roles);
             }
             else
             {
@@ -60,7 +60,7 @@ namespace Ardita.Areas.UserManage.Controllers
             var roles = await _roleService.GetById(Id);
             if (roles != null)
             {
-                return View(Const.Form, roles);
+                return View(GlobalConst.Form, roles);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Ardita.Areas.UserManage.Controllers
             var roles = await _roleService.GetById(Id);
             if (roles != null)
             {
-                return View(Const.Form, roles);
+                return View(GlobalConst.Form, roles);
             }
             else
             {
@@ -118,6 +118,6 @@ namespace Ardita.Areas.UserManage.Controllers
             }
             return RedirectToIndex();
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Role, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Role, new { Area = GlobalConst.UserManage });
     }
 }

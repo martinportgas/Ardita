@@ -1,5 +1,6 @@
 ﻿using Ardita.Controllers;
-using Ardita.Globals;
+using Ardita.Extensions;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -9,7 +10,7 @@ using System.Text.Json.Serialization;
 namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
-    [Area(Const.ArchiveActive)]
+    [Area(GlobalConst.ArchiveActive)]
     public class ArchiveRetentionController : BaseController<TrxArchive>
     {
         #region MEMBER AND CTR
@@ -44,10 +45,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _archiveService.GetById(Id);
-            ViewBag.title = Const.TitleArchiveRetention;
-            ViewBag.backController = Const.ArchiveRetention;
-            ViewBag.backArea = Const.ArchiveActive;
-            return PartialView(Const._ArchiveMonitoringDetail, model);
+            ViewBag.title = GlobalConst.TitleArchiveRetention;
+            ViewBag.backController = GlobalConst.ArchiveRetention;
+            ViewBag.backArea = GlobalConst.ArchiveActive;
+            return PartialView(GlobalConst._ArchiveMonitoringDetail, model);
         }
 
         [HttpGet]

@@ -1,4 +1,4 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,7 +7,7 @@
         <h2>Persetujuan Sirkulasi Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new { Area = Const.General })"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
@@ -58,7 +58,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.ArchiveApproval, new { Area = Const.ArchiveActive })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive })',
                     "type": "POST",
                     "datatype": "json",
                     //"complete": function (xhr, responseText) {
@@ -83,7 +83,7 @@
                         "data": "archiveApprovalId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             console.log(row);
-                            var submit = row.statusId == @((int)Const.Status.ApprovalProcess) || row.statusId == @((int)Const.Status.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(Const.Approval, "Controller", new { Area = Const.ArchiveActive, Id = -1, Level = "aprLevel" })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, "Controller", new { Area = GlobalConst.ArchiveActive, Id = -1, Level = "aprLevel" })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", row.transId).replace('Controller', row.approvalCode).replace('aprLevel', row.approvalLevel);
 
                             return submit;

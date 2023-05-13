@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -13,7 +13,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class ArchiveCreatorController : BaseController<MstCreator>
 {
     #region MEMBER AND CTR
@@ -48,7 +48,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
 
         await Task.Delay(0);
 
-        return View(Const.Form, new MstCreator());
+        return View(GlobalConst.Form, new MstCreator());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
@@ -58,7 +58,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -73,7 +73,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -88,7 +88,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
 
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -137,7 +137,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
             var archiveUnits = await _archiveUnitService.GetAll();
 
 
@@ -185,7 +185,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyName));
             row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
             row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorCode));
@@ -218,7 +218,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(MstCreator).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(MstCreator).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -230,13 +230,13 @@ public class ArchiveCreatorController : BaseController<MstCreator>
             IRow rowArchiveUnits = excelSheetArchiveUnits.CreateRow(0);
 
             //Archive Creators
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
             row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
             row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorName));
 
             //Archive Units
-            rowArchiveUnits.CreateCell(0).SetCellValue(Const.No);
+            rowArchiveUnits.CreateCell(0).SetCellValue(GlobalConst.No);
             rowArchiveUnits.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
             rowArchiveUnits.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
             rowArchiveUnits.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
@@ -277,7 +277,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveCreator, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveCreator, new { Area = GlobalConst.MasterData });
 
     #endregion
 }

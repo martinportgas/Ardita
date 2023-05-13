@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
-    [Area(Const.ArchiveActive)]
+    [Area(GlobalConst.ArchiveActive)]
     public class ArchiveMonitoringController : BaseController<TrxArchive>
     {
         public override async Task<ActionResult> Index() => await base.Index();
@@ -27,6 +27,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
+                if(AppUsers.CurrentUser(User).RoleCode == "ADM")
                 model.PositionId = AppUsers.CurrentUser(User).PositionId;
                 var result = await _archiveService.GetList(model);
 
@@ -40,10 +41,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _archiveService.GetById(Id);
-            ViewBag.title = Const.TitleArchiveMonitoring;
-            ViewBag.backController = Const.ArchiveMonitoring;
-            ViewBag.backArea = Const.ArchiveActive;
-            return PartialView(Const._ArchiveMonitoringDetail, model);
+            ViewBag.title = GlobalConst.TitleArchiveMonitoring;
+            ViewBag.backController = GlobalConst.ArchiveMonitoring;
+            ViewBag.backArea = GlobalConst.ArchiveActive;
+            return PartialView(GlobalConst._ArchiveMonitoringDetail, model);
         }
 
         [HttpGet]

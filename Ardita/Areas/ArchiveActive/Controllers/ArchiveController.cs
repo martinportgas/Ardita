@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -12,7 +12,7 @@ using System.Data;
 namespace Ardita.Areas.ArchiveActive.Controllers;
 
 [CustomAuthorize]
-[Area(Const.ArchiveActive)]
+[Area(GlobalConst.ArchiveActive)]
 public class ArchiveController : BaseController<TrxArchive>
 {
     #region CTR
@@ -51,7 +51,7 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         await BindAllDropdown();
 
-        return View(Const.Form, new TrxArchive());
+        return View(GlobalConst.Form, new TrxArchive());
     }
     public override async Task<IActionResult> Update(Guid Id)
     {
@@ -60,7 +60,7 @@ public class ArchiveController : BaseController<TrxArchive>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -73,11 +73,11 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         if (model is not null)
         {
-            var files = Request.Form[Const.Files];
+            var files = Request.Form[GlobalConst.Files];
 
             if (model.ArchiveId != Guid.Empty)
             {
-                string[] filesDeleted = Request.Form[Const.IdFileDeletedArray].ToArray();
+                string[] filesDeleted = Request.Form[GlobalConst.IdFileDeletedArray].ToArray();
 
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
@@ -99,7 +99,7 @@ public class ArchiveController : BaseController<TrxArchive>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -123,7 +123,7 @@ public class ArchiveController : BaseController<TrxArchive>
         {
             await BindAllDropdown();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -141,7 +141,7 @@ public class ArchiveController : BaseController<TrxArchive>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
             var Gmds = await _gmdService.GetAll();
             var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
             var SecurityClassifications = await _securityClassificationService.GetAll();
@@ -198,7 +198,7 @@ public class ArchiveController : BaseController<TrxArchive>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdName).ToCleanNameOf());
             row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName).ToCleanNameOf());
             row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName).ToCleanNameOf());
@@ -250,7 +250,7 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(TrxArchive).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(TrxArchive).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -269,7 +269,7 @@ public class ArchiveController : BaseController<TrxArchive>
             IRow rowCreator = excelSheetCreator.CreateRow(0);
 
             //Initiate Main Column
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode).ToCleanNameOf());
             row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode).ToCleanNameOf());
             row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode).ToCleanNameOf());
@@ -285,22 +285,22 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(13).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
 
             //Initiate Sheet GMD 
-            rowGMD.CreateCell(0).SetCellValue(Const.No);
+            rowGMD.CreateCell(0).SetCellValue(GlobalConst.No);
             rowGMD.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorCode));
             rowGMD.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorName));
 
             //Initiate Sub Subject Classification
-            rowSubSubjectClassification.CreateCell(0).SetCellValue(Const.No);
+            rowSubSubjectClassification.CreateCell(0).SetCellValue(GlobalConst.No);
             rowSubSubjectClassification.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
             rowSubSubjectClassification.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
 
             //Initiate Security Classification
-            rowSecurityClassification.CreateCell(0).SetCellValue(Const.No);
+            rowSecurityClassification.CreateCell(0).SetCellValue(GlobalConst.No);
             rowSecurityClassification.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
             rowSecurityClassification.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
 
             //Initiate Creator
-            rowCreator.CreateCell(0).SetCellValue(Const.No);
+            rowCreator.CreateCell(0).SetCellValue(GlobalConst.No);
             rowCreator.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorCode));
             rowCreator.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorName));
 
@@ -366,7 +366,7 @@ public class ArchiveController : BaseController<TrxArchive>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Archive, new { Area = Const.ArchiveActive });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive });
     protected async Task BindAllDropdown()
     {
         ViewBag.listGmd = await BindGmds();
