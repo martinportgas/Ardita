@@ -17,6 +17,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<IdxRolePage> IdxRolePages { get; set; }
 
+    public virtual DbSet<IdxSubTypeStorage> IdxSubTypeStorages { get; set; }
+
     public virtual DbSet<IdxUserRole> IdxUserRoles { get; set; }
 
     public virtual DbSet<MstCompany> MstCompanies { get; set; }
@@ -49,6 +51,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstStatus> MstStatuses { get; set; }
 
+    public virtual DbSet<MstSubTypeStorage> MstSubTypeStorages { get; set; }
+
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
@@ -73,6 +77,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; set; }
 
+    public virtual DbSet<TrxArchiveReceived> TrxArchiveReceiveds { get; set; }
+
     public virtual DbSet<TrxArchiveUnit> TrxArchiveUnits { get; set; }
 
     public virtual DbSet<TrxClassification> TrxClassifications { get; set; }
@@ -86,6 +92,10 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<TrxMediaStorage> TrxMediaStorages { get; set; }
 
     public virtual DbSet<TrxMediaStorageDetail> TrxMediaStorageDetails { get; set; }
+
+    public virtual DbSet<TrxMediaStorageInActive> TrxMediaStorageInActives { get; set; }
+
+    public virtual DbSet<TrxMediaStorageInActiveDetail> TrxMediaStorageInActiveDetails { get; set; }
 
     public virtual DbSet<TrxPermissionClassification> TrxPermissionClassifications { get; set; }
 
@@ -106,10 +116,9 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.STAGGING;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
-        //optionsBuilder.UseLazyLoadingProxies();
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<IdxRolePage>(entity =>
@@ -141,6 +150,33 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ROLE_PAGE_ROLE");
+        });
+
+        modelBuilder.Entity<IdxSubTypeStorage>(entity =>
+        {
+            entity.HasKey(e => e.SubTypeStorageDetailId);
+
+            entity.ToTable("IDX_SUB_TYPE_STORAGE");
+
+            entity.Property(e => e.SubTypeStorageDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("sub_type_storage_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.SubTypeStorageId).HasColumnName("sub_type_storage_id");
+            entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
+
+            entity.HasOne(d => d.SubTypeStorage).WithMany(p => p.IdxSubTypeStorages)
+                .HasForeignKey(d => d.SubTypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IDX_SUB_TYPE_STORAGE_MST_SUB_TYPE_STORAGE");
+
+            entity.HasOne(d => d.TypeStorage).WithMany(p => p.IdxSubTypeStorages)
+                .HasForeignKey(d => d.TypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IDX_SUB_TYPE_STORAGE_TRX_TYPE_STORAGE");
         });
 
         modelBuilder.Entity<IdxUserRole>(entity =>
@@ -736,6 +772,35 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("updated_date");
         });
 
+        modelBuilder.Entity<MstSubTypeStorage>(entity =>
+        {
+            entity.HasKey(e => e.SubTypeStorageId);
+
+            entity.ToTable("MST_SUB_TYPE_STORAGE");
+
+            entity.Property(e => e.SubTypeStorageId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("sub_type_storage_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.SubTypeStorageCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("sub_type_storage_code");
+            entity.Property(e => e.SubTypeStorageName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("sub_type_storage_name");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+            entity.Property(e => e.Volume).HasColumnName("volume");
+        });
+
         modelBuilder.Entity<MstSubmenu>(entity =>
         {
             entity.HasKey(e => e.SubmenuId).HasName("PK_SUBMENU");
@@ -1256,6 +1321,36 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_DETAIL_TRX_ARCHIVE_MOVEMENT");
         });
 
+        modelBuilder.Entity<TrxArchiveReceived>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveReceivedId);
+
+            entity.ToTable("TRX_ARCHIVE_RECEIVED");
+
+            entity.Property(e => e.ArchiveReceivedId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_received_id");
+            entity.Property(e => e.ArchiveMovementId).HasColumnName("archive_movement_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.ArchiveMovement).WithMany(p => p.TrxArchiveReceiveds)
+                .HasForeignKey(d => d.ArchiveMovementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_RECEIVED_TRX_ARCHIVE_MOVEMENT");
+        });
+
         modelBuilder.Entity<TrxArchiveUnit>(entity =>
         {
             entity.HasKey(e => e.ArchiveUnitId);
@@ -1519,6 +1614,98 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_TRX_MEDIA_STORAGE_DETAIL_TRX_MEDIA_STORAGE");
         });
 
+        modelBuilder.Entity<TrxMediaStorageInActive>(entity =>
+        {
+            entity.HasKey(e => e.MediaStorageInActiveId);
+
+            entity.ToTable("TRX_MEDIA_STORAGE_IN_ACTIVE");
+
+            entity.Property(e => e.MediaStorageInActiveId)
+                .ValueGeneratedNever()
+                .HasColumnName("media_storage_in_active_id");
+            entity.Property(e => e.ArchiveYear)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("archive_year");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.MediaStorageInActiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("media_storage_in_active_code");
+            entity.Property(e => e.MediaStorageInActiveName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("media_storage_in_active_name");
+            entity.Property(e => e.RowId).HasColumnName("row_id");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
+            entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
+            entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorageInActives)
+                .HasForeignKey(d => d.RowId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_TRX_ROW");
+
+            entity.HasOne(d => d.SubSubjectClassification).WithMany(p => p.TrxMediaStorageInActives)
+                .HasForeignKey(d => d.SubSubjectClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_TRX_SUB_SUBJECT_CLASSIFICATION");
+
+            entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxMediaStorageInActives)
+                .HasForeignKey(d => d.TypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_TRX_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<TrxMediaStorageInActiveDetail>(entity =>
+        {
+            entity.HasKey(e => e.MediaStorageInActiveDetailId);
+
+            entity.ToTable("TRX_MEDIA_STORAGE_IN_ACTIVE_DETAIL");
+
+            entity.Property(e => e.MediaStorageInActiveDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("media_storage_in_active_detail_id");
+            entity.Property(e => e.ArchiveId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.MediaStorageInActiveId).HasColumnName("media_storage_in_active_id");
+            entity.Property(e => e.Sort).HasColumnName("sort");
+            entity.Property(e => e.SubTypeStorageId).HasColumnName("sub_type_storage_id");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxMediaStorageInActiveDetails)
+                .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_DETAIL_TRX_ARCHIVE");
+
+            entity.HasOne(d => d.MediaStorageInActive).WithMany(p => p.TrxMediaStorageInActiveDetails)
+                .HasForeignKey(d => d.MediaStorageInActiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_DETAIL_TRX_MEDIA_STORAGE_IN_ACTIVE");
+        });
+
         modelBuilder.Entity<TrxPermissionClassification>(entity =>
         {
             entity.HasKey(e => e.PermissionClassificationId);
@@ -1750,7 +1937,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.ParentId).HasColumnName("parent_id");
             entity.Property(e => e.TypeStorageCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)

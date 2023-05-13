@@ -11,8 +11,6 @@ public partial class TrxTypeStorage
 
     public string TypeStorageName { get; set; } = null!;
 
-    public Guid? ParentId { get; set; }
-
     public Guid ArchiveUnitId { get; set; }
 
     public int Volume { get; set; }
@@ -29,7 +27,11 @@ public partial class TrxTypeStorage
 
     public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
+    public virtual ICollection<IdxSubTypeStorage> IdxSubTypeStorages { get; } = new List<IdxSubTypeStorage>();
+
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovements { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();
 
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
 }
