@@ -12,15 +12,15 @@ public static class Label
         byte[] toArray;
         Document document = new();
         document.LoadFromFile(template);
-        document.Replace("RackCode", data.Row!.Level!.Rack!.RackCode, false, true);
-        document.Replace("LevelCode", data.Row!.Level!.LevelCode, false, true);
-        document.Replace("RowCode", data.Row!.RowCode, false, true);
-        document.Replace("ArchiveUnitCode", data.TypeStorage!.ArchiveUnit!.ArchiveUnitCode, false, true);
+        document.Replace(nameof(TrxRack.RackCode), data.Row!.Level!.Rack!.RackCode, false, true);
+        document.Replace(nameof(TrxLevel.LevelCode), data.Row!.Level!.LevelCode, false, true);
+        document.Replace(nameof(TrxRow.RowCode), data.Row!.RowCode, false, true);
+        document.Replace(nameof(TrxArchiveUnit.ArchiveUnitCode), data.TypeStorage!.ArchiveUnit!.ArchiveUnitCode, false, true);
 
-        using (MemoryStream ms1 = new())
+        using (MemoryStream memoryStream = new())
         {
-            document.SaveToStream(ms1, FileFormat.PDF);
-            toArray = ms1.ToArray();
+            document.SaveToStream(memoryStream, FileFormat.PDF);
+            toArray = memoryStream.ToArray();
         }
         return toArray;
     }
