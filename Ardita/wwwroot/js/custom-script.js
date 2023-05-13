@@ -16,6 +16,14 @@ $(document).ready(function () {
     $('.disabled').each(function () {
         $(this).prop('disabled', true);
     });
+
+    var menuActive = $('ul.metismenu').find('.active').children().find('.nav-label').html();
+    var subMenuActive = $('ul.nav-second-level').find('.active').children().html();
+
+    $('ol.breadcrumb').children(':first-child').next().html(menuActive);
+    $('ol.breadcrumb').children(':first-child').next().next().html(subMenuActive);
+    $('.page-heading').children().children('h2').html(subMenuActive);
+    $('.ibox-title').children('h5').html(subMenuActive);
 });
 
 function toCapitalCase(string) {
@@ -160,17 +168,15 @@ function ajaxcallreturn(urlstring, method, param, auth, content_type) {
 }
 
 function initForms(action){
-    $('#btn-submit').show();
+    //$('#btn-submit').show();
     initFormReadOnly(false);
     
     if(action == "Detail"){
-        $('#btn-submit').hide();
-        $('#btn-cancel').html("Back");
+        //$('#btn-submit').hide();
          initFormReadOnly(true);
     }
 
     if(action == "Remove"){
-        $('#btn-submit').html("Delete");
         initFormReadOnly(true);
     }
 }

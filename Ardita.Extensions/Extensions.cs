@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static Azure.Core.HttpHeader;
 
-namespace Ardita.Globals
+namespace Ardita.Extensions
 {
     public static class Extensions
     {
@@ -31,40 +31,40 @@ namespace Ardita.Globals
             string currentAction = (string)html.ViewContext.RouteData.Values["action"];
             string currentController = (string)html.ViewContext.RouteData.Values["controller"];
 
-            string FormAction = Const.Save;
+            string FormAction = GlobalConst.Save;
 
-            string LastBreadcrumb = Const.Create;
+            string LastBreadcrumb = GlobalConst.Create;
 
-            if (currentAction == Const.Update)
+            if (currentAction == GlobalConst.Update)
             {
-                LastBreadcrumb = Const.Update;
+                LastBreadcrumb = GlobalConst.Update;
             }
 
-            if (currentAction == Const.Detail)
+            if (currentAction == GlobalConst.Detail)
             {
-                LastBreadcrumb = Const.Detail;
+                LastBreadcrumb = GlobalConst.Detail;
             }
 
-            if (currentAction == Const.Remove)
+            if (currentAction == GlobalConst.Remove)
             {
-                FormAction = Const.Delete;
-                LastBreadcrumb = Const.Delete;
+                FormAction = GlobalConst.Delete;
+                LastBreadcrumb = GlobalConst.Delete;
             }
 
-            if (currentAction == Const.Preview)
+            if (currentAction == GlobalConst.Preview)
             {
-                FormAction = Const.Submit;
-                LastBreadcrumb = Const.Submit;
+                FormAction = GlobalConst.Submit;
+                LastBreadcrumb = GlobalConst.Submit;
             }
 
-            if (currentAction == Const.Approval)
+            if (currentAction == GlobalConst.Approval)
             {
-                FormAction = Const.SubmitApproval;
-                LastBreadcrumb = Const.Approval;
+                FormAction = GlobalConst.SubmitApproval;
+                LastBreadcrumb = GlobalConst.Approval;
             }
 
-            var isInput = currentAction == Const.Add || currentAction == Const.Update;
-            var isSubmitForm = isInput || currentAction == Const.Remove || currentAction == Const.Preview|| currentAction == Const.Approval;
+            var isInput = currentAction == GlobalConst.Add || currentAction == GlobalConst.Update || currentAction == GlobalConst.Remove;
+            var isSubmitForm = isInput || currentAction == GlobalConst.Remove || currentAction == GlobalConst.Preview || currentAction == GlobalConst.Approval;
 
             FormModel model = new FormModel();
             model.CurrentArea = currentArea;
@@ -74,9 +74,13 @@ namespace Ardita.Globals
             model.LastBreadcrumb = LastBreadcrumb;
             model.isInput = isInput;
             model.isSubmitForm = isSubmitForm;
-            model.SubmitText = currentAction == Const.Remove ? Const.Delete : Const.Submit;
-            model.SaveText = currentAction == Const.Remove ? Const.Delete : Const.Save;
-            model.ApprovalText = currentAction == Const.Remove ? Const.Delete : Const.Approve;
+            model.SubmitText = currentAction == GlobalConst.Remove ? string.Concat(GlobalConst.IconDelete, GlobalConst.Delete) : string.Concat(GlobalConst.IconSubmit, GlobalConst.Submit);
+            model.SaveText = currentAction == GlobalConst.Remove ? string.Concat(GlobalConst.IconDelete, GlobalConst.Delete) : string.Concat(GlobalConst.IconSave, GlobalConst.Save);
+            model.ApprovalText = string.Concat(GlobalConst.IconApprove, GlobalConst.Approve);
+            model.RejectText = string.Concat(GlobalConst.IconReject, GlobalConst.Reject);
+            model.CancelText = string.Concat(GlobalConst.IconBack, GlobalConst.Cancel);
+            model.BackText = string.Concat(GlobalConst.IconBack, GlobalConst.Back);
+            model.ButtonSubmitClass = currentAction == GlobalConst.Remove ? GlobalConst.BtnDanger : GlobalConst.BtnPrimary;
 
             return model;
         }

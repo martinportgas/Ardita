@@ -1,7 +1,7 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -9,7 +9,7 @@
         <h2>Media Storage</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
@@ -29,7 +29,7 @@
                 <div class="ibox-title">
                     <h5>Archive Unit</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.MediaStorage, new { Area = Const.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -62,7 +62,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.MediaStorage, new { Area = Const.ArchiveActive})',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -81,26 +81,26 @@
                     {
                         "data": "mediaStorageId",
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.mediaStorageId);
 
-                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
 
                             if (row.statusId == 1) {
-                                 edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                 edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                  edit = edit.replace("-1", row.mediaStorageId);
                             }
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.MediaStorage, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.mediaStorageId);
 
                             var downloadQr = `<a class="btn btn-sm btn-info" data-toggle="tooltip" title="Data Still Draft" href="#"><i class="fa fa-download"></i> </a>`;
                             if (row.statusId == 5) {
-                                downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(Const.BindQrCode, Const.MediaStorage, new { Area = Const.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
+                                downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindQrCode, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
                                 downloadQr = downloadQr.replace("-1", row.mediaStorageCode);
                             }
 
-                            var downloadLbl = `<a class="btn btn-sm btn-info" href="@Url.Action(Const.BindLabel, Const.MediaStorage, new { Area = Const.ArchiveActive, MediaStorageId = -1})"><i class="fa fa-download"></i> </a>`;
+                            var downloadLbl = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindLabel, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, MediaStorageId = -1})"><i class="fa fa-download"></i> </a>`;
                             downloadLbl = downloadLbl.replace("-1", row.mediaStorageId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr).concat(" ", downloadLbl);

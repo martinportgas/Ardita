@@ -1,8 +1,11 @@
 ﻿@model Ardita.Areas.UserManage.Models.PageInsertViewModel
+@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    FormModel form = Html.Form();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -78,8 +81,8 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">

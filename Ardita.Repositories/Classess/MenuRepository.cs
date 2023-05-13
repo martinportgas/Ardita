@@ -41,7 +41,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.MstMenus
-                .Include(x => x.MstSubmenus)
+                .Include(x => x.MstSubmenus.OrderBy(z => z.Sort))
                 .Where(
                     x => (x.Name).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -53,7 +53,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.MstMenus
-                .Include(x => x.MstSubmenus)
+                .Include(x => x.MstSubmenus.OrderBy(z => z.Sort))
                 .Where(
                     x => (x.Name).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -102,7 +102,6 @@ namespace Ardita.Repositories.Classess
                 model.CreatedBy = data.CreatedBy;
                 model.CreatedDate = data.CreatedDate;
                 model.IsActive = true;
-                model.Sort = data.Sort;
                 model.Icon = data.Icon;
 
                 _context.Update(model);

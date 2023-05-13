@@ -1,8 +1,8 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -10,7 +10,7 @@
         <h2>Archive</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
@@ -30,8 +30,8 @@
                 <div class="ibox-title">
                     <h5>Archive</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.Archive, new { Area = Const.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action(Const.Export, Const.Archive, new { Area = Const.ArchiveActive })" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Export, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <form id="frmArchiveUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.Archive" asp-action="@Const.Upload" asp-area="@Const.ArchiveActive">
+                    <form id="frmArchiveUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.Archive" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.ArchiveActive">
                         @Html.AntiForgeryToken();
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -76,8 +76,8 @@
 
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.Archive, new { Area = Const.ArchiveActive })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -99,7 +99,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.Archive, new { Area = Const.ArchiveActive})',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive})',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -119,19 +119,19 @@
                     {
                         "data": "archiveId",
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
 
-                            var edit = `<a class="btn btn-sm btn-default" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
 
                             if (row.statusId == 1) {
-                                edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                                edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                 edit = edit.replace("-1", row.archiveId);
                             }
 
                             var remove = `<a class="btn btn-sm btn-danger" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
                             if (row.statusId == 1) {
-                                remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Archive, new { Area = Const.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                                remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                                 remove = remove.replace("-1", row.archiveId);
                             }
                             
@@ -144,7 +144,7 @@
                     { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
                     {
                         "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.color}" style="width:100%">${data}</span>`;
+                            return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
                         }
                     }
                 ]

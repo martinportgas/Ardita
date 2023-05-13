@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -12,7 +12,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class CompanyController : BaseController<MstCompany>
 {
     private IWebHostEnvironment _webHostEnvironment;
@@ -43,11 +43,11 @@ public class CompanyController : BaseController<MstCompany>
     public override async Task<IActionResult> Add()
     {
         var Company = new MstCompany();
-        ViewBag.CurrentAction = Const.Add;
+        ViewBag.CurrentAction = GlobalConst.Add;
 
         await Task.Delay(0);
 
-        return View(Const.Form, Company);
+        return View(GlobalConst.Form, Company);
     }
 
     [HttpPost]
@@ -80,7 +80,7 @@ public class CompanyController : BaseController<MstCompany>
 
         if (listCompany.Any())
         {
-            return View(Const.Form, listCompany.FirstOrDefault());
+            return View(GlobalConst.Form, listCompany.FirstOrDefault());
         }
         else
         {
@@ -94,7 +94,7 @@ public class CompanyController : BaseController<MstCompany>
 
         if (listCompany.Any())
         {
-            return View(Const.Form, listCompany.FirstOrDefault());
+            return View(GlobalConst.Form, listCompany.FirstOrDefault());
         }
         else
         {
@@ -108,7 +108,7 @@ public class CompanyController : BaseController<MstCompany>
 
         if (listCompany.Any())
         {
-            return View(Const.Form, listCompany.FirstOrDefault());
+            return View(GlobalConst.Form, listCompany.FirstOrDefault());
         }
         else
         {
@@ -135,7 +135,7 @@ public class CompanyController : BaseController<MstCompany>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             List<MstCompany> companies = new();
             MstCompany company;
@@ -166,7 +166,7 @@ public class CompanyController : BaseController<MstCompany>
         }
 
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -182,7 +182,7 @@ public class CompanyController : BaseController<MstCompany>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
             row.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
             row.CreateCell(3).SetCellValue(nameof(MstCompany.Address));
@@ -202,18 +202,23 @@ public class CompanyController : BaseController<MstCompany>
 
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(MstCompany).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(MstCompany).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -222,20 +227,25 @@ public class CompanyController : BaseController<MstCompany>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
             row.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
             row.CreateCell(3).SetCellValue(nameof(MstCompany.Address));
             row.CreateCell(4).SetCellValue(nameof(MstCompany.Telepone));
             row.CreateCell(5).SetCellValue(nameof(MstCompany.Email));
 
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception)
         {
             throw new Exception();
         }
     }
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Company, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Company, new { Area = GlobalConst.MasterData });
 
 }

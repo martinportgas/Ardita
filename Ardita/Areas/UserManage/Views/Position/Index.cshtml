@@ -1,17 +1,17 @@
 ﻿@model Ardita.Models.DbModels.MstPosition
 @using Ardita.Models.ViewModels;
-@using Ardita.Globals;
+@using Ardita.Extensions;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Positions</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home)"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 User Management
@@ -31,7 +31,7 @@
                 <div class="ibox-title">
                     <h5>Positions</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.Position, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.Position, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                      </div>
                 </div>
                 <div class="ibox-content">
@@ -64,7 +64,7 @@
                 filter: true,
                 order:[[0, "desc"]],
                 ajax: {
-                    "url": '@Url.Action(Const.GetData, Const.Position, new { Area = Const.UserManage })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.Position, new { Area = GlobalConst.UserManage })',
                     "type": "POST",
                     "datatype": "json"
                 },
@@ -86,14 +86,14 @@
                         "data": "positionId",
                         "render": function (data, type, row, meta) {
 
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.Position, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.Position, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.Position, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.Position, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

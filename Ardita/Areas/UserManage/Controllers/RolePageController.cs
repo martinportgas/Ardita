@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -96,12 +96,12 @@ namespace Ardita.Areas.UserManage.Controllers
                 else
                 {
                     msg = "Role Not Found";
-                    urlRedirect = Url.Action(Const.Index, Const.RolePage, new { Area = Const.UserManage });
+                    urlRedirect = Url.Action(GlobalConst.Index, GlobalConst.RolePage, new { Area = GlobalConst.UserManage });
                 }
                 return Json(new { code = 200, msg = msg, redirect = urlRedirect });
             } catch (Exception ex) 
             {
-                return Json(new { code = 400, msg = ex.Message, redirect = Url.Action(Const.Index, Const.RolePage, new { Area = Const.UserManage }) });
+                return Json(new { code = 400, msg = ex.Message, redirect = Url.Action(GlobalConst.Index, GlobalConst.RolePage, new { Area = GlobalConst.UserManage }) });
             }
         }
 

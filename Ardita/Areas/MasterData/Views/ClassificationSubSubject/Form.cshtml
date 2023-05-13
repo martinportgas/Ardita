@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxSubSubjectClassification
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
 }
@@ -13,13 +13,13 @@
         <h2>Sub Subject Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.ClassificationSubSubject, new {Area = Const.MasterData})">Sub Subject Classification</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubSubject, new {Area = GlobalConst.MasterData})">Sub Subject Classification</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -70,48 +70,48 @@
                                                 <input type="hidden" asp-for="CreatedDate" />
                                                 <input type="hidden" asp-for="UpdatedBy" />
                                                 <input type="hidden" asp-for="UpdatedDate" />
-                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
+                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Jenis Klasifikasi</label>
-                                                <select id="txtTypeClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassification.Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --" ><option value=""></option></select>
+                                                <select id="txtTypeClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubjectClassification.Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Klasifikasi</label>
-                                                <select id="txtClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassification.ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --" ><option value=""></option></select>
+                                                <select id="txtClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubjectClassification.ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Subjek Klasifikasi</label>
-                                                <select id="txtSubjectlassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationId" asp-items="ViewBag.listClassificationSubject" data-placeholder="-- Pilih Subjek Klasifikasi --" ><option value=""></option></select>
+                                                <select id="txtSubjectlassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubjectClassificationId" asp-items="ViewBag.listClassificationSubject" data-placeholder="-- Pilih Subjek Klasifikasi --" ><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Kode Sub Subjek Klasifikasi</label>
-                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubSubjectClassificationCode" >
+                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubSubjectClassificationCode" >
                                             </div>
                                             <div class="form-group">
                                                 <label>Nama Sub Subject Klasifikasi</label>
-                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubSubjectClassificationName" >
+                                                <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubSubjectClassificationName" >
                                             </div>
                                             <div class="form-group">
                                                 <label>Klasifikasi Keamanan</label>
-                                                <select id="txtSecurityClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SecurityClassificationId" asp-items="ViewBag.ListSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
+                                                <select id="txtSecurityClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SecurityClassificationId" asp-items="ViewBag.ListSecurityClassification" data-placeholder="-- Pilih Klasifikasi Keamanan --"><option value=""></option></select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Retensi Aktif ( Bulan )</label>
-                                                <input type="number" id="txtRetentionActive" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RetentionActive"  />
+                                                <input type="number" id="txtRetentionActive" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RetentionActive"  />
                                             </div>
                                             <div class="form-group">
                                                 <label>Retensi In Aktif ( Bulan )</label>
-                                                <input type="number" id="txtRetentionInActive" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="RetentionInactive"  />
+                                                <input type="number" id="txtRetentionInActive" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RetentionInactive"  />
                                             </div>
                                             <div class="form-group">
                                                 <label>Dasar Pertimbangan</label>
-                                                <textarea id="txtBasicInformation" asp-for="BasicInformation" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" ></textarea>
+                                                <textarea id="txtBasicInformation" asp-for="BasicInformation" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" ></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add" @Html.Raw(form.isInput ? string.Empty : Const.Hidden)><i class="fa fa-plus"></i> Add</button>
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" id="add" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Add</button>
                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                             <thead>
                                                 <tr>
@@ -127,9 +127,9 @@
                                                         foreach (Ardita.Models.DbModels.TrxPermissionClassification item in ViewBag.subDetail)
                                                         {
                                                             <tr>
-                                                                <td><button class="btn btn-danger btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                                <td><button class="btn btn-default btn-sm min" @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                                 <td style="width:95%">
-                                                                    <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
+                                                                    <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value="@item.PositionId" selected>@item.Position.Name</option></select>
                                                                 </td>
                                                             </tr>
                                                         }
@@ -137,9 +137,9 @@
                                                     else
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                            <td><button class="btn btn-default btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:95%">
-                                                                <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
+                                                                <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
                                                             </td>
                                                         </tr>
                                                     }
@@ -147,9 +147,9 @@
                                                 else
                                                 {
                                                     <tr>
-                                                        <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                        <td><button class="btn btn-default btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                         <td style="width:95%">
-                                                            <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
+                                                            <select class="select2_demo_1 form-control pos @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="posisi[]" asp-items="ViewBag.listPosition" data-placeholder="-- Pilih Posisi --"><option value=""></option></select>
                                                         </td>
                                                     </tr>
                                                 }
@@ -158,10 +158,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ClassificationSubSubject, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    @if (form.isInput || form.CurrentAction == Const.Remove)
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubSubject, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    @if (form.isInput)
                                     {
-                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">@form.SubmitText</button>
+                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                     }
                                 </div>
                             </form>
@@ -207,7 +207,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action(Const.BindClassificationIdByClassificationTypeId, Const.ClassificationSubSubject, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindClassificationIdByClassificationTypeId, GlobalConst.ClassificationSubSubject, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -233,7 +233,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Subjek Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action(Const.BindClassificationSubjectIdByClassificationId, Const.ClassificationSubSubject, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindClassificationSubjectIdByClassificationId, GlobalConst.ClassificationSubSubject, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {

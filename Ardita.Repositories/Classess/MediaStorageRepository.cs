@@ -76,7 +76,7 @@ public class MediaStorageRepository : IMediaStorageRepository
     
     public async Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id)
     {
-        return await _context.TrxMediaStorageDetails.FirstOrDefaultAsync(x => x.ArchiveId == id) ?? new TrxMediaStorageDetail();
+        return await _context.TrxMediaStorageDetails.FirstOrDefaultAsync(x => x.ArchiveId == id);
     }
 
     public async Task<int> GetCount() => await _context.TrxMediaStorages.CountAsync(x => x.IsActive == true);

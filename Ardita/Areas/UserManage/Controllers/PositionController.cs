@@ -6,14 +6,14 @@ using Ardita.Models.ViewModels;
 using Ardita.Areas.UserManage.Models;
 using Ardita.Models.DbModels;
 using Ardita.Areas.UserManage.Models;
-using Ardita.Globals;
+
 using Ardita.Controllers;
 using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class PositionController : BaseController<MstPosition>
     {
         public PositionController(IPositionService positionService)
@@ -38,7 +38,7 @@ namespace Ardita.Areas.UserManage.Controllers
         public override async Task<IActionResult> Add()
         {
 
-            return View(Const.Form, new MstPosition());
+            return View(GlobalConst.Form, new MstPosition());
         }
 
         public override async Task<IActionResult> Update(Guid Id)
@@ -47,7 +47,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -125,6 +125,6 @@ namespace Ardita.Areas.UserManage.Controllers
             return RedirectToIndex();
         }
 
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Position, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Position, new { Area = GlobalConst.UserManage });
     }
 }

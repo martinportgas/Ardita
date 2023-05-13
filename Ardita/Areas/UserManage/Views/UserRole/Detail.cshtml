@@ -1,7 +1,11 @@
-﻿@model IEnumerable<Ardita.Models.DbModels.IdxUserRole>
+﻿@model Ardita.Models.DbModels.MstUser
+@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -31,16 +35,15 @@
                             <form role="form" id="frmRole" enctype="multipart/form-data" asp-controller="UserRole" asp-area="UserManage" asp-action="Save">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input type="hidden" asp-for="First().UserRoleId" />
-                                    <input type="hidden" asp-for="First().UserId" />
-                                    <input type="text" asp-for="First().User.Username" placeholder="" class="form-control" readonly="">
+                                    <input type="hidden" asp-for="UserId" name="UserId" />
+                                    <input type="text" asp-for="Username" placeholder="" class="form-control" readonly="">
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select asp-for="First().RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
+                                    <select name="RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
                                 </div>
                                 <div class="form-group">
-                                    <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
+                                    <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit"><i class="fa fa-pencil">Add</i></button>
                                 </div>
                             </form>
@@ -55,13 +58,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
+                                    @if (ViewBag.listUserRole.Count > 0)
                                     {
-                                        <tr>
-                                            <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
-                                            <td>@item.Role.Code</td>
-                                            <td>@item.Role.Name</td>
-                                        </tr>
+                                        foreach (Ardita.Models.DbModels.IdxUserRole item in ViewBag.listUserRole)
+                                        {
+                                            <tr>
+                                                <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
+                                                <td>@item.Role.Code</td>
+                                                <td>@item.Role.Name</td>
+                                            </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>

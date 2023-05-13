@@ -14,14 +14,14 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Data;
-using Ardita.Globals;
+
 using Ardita.Controllers;
 using Ardita.Extensions;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class EmployeeController : BaseController<MstEmployee>
     {
         public EmployeeController(
@@ -52,7 +52,7 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             ViewBag.listPositions = await BindPositions();
 
-            return View(Const.Form, new MstEmployee());
+            return View(GlobalConst.Form, new MstEmployee());
         }
 
         public override async Task<IActionResult> Update(Guid Id)
@@ -62,7 +62,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -91,7 +91,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -143,11 +143,11 @@ namespace Ardita.Areas.UserManage.Controllers
             return RedirectToIndex();
         }
 
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(MstEmployee).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(MstEmployee).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -158,7 +158,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowPosition = excelSheetPosition.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstEmployee.Nik));
                 row.CreateCell(2).SetCellValue(nameof(MstEmployee.Name));
                 row.CreateCell(3).SetCellValue(nameof(MstEmployee.Email));
@@ -171,7 +171,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
 
 
-                rowPosition.CreateCell(0).SetCellValue(Const.No);
+                rowPosition.CreateCell(0).SetCellValue(GlobalConst.No);
                 rowPosition.CreateCell(1).SetCellValue(nameof(MstPosition.Code));
                 rowPosition.CreateCell(2).SetCellValue(nameof(MstPosition.Name));
 
@@ -187,14 +187,19 @@ namespace Ardita.Areas.UserManage.Controllers
                     rowPosition.CreateCell(2).SetCellValue(item.Name);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception)
             {
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -209,7 +214,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstEmployee.Nik));
                 row.CreateCell(2).SetCellValue(nameof(MstEmployee.Name));
                 row.CreateCell(3).SetCellValue(nameof(MstEmployee.Email));
@@ -237,7 +242,12 @@ namespace Ardita.Areas.UserManage.Controllers
 
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
@@ -249,7 +259,7 @@ namespace Ardita.Areas.UserManage.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, _hostingEnvironment.WebRootPath);
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, _hostingEnvironment.WebRootPath);
                 var positions = await _positionService.GetAll();
 
                 List<MstEmployee> employees = new();
@@ -285,6 +295,6 @@ namespace Ardita.Areas.UserManage.Controllers
             }
         }
 
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Employee, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Employee, new { Area = GlobalConst.UserManage });
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -21,7 +21,7 @@ using System.Text;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class FloorController : BaseController<TrxFloor>
     {
         #region MEMBER AND CTR
@@ -54,7 +54,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
             ViewBag.listArchiveUnits = await BindArchiveUnits();
 
-            return View(Const.Form, new TrxFloor());
+            return View(GlobalConst.Form, new TrxFloor());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -62,7 +62,7 @@ namespace Ardita.Areas.MasterData.Controllers
             if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -75,7 +75,7 @@ namespace Ardita.Areas.MasterData.Controllers
             if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -88,7 +88,7 @@ namespace Ardita.Areas.MasterData.Controllers
             if (data != null)
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -125,7 +125,7 @@ namespace Ardita.Areas.MasterData.Controllers
             {
                 IFormFile file = Request.Form.Files[0];
 
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var ArchiveUnits = await _archiveUnitService.GetAll();
 
 
@@ -156,7 +156,7 @@ namespace Ardita.Areas.MasterData.Controllers
             }
 
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -185,18 +185,23 @@ namespace Ardita.Areas.MasterData.Controllers
 
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception();
             }
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxFloor).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(TrxFloor).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -226,7 +231,12 @@ namespace Ardita.Areas.MasterData.Controllers
                     rowArchive.CreateCell(1).SetCellValue(item.ArchiveUnitName);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception)
             {
@@ -245,7 +255,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Floor, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Floor, new { Area = GlobalConst.MasterData });
         #endregion
   
     }

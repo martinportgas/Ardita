@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -13,7 +13,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class ClassificationSubSubjectController : BaseController<TrxSubSubjectClassification>
     {
         #region MEMBER AND CTR
@@ -59,7 +59,7 @@ namespace Ardita.Areas.MasterData.Controllers
             ViewBag.listPosition = await BindPositions();
             ViewBag.ListArchiveCreator = await BindArchiveCreators();
             ViewBag.ListSecurityClassification = await BindSecurityClassifications();
-            return View(Const.Form, new TrxSubSubjectClassification());
+            return View(GlobalConst.Form, new TrxSubSubjectClassification());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -74,7 +74,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -94,7 +94,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -114,7 +114,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 ViewBag.ListSecurityClassification = await BindSecurityClassifications();
                 ViewBag.subDetail = await _classificationSubSubjectService.GetListDetailPermissionClassifications(Id);
 
-                return View(Const.Form, model);
+                return View(GlobalConst.Form, model);
             }
             else
             {
@@ -181,11 +181,11 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxSubSubjectClassification).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(TrxSubSubjectClassification).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -254,14 +254,19 @@ namespace Ardita.Areas.MasterData.Controllers
                     no += 1;
                 }
 
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -318,21 +323,24 @@ namespace Ardita.Areas.MasterData.Controllers
                         }
                     }
                 }
-                
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception();
             }
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             var dataSubjects = await _classificationSubjectService.GetAll();
             var dataCreators = await _archiveCreatorService.GetAll();
@@ -343,7 +351,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
             foreach (DataRow row in result.Rows)
             {
-                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[3].ToString()).FirstOrDefault();
+                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[2].ToString()).FirstOrDefault();
                 var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault();
                 var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).FirstOrDefault();
 
@@ -356,8 +364,8 @@ namespace Ardita.Areas.MasterData.Controllers
                     model.CreatorId = dataCreator.CreatorId;
                     model.SubjectClassificationId = dataSubject.SubjectClassificationId;
                     model.SecurityClassificationId = dataSecurity.SecurityClassificationId;
-                    model.RetentionActive = (int)row[5];
-                    model.RetentionInactive = (int)row[6];
+                    model.RetentionActive = int.Parse(row[5].ToString());
+                    model.RetentionInactive = int.Parse(row[6].ToString());
                     model.BasicInformation = row[7].ToString();
                     model.IsActive = true;  
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
@@ -372,7 +380,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationSubSubject, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ClassificationSubSubject, new { Area = GlobalConst.MasterData });
         #endregion
     }
 }

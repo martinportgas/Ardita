@@ -1,18 +1,19 @@
 ﻿using Ardita.Areas.UserManage.Models;
 using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.UserRoles;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using NPOI.SS.Formula.Atp;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class UserRoleController : BaseController<IdxUserRole>
     {
         public UserRoleController(
@@ -42,11 +43,11 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         public override async Task<IActionResult> Detail(Guid Id)
         {
-            var data = await _userService.GetIdxUserRoleByUserId(Id);
+            var data = await _userService.GetById(Id);
 
-            
             if (data != null)
             {
+                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(Id);
                 ViewBag.listRoles = await BindRoles();
                 return View(data);
             }
@@ -58,17 +59,23 @@ namespace Ardita.Areas.UserManage.Controllers
         public override async Task<IActionResult> Save(IdxUserRole model)
         {
             Guid UserId = Guid.Empty;
+            Guid RoleId = Guid.Empty;
             if (model != null)
             {
-                UserId = model.UserId;
+                Guid.TryParse(Request.Form["UserId"], out UserId);
+                Guid.TryParse(Request.Form["RoleId"], out RoleId);
+
                 model.UserRoleId = Guid.NewGuid();
+                model.UserId = UserId;
+                model.RoleId = RoleId;
                 model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 model.CreatedDate = DateTime.Now;
                 await _userRoleService.Insert(model);
 
+                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(UserId);
                 ViewBag.listRoles = await BindRoles();
             }
-            return RedirectToAction(Const.Detail, Const.UserRole, new { Area = Const.UserManage, Id = UserId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Area = GlobalConst.UserManage, Id = UserId });
         }
         public override async Task<IActionResult> Remove(Guid Id)
         {
@@ -76,12 +83,13 @@ namespace Ardita.Areas.UserManage.Controllers
             
             if (data != null)
             {
-               
                 await _userRoleService.Delete(data.FirstOrDefault());
+
+                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(data.FirstOrDefault().UserId);
                 ViewBag.listRoles = await BindRoles();
             }
-            return RedirectToAction(Const.Detail, Const.UserRole, new { Areas = Const.UserManage, Id = data.FirstOrDefault().UserId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Areas = GlobalConst.UserManage, Id = data.FirstOrDefault().UserId });
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.UserRole, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.UserRole, new { Area = GlobalConst.UserManage });
     }
 }

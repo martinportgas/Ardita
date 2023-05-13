@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -15,7 +15,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class RoomController : BaseController<TrxRoom>
     {
         public RoomController(IRoomService roomService, IFloorService floorService, IArchiveUnitService archiveUnitService)
@@ -41,7 +41,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             ViewBag.listFloors = await BindFloors();
             ViewBag.listArchiveUnits = await BindArchiveUnits();
-            return View(Const.Form, new TrxRoom());
+            return View(GlobalConst.Form, new TrxRoom());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -51,7 +51,7 @@ namespace Ardita.Areas.MasterData.Controllers
             {
                 ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Ardita.Areas.MasterData.Controllers
             if (data != null)
             {
                ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace Ardita.Areas.MasterData.Controllers
             if (data != null)
             {
                 ViewBag.listFloors = await BindFloors();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
                 var floors = await _floorService.GetAll();
 
@@ -153,7 +153,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -170,7 +170,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
                 row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
                 row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomCode));
@@ -191,18 +191,23 @@ namespace Ardita.Areas.MasterData.Controllers
 
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception();
             }
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(TrxRoom).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(TrxRoom).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -213,14 +218,14 @@ namespace Ardita.Areas.MasterData.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowFloor = excelSheetFloors.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
                 row.CreateCell(2).SetCellValue(nameof(TrxRoom.RoomCode));
                 row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
                 row.CreateCell(4).SetCellValue(nameof(TrxRoom.ArchiveRoomType));
 
 
-                rowFloor.CreateCell(0).SetCellValue(Const.No);
+                rowFloor.CreateCell(0).SetCellValue(GlobalConst.No);
                 rowFloor.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
                 rowFloor.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
                 rowFloor.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
@@ -238,13 +243,18 @@ namespace Ardita.Areas.MasterData.Controllers
                     rowFloor.CreateCell(3).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception)
             {
                 throw new Exception();
             }
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Room, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Room, new { Area = GlobalConst.MasterData });
     }
 }

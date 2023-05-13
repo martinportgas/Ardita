@@ -18,5 +18,9 @@ namespace Ardita.Models.ViewModels
         public string ApprovalText { get; set; }
         public string SubmitText { get; set; }
         public string SaveText { get; set; }
+        public string CancelText { get; set; }
+        public string BackText { get; set; }
+        public string RejectText { get; set; }
+        public string ButtonSubmitClass { get; set; }
     }
 }

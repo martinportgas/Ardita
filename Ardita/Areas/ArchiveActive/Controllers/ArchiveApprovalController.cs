@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
-    [Area(Const.ArchiveActive)]
+    [Area(GlobalConst.ArchiveActive)]
     public class ArchiveApprovalController : BaseController<VwArchiveApproval>
     {
         #region MEMBER AND CTR
@@ -39,7 +39,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveApproval, new { Area = Const.ArchiveActive });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive });
         #endregion
     }
 }

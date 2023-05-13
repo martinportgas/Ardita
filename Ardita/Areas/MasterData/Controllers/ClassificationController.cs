@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -13,7 +13,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorizeAttribute]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class ClassificationController : BaseController<TrxClassification>
 {
     #region MEMBER AND CTR
@@ -43,7 +43,7 @@ public class ClassificationController : BaseController<TrxClassification>
     public override async Task<IActionResult> Add()
     {
         ViewBag.listClassificationType = await BindClassificationTypes();
-        return View(Const.Form, new TrxClassification());
+        return View(GlobalConst.Form, new TrxClassification());
     }
     public override async Task<IActionResult> Update(Guid Id)
     {
@@ -51,7 +51,7 @@ public class ClassificationController : BaseController<TrxClassification>
         if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes(); 
-            return View(Const.Form, model);
+            return View(GlobalConst.Form, model);
         }
         else
         {
@@ -64,7 +64,7 @@ public class ClassificationController : BaseController<TrxClassification>
         if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
-            return View(Const.Form, model);
+            return View(GlobalConst.Form, model);
         }
         else
         {
@@ -77,7 +77,7 @@ public class ClassificationController : BaseController<TrxClassification>
         if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
-            return View(Const.Form, model);
+            return View(GlobalConst.Form, model);
         }
         else
         {
@@ -121,11 +121,11 @@ public class ClassificationController : BaseController<TrxClassification>
         }
         return RedirectToIndex();
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(TrxClassification).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(TrxClassification).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -154,14 +154,19 @@ public class ClassificationController : BaseController<TrxClassification>
                 rowParent.CreateCell(1).SetCellValue(item.TypeClassificationName);
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -196,7 +201,12 @@ public class ClassificationController : BaseController<TrxClassification>
                     no += 1;
                 }
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
@@ -208,7 +218,7 @@ public class ClassificationController : BaseController<TrxClassification>
         try
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             var type = await _classificationTypeService.GetAll();
 
@@ -243,6 +253,6 @@ public class ClassificationController : BaseController<TrxClassification>
     }
     #endregion
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Classification, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Classification, new { Area = GlobalConst.MasterData });
     #endregion
 }

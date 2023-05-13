@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -11,7 +11,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 {
     #region MEMBER AND CTR
@@ -44,7 +44,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     {
         ViewBag.listCompany = await BindCompanies();
 
-        return View(Const.Form, new TrxArchiveUnit());
+        return View(GlobalConst.Form, new TrxArchiveUnit());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
@@ -54,7 +54,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -69,7 +69,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -84,7 +84,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         {
             ViewBag.listCompany = await BindCompanies();
 
-            return View(Const.Form, data);
+            return View(GlobalConst.Form, data);
         }
         else
         {
@@ -134,7 +134,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
             var companies = await _companyService.GetAll();
 
 
@@ -170,7 +170,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         }
 
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -185,7 +185,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyName));
             row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
             row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
@@ -207,18 +207,23 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(TrxArchiveUnit).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(TrxArchiveUnit).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -230,7 +235,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
             IRow rowCompanies = excelSheetCompanies.CreateRow(0);
 
             //Archive Units
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
             row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
             row.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
@@ -239,7 +244,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
             row.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitEmail));
 
             //Companies
-            rowCompanies.CreateCell(0).SetCellValue(Const.No);
+            rowCompanies.CreateCell(0).SetCellValue(GlobalConst.No);
             rowCompanies.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
             rowCompanies.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
             rowCompanies.CreateCell(3).SetCellValue(nameof(MstCompany.Address));
@@ -261,7 +266,12 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
                 rowCompanies.CreateCell(5).SetCellValue(item.Email);
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception)
         {
@@ -271,6 +281,6 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ArchiveUnit, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveUnit, new { Area = GlobalConst.MasterData });
     #endregion
 }

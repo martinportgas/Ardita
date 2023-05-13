@@ -1,9 +1,9 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxSubjectClassification
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
 }
@@ -13,13 +13,13 @@
         <h2>Subject Classification</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Master Data
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.ClassificationSubject, new {Area = Const.MasterData})">Subject Classification</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubject, new {Area = GlobalConst.MasterData})">Subject Classification</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -68,24 +68,27 @@
                                         <input type="hidden" asp-for="CreatedDate" />
                                         <input type="hidden" asp-for="UpdatedBy" />
                                         <input type="hidden" asp-for="UpdatedDate" />
-                                        <select class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" id="txtTypeClassificationId" asp-for="Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
+                                        <select class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" id="txtTypeClassificationId" asp-for="Classification.TypeClassificationId" asp-items="ViewBag.listClassificationType" data-placeholder="-- Pilih Jenis Klasifikasi --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Klasifikasi</label>
-                                        <select id="txtClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --"><option value=""></option></select>
+                                        <select id="txtClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ClassificationId" asp-items="ViewBag.listClassification" data-placeholder="-- Pilih Klasifikasi --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Subjek Klasifikasi</label>
-                                        <input type="text" placeholder="" id="txtSubClassificationCode" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationCode">
+                                        <input type="text" placeholder="" id="txtSubClassificationCode" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubjectClassificationCode">
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Subject Klasifikasi</label>
-                                        <input type="text" placeholder="" id="txtSubClassificationName" class="form-control @Html.Raw(form.isInput ? Const.Required : Const.Disabled)" asp-for="SubjectClassificationName">
+                                        <input type="text" placeholder="" id="txtSubClassificationName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubjectClassificationName">
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(Const.Index, Const.ClassificationSubject, new {Area = Const.MasterData})" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@form.CurrentAction</button>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubject, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    @if (form.isInput)
+                                    {
+                                        <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                    }
                                 </div>
                             </form>
                         </div>
@@ -108,7 +111,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action(Const.BindClassificationIdByClassificationTypeId, Const.ClassificationSubject, new { Area = Const.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindClassificationIdByClassificationTypeId, GlobalConst.ClassificationSubject, new { Area = GlobalConst.MasterData })',
                     type: "POST",
                     data: function (params) {
                         var query = {

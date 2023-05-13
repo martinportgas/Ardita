@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -12,7 +12,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers;
 
 [CustomAuthorize]
-[Area(Const.MasterData)]
+[Area(GlobalConst.MasterData)]
 public class GmdController : BaseController<MstGmd>
 {
     #region MEMBER AND CTR
@@ -40,7 +40,7 @@ public class GmdController : BaseController<MstGmd>
     public override async Task<IActionResult> Add()
     {
         await Task.Delay(0);
-        return View(Const.Form, new MstGmd());
+        return View(GlobalConst.Form, new MstGmd());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
@@ -48,7 +48,7 @@ public class GmdController : BaseController<MstGmd>
         var data = await _gmdService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -61,7 +61,7 @@ public class GmdController : BaseController<MstGmd>
         var data = await _gmdService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -74,7 +74,7 @@ public class GmdController : BaseController<MstGmd>
         var data = await _gmdService.GetById(Id);
         if (data.Any())
         {
-            return View(Const.Form, data.FirstOrDefault());
+            return View(GlobalConst.Form, data.FirstOrDefault());
         }
         else
         {
@@ -125,7 +125,7 @@ public class GmdController : BaseController<MstGmd>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             List<MstGmd> gmds = new();
             MstGmd gmd;
@@ -154,7 +154,7 @@ public class GmdController : BaseController<MstGmd>
         }
 
     }
-    public async Task Export()
+    public async Task<IActionResult> Export()
     {
         try
         {
@@ -169,7 +169,7 @@ public class GmdController : BaseController<MstGmd>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode));
             row.CreateCell(2).SetCellValue(nameof(MstGmd.GmdName));
 
@@ -183,18 +183,23 @@ public class GmdController : BaseController<MstGmd>
 
                 no += 1;
             }
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception ex)
         {
             throw new Exception();
         }
     }
-    public async Task DownloadTemplate()
+    public async Task<IActionResult> DownloadTemplate()
     {
         try
         {
-            string fileName = $"{Const.Template}-{nameof(MstGmd).ToCleanNameOf()}";
+            string fileName = $"{GlobalConst.Template}-{nameof(MstGmd).ToCleanNameOf()}";
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
             IWorkbook workbook;
@@ -203,11 +208,16 @@ public class GmdController : BaseController<MstGmd>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(Const.No);
+            row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode));
             row.CreateCell(2).SetCellValue(nameof(MstGmd.GmdName));
 
-            workbook.WriteExcelToResponse(HttpContext, fileName);
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+            }
         }
         catch (Exception)
         {
@@ -217,6 +227,6 @@ public class GmdController : BaseController<MstGmd>
     #endregion
 
     #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Gmd, new { Area = Const.MasterData });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Gmd, new { Area = GlobalConst.MasterData });
     #endregion
 }

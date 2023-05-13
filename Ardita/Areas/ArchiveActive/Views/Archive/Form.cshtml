@@ -1,13 +1,13 @@
-﻿@using Ardita.Globals;
+﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
 @model Ardita.Models.DbModels.TrxArchive;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 
     bool isEditable = false;
-    if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+    if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
     {
         isEditable = true;
     }
@@ -23,13 +23,13 @@
         <h2>Archive</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Home, new {Area = Const.General})"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})">Archive</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveActive})">Archive</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -74,7 +74,7 @@
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
                                             <label>GMD</label>
-                                            <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? Const.Required : Const.Disabled)
+                                            <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtGmdId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select GMD --">
                                                 <option value=""></option>
@@ -90,7 +90,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Sub Subject Classifications</label>
-                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? Const.Required : Const.Disabled)
+                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Subject Classification --">
                                                 <option value=""></option>
@@ -100,7 +100,7 @@
                                             <label>Keywords</label>
                                             <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                         </div>
-                                        @if (form.CurrentAction is not Const.Add)
+                                        @if (form.CurrentAction is not GlobalConst.Add)
                                         {
                                             <div class="form-group">
                                                 <label>Archive Code</label>
@@ -115,7 +115,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Security Classifications</label>
-                                            <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" (form.isInput ? Const.Required : Const.Disabled)
+                                            <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSecurityClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Security Classification --">
                                                 <option value=""></option>
@@ -137,7 +137,7 @@
                                             <input type="radio" placeholder="" id="txtCopy" value="Copy" asp-for="TypeArchive">
                                             <label>Copy</label>
                                         </div>
-                                        @if (form.CurrentAction == Const.Add || form.CurrentAction == Const.Update)
+                                        @if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
                                         {
                                             <div class="form-group">
                                                 <label>File</label>
@@ -145,7 +145,7 @@
                                                        data-max-files="10">
                                             </div>
                                         }
-                                        @if (form.CurrentAction != Const.Add)
+                                        @if (form.CurrentAction != GlobalConst.Add)
                                         {
                                             <div class="form-group">
                                                 <label>File Existing</label>
@@ -156,10 +156,10 @@
                                                         @foreach (var item in Model.TrxFileArchiveDetails)
                                                         {
                                                             <li id="@item.FileArchiveDetailId.ToString()">
-                                                                <a href="@Url.Action(Const.BindDownload, Const.Archive, new { Area = Const.ArchiveActive, path = item.FilePath })">
+                                                                <a href="@Url.Action(GlobalConst.BindDownload, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, path = item.FilePath })">
                                                                     @item.FileName
                                                                 </a>
-                                                                @if (form.CurrentAction == Const.Update)
+                                                                @if (form.CurrentAction == GlobalConst.Update)
                                                                 {
                                                                     <a onclick="deleteFile('@item.FileArchiveDetailId.ToString()')"><i class="fa fa-trash"></i></a>
                                                                 }
@@ -193,9 +193,9 @@
                                 <div>
                                     @if (isEditable)
                                     {
-                                        <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
                                         <button onclick="onSubmit(this, event, 'submit');"
-                                                class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                 type="submit" id="btn-submit">
                                             Submit
                                         </button>
@@ -208,12 +208,12 @@
                                     }
                                     else
                                     {
-                                        <a href="@Url.Action(Const.Index, Const.Archive, new {Area = Const.ArchiveActive})" class="btn btn-sm btn-danger float-right m-t-n-xs" id="btn-cancel">Cancel</a>
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
 
-                                        if (form.CurrentAction == Const.Remove)
+                                        if (form.CurrentAction == GlobalConst.Remove)
                                         {
                                             <button onclick="onSubmit(this, event, 'submit');"
-                                                    class="btn btn-sm btn-primary float-right m-t-n-xs mr-1"
+                                                    class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                     type="submit" id="btn-submit">
                                                 Submit
                                             </button>
@@ -276,10 +276,10 @@
 
                 $.ajax({
                     url: url,
-                    type: "@Const.GET",
+                    type: "@GlobalConst.GET",
                     data: { Id: id },
-                    dataType: "@Const.JSON",
-                    contentType: "@Const.APPLICATIONJSON",
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
                     success: function (data) {
                         $("#txtCreatorName").val(data.creatorName);
                         $("#txtCreatorId").val(data.creatorId);
@@ -292,7 +292,7 @@
                 });
             });
 
-            if ("@form.CurrentAction" == "@Const.Add") {
+            if ("@form.CurrentAction" == "@GlobalConst.Add") {
                 $('#txtCreatedDateArchive').val("");
             }
         });

@@ -1,17 +1,17 @@
 ﻿@model Ardita.Models.DbModels.MstUser
 @using Ardita.Models.ViewModels;
-@using Ardita.Globals;
+@using Ardita.Extensions;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>Users</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i></a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
                 User Management
@@ -31,8 +31,8 @@
                 <div class="ibox-title">
                     <h5>Users</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(Const.Add, Const.User, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action(Const.Export, Const.User, new { Area = Const.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.User, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Export, GlobalConst.User, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
         <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated fadeIn">
-                    <form id="frmUserUpload" method="post" enctype="multipart/form-data" asp-controller="@Const.User" asp-action="@Const.Upload" asp-area="@Const.UserManage">
+                    <form id="frmUserUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.User" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.UserManage">
                         @Html.AntiForgeryToken()
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -75,8 +75,8 @@
                             <br />
                         </div>
                         <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(Const.DownloadTemplate, Const.User, new { Area = Const.UserManage })" class="btn btn-sm btn-default"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-default"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                            <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.User, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
                             <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </form>>
@@ -122,13 +122,13 @@
                     {
                         "data": "userId",
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(Const.Detail, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.User, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = `<a class="btn btn-sm btn-default" href="@Url.Action(Const.Update, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.User, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", row.userId);
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(Const.Remove, Const.User, new { Area = Const.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.User, new { Area = GlobalConst.UserManage, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.userId);
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);

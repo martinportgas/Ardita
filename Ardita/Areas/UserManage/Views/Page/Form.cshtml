@@ -1,10 +1,10 @@
 ﻿@model Ardita.Models.DbModels.MstPage
 @using Ardita.Models.ViewModels;
-@using Ardita.Globals;
+@using Ardita.Extensions;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = Const.ViewStart;
+    Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
 }
@@ -69,8 +69,8 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">Cancel</a>
-                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit">Submit</button>
+                                            <a href="@Url.Action("Index", "Page", new { Area = "UserManage" })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -86,7 +86,7 @@
                                             </thead>
                                             <tbody id="listdtl">
                                                 <tr>
-                                                    <td><button class="btn btn-danger btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                    <td><button class="btn btn-default btn-sm min" style="display:none" type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
                                                     <td style="width:35%"><input type="text" name="namePath[]" class="form-control name" /></td>
                                                     <td style="width:60%"><input type="text" name="pagePath[]" class="form-control path" /></td>
                                                 </tr>

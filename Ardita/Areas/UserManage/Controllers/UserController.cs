@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -12,7 +12,7 @@ using System.Data;
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class UserController : BaseController<MstUser>
     {
 
@@ -43,7 +43,7 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             ViewBag.listEmployees = await BindEmployee();
 
-            return View(Const.Form, new MstUser());
+            return View(GlobalConst.Form, new MstUser());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
@@ -52,7 +52,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -117,18 +117,18 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
                 return RedirectToIndex();
             }
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(MstUser).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(MstUser).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -139,13 +139,13 @@ namespace Ardita.Areas.UserManage.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowEmployee = excelSheetEmployee.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstUser.Username));
                 row.CreateCell(2).SetCellValue(nameof(MstEmployee.Nik));
 
 
                 //Employee
-                rowEmployee.CreateCell(0).SetCellValue(Const.No);
+                rowEmployee.CreateCell(0).SetCellValue(GlobalConst.No);
                 rowEmployee.CreateCell(1).SetCellValue(nameof(MstEmployee.Nik));
                 rowEmployee.CreateCell(2).SetCellValue(nameof(MstEmployee.Name));
                 rowEmployee.CreateCell(3).SetCellValue(nameof(MstEmployee.Email));
@@ -175,14 +175,19 @@ namespace Ardita.Areas.UserManage.Controllers
                     rowEmployee.CreateCell(9).SetCellValue(item.Position.Name);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception)
             {
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -197,7 +202,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(Const.No);
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstUser.Username));
                 row.CreateCell(2).SetCellValue(nameof(MstEmployee.Nik));
                 row.CreateCell(3).SetCellValue(nameof(MstEmployee.Name));
@@ -227,7 +232,13 @@ namespace Ardita.Areas.UserManage.Controllers
 
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
@@ -239,7 +250,7 @@ namespace Ardita.Areas.UserManage.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var employees = await _employeeService.GetAll();
 
                 List<MstUser> users = new();
@@ -250,7 +261,7 @@ namespace Ardita.Areas.UserManage.Controllers
                     user = new();
                     user.UserId = Guid.NewGuid();
                     user.Username = row[1].ToString();
-                    user.Password = Global.Encode(Const.Password);
+                    user.Password = Global.Encode(GlobalConst.Password);
                     user.EmployeeId = employees.Where(x => x.Nik.Contains(row[2].ToString())).FirstOrDefault().EmployeeId;
 
                     user.IsActive = true;
@@ -268,6 +279,6 @@ namespace Ardita.Areas.UserManage.Controllers
                 throw new Exception();
             }
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.User, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.User, new { Area = GlobalConst.UserManage });
     }
 }

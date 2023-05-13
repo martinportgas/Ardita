@@ -1,7 +1,7 @@
 ﻿using Ardita.Areas.UserManage.Models;
 using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ardita.Areas.UserManage.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.UserManage)]
+    [Area(GlobalConst.UserManage)]
     public class MenuController : BaseController<MstMenu>
     {
         public MenuController(
@@ -64,7 +64,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                return View(Const.SubMenuForm, data);
+                return View(GlobalConst.SubMenuForm, data);
             }
             else
             {
@@ -122,7 +122,7 @@ namespace Ardita.Areas.UserManage.Controllers
         public async Task<IActionResult> AddPage(Guid Id)
         {
             ViewBag.SubMenuId = Id;
-            return View(Const.PageForm, new PageInsertViewModel());
+            return View(GlobalConst.PageForm, new PageInsertViewModel());
 
         }
 
@@ -173,7 +173,7 @@ namespace Ardita.Areas.UserManage.Controllers
                     }
                 }
             }
-            return RedirectToAction(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = model.page.SubmenuId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.Menu, new { Area = GlobalConst.UserManage, Id = model.page.SubmenuId });
         }
 
         public async Task<IActionResult> UpdatePage(Guid Id)
@@ -185,11 +185,11 @@ namespace Ardita.Areas.UserManage.Controllers
             if (pages!= null)
             {
                 model.page = pages;
-                return View(Const.PageUpdateForm, model);
+                return View(GlobalConst.PageUpdateForm, model);
             }
             else
             {
-                return RedirectToAction(Const.Detail, Const.Menu, new { Area = Const.UserManage, Id = model.page.SubmenuId });
+                return RedirectToAction(GlobalConst.Detail, GlobalConst.Menu, new { Area = GlobalConst.UserManage, Id = model.page.SubmenuId });
             }
         }
         public override async Task<IActionResult> Detail(Guid Id)
@@ -199,8 +199,8 @@ namespace Ardita.Areas.UserManage.Controllers
             ViewBag.SubMenuId = Id.ToString();
 
             HttpContext.Session.SetString(nameof(MstSubmenu.SubmenuId), Id.ToString());
-            return View(Const.SubMenuPageDetail);
+            return View(GlobalConst.SubMenuPageDetail);
         }
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.Menu, new { Area = Const.UserManage });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Menu, new { Area = GlobalConst.UserManage });
     }
 }

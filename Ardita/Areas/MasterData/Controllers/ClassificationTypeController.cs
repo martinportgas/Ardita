@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-using Ardita.Globals;
+
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
@@ -15,7 +15,7 @@ using System.Data;
 namespace Ardita.Areas.MasterData.Controllers
 {
     [CustomAuthorizeAttribute]
-    [Area(Const.MasterData)]
+    [Area(GlobalConst.MasterData)]
     public class ClassificationTypeController : BaseController<MstTypeClassification>
     {
         #region MEMBER AND CTR
@@ -44,14 +44,14 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            return View(Const.Form, new MstTypeClassification());
+            return View(GlobalConst.Form, new MstTypeClassification());
         }
         public override async Task<IActionResult> Update(Guid Id)
         {
             var data = await _classificationTypeService.GetById(Id);
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -63,7 +63,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _classificationTypeService.GetById(Id);
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -76,7 +76,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _classificationTypeService.GetById(Id);
             if (data != null)
             {
-                return View(Const.Form, data);
+                return View(GlobalConst.Form, data);
             }
             else
             {
@@ -118,11 +118,11 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
-        public async Task DownloadTemplate()
+        public async Task<IActionResult> DownloadTemplate()
         {
             try
             {
-                string fileName = $"{Const.Template}-{nameof(MstTypeClassification).ToCleanNameOf()}";
+                string fileName = $"{GlobalConst.Template}-{nameof(MstTypeClassification).ToCleanNameOf()}";
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 IWorkbook workbook;
@@ -134,14 +134,19 @@ namespace Ardita.Areas.MasterData.Controllers
                 row.CreateCell(0).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
                 row.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
 
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception();
             }
         }
-        public async Task Export()
+        public async Task<IActionResult> Export()
         {
             try
             {
@@ -167,7 +172,12 @@ namespace Ardita.Areas.MasterData.Controllers
                     row.CreateCell(1).SetCellValue(item.TypeClassificationName);
                     no += 1;
                 }
-                workbook.WriteExcelToResponse(HttpContext, fileName);
+                using (var exportData = new MemoryStream())
+                {
+                    workbook.Write(exportData);
+                    byte[] bytes = exportData.ToArray();
+                    return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                }
             }
             catch (Exception ex)
             {
@@ -177,9 +187,7 @@ namespace Ardita.Areas.MasterData.Controllers
         public async Task<IActionResult> Upload()
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, Const.Upload, string.Empty);
-
-            var type = await _classificationTypeService.GetAll();
+            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
             List<MstTypeClassification> models = new();
             MstTypeClassification model;
@@ -202,7 +210,7 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(Const.Index, Const.ClassificationType, new { Area = Const.MasterData });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ClassificationType, new { Area = GlobalConst.MasterData });
         #endregion
     }
 }
