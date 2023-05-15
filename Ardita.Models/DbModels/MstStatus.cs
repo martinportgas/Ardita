@@ -27,7 +27,9 @@ public partial class MstStatus
 
     public virtual ICollection<TrxArchiveExtend> TrxArchiveExtends { get; } = new List<TrxArchiveExtend>();
 
-    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovements { get; } = new List<TrxArchiveMovement>();
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementStatusReceivedNavigations { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementStatuses { get; } = new List<TrxArchiveMovement>();
 
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 

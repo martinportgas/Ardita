@@ -53,6 +53,7 @@ public abstract class BaseController<T> : Controller
     protected IArchiveDestroyService _archiveDestroyService { get; set; }
     protected IArchiveMovementService _archiveMovementService { get; set; }
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
+    protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
     #endregion
 
     #region Main Action

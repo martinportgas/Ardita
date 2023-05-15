@@ -1,11 +1,4 @@
-﻿using Ardita.Models.ViewModels.Positions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ardita.Models.ViewModels
+﻿namespace Ardita.Models.ViewModels
 {
     public class DataTableResponseModel<T>
     {
@@ -13,5 +6,6 @@ namespace Ardita.Models.ViewModels
         public int recordsFiltered { get; set; }
         public int recordsTotal { get; set; }
         public List<T> data { get; set; }
+        public string? ErrorMessage { get; set; } 
     }
 }

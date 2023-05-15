@@ -1,6 +1,5 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;

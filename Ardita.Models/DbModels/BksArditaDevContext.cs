@@ -1252,6 +1252,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("description");
+            entity.Property(e => e.DescriptionReceived)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description_received");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.MovementCode)
@@ -1267,6 +1271,7 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("note");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.StatusReceived).HasColumnName("status_received");
             entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
             entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
@@ -1282,10 +1287,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveUnitIdFrom)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT1");
 
-            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveMovements)
+            entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveMovementStatuses)
                 .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_STATUS");
+
+            entity.HasOne(d => d.StatusReceivedNavigation).WithMany(p => p.TrxArchiveMovementStatusReceivedNavigations)
+                .HasForeignKey(d => d.StatusReceived)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_STATUS1");
 
             entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxArchiveMovements)
                 .HasForeignKey(d => d.TypeStorageId)

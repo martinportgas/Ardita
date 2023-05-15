@@ -35,6 +35,10 @@ public partial class TrxArchiveMovement
 
     public long StatusId { get; set; }
 
+    public long? StatusReceived { get; set; }
+
+    public string? DescriptionReceived { get; set; }
+
     public string? Note { get; set; }
 
     public bool IsActive { get; set; }
@@ -52,6 +56,8 @@ public partial class TrxArchiveMovement
     public virtual TrxArchiveUnit? ArchiveUnitIdFromNavigation { get; set; }
 
     public virtual MstStatus Status { get; set; } = null!;
+
+    public virtual MstStatus? StatusReceivedNavigation { get; set; }
 
     public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
 

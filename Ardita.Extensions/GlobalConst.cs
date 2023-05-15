@@ -11,7 +11,9 @@ public static class GlobalConst
         ApprovalProcess = 2,
         Approved = 3,
         Rejected = 4,
-        Submit = 5
+        Submit = 5,
+        ArchiveReceived = 6,
+        ArchiveNotReceived = 7,
     }
     public const string Form = "Form";
     public const string Add = "Add";
@@ -29,6 +31,7 @@ public static class GlobalConst
     public const string UserManage = "UserManage";
     public const string General = "General";
     public const string ArchiveActive = "ArchiveActive";
+    public const string ArchiveInActive = "ArchiveInActive";
 
     //Controller
     public const string Company = "Company";
@@ -64,6 +67,7 @@ public static class GlobalConst
     public const string ArchiveDestroy = "ArchiveDestroy";
     public const string ArchiveMovement = "ArchiveMovement";
     public const string ArchiveApproval = "ArchiveApproval";
+    public const string ArchiveReceived = "ArchiveReceived";
 
     //Action
     public const string Index = "Index";
