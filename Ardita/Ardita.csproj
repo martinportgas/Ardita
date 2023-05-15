@@ -40,6 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetentionController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
@@ -52,7 +56,6 @@
   <ItemGroup>
     <Folder Include="Areas\ArchiveActive\Data\" />
     <Folder Include="Areas\ArchiveActive\Models\" />
-    <Folder Include="Areas\ArchiveInActive\Controllers\" />
     <Folder Include="Areas\ArchiveInActive\Views\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />

@@ -29,6 +29,7 @@ public static class GlobalConst
     public const string UserManage = "UserManage";
     public const string General = "General";
     public const string ArchiveActive = "ArchiveActive";
+    public const string ArchiveInActive = "ArchiveInActive";
 
     //Controller
     public const string Company = "Company";
