@@ -163,6 +163,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 }
                 else
                 {
+                    model.IsArchiveActive = false;
                     model.StatusId = (int)GlobalConst.STATUS.Draft;
                     model.ApproveLevel = 1;
                     model.ApproveMax = listApproval.Length;

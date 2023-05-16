@@ -135,13 +135,6 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveExtends.AsNoTracking().FirstAsync(x => x.ArchiveExtendId == model.ArchiveExtendId);
                 if (data != null)
                 {
-                    model.ExtendCode = data.ExtendCode;
-                    model.ApproveLevel = data.ApproveLevel;
-                    model.ApproveMax = data.ApproveMax;
-                    model.StatusId = data.StatusId;
-                    model.IsActive = data.IsActive;
-                    model.CreatedBy = data.CreatedBy;
-                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }
