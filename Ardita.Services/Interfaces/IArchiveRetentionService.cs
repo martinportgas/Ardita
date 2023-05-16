@@ -6,6 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveRetentionService
 {
     Task<IEnumerable<TrxArchive>> GetById(Guid id);
+    Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll();
     Task<IEnumerable<VwArchiveRetention>> GetAll();
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxArchive model);

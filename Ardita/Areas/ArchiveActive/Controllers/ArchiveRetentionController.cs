@@ -31,6 +31,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
+                model.IsArchiveActive = true;
                 var result = await _archiveRetentionService.GetList(model);
 
                 return Json(result);

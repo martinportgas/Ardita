@@ -22,6 +22,11 @@ public class ArchiveRetentionService : IArchiveRetentionService
         var results = await _archiveRetentionRepository.GetAll();
         return results;
     }
+    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll()
+    {
+        var results = await _archiveRetentionRepository.GetInActiveAll();
+        return results;
+    }
 
     public Task<IEnumerable<TrxArchive>> GetById(Guid id)
     {
@@ -39,6 +44,7 @@ public class ArchiveRetentionService : IArchiveRetentionService
             filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
             filterData.pageSize = model.length;
             filterData.skip = model.start;
+            filterData.IsArchiveActive = model.IsArchiveActive;
 
             var dataCount = await _archiveRetentionRepository.GetCountArchiveRetentionByFilterModel(filterData);
             var results = await _archiveRetentionRepository.GetArchiveRetentionByFilterModel(filterData);

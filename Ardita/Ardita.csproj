@@ -40,7 +40,37 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveApprovalController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveDestroyController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveExtendController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetentionController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveApproval\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveDestroy\Form.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveDestroy\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveExtend\Form.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveExtend\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveRetention\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -56,7 +86,6 @@
   <ItemGroup>
     <Folder Include="Areas\ArchiveActive\Data\" />
     <Folder Include="Areas\ArchiveActive\Models\" />
-    <Folder Include="Areas\ArchiveInActive\Views\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />

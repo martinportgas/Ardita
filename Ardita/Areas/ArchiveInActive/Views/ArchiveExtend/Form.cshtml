@@ -1,0 +1,336 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.TrxArchiveExtend
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Perpanjangan Arsip</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})">Perpanjangan Arsip</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Perpanjangan Arsip</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label>Kode Registrasi</label>
+                                                <input type="hidden" asp-for="ArchiveExtendId" value="@Model.ArchiveExtendId">
+                                                <input type="hidden" asp-for="ApproveLevel">
+                                                <input type="hidden" asp-for="ApproveMax">
+                                                <input type="hidden" asp-for="CreatedBy">
+                                                <input type="hidden" asp-for="CreatedDate">
+                                                <input type="hidden" asp-for="UpdatedBy">
+                                                <input type="hidden" asp-for="UpdatedDate">
+                                                <input type="hidden" asp-for="IsActive">
+                                                <input type="hidden" asp-for="StatusId">
+                                                <input type="text" placeholder="" id="txtCode" class="form-control" asp-for="ExtendCode" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Nama Perpanjangan</label>
+                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ExtendName">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Deskripsi</label>
+                                                <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
+                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Approval</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listdtlApr">
+                                                @if (ViewBag.approval.Count > 0)
+                                                {
+                                                    foreach (Ardita.Models.DbModels.TrxApproval item in ViewBag.approval)
+                                                    {
+                                                        <tr>
+                                                            <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.approval.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
+                                                            <td style="width:95%">
+                                                                <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="approval[]" data-placeholder="-- Pilih Approval --"><option value="@item.EmployeeId" selected>@item.Employee.Name</option></select>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td><button class="btn btn-default btn-sm minApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Apr')"><i class="fa fa-trash"></i></button></td>
+                                                        <td style="width:95%">
+                                                            <select onchange="checkDuplicate($(this), 'apr')" class="select2_demo_1 form-control apr @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="approval[]" data-placeholder="-- Pilih Approval --"><option value=""></option></select>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ars')" id="addArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Arsip</button>
+                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Arsip</th>
+                                                    <th>Retensi Sebelumnya</th>
+                                                    <th>Retensi Selanjutnya</th>
+                                                    <th>Alasan Perpanjangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listdtlArs">
+                                                @if (ViewBag.subDetail.Count > 0)
+                                                {
+                                                    foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
+                                                    {
+                                                        <tr>
+                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
+                                                            <td style="width:50%">
+                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
+                                                            </td>
+                                                            <td style="width:10%">
+                                                                <input readonly type="number" name="retentionBefore[]" value="@item.RetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                            </td>
+                                                            <td style="width:10%">
+                                                                <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" value="@item.RetensionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                            </td>
+                                                            <td style="width:25%">
+                                                                <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)">@item.Reason</textarea>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
+                                                        <td style="width:50%">
+                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
+                                                        </td>
+                                                        <td style="width:10%">
+                                                            <input readonly type="number" name="retentionBefore[]" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                        </td>
+                                                        <td style="width:10%">
+                                                            <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                        </td>
+                                                        <td style="width:25%">
+                                                            <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" ></textarea>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    @if (form.isSubmitForm)
+                                    {
+                                        if(form.CurrentAction != GlobalConst.Approval)
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))</button>
+                                        }
+
+                                        if (form.CurrentAction == GlobalConst.Approval && ViewBag.level == Model.ApproveLevel)
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">@Html.Raw(form.ApprovalText)</button>
+                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="submit" name="submit" value="Reject">@Html.Raw(form.RejectText)</button>
+                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" type="button" onclick="showReason(this.id)" id="btnReason">@Html.Raw(form.RejectText)</button>
+                                            <button class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" style="display:none" type="button" onclick="showReason(this.id)" id="btnRefresh">@Html.Raw($"{GlobalConst.IconRefresh}{GlobalConst.Cancel} {GlobalConst.Reject}")</button>
+                                            <div style="width:100%;display:flex;justify-content:end">
+                                                <div style="width:30%;">
+                                                    <br />
+                                                    <textarea asp-for="Note" class="form-control" placeholder="Alasan Reject" id="txtNote"></textarea>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+        function showReason(e) {
+            if (e.toLowerCase() == 'btnreason') {
+                $('#txtNote').show().prop('required', true).next().show();;
+                $('#btnReject').show();
+                $('#btnApprove').hide();
+                $('#btnReason').hide();
+                $('#btnRefresh').show();
+            } else {
+                $('#txtNote').hide().val('').prop('required', false).next().hide();;
+                $('#btnReject').hide();
+                $('#btnApprove').show();
+                $('#btnReason').show();
+                $('#btnRefresh').hide();
+            }
+        }
+
+        function addRow(e, name) {
+            var nameCapital = toCapitalCase(name);
+            $(`.${name}`).select2('destroy');
+            var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
+            elClone.find(`.${name}`).val('');
+            if (name == 'ars') {
+                elClone.find('.before').val('');
+                elClone.find('.after').val('');
+                elClone.find('.reason').val('');
+            }
+            elClone.appendTo(`#listdtl${nameCapital}`);
+            $(`.min${nameCapital}`).show();
+            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindEmployeeByParam';
+            initSelect2(name, bindName);
+        }
+
+        function removeRow(e, name) {
+            e.parent().parent().remove();
+            var countClass = $(`.min${name}`).length;
+            if (countClass < 2) {
+                $(`#Add${name}`).children("tr:first-child").children('td:first-child').children().hide();
+            }
+        }
+
+        function checkBefore(e) {
+            var retentionBefore = e.parent().prev().children('.before').val() == '' ? 0 : parseInt(e.parent().prev().children('.before').val());
+            var retentionAfter = e.val() == '' ? 0 : parseInt(e.val());
+            if (retentionBefore >= retentionAfter){
+                swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus Lebih Besar Dari Retensi Sebelumnya!', type: "info" }, function () {
+                    e.val('');
+                });
+            }
+        }
+
+        function checkDuplicate(e, name) {
+            var data = e.val();
+            if (!e.hasClass('current')){
+
+                e.addClass('current');
+
+                if (e.hasClass(name)) {
+                    $(`.${name}`).each(function () {
+                        if (!$(this).hasClass('current')) {
+                            if (data == $(this).val()) {
+                                swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                                    e.val('').trigger('change');
+                                    e.parent().next().children('.before').val('');
+                                });
+                                return;
+                            }
+                        }
+                    });
+                }
+
+                if(name == 'ars'){
+                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })';
+                    var param = new Object();
+                    param.Id = data;
+
+                    ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                        e.parent().next().children('.before').val(result.activeRetention);
+                    });
+                }
+                
+            }
+            e.removeClass('current');
+        }
+
+        function initSelect2(name, act){
+            $(`.${name}`).each(function () {
+                $(this).select2({
+                    minimumInputLength: 0,
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    ajax: {
+                        url: '@Url.Action("action", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })'.replace('action', act),
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                param: act == '@GlobalConst.BindArchiveRetentionInActiveByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'}` : params.term
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            $('#txtNote').hide().next().hide();
+
+            if('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel'){
+                swal({ title: "Attention!", text: 'Approval Sudah Ditindaklanjuti!', type: "info" });
+            }
+
+            initSelect2('ars', '@GlobalConst.BindArchiveRetentionByParam');
+            initSelect2('apr', '@GlobalConst.BindEmployeeByParam');
+        });
+    </script>
+}

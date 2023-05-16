@@ -40,6 +40,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
+                model.IsArchiveActive = true;
                 var result = await _archiveDestroyService.GetList(model);
 
                 return Json(result);

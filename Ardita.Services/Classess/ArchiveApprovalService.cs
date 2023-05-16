@@ -46,11 +46,10 @@ public class ArchiveApprovalService : IArchiveApprovalService
         return await _archiveApprovalRepository.GetByTransIdandApprovalCode(id, approvalCode);
     }
 
-    public async Task<DataTableResponseModel<VwArchiveApproval>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            var dataCount = await _archiveApprovalRepository.GetCount();
 
             var filterData = new DataTableModel();
 
@@ -60,10 +59,12 @@ public class ArchiveApprovalService : IArchiveApprovalService
             filterData.pageSize = model.length;
             filterData.skip = model.start;
             filterData.EmployeeId = model.EmployeeId;
+            filterData.IsArchiveActive = model.IsArchiveActive;
 
+            var dataCount = await _archiveApprovalRepository.GetCountByFilterModel(filterData);
             var results = await _archiveApprovalRepository.GetByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<VwArchiveApproval>();
+            var responseModel = new DataTableResponseModel<object>();
 
             responseModel.draw = model.draw;
             responseModel.recordsTotal = dataCount;

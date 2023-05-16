@@ -20,6 +20,7 @@ namespace Ardita.Models.ViewModels
         public Guid? PositionId { get; set; }
         public Guid? SubMenuId { get; set; }
         public Guid? EmployeeId { get; set; }
+        public bool? IsArchiveActive { get; set; }
 
     }
 }

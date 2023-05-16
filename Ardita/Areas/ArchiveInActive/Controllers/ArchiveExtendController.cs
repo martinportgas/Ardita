@@ -7,10 +7,10 @@ using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ardita.Areas.ArchiveActive.Controllers
+namespace Ardita.Areas.ArchiveInActive.Controllers
 {
     [CustomAuthorize]
-    [Area(GlobalConst.ArchiveActive)]
+    [Area(GlobalConst.ArchiveInActive)]
     public class ArchiveExtendController : BaseController<TrxArchiveExtend>
     {
         #region MEMBER AND CTR
@@ -40,7 +40,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
-                model.IsArchiveActive = true;
+                model.IsArchiveActive = false;
                 var result = await _archiveExtendService.GetList(model);
 
                 return Json(result);
@@ -308,11 +308,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive });
+            return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveInActive });
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive });
         #endregion
     }
 }

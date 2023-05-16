@@ -29,6 +29,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
+                model.IsArchiveActive = false;
                 var result = await _archiveRetentionService.GetList(model);
 
                 return Json(result);
@@ -44,7 +45,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveService.GetById(Id);
             ViewBag.title = GlobalConst.TitleArchiveRetention;
             ViewBag.backController = GlobalConst.ArchiveRetention;
-            ViewBag.backArea = GlobalConst.ArchiveActive;
+            ViewBag.backArea = GlobalConst.ArchiveInActive;
             return PartialView(GlobalConst._ArchiveMonitoringDetail, model);
         }
 

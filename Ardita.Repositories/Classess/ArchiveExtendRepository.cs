@@ -73,6 +73,7 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveExtends
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true && ( x.ExtendCode + x.ExtendName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
                     .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                     .Skip(model.skip).Take(model.pageSize)
                     .Select(x => new {
@@ -93,6 +94,7 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveExtends
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true && (x.ExtendCode + x.ExtendName + x.Status.Name).Contains(model.searchValue))
+                    .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
                     .CountAsync();
 
             return result;
