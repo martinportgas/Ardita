@@ -20,7 +20,11 @@ namespace Ardita.Repositories.Classess
 
         public Task<TrxFileArchiveDetail> GetById(Guid id)
         {
-            return _context.TrxFileArchiveDetails.AsNoTracking().Where(x => x.IsActive == true).FirstAsync();
+            return _context.TrxFileArchiveDetails.AsNoTracking().Where(x => x.FileArchiveDetailId == id).FirstAsync();
+        }
+        public async Task<IEnumerable<TrxFileArchiveDetail>> GetByArchiveId(Guid id)
+        {
+            return await _context.TrxFileArchiveDetails.Where(x => x.IsActive == true && x.ArchiveId == id).ToListAsync();
         }
     }
 }

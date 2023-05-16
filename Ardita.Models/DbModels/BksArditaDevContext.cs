@@ -1005,6 +1005,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
+            entity.Property(e => e.DocumentNo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("document_no");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -1459,6 +1463,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.FileNameEncrypt)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("file_name_encrypt");
             entity.Property(e => e.FileName)
                 .HasMaxLength(200)
                 .IsUnicode(false)
