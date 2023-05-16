@@ -10,11 +10,11 @@ public interface IArchiveRepository
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> GetCountByFilterData(DataTableModel model);
-    Task<int> Insert(TrxArchive model, List<FileModel> files); 
+    Task<int> Insert(TrxArchive model, List<FileModel> files, string path = ""); 
     Task<int> Submit(Guid ArchiveId); 
     Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);
-    Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId);
+    Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId, string path = "");
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId);
     Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive);
 }

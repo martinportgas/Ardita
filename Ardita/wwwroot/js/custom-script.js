@@ -185,6 +185,7 @@ function initFormReadOnly(condition){
     $("input").attr('readonly', condition);
     $("textarea").attr('readonly', condition);
     $('select').prop('disabled', condition);
+    $("input.readonly").attr('readonly', true);
 }
 
 

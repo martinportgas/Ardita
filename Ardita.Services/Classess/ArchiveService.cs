@@ -97,16 +97,11 @@ public class ArchiveService : IArchiveService
             }
         }
 
-        result = await _archiveRepository.Insert(model, file);
-
+        string path = $"{basePathTemp}{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}";
         if (model.StatusId == (int)GlobalConst.STATUS.Submit)
-        {
-            TrxArchive archive = await _archiveRepository.GetById(model.ArchiveId);
-            string dest = $"{basePath}\\{await _archiveRepository.GetPathArchive(archive.SubSubjectClassificationId, archive.CreatedDateArchive)}\\{model.ArchiveCode}\\";
-            string src = $"{basePathTemp}\\{archive.CreatedDate:yyyy}\\{archive.CreatedDate:MM}\\{archive.CreatedDate:dd}\\{archive.ArchiveCode}\\";
+            path = $"{basePath}{await _archiveRepository.GetPathArchive(model.SubSubjectClassificationId, model.CreatedDateArchive)}";
 
-            DirectoryMove(src, dest, false);
-        }
+        result = await _archiveRepository.Insert(model, file, path);
 
         return result;
     }
@@ -151,16 +146,20 @@ public class ArchiveService : IArchiveService
             }
         }
 
-        result = await _archiveRepository.Update(model, file, filesDeletedId);
-
+        string path = $"{basePathTemp}{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}";
         if (model.StatusId == (int)GlobalConst.STATUS.Submit)
-        {
-            TrxArchive archive = await _archiveRepository.GetById(model.ArchiveId);
-            string dest = $"{basePath}\\{await _archiveRepository.GetPathArchive(archive.SubSubjectClassificationId, archive.CreatedDateArchive)}\\{model.ArchiveCode}\\";
-            string src = $"{basePathTemp}\\{archive.CreatedDate:yyyy}\\{archive.CreatedDate:MM}\\{archive.CreatedDate:dd}\\{archive.ArchiveCode}\\";
+            path = $"{basePath}{await _archiveRepository.GetPathArchive(model.SubSubjectClassificationId, model.CreatedDateArchive)}";
 
-            DirectoryMove(src, dest, false);
-        }
+        result = await _archiveRepository.Update(model, file, filesDeletedId, path);
+
+        //if (model.StatusId == (int)GlobalConst.STATUS.Submit)
+        //{
+        //    //TrxArchive archive = await _archiveRepository.GetById(model.ArchiveId);
+        //    string dest = $"{basePath}\\{await _archiveRepository.GetPathArchive(model.SubSubjectClassificationId, model.CreatedDateArchive)}\\{model.ArchiveCode}\\";
+        //    string src = $"{basePathTemp}\\{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}\\{model.ArchiveCode}\\";
+
+        //    DirectoryMove(src, dest, false);
+        //}
 
         return result;
     }

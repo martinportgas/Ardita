@@ -73,6 +73,17 @@
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
+                                            <label>Archive Code</label>
+                                            <input type="text" asp-for="ArchiveCode" class="form-control readonly">
+                                            <input type="hidden" asp-for="CreatedBy">
+                                            <input type="hidden" asp-for="CreatedDate">
+                                            <input type="hidden" asp-for="IsActive">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Document Number</label>
+                                            <input asp-for="DocumentNo" type="text" placeholder="" id="txtDocumentNo" class="form-control">
+                                        </div>
+                                        <div class="form-group">
                                             <label>GMD</label>
                                             <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtGmdId" class="select2_demo_1 form-control"
@@ -100,14 +111,6 @@
                                             <label>Keywords</label>
                                             <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                         </div>
-                                        @if (form.CurrentAction is not GlobalConst.Add)
-                                        {
-                                            <div class="form-group">
-                                                <label>Archive Code</label>
-                                                <input type="text" asp-for="ArchiveCode" value="@Model.ArchiveCode" class="form-control" disabled>
-                                                <input type="hidden" asp-for="ArchiveCode" value="@Model.ArchiveCode">
-                                            </div>
-                                        }
                                         <div class="form-group">
                                             <label>Archive Title</label>
                                             <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
@@ -156,7 +159,7 @@
                                                         @foreach (var item in Model.TrxFileArchiveDetails)
                                                         {
                                                             <li id="@item.FileArchiveDetailId.ToString()">
-                                                                <a href="@Url.Action(GlobalConst.BindDownload, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, path = item.FilePath })">
+                                                                <a href="@Url.Action(GlobalConst.BindDownload, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = item.FileArchiveDetailId })">
                                                                     @item.FileName
                                                                 </a>
                                                                 @if (form.CurrentAction == GlobalConst.Update)
