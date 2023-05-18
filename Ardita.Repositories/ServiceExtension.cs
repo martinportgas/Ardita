@@ -47,6 +47,7 @@ public static class ServiceExtension
         services.AddScoped<IFileArchiveDetailRepository, FileArchiveDetailRepository>();
         services.AddScoped<IMediaStorageRepository, MediaStorageRepository>();
         services.AddScoped<IArchiveReceivedRepository, ArchiveReceivedRepository>();
+        services.AddScoped<IMediaStorageInActiveRepository, MediaStorageInActiveRepository>();
 
         return services;
     }

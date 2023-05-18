@@ -330,12 +330,30 @@ public class ArchiveRepository : IArchiveRepository
                                       where archive.IsActive == true && media.IsActive == true
                                       select archive;
 
-        return await _context.TrxArchives.Where(x => x.IsActive == true && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId).ToListAsync();
-
+        return await _context.TrxArchives
+            .Where(x => x.IsActive == true && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId)
+            .ToListAsync();
     }
 
     public Task<int> Submit(Guid ArchiveId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId)
+    {
+        var result = from archive in _context.TrxArchives
+                     join mvmntDtl in _context.TrxArchiveMovementDetails on archive.ArchiveId equals mvmntDtl.ArchiveId
+                     join mvmnt in _context.TrxArchiveMovements on mvmntDtl.ArchiveMovementId equals mvmnt.ArchiveMovementId
+                     join media in _context.TrxMediaStorageInActiveDetails on archive.ArchiveId equals media.ArchiveId into tmp
+                     from submedia in tmp.DefaultIfEmpty()
+                     join mediaHeader in _context.TrxMediaStorageInActives on submedia.MediaStorageInActiveId equals mediaHeader.MediaStorageInActiveId into tmp2
+                     from submediaHeader in tmp2.DefaultIfEmpty()
+                     where submedia == null && (submediaHeader.IsActive != true)
+                     select archive;
+
+        await Task.Delay(0);
+
+        return result;
     }
 }

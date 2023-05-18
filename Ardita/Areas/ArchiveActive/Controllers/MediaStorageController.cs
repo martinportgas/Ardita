@@ -1,6 +1,5 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -48,8 +47,6 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     {
         try
         {
-            QRCodeExtension.Generate("123");
-
             var result = await _mediaStorageService.GetList(model);
 
             return Json(result);

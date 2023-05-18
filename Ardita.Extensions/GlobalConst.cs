@@ -42,6 +42,7 @@ public static class GlobalConst
     public const string ClassificationSubSubject = "ClassificationSubSubject";
     public const string ArchiveUnit = "ArchiveUnit";
     public const string MediaStorage = "MediaStorage";
+    public const string MediaStorageInActive = "MediaStorageInActive";
     public const string ArchiveCreator = "ArchiveCreator";
     public const string Gmd = "Gmd";
     public const string SecurityClassification = "SecurityClassification";

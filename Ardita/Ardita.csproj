@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveReceivedController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\MediaStorageInActiveController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +65,8 @@
   <ItemGroup>
     <None Include="Areas\ArchiveInActive\Views\ArchiveReceived\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveReceived\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Form.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Index.cshtml" />
     <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.svg" />
     <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="wwwroot\fonts\font-awesome\less\animated.less" />

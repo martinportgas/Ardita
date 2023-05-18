@@ -54,6 +54,7 @@ public abstract class BaseController<T> : Controller
     protected IArchiveMovementService _archiveMovementService { get; set; }
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
     protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
+    protected IMediaStorageInActiveService MediaStorageInActiveService { get; set; } = null!;
     #endregion
 
     #region Main Action
@@ -395,7 +396,7 @@ public abstract class BaseController<T> : Controller
             TypeArchive = data.TypeArchive,
             TypeSender = data.TypeSender,
             Volume = data.Volume,
-            ArchiveCreator = data.SubSubjectClassification.Creator.CreatorName
+            ArchiveCreator = data.SubSubjectClassification.Creator!.CreatorName
         };
         return Json(result);
     }

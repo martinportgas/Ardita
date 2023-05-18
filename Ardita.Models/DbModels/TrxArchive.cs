@@ -21,6 +21,8 @@ public partial class TrxArchive
 
     public string? ArchiveCode { get; set; }
 
+    public string? DocumentNo { get; set; }
+
     public string TitleArchive { get; set; } = null!;
 
     public string TypeArchive { get; set; } = null!;
