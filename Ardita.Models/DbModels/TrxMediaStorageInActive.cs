@@ -39,6 +39,8 @@ public partial class TrxMediaStorageInActive
 
     public virtual TrxRow Row { get; set; } = null!;
 
+    public virtual MstStatus Status { get; set; } = null!;
+
     public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 
     public virtual ICollection<TrxMediaStorageInActiveDetail> TrxMediaStorageInActiveDetails { get; } = new List<TrxMediaStorageInActiveDetail>();

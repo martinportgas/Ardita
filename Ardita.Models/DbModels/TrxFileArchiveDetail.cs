@@ -10,6 +10,7 @@ public partial class TrxFileArchiveDetail
     public Guid ArchiveId { get; set; }
 
     public string FileNameEncrypt { get; set; } = null!;
+
     public string FileName { get; set; } = null!;
 
     public string FilePath { get; set; } = null!;

@@ -7,13 +7,21 @@ public partial class TrxMediaStorage
 {
     public Guid MediaStorageId { get; set; }
 
+    public Guid SubSubjectClassificationId { get; set; }
+
     public Guid TypeStorageId { get; set; }
 
     public Guid RowId { get; set; }
 
+    public Guid ArchiveOwnerId { get; set; }
+
+    public Guid ArchiveTypeId { get; set; }
+
     public string MediaStorageCode { get; set; } = null!;
 
     public string MediaStorageName { get; set; } = null!;
+
+    public string ArchiveYear { get; set; } = null!;
 
     public int TotalVolume { get; set; }
 
@@ -30,6 +38,10 @@ public partial class TrxMediaStorage
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual MstArchiveOwner ArchiveOwner { get; set; } = null!;
+
+    public virtual MstArchiveType ArchiveType { get; set; } = null!;
 
     public virtual TrxRow Row { get; set; } = null!;
 

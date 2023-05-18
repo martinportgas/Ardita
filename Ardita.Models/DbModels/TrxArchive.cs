@@ -20,6 +20,7 @@ public partial class TrxArchive
     public string Keyword { get; set; } = null!;
 
     public string? ArchiveCode { get; set; }
+
     public string? DocumentNo { get; set; }
 
     public string TitleArchive { get; set; } = null!;
@@ -61,6 +62,8 @@ public partial class TrxArchive
     public virtual ICollection<TrxArchiveExtendDetail> TrxArchiveExtendDetails { get; } = new List<TrxArchiveExtendDetail>();
 
     public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
+
+    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
 
     public virtual ICollection<TrxFileArchiveDetail> TrxFileArchiveDetails { get; } = new List<TrxFileArchiveDetail>();
 
