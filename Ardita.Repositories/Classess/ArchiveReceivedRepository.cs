@@ -27,7 +27,7 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
                     x.ArchiveMovementId,
                     x.MovementCode, 
                     x.MovementName,
-                    x.StatusId,
+                    x.StatusReceived,
                     x.Note,
                     x.StatusReceivedNavigation!.Color,
                     Status = x.StatusReceivedNavigation!.Name
@@ -36,7 +36,6 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
 
         return result;
     }
-
 
     public async Task<int> GetCountByFilterDataArchiveMovement(DataTableModel model)
     {
@@ -53,5 +52,23 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
         var result = await _context.TrxArchiveMovements.AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
 
         return result ?? new TrxArchiveMovement();
+    }
+
+    public async Task<int> Update(TrxArchiveMovement model)
+    {
+        int result = 0;
+
+        if (model != null && model.ArchiveMovementId != Guid.Empty)
+        {
+            var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
+            if (data != null)
+            {
+                data.StatusReceived = (int)GlobalConst.STATUS.ArchiveReceived;
+                data.DescriptionReceived = model.DescriptionReceived;
+                _context.Update(data);
+                result = await _context.SaveChangesAsync();
+            }
+        }
+        return result;
     }
 }

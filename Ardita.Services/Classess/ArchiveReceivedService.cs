@@ -1,4 +1,5 @@
-﻿using Ardita.Models.ViewModels;
+﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -45,5 +46,10 @@ public class ArchiveReceivedService : IArchiveReceivedService
                 ErrorMessage = ex.Message
             };
         }
+    }
+
+    public async Task<int> Update(TrxArchiveMovement model)
+    {
+        return await _archiveReceivedRepository.Update(model);
     }
 }

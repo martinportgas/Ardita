@@ -88,6 +88,7 @@ public static class GlobalConst
     public const string UpdateSubMenu = "UpdateSubMenu";
     public const string SaveSubMenu = "SaveSubMenu";
     public const string UpdatePage = "UpdatePage";
+    public const string AcceptArchiveForm = "AcceptArchiveForm";
 
     //Html helper
     public const string Required = "required";
