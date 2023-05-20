@@ -481,6 +481,38 @@ public abstract class BaseController<T> : Controller
              ).ToList();
         return Json(result);
     }
+    public async Task<JsonResult> BindArchiveRetentionInActiveByParam(string param)
+    {
+        string[] arrParam = param.Split(',');
+
+        var keyword = string.IsNullOrEmpty(arrParam[0]) ? string.Empty : arrParam[0];
+        Guid DetailId = Guid.Empty;
+        Guid.TryParse(arrParam[1], out DetailId);
+        var type = arrParam[2];
+
+        var data = await _archiveRetentionService.GetInActiveAll();
+
+        var dataExt = await _archiveExtendService.GetDetailAll();
+        var dataDst = await _archiveDestroyService.GetDetailAll();
+
+        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
+        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
+
+        var result =
+            (from dataALl in data
+             join dataDetailExt in detailExt on dataALl.ArchiveId equals dataDetailExt.ArchiveId into a
+             from dataDetailExt in a.DefaultIfEmpty()
+             join dataDetailDst in detailDst on dataALl.ArchiveId equals dataDetailDst.ArchiveId into b
+             from dataDetailDst in b.DefaultIfEmpty()
+             where dataDetailExt == null && dataDetailDst == null && dataALl.TitleArchive.ToLower().Contains(keyword.ToLower())
+             select new
+             {
+                 id = dataALl.ArchiveId,
+                 text = dataALl.TitleArchive
+             }
+             ).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindEmployeeByParam(string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;

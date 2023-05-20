@@ -1,16 +1,14 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
 
-namespace Ardita.Areas.ArchiveActive.Controllers
+namespace Ardita.Areas.ArchiveInActive.Controllers
 {
     [CustomAuthorize]
-    [Area(GlobalConst.ArchiveActive)]
+    [Area(GlobalConst.ArchiveInActive)]
     public class ArchiveRetentionController : BaseController<TrxArchive>
     {
         #region MEMBER AND CTR
@@ -31,7 +29,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
-                model.IsArchiveActive = true;
+                model.IsArchiveActive = false;
                 var result = await _archiveRetentionService.GetList(model);
 
                 return Json(result);
@@ -47,7 +45,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveService.GetById(Id);
             ViewBag.title = GlobalConst.TitleArchiveRetention;
             ViewBag.backController = GlobalConst.ArchiveRetention;
-            ViewBag.backArea = GlobalConst.ArchiveActive;
+            ViewBag.backArea = GlobalConst.ArchiveInActive;
             return PartialView(GlobalConst._ArchiveMonitoringDetail, model);
         }
 

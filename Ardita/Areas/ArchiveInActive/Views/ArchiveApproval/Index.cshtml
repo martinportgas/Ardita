@@ -58,7 +58,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveInActive })',
                     "type": "POST",
                     "datatype": "json",
                     //"complete": function (xhr, responseText) {
@@ -83,7 +83,7 @@
                         "data": "approvalId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             console.log(row);
-                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, "Controller", new { Area = GlobalConst.ArchiveActive, Id = -1, Level = "aprLevel" })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, "Controller", new { Area = GlobalConst.ArchiveInActive, Id = -1, Level = "aprLevel" })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", row.transId).replace('Controller', row.approvalCode).replace('aprLevel', row.approvalLevel);
 
                             return submit;

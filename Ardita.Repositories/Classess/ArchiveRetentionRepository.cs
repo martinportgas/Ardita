@@ -16,6 +16,11 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
         var results = await _context.VwArchiveRetentions.ToListAsync();
         return results;
     }
+    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll()
+    {
+        var results = await _context.VwArchiveRetentionInActives.ToListAsync();
+        return results;
+    }
     public async Task<int> GetCount()
     {
         var results = await _context.VwArchiveRetentions.CountAsync();
@@ -24,12 +29,32 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
 
     public async Task<IEnumerable<object>> GetArchiveRetentionByFilterModel(DataTableModel model)
     {
-        var result = await _context.VwArchiveRetentions
+        var result = (bool)model.IsArchiveActive ? await _context.VwArchiveRetentions
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
-            .Select(x => new { 
-                x.ArchiveId, x.ArchiveType, x.CreatorName, x.Status, x.ArchiveNumber, x.TitleArchive,
+            .Select(x => new
+            {
+                x.ArchiveId,
+                x.ArchiveType,
+                x.CreatorName,
+                x.Status,
+                x.ArchiveNumber,
+                x.TitleArchive,
+                RetentionDateArchive = x.RetentionDateArchive.ToString()
+            })
+            .ToListAsync() : await _context.VwArchiveRetentionInActives
+            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+            .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new
+            {
+                x.ArchiveId,
+                x.ArchiveType,
+                x.CreatorName,
+                x.Status,
+                x.ArchiveNumber,
+                x.TitleArchive,
                 RetentionDateArchive = x.RetentionDateArchive.ToString()
             })
             .ToListAsync();
@@ -38,7 +63,9 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
     }
     public async Task<int> GetCountArchiveRetentionByFilterModel(DataTableModel model)
     {
-        var result = await _context.VwArchiveRetentions
+        var result = (bool)model.IsArchiveActive ? await _context.VwArchiveRetentions
+            .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
+            .CountAsync() : await _context.VwArchiveRetentionInActives
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
             .CountAsync();
 

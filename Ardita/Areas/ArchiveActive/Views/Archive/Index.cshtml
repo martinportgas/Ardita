@@ -122,14 +122,14 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
 
-                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
+                            var edit = ``;
 
                             if (row.statusId == 1) {
                                 edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                 edit = edit.replace("-1", row.archiveId);
                             }
 
-                            var remove = `<a class="btn btn-sm btn-danger" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-ban"></i> </a>`;
+                            var remove = ``;
                             if (row.statusId == 1) {
                                 remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                                 remove = remove.replace("-1", row.archiveId);

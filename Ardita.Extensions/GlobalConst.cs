@@ -145,6 +145,7 @@ public static class GlobalConst
     public const string BindDownload = "BindDownload";
     public const string BindArchiveRetention = "BindArchiveRetention";
     public const string BindArchiveRetentionByParam = "BindArchiveRetentionByParam";
+    public const string BindArchiveRetentionInActiveByParam = "BindArchiveRetentionInActiveByParam";
     public const string BindEmployeeByParam = "BindEmployeeByParam";
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";

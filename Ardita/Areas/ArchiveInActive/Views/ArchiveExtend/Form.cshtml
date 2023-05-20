@@ -19,7 +19,7 @@
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveActive})">Perpanjangan Arsip</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})">Perpanjangan Arsip</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -179,7 +179,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
                                         if(form.CurrentAction != GlobalConst.Approval)
@@ -285,7 +285,7 @@
                 }
 
                 if(name == 'ars'){
-                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })';
+                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })';
                     var param = new Object();
                     param.Id = data;
 
@@ -305,11 +305,11 @@
                     theme: 'bootstrap4',
                     allowClear: true,
                     ajax: {
-                        url: '@Url.Action("action", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })'.replace('action', act),
+                        url: '@Url.Action("action", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })'.replace('action', act),
                         type: "POST",
                         data: function (params) {
                             var query = {
-                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'}` : params.term
+                                param: act == '@GlobalConst.BindArchiveRetentionInActiveByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'}` : params.term
                             }
                             return query;
                         },

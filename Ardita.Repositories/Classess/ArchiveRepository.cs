@@ -157,19 +157,18 @@ public class ArchiveRepository : IArchiveRepository
         return pathResult;
     }
 
-    public async Task<int> Insert(TrxArchive model, List<FileModel> files)
+    public async Task<int> Insert(TrxArchive model, List<FileModel> files, string path = "")
     {
         int result = 0;
 
         if (model != null)
         {
-            string path = $"{model.CreatedDate:yyyy}\\{model.CreatedDate:MM}\\{model.CreatedDate:dd}\\";
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
                 model.IsActive = true;
-                model.ArchiveCode = $"ARCHIVE-{_context.TrxArchives.Count() + 1}";
+                model.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{model.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}{(_context.TrxArchives.Count() + 1).ToString("D4")}";
 
                 foreach (var e in _context.ChangeTracker.Entries())
                 {
@@ -181,31 +180,34 @@ public class ArchiveRepository : IArchiveRepository
 
                 if (result != 0 && files.Any())
                 {
+                    path = $"{path}\\{model.ArchiveCode}\\";
                     foreach (FileModel file in files)
                     {
-                        var directory = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
+                        Guid newId = Guid.NewGuid();
+                        string ext = Path.GetExtension(file.FileName!);
 
                         TrxFileArchiveDetail temp = new()
                         {
+                            FileArchiveDetailId = newId,
                             ArchiveId = model.ArchiveId,
                             FileName = file.FileName!,
-                            FilePath = directory + path + model.ArchiveCode + "\\" + file.FileName,
-                            FileType = file.FileType!,
+                            FileNameEncrypt = string.Concat(newId, "_", DateTime.Now.ToString("ddMMyyyyHHmmssffff"), ext),
+                            FilePath = path,
+                            FileType = ext,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
                             IsActive = true
                         };
 
                         _context.TrxFileArchiveDetails.Add(temp);
-                        directory = directory + path + model.ArchiveCode;
 
-                        if (!Directory.Exists(directory))
+                        if (!Directory.Exists(path))
                         {
-                            Directory.CreateDirectory(directory);
+                            Directory.CreateDirectory(path);
                         }
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
-                        File.WriteAllBytes(temp.FilePath, bytes);
+                        File.WriteAllBytes(temp.FilePath + temp.FileNameEncrypt, bytes);
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -228,7 +230,7 @@ public class ArchiveRepository : IArchiveRepository
             foreach (var item in trxArchives)
             {
                 lastCOunt = lastCOunt + 1;
-                item.ArchiveCode = $"ARCHIVE-{lastCOunt}";
+                item.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{item.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}{lastCOunt.ToString("D4")}";
             }
 
             await _context.AddRangeAsync(trxArchives);
@@ -238,7 +240,7 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId)
+    public async Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId, string path = "")
     {
         int result = 0;
 
@@ -247,8 +249,6 @@ public class ArchiveRepository : IArchiveRepository
             var data = await _context.TrxArchives.AsNoTracking().FirstAsync(x => x.ArchiveId == model.ArchiveId);
             if (data != null)
             {
-                string path = $"{data.CreatedDate:yyyy}\\{data.CreatedDate:MM}\\{data.CreatedDate:dd}\\";
-
                 //Update Header
                 model.IsActive = data.IsActive;
                 model.CreatedBy = data.CreatedBy;
@@ -271,45 +271,68 @@ public class ArchiveRepository : IArchiveRepository
                 result = await _context.SaveChangesAsync();
 
                 //Update Detail
+                path = $"{path}\\{model.ArchiveCode}\\";
                 if (result != 0 && files.Any())
                 {
-                    var directory = _configuration[GlobalConst.BASE_PATH_TEMP_ARCHIVE];
-
                     foreach (FileModel file in files)
                     {
+                        Guid newId = Guid.NewGuid();
+                        string ext = Path.GetExtension(file.FileName!);
                         TrxFileArchiveDetail temp = new()
                         {
                             ArchiveId = model.ArchiveId,
                             FileName = file.FileName!,
-                            FilePath = directory + path + model.ArchiveCode + "\\" + file.FileName,
-                            FileType = file.FileType!,
+                            FileNameEncrypt = string.Concat(newId, "_", DateTime.Now.ToString("ddMMyyyyHHmmssffff"), ext),
+                            FilePath = path,
+                            FileType = ext,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
                             IsActive = true
                         };
 
                         _context.TrxFileArchiveDetails.Add(temp);
-                        directory = directory + path + model.ArchiveCode;
 
-                        if (!Directory.Exists(directory))
+                        if (!Directory.Exists(path))
                         {
-                            Directory.CreateDirectory(directory);
+                            Directory.CreateDirectory(path);
                         }
 
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
-                        File.WriteAllBytes(temp.FilePath, bytes);
+                        File.WriteAllBytes(temp.FilePath + temp.FileNameEncrypt, bytes);
                     }
                     await _context.SaveChangesAsync();
                 }
 
                 //Delete Files
                 List<TrxFileArchiveDetail> listFileDeleted = new();
-                foreach (var item in filesDeletedId)
+                var listFileArchiveDetail = await _context.TrxFileArchiveDetails.Where(x => x.ArchiveId == model.ArchiveId && x.IsActive == true).ToListAsync();
+                if (listFileArchiveDetail.Any())
                 {
-                    TrxFileArchiveDetail temp = new();
-                    temp = await _context.TrxFileArchiveDetails.AsNoTracking().FirstAsync(x => x.FileArchiveDetailId == item);
-                    File.Delete(temp.FilePath);
-                    listFileDeleted.Add(temp);
+                    foreach(var item in listFileArchiveDetail)
+                    {
+                        if (filesDeletedId.Contains(item.FileArchiveDetailId))
+                        {
+                            if(File.Exists(item.FilePath))
+                                File.Delete(item.FilePath);
+                            listFileDeleted.Add(item);
+                        }
+                        else
+                        {
+                            if(item.FilePath != path)
+                            {
+                                if (!Directory.Exists(path))
+                                {
+                                    Directory.CreateDirectory(path);
+                                }
+                                string oldDirectory = string.Concat(item.FilePath, item.FileNameEncrypt);
+                                string newDirectory = string.Concat(path, item.FileNameEncrypt);
+                                Directory.Move(oldDirectory, newDirectory);
+                            }
+                            item.FilePath = path;
+                            _context.Update(item);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
                 }
 
                 _context.TrxFileArchiveDetails.RemoveRange(listFileDeleted);

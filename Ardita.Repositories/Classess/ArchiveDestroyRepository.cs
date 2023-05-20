@@ -73,6 +73,7 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveDestroys
                 .Include(x => x.Status)
                 .Where(x => x.IsActive == true && ( x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
@@ -93,6 +94,7 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveDestroys
                 .Include(x => x.Status)
                 .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Status.Name).Contains(model.searchValue))
+                .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
                 .CountAsync();
 
             return result;
@@ -132,13 +134,6 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == model.ArchiveDestroyId);
                 if (data != null)
                 {
-                    model.DestroyCode = data.DestroyCode;
-                    model.ApproveLevel = data.ApproveLevel;
-                    model.ApproveMax = data.ApproveMax;
-                    model.StatusId = data.StatusId;
-                    model.IsActive = data.IsActive;
-                    model.CreatedBy = data.CreatedBy;
-                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

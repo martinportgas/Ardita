@@ -40,6 +40,40 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveApprovalController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveDestroyController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveExtendController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetentionController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveApproval\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveDestroy\Form.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveDestroy\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveExtend\Form.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveExtend\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\ArchiveInActive\Views\ArchiveRetention\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveReceivedController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\MediaStorageInActiveController.cs" />
   </ItemGroup>

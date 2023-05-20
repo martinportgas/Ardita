@@ -2,7 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -22,16 +22,9 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<VwArchiveApproval>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<VwArchiveApproval> result;
-
-        var propertyInfo = typeof(VwArchiveApproval).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(VwArchiveApproval).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.VwArchiveApprovals
+        var result = (bool)model.IsArchiveActive ? await _context.VwArchiveApprovals
             .Where(x => x.EmployeeId == model.EmployeeId &&
             (
             x.Title
@@ -39,13 +32,25 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
             + x.ApprovalType
             )
             .Contains(model.searchValue))
-            .OrderBy(x => EF.Property<VwArchiveApproval>(x, propertyName))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
-        else
-        {
-            result = await _context.VwArchiveApprovals
+            .Select(x => new
+            {
+                x.ApprovalId,
+                x.TransId,
+                x.StatusId,
+                x.ApprovalCode,
+                x.ApprovalDate,
+                x.ApprovalType,
+                x.ApprovalLevel,
+                x.Title,
+                x.RegistrationNumber,
+                x.Note,
+                x.EmployeeId,
+                x.CreatedBy,
+                x.CreatedDate
+            })
+            .ToListAsync() : await _context.VwArchiveApprovalInActives
             .Where(x => x.EmployeeId == model.EmployeeId &&
             (
             x.Title
@@ -53,10 +58,25 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
             + x.ApprovalType
             )
             .Contains(model.searchValue))
-            .OrderByDescending(x => EF.Property<VwArchiveApproval>(x, propertyName))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new
+            {
+                x.ApprovalId,
+                x.TransId,
+                x.StatusId,
+                x.ApprovalCode,
+                x.ApprovalDate,
+                x.ApprovalType,
+                x.ApprovalLevel,
+                x.Title,
+                x.RegistrationNumber,
+                x.Note,
+                x.EmployeeId,
+                x.CreatedBy,
+                x.CreatedDate
+            })
             .ToListAsync();
-        }
 
         return result;
     }
@@ -83,6 +103,16 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
     public async Task<int> GetCount()
     {
         return await _context.VwArchiveApprovals.CountAsync();
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        return (bool)model.IsArchiveActive ? await _context.VwArchiveApprovals
+            .Where(x => x.EmployeeId == model.EmployeeId && (x.Title + x.RegistrationNumber + x.ApprovalType)
+            .Contains(model.searchValue))
+            .CountAsync() : await _context.VwArchiveApprovalInActives
+            .Where(x => x.EmployeeId == model.EmployeeId && (x.Title + x.RegistrationNumber + x.ApprovalType)
+            .Contains(model.searchValue))
+            .CountAsync();
     }
 
     public async Task<int> Insert(TrxApproval model)

@@ -75,6 +75,7 @@ namespace Ardita.Services.Classess
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
+                filterData.IsArchiveActive = model.IsArchiveActive;
 
                 var dataCount = await _archiveExtendRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveExtendRepository.GetByFilterModel(filterData);

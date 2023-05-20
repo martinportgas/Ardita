@@ -1,6 +1,6 @@
 ﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
-@model Ardita.Models.DbModels.TrxArchiveExtend
+@model Ardita.Models.DbModels.TrxArchiveDestroy
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
@@ -10,7 +10,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Perpanjangan Arsip</h2>
+        <h2>Pemusnahan Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
@@ -19,7 +19,7 @@
                 Archive Active
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveActive})">Perpanjangan Arsip</a>
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveDestroy, new {Area = GlobalConst.ArchiveInActive})">Pemusnahan Arsip</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@form.LastBreadcrumb</strong>
@@ -34,7 +34,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Perpanjangan Arsip</h5>
+                    <h5>Pemusnahan Arsip</h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -64,7 +64,7 @@
                                         <div class="form-group">
                                             <div class="form-group">
                                                 <label>Kode Registrasi</label>
-                                                <input type="hidden" asp-for="ArchiveExtendId" value="@Model.ArchiveExtendId">
+                                                <input type="hidden" asp-for="ArchiveDestroyId" value="@Model.ArchiveDestroyId">
                                                 <input type="hidden" asp-for="ApproveLevel">
                                                 <input type="hidden" asp-for="ApproveMax">
                                                 <input type="hidden" asp-for="CreatedBy">
@@ -74,11 +74,11 @@
                                                 <input type="hidden" asp-for="IsActive">
                                                 <input type="hidden" asp-for="StatusId">
                                                 <input type="hidden" asp-for="IsArchiveActive">
-                                                <input type="text" placeholder="" id="txtCode" class="form-control" asp-for="ExtendCode" disabled>
+                                                <input type="text" placeholder="" id="txtCode" class="form-control" asp-for="DestroyCode" disabled>
                                             </div>
                                             <div class="form-group">
-                                                <label>Nama Perpanjangan</label>
-                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ExtendName">
+                                                <label>Nama Pemusnahan</label>
+                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DestroyName">
                                             </div>
                                             <div class="form-group">
                                                 <label>Deskripsi</label>
@@ -129,26 +129,22 @@
                                                 <tr>
                                                     <th></th>
                                                     <th>Arsip</th>
-                                                    <th>Retensi Sebelumnya</th>
-                                                    <th>Retensi Selanjutnya</th>
-                                                    <th>Alasan Perpanjangan</th>
+                                                    <th>Jadwal Pemusnahan</th>
+                                                    <th>Alasan Pemusnahan</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtlArs">
                                                 @if (ViewBag.subDetail.Count > 0)
                                                 {
-                                                    foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
+                                                    foreach (Ardita.Models.DbModels.TrxArchiveDestroyDetail item in ViewBag.subDetail)
                                                     {
                                                         <tr>
                                                             <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
                                                             <td style="width:50%">
                                                                 <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
                                                             </td>
-                                                            <td style="width:10%">
-                                                                <input readonly type="number" name="retentionBefore[]" value="@item.RetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                            </td>
-                                                            <td style="width:10%">
-                                                                <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" value="@item.RetensionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                            <td style="width:20%">
+                                                                <input type="date" min="@(DateTime.Now.ToString("yyyy-MM-dd"))" name="destroySchedule[]" value="@(((DateTime)item.DestroySchedule).ToString("yyyy-MM-dd"))" class="form-control destroy @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
                                                             </td>
                                                             <td style="width:25%">
                                                                 <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)">@item.Reason</textarea>
@@ -163,11 +159,8 @@
                                                         <td style="width:50%">
                                                             <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
                                                         </td>
-                                                        <td style="width:10%">
-                                                            <input readonly type="number" name="retentionBefore[]" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                        </td>
-                                                        <td style="width:10%">
-                                                            <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                        <td style="width:20%">
+                                                            <input type="date" min="@(DateTime.Now.ToString("yyyy-MM-dd"))" name="destroySchedule[]" class="form-control destroy @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
                                                         </td>
                                                         <td style="width:25%">
                                                             <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" ></textarea>
@@ -179,7 +172,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveDestroy, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
                                         if(form.CurrentAction != GlobalConst.Approval)
@@ -236,8 +229,7 @@
             var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
             elClone.find(`.${name}`).val('');
             if (name == 'ars') {
-                elClone.find('.before').val('');
-                elClone.find('.after').val('');
+                elClone.find('.destroy').val('');
                 elClone.find('.reason').val('');
             }
             elClone.appendTo(`#listdtl${nameCapital}`);
@@ -254,16 +246,6 @@
             }
         }
 
-        function checkBefore(e) {
-            var retentionBefore = e.parent().prev().children('.before').val() == '' ? 0 : parseInt(e.parent().prev().children('.before').val());
-            var retentionAfter = e.val() == '' ? 0 : parseInt(e.val());
-            if (retentionBefore >= retentionAfter){
-                swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus Lebih Besar Dari Retensi Sebelumnya!', type: "info" }, function () {
-                    e.val('');
-                });
-            }
-        }
-
         function checkDuplicate(e, name) {
             var data = e.val();
             if (!e.hasClass('current')){
@@ -276,7 +258,6 @@
                             if (data == $(this).val()) {
                                 swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
                                     e.val('').trigger('change');
-                                    e.parent().next().children('.before').val('');
                                 });
                                 return;
                             }
@@ -285,15 +266,14 @@
                 }
 
                 if(name == 'ars'){
-                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })';
+                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive })';
                     var param = new Object();
                     param.Id = data;
 
                     ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                        e.parent().next().children('.before').val(result.activeRetention);
+                        //e.parent().next().children('.before').val(result.activeRetention);
                     });
                 }
-                
             }
             e.removeClass('current');
         }
@@ -305,11 +285,11 @@
                     theme: 'bootstrap4',
                     allowClear: true,
                     ajax: {
-                        url: '@Url.Action("action", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })'.replace('action', act),
+                        url: '@Url.Action("action", GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive })'.replace('action', act),
                         type: "POST",
                         data: function (params) {
                             var query = {
-                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'}` : params.term
+                                param: act == '@GlobalConst.BindArchiveRetentionInActiveByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveDestroyId'},${'@GlobalConst.ArchiveExtend'}` : params.term
                             }
                             return query;
                         },

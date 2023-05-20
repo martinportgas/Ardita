@@ -4,6 +4,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -20,13 +21,15 @@ public class ArchiveController : BaseController<TrxArchive>
         IGmdService gmdService,
         IClassificationSubSubjectService classificationSubSubjectService,
         ISecurityClassificationService securityClassificationService,
-        IArchiveCreatorService archiveCreatorService)
+        IArchiveCreatorService archiveCreatorService,
+        IFileArchiveDetailService fileArchiveDetailService)
     {
         _archiveService = archiveService;
         _gmdService = gmdService;
         _classificationSubSubjectService = classificationSubSubjectService;
         _securityClassificationService = securityClassificationService;
         _archiveCreatorService = archiveCreatorService;
+        _fileArchiveDetailService = fileArchiveDetailService;
     }
     #endregion
 
@@ -49,8 +52,10 @@ public class ArchiveController : BaseController<TrxArchive>
     public override async Task<IActionResult> Add()
     {
         await BindAllDropdown();
+        var model = new TrxArchive();
+        model.ArchiveCode = "Auto Generated";
 
-        return View(GlobalConst.Form, new TrxArchive());
+        return View(GlobalConst.Form, model);
     }
     public override async Task<IActionResult> Update(Guid Id)
     {
@@ -150,27 +155,33 @@ public class ArchiveController : BaseController<TrxArchive>
             TrxArchive trxArchive;
             foreach (DataRow row in result.Rows)
             {
-                trxArchive = new();
-                trxArchive.ArchiveId = Guid.NewGuid();
-                trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault().GmdId;
-                trxArchive.SubSubjectClassificationId = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode == row[2].ToString()).FirstOrDefault().SubSubjectClassificationId;
-                trxArchive.SecurityClassificationId = SecurityClassifications.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault().SecurityClassificationId;
-                trxArchive.CreatorId = Creators.Where(x => x.CreatorCode == row[4].ToString()).FirstOrDefault().CreatorId;
-                trxArchive.TypeSender = row[5].ToString();
-                trxArchive.Keyword = row[6].ToString();
-                trxArchive.ArchiveCode = row[7].ToString();
-                trxArchive.TitleArchive = row[8].ToString();
-                trxArchive.TypeArchive = row[9].ToString();
-                trxArchive.CreatedDateArchive = Convert.ToDateTime(row[10]);
-                trxArchive.ActiveRetention = Convert.ToInt32(row[11]);
-                trxArchive.InactiveRetention = Convert.ToInt32(row[12]);
-                trxArchive.Volume = Convert.ToInt32(row[13]);
-                trxArchive.IsActive = true;
-                trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                trxArchive.CreatedDate = DateTime.Now;
-                trxArchive.StatusId = 1;
+                var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
+                var creatorData = Creators.Where(x => x.CreatorCode == row[4].ToString()).FirstOrDefault();
+                if(securityClassificationData != null && creatorData != null)
+                {
+                    trxArchive = new();
+                    trxArchive.ArchiveId = Guid.NewGuid();
+                    trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault().GmdId;
+                    trxArchive.SubSubjectClassificationId = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode == row[2].ToString()).FirstOrDefault().SubSubjectClassificationId;
+                    trxArchive.SecurityClassificationId = securityClassificationData.SecurityClassificationId;
+                    trxArchive.CreatorId = creatorData.CreatorId;
+                    trxArchive.TypeSender = row[5].ToString();
+                    trxArchive.Keyword = row[6].ToString();
+                    trxArchive.ArchiveCode = row[7].ToString();
+                    trxArchive.DocumentNo = row[8].ToString();
+                    trxArchive.TitleArchive = row[9].ToString();
+                    trxArchive.TypeArchive = row[10].ToString();
+                    trxArchive.CreatedDateArchive = Convert.ToDateTime(row[11]);
+                    trxArchive.ActiveRetention = Convert.ToInt32(row[12]);
+                    trxArchive.InactiveRetention = Convert.ToInt32(row[13]);
+                    trxArchive.Volume = Convert.ToInt32(row[14]);
+                    trxArchive.IsActive = true;
+                    trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    trxArchive.CreatedDate = DateTime.Now;
+                    trxArchive.StatusId = 1;
 
-                trxArchives.Add(trxArchive);
+                    trxArchives.Add(trxArchive);
+                }
             }
             await _archiveService.InsertBulk(trxArchives);
             return RedirectToIndex();
@@ -205,12 +216,13 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(5).SetCellValue(nameof(TrxArchive.TypeSender).ToCleanNameOf());
             row.CreateCell(6).SetCellValue(nameof(TrxArchive.Keyword).ToCleanNameOf());
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
-            row.CreateCell(8).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
-            row.CreateCell(11).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
-            row.CreateCell(12).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
-            row.CreateCell(13).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
+            row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
+            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
+            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
+            row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
+            row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
+            row.CreateCell(14).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
 
             int no = 1;
             foreach (var item in archives)
@@ -224,12 +236,13 @@ public class ArchiveController : BaseController<TrxArchive>
                 row.CreateCell(5).SetCellValue(item.TypeSender);
                 row.CreateCell(6).SetCellValue(item.Keyword);
                 row.CreateCell(7).SetCellValue(item.ArchiveCode);
-                row.CreateCell(8).SetCellValue(item.TitleArchive);
-                row.CreateCell(9).SetCellValue(item.TypeArchive);
-                row.CreateCell(10).SetCellValue(item.CreatedDateArchive.ToString());
-                row.CreateCell(11).SetCellValue(item.ActiveRetention);
-                row.CreateCell(12).SetCellValue(item.InactiveRetention);
-                row.CreateCell(13).SetCellValue(item.Volume);
+                row.CreateCell(8).SetCellValue(item.DocumentNo);
+                row.CreateCell(9).SetCellValue(item.TitleArchive);
+                row.CreateCell(10).SetCellValue(item.TypeArchive);
+                row.CreateCell(11).SetCellValue(item.CreatedDateArchive.ToString());
+                row.CreateCell(12).SetCellValue(item.ActiveRetention);
+                row.CreateCell(13).SetCellValue(item.InactiveRetention);
+                row.CreateCell(14).SetCellValue(item.Volume);
 
                 no += 1;
             }
@@ -276,12 +289,13 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(5).SetCellValue(nameof(TrxArchive.TypeSender).ToCleanNameOf());
             row.CreateCell(6).SetCellValue(nameof(TrxArchive.Keyword).ToCleanNameOf());
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
-            row.CreateCell(8).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
-            row.CreateCell(11).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
-            row.CreateCell(12).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
-            row.CreateCell(13).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
+            row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
+            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
+            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
+            row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
+            row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
+            row.CreateCell(14).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
 
             //Initiate Sheet GMD 
             rowGMD.CreateCell(0).SetCellValue(GlobalConst.No);
@@ -373,6 +387,18 @@ public class ArchiveController : BaseController<TrxArchive>
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
     }
     [HttpGet]
-    public IActionResult BindDownload(string path) => File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
+    public async Task<IActionResult> BindDownload(Guid Id)
+    {
+        var data = await _fileArchiveDetailService.GetById(Id);
+        if(data != null)
+        {
+            string path = string.Concat(data.FilePath, data.FileNameEncrypt);
+            if(System.IO.File.Exists(path))
+            {
+                return File(System.IO.File.OpenRead(path), "application/octet-stream", data.FileName);
+            }
+        }
+        return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
+    } 
     #endregion 
 }

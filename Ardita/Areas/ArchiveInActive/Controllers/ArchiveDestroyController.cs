@@ -7,10 +7,10 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
-namespace Ardita.Areas.ArchiveActive.Controllers
+namespace Ardita.Areas.ArchiveInActive.Controllers
 {
     [CustomAuthorize]
-    [Area(GlobalConst.ArchiveActive)]
+    [Area(GlobalConst.ArchiveInActive)]
     public class ArchiveDestroyController : BaseController<TrxArchiveDestroy>
     {
         #region MEMBER AND CTR
@@ -40,7 +40,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
-                model.IsArchiveActive = true;
+                model.IsArchiveActive = false;
                 var result = await _archiveDestroyService.GetList(model);
 
                 return Json(result);
@@ -164,7 +164,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 }
                 else
                 {
-                    model.IsArchiveActive = true;
+                    model.IsArchiveActive = false;
                     model.StatusId = (int)GlobalConst.STATUS.Draft;
                     model.ApproveLevel = 1;
                     model.ApproveMax = listApproval.Length;
@@ -318,7 +318,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     }
                 }
             }
-            return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive });
+            return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveInActive });
         }
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
@@ -327,7 +327,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive });
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive });
         #endregion
     }
 }

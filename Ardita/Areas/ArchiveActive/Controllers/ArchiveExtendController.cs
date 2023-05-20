@@ -40,6 +40,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
+                model.IsArchiveActive = true;
                 var result = await _archiveExtendService.GetList(model);
 
                 return Json(result);
@@ -162,6 +163,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 }
                 else
                 {
+                    model.IsArchiveActive = true;
                     model.StatusId = (int)GlobalConst.STATUS.Draft;
                     model.ApproveLevel = 1;
                     model.ApproveMax = listApproval.Length;
