@@ -15,8 +15,6 @@ public partial class TrxMediaStorageInActive
 
     public string MediaStorageInActiveCode { get; set; } = null!;
 
-    public string MediaStorageInActiveName { get; set; } = null!;
-
     public string ArchiveYear { get; set; } = null!;
 
     public int TotalVolume { get; set; }

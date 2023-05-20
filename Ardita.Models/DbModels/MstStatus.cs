@@ -31,6 +31,8 @@ public partial class MstStatus
 
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementStatuses { get; } = new List<TrxArchiveMovement>();
 
+    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
+
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 
     public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();

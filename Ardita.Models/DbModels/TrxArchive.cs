@@ -63,6 +63,8 @@ public partial class TrxArchive
 
     public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
 
+    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
+
     public virtual ICollection<TrxFileArchiveDetail> TrxFileArchiveDetails { get; } = new List<TrxFileArchiveDetail>();
 
     public virtual ICollection<TrxMediaStorageDetail> TrxMediaStorageDetails { get; } = new List<TrxMediaStorageDetail>();

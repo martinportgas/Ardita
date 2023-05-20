@@ -27,7 +27,7 @@
                 <div class="ibox-title">
                     <h5>Pemindahan Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -36,9 +36,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Nomor registrasi</th>
-                                <th>Nama Pemindahan</th>
-                                <th>Nama Pemindahan</th>
+                                <th>Code</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -65,7 +64,7 @@
                 },
                 columnDefs: [
                     { width: 50, targets: 0 },
-                    { width: 100, targets: 4 }
+                    { width: 100, targets: 3 }
                 ],
                 fixedColumns: true,
                 order: [[0, 'desc']],
@@ -105,7 +104,6 @@
                         }
                     },
                     { "data": "mediaStorageInActiveCode", "Code": "mediaStorageInActiveCode", "autoWidth": true },
-                    { "data": "mediaStorageInActiveName", "Name": "mediaStorageInActiveName", "autoWidth": true },
                     {
                         "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;

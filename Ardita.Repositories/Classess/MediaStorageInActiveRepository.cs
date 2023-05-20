@@ -19,13 +19,12 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         return await _context.TrxMediaStorageInActives
             .Include(x => x.SubSubjectClassification)
             .Include(x => x.Status)
-            .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.MediaStorageInActiveName + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
+            .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
                     x.MediaStorageInActiveId,
                     x.MediaStorageInActiveCode,
-                    x.MediaStorageInActiveName,
                     x.SubSubjectClassification.SubSubjectClassificationName,
                     x.StatusId,
                     x.Status.Color,
@@ -39,7 +38,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         return await _context.TrxMediaStorageInActives
             .Include(x => x.SubSubjectClassification)
             .Include(x => x.Status)
-            .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.MediaStorageInActiveName + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
+            .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
             .CountAsync();
     }
 }

@@ -12,10 +12,28 @@ namespace Ardita.Areas.ArchiveInActive.Controllers;
 public class MediaStorageInActiveController : BaseController<TrxMediaStorageInActive>
 {
     public MediaStorageInActiveController(
-        IMediaStorageInActiveService mediaStorageInActiveService
+        IMediaStorageInActiveService mediaStorageInActiveService,
+        IClassificationSubSubjectService classificationSubSubjectService,
+        IArchiveService archiveService,
+        IArchiveUnitService archiveUnitService,
+        ITypeStorageService typeStorageService,
+        IFloorService floorService,
+        IRoomService roomService,
+        IRackService rackService,
+        ILevelService levelService,
+        IRowService rowService
         )
     {
         MediaStorageInActiveService = mediaStorageInActiveService;
+        _classificationSubSubjectService = classificationSubSubjectService;
+        _archiveService = archiveService;
+        _archiveUnitService = archiveUnitService;
+        _typeStorageService = typeStorageService;
+        _floorService = floorService;
+        _roomService = roomService;
+        _rackService = rackService;
+        _levelService = levelService;
+        _rowService = rowService;
     }
     public override async Task<ActionResult> Index() => await base.Index();
 
@@ -37,7 +55,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
     public override async Task<IActionResult> Add()
     {
         await BindAllDropdown();
-        return View(GlobalConst.Form, new TrxMediaStorage());
+        return View(GlobalConst.Form, new TrxMediaStorageInActive());
     }
 
     protected async Task BindAllDropdown()
