@@ -585,7 +585,7 @@
 
             @foreach (var d in Model.TrxMediaStorageDetails)
             {
-                @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.TypeArchive", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
+                @:initListArchive("@d.ArchiveId", "@d.Archive.Volume", "@d.Archive.ArchiveType.ArchiveTypeName", "@d.Archive.TitleArchive", "@d.Archive.SubSubjectClassification.Creator.CreatorName", true);
 
             }
             

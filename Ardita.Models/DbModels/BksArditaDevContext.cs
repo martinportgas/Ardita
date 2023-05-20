@@ -1067,6 +1067,8 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
+            entity.Property(e => e.ArchiveOwnerId).HasColumnName("archive_owner_id");
+            entity.Property(e => e.ArchiveTypeId).HasColumnName("archive_type_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -1095,10 +1097,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("title_archive");
-            entity.Property(e => e.TypeArchive)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("type_archive");
             entity.Property(e => e.TypeSender)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -1108,6 +1106,16 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
             entity.Property(e => e.Volume).HasColumnName("volume");
+
+            entity.HasOne(d => d.ArchiveOwner).WithMany(p => p.TrxArchives)
+                .HasForeignKey(d => d.ArchiveOwnerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MST_ARCHIVE_OWNER");
+
+            entity.HasOne(d => d.ArchiveType).WithMany(p => p.TrxArchives)
+                .HasForeignKey(d => d.ArchiveTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MST_ARCHIVE_TYPE");
 
             entity.HasOne(d => d.Creator).WithMany(p => p.TrxArchives)
                 .HasForeignKey(d => d.CreatorId)
@@ -1690,8 +1698,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.MediaStorageId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("media_storage_id");
-            entity.Property(e => e.ArchiveOwnerId).HasColumnName("archive_owner_id");
-            entity.Property(e => e.ArchiveTypeId).HasColumnName("archive_type_id");
             entity.Property(e => e.ArchiveYear)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1719,16 +1725,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.ArchiveOwner).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.ArchiveOwnerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_ARCHIVE_OWNER");
-
-            entity.HasOne(d => d.ArchiveType).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.ArchiveTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_ARCHIVE_TYPE");
 
             entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.RowId)

@@ -55,6 +55,8 @@ public abstract class BaseController<T> : Controller
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
     protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
     protected IMediaStorageInActiveService MediaStorageInActiveService { get; set; } = null!;
+    protected IArchiveRentService _archiveRentService { get; set; } = null!;
+  
     #endregion
 
     #region Main Action
@@ -393,7 +395,7 @@ public abstract class BaseController<T> : Controller
         {
             ArchiveId = data.ArchiveId,
             TitleArchive = data.TitleArchive,
-            TypeArchive = data.TypeArchive,
+            TypeArchive = data.ArchiveType.ArchiveTypeName,
             TypeSender = data.TypeSender,
             Volume = data.Volume,
             ArchiveCreator = data.SubSubjectClassification.Creator!.CreatorName
