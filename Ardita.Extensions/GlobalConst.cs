@@ -69,6 +69,7 @@ public static class GlobalConst
     public const string ArchiveMovement = "ArchiveMovement";
     public const string ArchiveApproval = "ArchiveApproval";
     public const string ArchiveReceived = "ArchiveReceived";
+    public const string ArchiveRent = "ArchiveRent";
 
     //Action
     public const string Index = "Index";
@@ -84,6 +85,8 @@ public static class GlobalConst
     public const string Export = "Export";
     public const string Upload = "Upload";
     public const string GetData = "GetData";
+    public const string GetDetail = "GetDetail";
+    public const string GetDetailArchive = "GetDetailArchive";
     public const string DownloadTemplate = "DownloadTemplate";
     public const string DownloadFile = "DownloadFile";
     public const string UpdateSubMenu = "UpdateSubMenu";
@@ -165,5 +168,17 @@ public static class GlobalConst
 
     //Others
     public const string Password = "Password";
+
+    //ClaimTypes
+    public const string Username = "Username";
+    public const string RoleId = "RoleId";
+    public const string RoleCode = "RoleCode";
+    public const string RoleName = "RoleName";
+    public const string EmployeeNIK = "EmployeeNIK";
+    public const string EmployeeName = "EmployeeName";
+    public const string PositionId = "PositionId";
+    public const string CompanyId = "CompanyId";
+    public const string EmployeeId = "EmployeeId";
+    public const string ArchiveUnitCode = "ArchiveUnitCode";
 
 }

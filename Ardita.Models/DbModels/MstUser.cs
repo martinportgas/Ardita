@@ -33,6 +33,8 @@ public partial class MstUser
 
     public virtual MstEmployee Employee { get; set; } = null!;
 
+    public virtual ICollection<IdxUserArchiveUnit> IdxUserArchiveUnits { get; } = new List<IdxUserArchiveUnit>();
+
     public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
 
     public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();

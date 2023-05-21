@@ -2,12 +2,8 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Repositories.Classess
 {
@@ -42,6 +38,7 @@ namespace Ardita.Repositories.Classess
             var results = await _context.TrxSubSubjectClassifications.Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
+
         public async Task<int> GetCount()
         {
             var results = await _context.TrxSubSubjectClassifications.Where(x => x.IsActive == true).CountAsync();
@@ -123,6 +120,11 @@ namespace Ardita.Repositories.Classess
                 }
             }
             return result;
+        }
+
+        public async Task<IEnumerable<TrxSubSubjectClassification>> GetByArchiveUnit(List<string> listArchiveUnitCode)
+        {
+            return await _context.TrxSubSubjectClassifications.Include(c => c.Creator!.ArchiveUnit).Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode).ToListAsync();
         }
     }
 }

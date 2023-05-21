@@ -19,6 +19,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<IdxSubTypeStorage> IdxSubTypeStorages { get; set; }
 
+    public virtual DbSet<IdxUserArchiveUnit> IdxUserArchiveUnits { get; set; }
+
     public virtual DbSet<IdxUserRole> IdxUserRoles { get; set; }
 
     public virtual DbSet<MstArchiveOwner> MstArchiveOwners { get; set; }
@@ -187,6 +189,33 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.TypeStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IDX_SUB_TYPE_STORAGE_TRX_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<IdxUserArchiveUnit>(entity =>
+        {
+            entity.HasKey(e => e.UserArchiveUnitId);
+
+            entity.ToTable("IDX_USER_ARCHIVE_UNIT");
+
+            entity.Property(e => e.UserArchiveUnitId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("user_archive_unit_id");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.IdxUserArchiveUnits)
+                .HasForeignKey(d => d.ArchiveUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IDX_USER_ARCHIVE_UNIT_TRX_ARCHIVE_UNIT");
+
+            entity.HasOne(d => d.User).WithMany(p => p.IdxUserArchiveUnits)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IDX_USER_ARCHIVE_UNIT_MST_USER");
         });
 
         modelBuilder.Entity<IdxUserRole>(entity =>

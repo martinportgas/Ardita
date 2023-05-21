@@ -43,6 +43,8 @@ public abstract class BaseController<T> : Controller
     protected IRowService _rowService { get; set; }
     protected ISecurityClassificationService _securityClassificationService { get; set; }
     protected IArchiveService _archiveService { get; set; }
+    protected IArchiveOwnerService _archiveOwnerService { get; set; }
+    protected IArchiveTypeService _archiveTypeService { get; set; }
 
     //Trx
     protected IFileArchiveDetailService _fileArchiveDetailService { get; set; }
@@ -55,6 +57,8 @@ public abstract class BaseController<T> : Controller
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
     protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
     protected IMediaStorageInActiveService MediaStorageInActiveService { get; set; } = null!;
+    protected IArchiveRentService _archiveRentService { get; set; } = null!;
+  
     protected ISubTypeStorageService SubTypeStorageService { get; set; } = null!;
     #endregion
 
@@ -181,7 +185,6 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
-
         return data.Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
@@ -209,6 +212,16 @@ public abstract class BaseController<T> : Controller
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
+    {
+        var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubSubjectClassificationId.ToString(),
+            Text = x.SubSubjectClassificationName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindAllSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetAll();
 
@@ -394,7 +407,7 @@ public abstract class BaseController<T> : Controller
         {
             ArchiveId = data.ArchiveId,
             TitleArchive = data.TitleArchive,
-            //TypeArchive = data.TypeArchive,
+            TypeArchive = data.ArchiveType.ArchiveTypeName,
             TypeSender = data.TypeSender,
             Volume = data.Volume,
             ArchiveCreator = data.SubSubjectClassification.Creator!.CreatorName
@@ -530,6 +543,24 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _typeStorageService.GetById(Id);
         return Json(data);
+    }
+    public async Task<List<SelectListItem>> BindArchiveOwners()
+    {
+        var data = await _archiveOwnerService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveOwnerId.ToString(),
+            Text = x.ArchiveOwnerName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindArchiveTypes()
+    {
+        var data = await _archiveTypeService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveTypeId.ToString(),
+            Text = x.ArchiveTypeName
+        }).ToList();
     }
     #endregion
 }

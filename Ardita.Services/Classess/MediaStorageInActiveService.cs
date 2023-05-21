@@ -1,4 +1,5 @@
-﻿using Ardita.Models.ViewModels;
+﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -12,6 +13,20 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
     {
         _mediaStorageInActiveRepository = mediaStorageInActiveRepository;
     }
+
+    public async Task<IEnumerable<object>> GetDetailArchive(Guid id)
+    {
+        return await _mediaStorageInActiveRepository.GetDetailArchive(id);
+    }
+
+    public async Task<IEnumerable<object>> GetDetails(Guid id)
+    {
+        var detail = await _mediaStorageInActiveRepository.GetDetailByArchiveId(id);
+        var result = await _mediaStorageInActiveRepository.GetDetailByArchiveIdAndSort(detail.MediaStorageInActiveId, detail.Sort);
+
+        return result;
+    }
+
     public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try

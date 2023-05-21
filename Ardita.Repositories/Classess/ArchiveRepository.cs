@@ -15,7 +15,7 @@ public class ArchiveRepository : IArchiveRepository
     private readonly IConfiguration _configuration;
     private readonly string _whereClause = @"TitleArchive+TypeSender+Keyword+ActiveRetention.ToString()+CreatedDateArchive.ToString()
                                             +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
-                                            +Creator.CreatorName+TypeArchive";
+                                            +Creator.CreatorName+ArchiveType.ArchiveTypeName";
 
     public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration)
     {
@@ -59,8 +59,12 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.Gmd)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
-                .Include(x => x.Creator)
-                .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
+                .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
+                .Include(x => x.ArchiveOwner)
+                .Include(x => x.ArchiveType)
+                .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
+                .Where($"{(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode )
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new
@@ -76,7 +80,7 @@ public class ArchiveRepository : IArchiveRepository
                     x.Gmd.GmdName,
                     x.SubSubjectClassification.SubSubjectClassificationName,
                     x.Creator.CreatorName,
-                    //x.TypeArchive,
+                    TypeArchive = x.ArchiveType.ArchiveTypeName,
                     x.StatusId,
                     x.Status.Color,
                     x.ArchiveCode,
@@ -125,8 +129,12 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.Gmd)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
-                .Include(x => x.Creator)
-                .Where($"({_whereClause}).Contains(@0) {(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@1))" : "")}", model.searchValue, model.PositionId)
+                .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
+                .Include(x => x.ArchiveOwner)
+                .Include(x => x.ArchiveType)
+                .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
+                .Where($"{(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
                 .CountAsync();
 
         return result;
@@ -168,7 +176,7 @@ public class ArchiveRepository : IArchiveRepository
             try
             {
                 model.IsActive = true;
-                model.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{model.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}{(_context.TrxArchives.Count() + 1).ToString("D4")}";
+                model.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{model.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}.{(_context.TrxArchives.Count() + 1).ToString("D4")}";
 
                 foreach (var e in _context.ChangeTracker.Entries())
                 {

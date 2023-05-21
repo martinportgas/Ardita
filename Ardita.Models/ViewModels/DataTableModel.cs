@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace Ardita.Models.ViewModels
         public Guid? SubMenuId { get; set; }
         public Guid? EmployeeId { get; set; }
         public bool? IsArchiveActive { get; set; }
-
+        public ClaimsPrincipal? SessionUser { get; set; }
+        public List<string> listArchiveUnitCode { get; set; }
     }
 }
