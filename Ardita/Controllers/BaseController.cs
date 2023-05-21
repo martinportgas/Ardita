@@ -57,6 +57,8 @@ public abstract class BaseController<T> : Controller
     protected IArchiveApprovalService _archiveApprovalService { get; set; }
     protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
     protected IMediaStorageInActiveService MediaStorageInActiveService { get; set; } = null!;
+    protected IArchiveRentService _archiveRentService { get; set; } = null!;
+  
     #endregion
 
     #region Main Action

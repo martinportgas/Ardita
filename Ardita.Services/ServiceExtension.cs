@@ -48,6 +48,7 @@ public static class ServiceExtension
         services.AddScoped<IMediaStorageInActiveService, MediaStorageInActiveService>();
         services.AddScoped<IArchiveOwnerService, ArchiveOwnerService>();
         services.AddScoped<IArchiveTypeService, ArchiveTypeService>();
+        services.AddScoped<IArchiveRentService, ArchiveRentService>();
         return services;
     }
 }

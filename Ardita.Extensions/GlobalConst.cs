@@ -69,6 +69,7 @@ public static class GlobalConst
     public const string ArchiveMovement = "ArchiveMovement";
     public const string ArchiveApproval = "ArchiveApproval";
     public const string ArchiveReceived = "ArchiveReceived";
+    public const string ArchiveRent = "ArchiveRent";
 
     //Action
     public const string Index = "Index";
@@ -84,6 +85,8 @@ public static class GlobalConst
     public const string Export = "Export";
     public const string Upload = "Upload";
     public const string GetData = "GetData";
+    public const string GetDetail = "GetDetail";
+    public const string GetDetailArchive = "GetDetailArchive";
     public const string DownloadTemplate = "DownloadTemplate";
     public const string DownloadFile = "DownloadFile";
     public const string UpdateSubMenu = "UpdateSubMenu";

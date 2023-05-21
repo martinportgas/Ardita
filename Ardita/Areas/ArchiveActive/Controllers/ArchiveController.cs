@@ -177,7 +177,7 @@ public class ArchiveController : BaseController<TrxArchive>
                     trxArchive.ArchiveCode = row[7].ToString();
                     trxArchive.DocumentNo = row[8].ToString();
                     trxArchive.TitleArchive = row[9].ToString();
-                    trxArchive.ArchiveTypeId = archiveTypeData.ArchiveTypeId;
+                    trxArchive.ArchiveTypeId = new Guid(row[10].ToString());
                     trxArchive.CreatedDateArchive = Convert.ToDateTime(row[11]);
                     trxArchive.ActiveRetention = Convert.ToInt32(row[12]);
                     trxArchive.InactiveRetention = Convert.ToInt32(row[13]);

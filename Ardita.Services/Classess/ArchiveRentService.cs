@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,11 @@ namespace Ardita.Services.Classess
 {
     public class ArchiveRentService : IArchiveRentService
     {
+        private readonly IArchiveRentRepository _archiveRentRepository;
+        public ArchiveRentService(IArchiveRentRepository archiveRentRepository)
+        {
+            _archiveRentRepository = archiveRentRepository;
+        }
         public Task<int> Delete(TrxArchiveRent model)
         {
             throw new NotImplementedException();
@@ -21,9 +27,35 @@ namespace Ardita.Services.Classess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].name;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+                filterData.IsArchiveActive = model.IsArchiveActive;
+
+                var dataCount = await _archiveRentRepository.GetCountByFilterModel(filterData);
+                var results = await _archiveRentRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<object>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
@@ -36,9 +68,9 @@ namespace Ardita.Services.Classess
             throw new NotImplementedException();
         }
 
-        public Task<int> Insert(TrxArchiveRent model)
+        public async Task<int> Insert(TrxArchiveRent model)
         {
-            throw new NotImplementedException();
+            return await _archiveRentRepository.Insert(model);
         }
 
         public Task<int> Update(TrxArchiveRent model)
