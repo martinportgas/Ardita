@@ -1,0 +1,100 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Sirkulasi Arsip</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveCirculation, new {Area = GlobalConst.ArchiveActive})">Sirkulasi Arsip</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Form</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Sirkulasi Arsip</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="tabs-container">
+                                <ul class="nav nav-tabs">
+                                    <li>
+                                        <a class="nav-link" data-toggle="tab" href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive})">
+                                            Pemindahan Arsip
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" data-toggle="tab" href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive})">
+                                            Pemusnahan Arsip
+                                        </a>
+                                    </li>
+                                </ul>
+                               
+                                <div class="tab-content">
+                                    <div id="tab-10" class="tab-pane active">
+                                        <div class="panel-body">
+                                            <strong>Pemindahan Arsip</strong>
+
+                                            <p>
+                                                A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of
+                                                existence in this spot, which was created for the bliss of souls like mine.
+                                            </p>
+
+                                            <strong>Pemusnahan Arsip</strong>
+
+                                            <p>
+                                                A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of
+                                                existence in this spot, which was created for the bliss of souls like mine.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

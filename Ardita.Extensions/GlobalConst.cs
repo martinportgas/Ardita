@@ -62,6 +62,7 @@ public static class GlobalConst
     public const string Page = "Page";
     public const string RolePage = "RolePage";
     public const string Role = "Role";
+    public const string ArchiveCirculation = "ArchiveCirculation";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
