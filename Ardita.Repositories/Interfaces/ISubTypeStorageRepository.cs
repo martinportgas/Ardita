@@ -6,4 +6,17 @@ namespace Ardita.Repositories.Interfaces;
 public interface ISubTypeStorageRepository
 {
     Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageId(Guid ID);
+    Task<IEnumerable<IdxSubTypeStorage>> GetAllBySubTypeStorageId(Guid ID);
+    Task<IEnumerable<MstSubTypeStorage>> GetById(Guid id);
+    Task<IEnumerable<MstSubTypeStorage>> GetAll();
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCount();
+    Task<int> GetCountByFilterModel(DataTableModel model);
+    Task<int> Insert(MstSubTypeStorage model);
+    Task<int> InsertIDXSubTypeStorage(IdxSubTypeStorage model);
+    Task<bool> InsertBulk(List<MstSubTypeStorage> mstSubTypeStorages);
+    Task<bool> InsertBulkIDXTypeStorage(List<IdxSubTypeStorage> idxSubTypeStorages); 
+    Task<int> Delete(MstSubTypeStorage model);
+    Task<int> DeleteIDXSubTypeStorage(Guid id);
+    Task<int> Update(MstSubTypeStorage model);
 }
