@@ -166,4 +166,16 @@ public static class GlobalConst
     //Others
     public const string Password = "Password";
 
+    //ClaimTypes
+    public const string Username = "Username";
+    public const string RoleId = "RoleId";
+    public const string RoleCode = "RoleCode";
+    public const string RoleName = "RoleName";
+    public const string EmployeeNIK = "EmployeeNIK";
+    public const string EmployeeName = "EmployeeName";
+    public const string PositionId = "PositionId";
+    public const string CompanyId = "CompanyId";
+    public const string EmployeeId = "EmployeeId";
+    public const string ArchiveUnitCode = "ArchiveUnitCode";
+
 }

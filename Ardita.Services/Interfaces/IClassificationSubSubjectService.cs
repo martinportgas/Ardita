@@ -21,5 +21,6 @@ namespace Ardita.Services.Interfaces
         Task<int> Delete(TrxSubSubjectClassification model);
         Task<int> DeleteDetail(Guid id);
         Task<int> Update(TrxSubSubjectClassification model);
+        Task<IEnumerable<TrxSubSubjectClassification>> GetByArchiveUnit(List<string> listArchiveUnitCode);
     }
 }

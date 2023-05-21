@@ -21,5 +21,5 @@ public partial class MstArchiveOwner
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+    public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 }

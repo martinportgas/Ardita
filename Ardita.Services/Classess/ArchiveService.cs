@@ -43,6 +43,8 @@ public class ArchiveService : IArchiveService
     {
         try
         {
+            List<string> listArchiveUnitCode = model.SessionUser != null ? AppUsers.CurrentUser(model.SessionUser).ListArchiveUnitCode : new List<string>();
+
             var filterData = new DataTableModel
             {
                 sortColumn = model.columns[model.order[0].column].name,
@@ -50,7 +52,8 @@ public class ArchiveService : IArchiveService
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
                 skip = model.start,
-                PositionId = model.PositionId
+                PositionId = model.PositionId,
+                listArchiveUnitCode = listArchiveUnitCode
             };
 
             int dataCount = await _archiveRepository.GetCountByFilterData(filterData);

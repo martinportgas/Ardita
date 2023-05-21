@@ -22,7 +22,9 @@ public class ArchiveController : BaseController<TrxArchive>
         IClassificationSubSubjectService classificationSubSubjectService,
         ISecurityClassificationService securityClassificationService,
         IArchiveCreatorService archiveCreatorService,
-        IFileArchiveDetailService fileArchiveDetailService)
+        IFileArchiveDetailService fileArchiveDetailService,
+        IArchiveOwnerService archiveOwnerService,
+        IArchiveTypeService archiveTypeService)
     {
         _archiveService = archiveService;
         _gmdService = gmdService;
@@ -30,6 +32,8 @@ public class ArchiveController : BaseController<TrxArchive>
         _securityClassificationService = securityClassificationService;
         _archiveCreatorService = archiveCreatorService;
         _fileArchiveDetailService = fileArchiveDetailService;
+        _archiveOwnerService = archiveOwnerService;
+        _archiveTypeService = archiveTypeService;
     }
     #endregion
 
@@ -39,6 +43,7 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
+            model.SessionUser = User;
             var result = await _archiveService.GetList(model);
 
             return Json(result);
@@ -150,6 +155,7 @@ public class ArchiveController : BaseController<TrxArchive>
             var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
             var SecurityClassifications = await _securityClassificationService.GetAll();
             var Creators = await _archiveCreatorService.GetAll();
+            var ArchiveTypes = await _archiveTypeService.GetAll();
 
             List<TrxArchive> trxArchives = new();
             TrxArchive trxArchive;
@@ -157,7 +163,8 @@ public class ArchiveController : BaseController<TrxArchive>
             {
                 var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
                 var creatorData = Creators.Where(x => x.CreatorCode == row[4].ToString()).FirstOrDefault();
-                if(securityClassificationData != null && creatorData != null)
+                var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode == row[10].ToString()).FirstOrDefault();
+                if (securityClassificationData != null && creatorData != null)
                 {
                     trxArchive = new();
                     trxArchive.ArchiveId = Guid.NewGuid();
@@ -170,7 +177,7 @@ public class ArchiveController : BaseController<TrxArchive>
                     trxArchive.ArchiveCode = row[7].ToString();
                     trxArchive.DocumentNo = row[8].ToString();
                     trxArchive.TitleArchive = row[9].ToString();
-                    trxArchive.TypeArchive = row[10].ToString();
+                    trxArchive.ArchiveTypeId = archiveTypeData.ArchiveTypeId;
                     trxArchive.CreatedDateArchive = Convert.ToDateTime(row[11]);
                     trxArchive.ActiveRetention = Convert.ToInt32(row[12]);
                     trxArchive.InactiveRetention = Convert.ToInt32(row[13]);
@@ -218,7 +225,7 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
             row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
             row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            row.CreateCell(10).SetCellValue(nameof(TrxArchive.ArchiveType.ArchiveTypeName).ToCleanNameOf());
             row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
             row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
             row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
@@ -238,7 +245,7 @@ public class ArchiveController : BaseController<TrxArchive>
                 row.CreateCell(7).SetCellValue(item.ArchiveCode);
                 row.CreateCell(8).SetCellValue(item.DocumentNo);
                 row.CreateCell(9).SetCellValue(item.TitleArchive);
-                row.CreateCell(10).SetCellValue(item.TypeArchive);
+                row.CreateCell(10).SetCellValue(item.ArchiveType.ArchiveTypeName);
                 row.CreateCell(11).SetCellValue(item.CreatedDateArchive.ToString());
                 row.CreateCell(12).SetCellValue(item.ActiveRetention);
                 row.CreateCell(13).SetCellValue(item.InactiveRetention);
@@ -291,7 +298,7 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
             row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
             row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            row.CreateCell(10).SetCellValue(nameof(TrxArchive.ArchiveType.ArchiveTypeCode).ToCleanNameOf());
             row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
             row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
             row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
@@ -385,6 +392,8 @@ public class ArchiveController : BaseController<TrxArchive>
         ViewBag.listGmd = await BindGmds();
         ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
+        ViewBag.listArchiveOwner = await BindArchiveOwners();
+        ViewBag.listArchiveType = await BindArchiveTypes();
     }
     [HttpGet]
     public async Task<IActionResult> BindDownload(Guid Id)

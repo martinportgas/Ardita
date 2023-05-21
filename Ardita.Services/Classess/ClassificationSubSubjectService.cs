@@ -110,5 +110,10 @@ namespace Ardita.Services.Classess
 
             return result;
         }
+
+        public async Task<IEnumerable<TrxSubSubjectClassification>> GetByArchiveUnit(List<string> listArchiveUnitCode)
+        {
+            return await _classificationSubSubjectRepository.GetByArchiveUnit(listArchiveUnitCode);
+        }
     }
 }

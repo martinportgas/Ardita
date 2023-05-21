@@ -80,10 +80,6 @@
                                             <input type="hidden" asp-for="IsActive">
                                         </div>
                                         <div class="form-group">
-                                            <label>Document Number</label>
-                                            <input asp-for="DocumentNo" type="text" placeholder="" id="txtDocumentNo" class="form-control">
-                                        </div>
-                                        <div class="form-group">
                                             <label>GMD</label>
                                             <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtGmdId" class="select2_demo_1 form-control"
@@ -112,6 +108,10 @@
                                             <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                         </div>
                                         <div class="form-group">
+                                            <label>Document Number</label>
+                                            <input asp-for="DocumentNo" type="text" placeholder="" id="txtDocumentNo" class="form-control">
+                                        </div>
+                                        <div class="form-group">
                                             <label>Archive Title</label>
                                             <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
                                             <input type="text" placeholder="" id="txtTitleArchive" class="form-control" asp-for="TitleArchive">
@@ -130,15 +130,23 @@
                                             <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
                                             <input type="hidden" asp-for="StatusId" id="txtStatusId" />
                                         </div>
+                                        <div class="form-group">
+                                            <label>Asal Arsip</label>
+                                            <select asp-for="ArchiveOwnerId" asp-items="ViewBag.listArchiveOwner" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSArchiveOwnerId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Pilih Asal Arsip --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>Archive Type</label>
-                                            <br />
-                                            <input type="radio" placeholder="" id="txtOriginal" value="Original" asp-for="TypeArchive">
-                                            <label>Original</label>
-                                            <input type="radio" placeholder="" id="txtCopy" value="Copy" asp-for="TypeArchive">
-                                            <label>Copy</label>
+                                            <label>Tipe Arsip</label>
+                                            <select asp-for="ArchiveTypeId" asp-items="ViewBag.listArchiveType" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveTypeId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- -- Pilih Tipe Arsip --">
+                                                <option value=""></option>
+                                            </select>
                                         </div>
                                         @if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
                                         {
@@ -329,8 +337,13 @@
                 result = false;
             }
 
-            if (!($("#txtOriginal").is(':checked')) && !($("#txtCopy").is(':checked'))) {
+            if ($("#txtArchiveTypeId").val() == "") {
                 swal("Please select Archive Type !");
+                result = false;
+            }
+
+            if ($("#txtArchiveOwnerId").val() == "") {
+                swal("Please select Archive Owner !");
                 result = false;
             }
 

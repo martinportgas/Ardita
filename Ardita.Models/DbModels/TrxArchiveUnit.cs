@@ -31,6 +31,8 @@ public partial class TrxArchiveUnit
 
     public virtual MstCompany Company { get; set; } = null!;
 
+    public virtual ICollection<IdxUserArchiveUnit> IdxUserArchiveUnits { get; } = new List<IdxUserArchiveUnit>();
+
     public virtual ICollection<MstCreator> MstCreators { get; } = new List<MstCreator>();
 
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementArchiveUnitIdDestinationNavigations { get; } = new List<TrxArchiveMovement>();

@@ -12,6 +12,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Ardita.Models.ViewModels.Users;
 using Ardita.Models.ViewModels;
+using Ardita.Extensions;
 
 namespace Ardita.Services.Classess
 {
@@ -26,6 +27,7 @@ namespace Ardita.Services.Classess
         private readonly ISubMenuRepository _subMenuRepository;
         private readonly IPageRepository _pageRepository;
         private readonly IRolePageRepository _rolePageRepository;
+        private readonly IUserArchiveUnitRepository _userArchiveUnitRepository;
 
         public UserService(IUserRepository userRepository, 
             IRoleRepository roleRepository, 
@@ -35,7 +37,8 @@ namespace Ardita.Services.Classess
             IMenuRepository menuRepository,
             ISubMenuRepository subMenuRepository,
             IPageRepository pageRepository,
-            IRolePageRepository rolePageRepository
+            IRolePageRepository rolePageRepository,
+            IUserArchiveUnitRepository userArchiveUnitRepository
             )
         {
             _userRepository = userRepository;
@@ -47,6 +50,7 @@ namespace Ardita.Services.Classess
             _subMenuRepository = subMenuRepository;
             _pageRepository = pageRepository;
             _rolePageRepository = rolePageRepository;
+            _userArchiveUnitRepository = userArchiveUnitRepository;
         }
         public async Task<int> Delete(MstUser model)
         {
@@ -107,6 +111,7 @@ namespace Ardita.Services.Classess
             var userRole = await _userRoleRepository.GetAll();
             var employee = await _employeeRepository.GetAll();
             var position = await _positionRepository.GetAll();
+            var userArchiveUnit = await _userArchiveUnitRepository.GetAll();
 
             var result = (from usr in user
                           join ur in userRole on usr.UserId equals ur.UserId
@@ -133,19 +138,22 @@ namespace Ardita.Services.Classess
             List<Claim> claims = null;
             if (result != null)
             {
+                var arrArchiveUnit = userArchiveUnit.Where(x => x.UserId == result.UserId).Select(x => x.ArchiveUnit.ArchiveUnitCode).ToArray();
+
                 claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.Role, result.RoleCode),
-                    new Claim("Username" ,result.Username),
-                    new Claim("UserId" ,result.UserId.ToString()),
-                    new Claim("RoleId" ,result.RoleId.ToString()),
-                    new Claim("RoleCode" ,result.RoleCode.ToString()),
-                    new Claim("RoleName", result.RoleName),
-                    new Claim("EmployeeNIK", result.EmployeeNIK),
-                    new Claim("EmployeeName", result.EmployeeName),
-                    new Claim("PositionId", result.PositionId.ToString()),
-                    new Claim("CompanyId", result.CompanyId.ToString()),
-                    new Claim("EmployeeId", result.EmployeeId.ToString())
+                    new Claim(GlobalConst.Username ,result.Username),
+                    new Claim(GlobalConst.UserId ,result.UserId.ToString()),
+                    new Claim(GlobalConst.RoleId ,result.RoleId.ToString()),
+                    new Claim(GlobalConst.RoleCode ,result.RoleCode.ToString()),
+                    new Claim(GlobalConst.RoleName, result.RoleName),
+                    new Claim(GlobalConst.EmployeeNIK, result.EmployeeNIK),
+                    new Claim(GlobalConst.EmployeeName, result.EmployeeName),
+                    new Claim(GlobalConst.PositionId, result.PositionId.ToString()),
+                    new Claim(GlobalConst.CompanyId, result.CompanyId.ToString()!),
+                    new Claim(GlobalConst.EmployeeId, result.EmployeeId.ToString()),
+                    new Claim(GlobalConst.ArchiveUnitCode, arrArchiveUnit.Length > 0  ? string.Join(",", arrArchiveUnit) : string.Empty)
                 };
             }
        
