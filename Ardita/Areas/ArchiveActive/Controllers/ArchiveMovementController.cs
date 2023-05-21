@@ -11,6 +11,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
     [Area(GlobalConst.ArchiveActive)]
+
+    [Controller]
     public class ArchiveMovementController : BaseController<TrxArchiveMovement>
     {
         #region MEMBER AND CTR

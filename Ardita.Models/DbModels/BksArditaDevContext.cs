@@ -1199,6 +1199,13 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("destroy_name");
+            entity.Property(e => e.DestroySchedule)
+                .HasColumnType("datetime")
+                .HasColumnName("destroy_schedule");
+            entity.Property(e => e.DocumentCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("document_code");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsArchiveActive).HasColumnName("is_archive_active");
             entity.Property(e => e.Note)
@@ -1232,9 +1239,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
-            entity.Property(e => e.DestroySchedule)
-                .HasColumnType("datetime")
-                .HasColumnName("destroy_schedule");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.Reason)
                 .HasMaxLength(2500)
@@ -1271,6 +1275,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("description");
+            entity.Property(e => e.DocumentCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("document_code");
             entity.Property(e => e.ExtendCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1366,6 +1374,10 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("description_received");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
+            entity.Property(e => e.DocumentCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("document_code");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.MovementCode)
                 .HasMaxLength(50)

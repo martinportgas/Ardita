@@ -17,6 +17,8 @@ public partial class TrxArchiveExtend
 
     public int? ApproveMax { get; set; }
 
+    public string? DocumentCode { get; set; }
+
     public long StatusId { get; set; }
 
     public string? Note { get; set; }

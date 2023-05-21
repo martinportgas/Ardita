@@ -184,4 +184,9 @@ public static class GlobalConst
     public const string EmployeeId = "EmployeeId";
     public const string ArchiveUnitCode = "ArchiveUnitCode";
 
+    //Document Code
+    public const string RetentionExtendDoc = "PR";
+    public const string ArchiveDestroyDoc = "PH";
+    public const string ArchiveMovementDoc = "PD";
+
 }

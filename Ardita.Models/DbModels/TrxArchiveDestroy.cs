@@ -15,7 +15,11 @@ public partial class TrxArchiveDestroy
 
     public int? ApproveLevel { get; set; }
 
-    public int? ApproveMax { get; set; }
+    public int ApproveMax { get; set; }
+
+    public string? DocumentCode { get; set; }
+
+    public DateTime? DestroySchedule { get; set; }
 
     public long StatusId { get; set; }
 

@@ -19,6 +19,8 @@ public partial class TrxArchiveMovement
 
     public int? DifferenceVolume { get; set; }
 
+    public string? DocumentCode { get; set; }
+
     public Guid? ArchiveUnitIdDestination { get; set; }
 
     public Guid? ArchiveUnitIdFrom { get; set; }

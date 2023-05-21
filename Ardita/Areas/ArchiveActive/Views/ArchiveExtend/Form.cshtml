@@ -252,6 +252,9 @@
             if (countClass < 2) {
                 $(`#Add${name}`).children("tr:first-child").children('td:first-child').children().hide();
             }
+            if (countClass == 1) {
+                $('.minArs').hide();
+            }
         }
 
         function checkBefore(e) {
