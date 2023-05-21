@@ -76,7 +76,7 @@ public class ArchiveRepository : IArchiveRepository
                     x.Gmd.GmdName,
                     x.SubSubjectClassification.SubSubjectClassificationName,
                     x.Creator.CreatorName,
-                    x.TypeArchive,
+                    //x.TypeArchive,
                     x.StatusId,
                     x.Status.Color,
                     x.ArchiveCode,

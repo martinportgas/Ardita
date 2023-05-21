@@ -15,6 +15,10 @@ public partial class TrxArchive
 
     public Guid CreatorId { get; set; }
 
+    public Guid ArchiveOwnerId { get; set; }
+
+    public Guid ArchiveTypeId { get; set; }
+
     public string TypeSender { get; set; } = null!;
 
     public string Keyword { get; set; } = null!;
@@ -24,8 +28,6 @@ public partial class TrxArchive
     public string? DocumentNo { get; set; }
 
     public string TitleArchive { get; set; } = null!;
-
-    public string TypeArchive { get; set; } = null!;
 
     public DateTime CreatedDateArchive { get; set; }
 
@@ -46,6 +48,10 @@ public partial class TrxArchive
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual MstArchiveOwner ArchiveOwner { get; set; } = null!;
+
+    public virtual MstArchiveType ArchiveType { get; set; } = null!;
 
     public virtual MstCreator Creator { get; set; } = null!;
 

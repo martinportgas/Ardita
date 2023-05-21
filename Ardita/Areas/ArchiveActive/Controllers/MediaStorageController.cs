@@ -25,6 +25,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ILevelService levelService,
         IRowService rowService,
         IMediaStorageService mediaStorageService,
+        ISubTypeStorageService subTypeStorageService,
         IHostingEnvironment hostingEnvironment)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
@@ -37,6 +38,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _levelService = levelService;
         _rowService = rowService;
         _mediaStorageService = mediaStorageService;
+        SubTypeStorageService = subTypeStorageService;
         _hostingEnvironment = hostingEnvironment;
     }
     #endregion

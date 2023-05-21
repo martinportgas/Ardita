@@ -170,7 +170,7 @@ public class ArchiveController : BaseController<TrxArchive>
                     trxArchive.ArchiveCode = row[7].ToString();
                     trxArchive.DocumentNo = row[8].ToString();
                     trxArchive.TitleArchive = row[9].ToString();
-                    trxArchive.TypeArchive = row[10].ToString();
+                    //trxArchive.TypeArchive = row[10].ToString();
                     trxArchive.CreatedDateArchive = Convert.ToDateTime(row[11]);
                     trxArchive.ActiveRetention = Convert.ToInt32(row[12]);
                     trxArchive.InactiveRetention = Convert.ToInt32(row[13]);
@@ -218,7 +218,7 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
             row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
             row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            //row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
             row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
             row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
             row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
@@ -238,7 +238,7 @@ public class ArchiveController : BaseController<TrxArchive>
                 row.CreateCell(7).SetCellValue(item.ArchiveCode);
                 row.CreateCell(8).SetCellValue(item.DocumentNo);
                 row.CreateCell(9).SetCellValue(item.TitleArchive);
-                row.CreateCell(10).SetCellValue(item.TypeArchive);
+                //row.CreateCell(10).SetCellValue(item.TypeArchive);
                 row.CreateCell(11).SetCellValue(item.CreatedDateArchive.ToString());
                 row.CreateCell(12).SetCellValue(item.ActiveRetention);
                 row.CreateCell(13).SetCellValue(item.InactiveRetention);
@@ -291,7 +291,7 @@ public class ArchiveController : BaseController<TrxArchive>
             row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
             row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
             row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
+            //row.CreateCell(10).SetCellValue(nameof(TrxArchive.TypeArchive).ToCleanNameOf());
             row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
             row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
             row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
