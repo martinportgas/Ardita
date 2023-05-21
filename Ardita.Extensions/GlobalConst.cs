@@ -52,6 +52,7 @@ public static class GlobalConst
     public const string Level = "Level";
     public const string Row = "Row";
     public const string TypeStorage = "TypeStorage";
+    public const string SubTypeStorage = "SubTypeStorage";
     public const string Archive = "Archive";
     public const string ArchiveMonitoring = "ArchiveMonitoring";
     public const string Employee = "Employee";
@@ -136,6 +137,7 @@ public static class GlobalConst
     public const string BindGmds = "BindGmds";
     public const string BindLevels = "BindLevels";
     public const string BindArchiveUnits = "BindArchiveUnits";
+    public const string BindArchiveUnitsByParam = "BindArchiveUnitsByParam";
     public const string BindRooms = "BindRooms";
     public const string BindRacks = "BindRacks";
     public const string BindCompanies = "BindCompanies";
@@ -155,6 +157,7 @@ public static class GlobalConst
     public const string BindEmployeeByParam = "BindEmployeeByParam";
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
+    public const string BindTypeStorageByParam = "BindTypeStorageByParam";
 
     //Web Component
     public const string GET = "GET";

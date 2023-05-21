@@ -70,12 +70,18 @@ namespace Ardita.Repositories.Classess
         public async Task<int> Insert(MstArchiveType model)
         {
             int result = 0;
-
+            
             if (model != null)
             {
-                model.IsActive = true;
-                _context.MstArchiveTypes.Add(model);
-                result = await _context.SaveChangesAsync();
+                var data = await _context.MstArchiveTypes.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.ArchiveTypeCode == model.ArchiveTypeCode && x.ArchiveTypeName == model.ArchiveTypeName);
+
+                if (data != null)
+                {
+                    model.IsActive = true;
+                    _context.MstArchiveTypes.Add(model);
+                    result = await _context.SaveChangesAsync();
+                }
             }
             return result;
         }

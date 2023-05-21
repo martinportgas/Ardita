@@ -1,0 +1,248 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.MstSubTypeStorage
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Sub Type Storage</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Master Data
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.SubTypeStorage, new {Area = GlobalConst.MasterData})">Sub Type Storage</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Sub Type Storage</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label>Sub Type Storage Code</label>
+                                                <input type="hidden" asp-for="SubTypeStorageId">
+                                                <input type="text" placeholder="" id="txtCode" name="txtCode" class="form-control" asp-for="SubTypeStorageCode" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Sub Type Storage Name</label>
+                                                <input type="text" placeholder="" id="txtName" name="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubTypeStorageName">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ua')" id="addArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Add Type Storage</button>
+                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Unit Archive</th>
+                                                    <th>Type Storage</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="listTypeStorage">
+                                                @if (ViewBag.subDetail.Count > 0)
+                                                {
+                                                    foreach (Ardita.Models.DbModels.IdxSubTypeStorage item in ViewBag.subDetail)
+                                                    {
+                                                        <tr>
+                                                            <td style="width:5%"><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                            <td style="width:55%">
+                                                                <select class="select2_demo_1 form-control ua @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="unitArchive[]" data-placeholder="-- Pilih Archive Unit --"><option value="@item.TypeStorage.ArchiveUnitId" selected>@item.TypeStorage.ArchiveUnit.ArchiveUnitName</option></select>
+                                                            </td>
+                                                            <td style="width:40%">
+                                                                <select onchange="checkDuplicate($(this), 'ts')" class="select2_demo_1 form-control ts @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="typeStorage[]" data-placeholder="-- Pilih Type Storage --"><option value="@item.TypeStorageId" selected>@item.TypeStorage.TypeStorageName</option></select>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td style="width:5%"><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this))"><i class="fa fa-trash"></i></button></td>
+                                                        <td style="width:55%">
+                                                            <select class="select2_demo_1 form-control ua @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="unitArchive[]" data-placeholder="-- Pilih Archive Unit --"><option value=""></option></select>
+                                                        </td>
+                                                        <td style="width:40%">
+                                                            <select onchange="checkDuplicate($(this), 'ts')" class="select2_demo_1 form-control ts @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="typeStorage[]" data-placeholder="-- Pilih Type Storage --"><option value=""></option></select>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.SubTypeStorage, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+     
+
+        function addRow(e, name) {
+            var nameCapital = toCapitalCase(name);
+            $(`.ua`).select2('destroy');
+            $(`.ts`).select2('destroy');
+            var elClone = $(`#listTypeStorage`).children("tr:first-child").clone();
+            elClone.find('.ua').val('');
+            elClone.find('.ts').val('');
+            elClone.appendTo(`#listTypeStorage`);
+            $(`.minArs`).show();
+            var bindName = '@GlobalConst.BindArchiveUnits';
+            initSelect2(name, bindName);
+        }
+
+        function initSelect2(name, act) {
+            $(`.ua`).each(function () {
+                $(this).select2({
+                    minimumInputLength: 0,
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    ajax: {
+                        url: '@Url.Action(GlobalConst.BindArchiveUnitsByParam, GlobalConst.SubTypeStorage, new { Area = GlobalConst.MasterData })',
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                param: params.term
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            });
+
+            $(`.ts`).each(function () {
+                $(this).select2({
+                    minimumInputLength: 0,
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    ajax: {
+                        url: '@Url.Action(GlobalConst.BindTypeStorageByParam, GlobalConst.SubTypeStorage, new { Area = GlobalConst.MasterData })',
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                param: `${params.term == undefined ? '' : params.term},${$(this).parent().prev().find('.ua').val()}`
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            });
+        }
+
+        function removeRow(e, name) {
+            e.parent().parent().remove();
+            var countClass = $(`.min${name}`).length;
+            if (countClass < 2) {
+                $(`#Add${name}`).children("tr:first-child").children('td:first-child').children().hide();
+            }
+        }
+
+        function checkDuplicate(e, name) {
+            var data = e.val();
+            if (!e.hasClass('current')) {
+
+                e.addClass('current');
+
+                if (e.hasClass(name)) {
+                    $(`.${name}`).each(function () {
+                        if (!$(this).hasClass('current')) {
+                            if (data == $(this).val()) {
+                                swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                                    e.val('').trigger('change');
+                                });
+                                return;
+                            }
+                        }
+                    });
+                }
+
+                if (name == 'ars') {
+                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive })';
+                    var param = new Object();
+                    param.Id = data;
+
+                    ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                        //e.parent().next().children('.before').val(result.activeRetention);
+                    });
+                }
+            }
+            e.removeClass('current');
+        }
+
+        
+
+        $(document).ready(function () {
+            $('#txtNote').hide().next().hide();
+            initSelect2('', '');
+        });
+    </script>
+}
