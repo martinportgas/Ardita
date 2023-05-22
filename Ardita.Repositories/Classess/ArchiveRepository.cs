@@ -42,15 +42,19 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAll()
+    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode)
     {
         return await _context.TrxArchives
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification)
             .Include(x => x.SecurityClassification)
             .Include(x => x.Creator)
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
             .AsNoTracking()
-            .Where(x => x.IsActive == true).ToListAsync();
+            .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
+            .Where(x => x.IsActive == true)
+            .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
@@ -63,7 +67,7 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveOwner)
                 .Include(x => x.ArchiveType)
                 .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
-                .Where($"{(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode )
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -94,6 +98,8 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<TrxArchive> GetById(Guid id)
     {
         var result = await _context.TrxArchives.AsNoTracking()
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
@@ -201,7 +207,7 @@ public class ArchiveRepository : IArchiveRepository
                             FileName = file.FileName!,
                             FileNameEncrypt = string.Concat(newId, "_", DateTime.Now.ToString("ddMMyyyyHHmmssffff"), ext),
                             FilePath = path,
-                            FileType = ext,
+                            FileType = file.FileType!,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
                             IsActive = true
@@ -292,7 +298,7 @@ public class ArchiveRepository : IArchiveRepository
                             FileName = file.FileName!,
                             FileNameEncrypt = string.Concat(newId, "_", DateTime.Now.ToString("ddMMyyyyHHmmssffff"), ext),
                             FilePath = path,
-                            FileType = ext,
+                            FileType = file.FileType!,
                             CreatedBy = model.CreatedBy,
                             CreatedDate = model.CreatedDate,
                             IsActive = true

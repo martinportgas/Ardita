@@ -1,4 +1,9 @@
-﻿namespace Ardita.Extensions;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
+using System.Data;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+
+namespace Ardita.Extensions;
 
 public static class GlobalConst
 {
@@ -83,6 +88,7 @@ public static class GlobalConst
     public const string Approval = "Approval";
     public const string SubmitApproval = "SubmitApproval";
     public const string Export = "Export";
+    public const string Import = "Import";
     public const string Upload = "Upload";
     public const string GetData = "GetData";
     public const string GetDetail = "GetDetail";
@@ -93,6 +99,7 @@ public static class GlobalConst
     public const string SaveSubMenu = "SaveSubMenu";
     public const string UpdatePage = "UpdatePage";
     public const string AcceptArchiveForm = "AcceptArchiveForm";
+    public const string GetFileArchive = "GetFileArchive";
 
     //Html helper
     public const string Required = "required";
@@ -119,6 +126,9 @@ public static class GlobalConst
     public const string DetailArray = "detail[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
     public const string InitialCode = "Auto Generated";
+    public const string wwwroot = "wwwroot";
+    public const string Internal = "Internal";
+    public const string Eksternal = "Eksternal";
 
     //Prefix
     public const string Trx = "Trx";
@@ -158,7 +168,6 @@ public static class GlobalConst
     public const string JSON = "JSON";
     public const string APPLICATIONJSON = "application/json";
 
-
     //Partial View
     public const string _ArchiveMonitoringDetail = "_ArchiveMonitoringDetail";
 
@@ -181,4 +190,28 @@ public static class GlobalConst
     public const string EmployeeId = "EmployeeId";
     public const string ArchiveUnitCode = "ArchiveUnitCode";
 
+    //Excel Template Header From Json
+    public const string name = "name";
+    public const string column = "column";
+    public static JObject ExcelTemplate(string templateName)
+    {
+        return JObject.Parse(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), wwwroot, $"{templateName}.json")));
+    }
+
+    //Datatable
+    public static DataTable dataSender()
+    {
+        DataTable dtSender = new DataTable();
+        dtSender.Columns.Add("no");
+        dtSender.Columns.Add("tipe");
+        DataRow dataRow = dtSender.NewRow();
+        dataRow[0] = 1;
+        dataRow[1] = Internal;
+        dtSender.Rows.Add(dataRow);
+        dataRow = dtSender.NewRow();
+        dataRow[0] = 2;
+        dataRow[1] = Eksternal;
+        dtSender.Rows.Add(dataRow);
+        return dtSender;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -10,6 +11,49 @@ namespace Ardita.Extensions
 {
     public static class Global
     {
+        public static IWorkbook GetExcelTemplate(string templateName, List<DataTable> listData, string type)
+        {
+            IWorkbook workbook;
+            workbook = new XSSFWorkbook();
+            JObject excelTemplate = GlobalConst.ExcelTemplate(templateName);
+            if (excelTemplate.Count > 0)
+            {
+                var sheetCount = excelTemplate[type].Count();
+                for (int i = 0; i < sheetCount; i++)
+                {
+                    ISheet excelSheetx = workbook.CreateSheet(excelTemplate[type][i.ToString()]![GlobalConst.name]!.ToString());
+                    int columnCount = excelTemplate[type][i.ToString()]![GlobalConst.column]!.Count();
+                    if (columnCount > 0)
+                    {
+                        //Create Header
+                        IRow rowHeader = excelSheetx.CreateRow(0);
+                        for (int c = 0; c < columnCount; c++)
+                        {
+                            rowHeader.CreateCell(c).SetCellValue(excelTemplate[type][i.ToString()]![GlobalConst.column]![c.ToString()]!.ToString());
+                        }
+                        //Create Detail
+                        var dt = listData[i];
+                        if (dt.Rows.Count > 0)
+                        {
+                            int no = 1;
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                IRow rowData = excelSheetx.CreateRow(no);
+                                for (int c = 0; c < columnCount; c++)
+                                {
+                                    if (c > 0)
+                                        rowData.CreateCell(c).SetCellValue(dr[c].ToString());
+                                    else
+                                        rowData.CreateCell(c).SetCellValue(no);
+                                }
+                                no++;
+                            }
+                        }
+                    }
+                }
+            }
+            return workbook;
+        }
         public static DataTable ImportExcel(IFormFile file, string folderName, string path)
         {
             var results = new DataTable();

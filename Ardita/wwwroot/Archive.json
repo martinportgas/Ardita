@@ -1,0 +1,92 @@
+{
+  "export": {
+    "0": {
+      "name": "Arsip",
+      "column": {
+        "0": "No",
+        "1": "Kode Arsip",
+        "2": "Bentuk Media Arsip",
+        "3": "Sub-subjek Klasifikasi",
+        "4": "Klasifikasi Keamanan",
+        "5": "Tipe Pengirim",
+        "6": "Asal Arsip",
+        "7": "Kata Kunci",
+        "8": "Nomer Dokumen",
+        "9": "Judul",
+        "10": "Tingkat Perkembangan",
+        "11": "Tanggal Penciptaan",
+        "12": "Retensi Arsip Aktif",
+        "13": "Retensi Arsip Inaktif",
+        "14": "Jumlah"
+      }
+    }
+  },
+  "import": {
+    "0": {
+      "name": "Arsip",
+      "column": {
+        "0": "No",
+        "1": "Bentuk Media Arsip",
+        "2": "Sub-subjek Klasifikasi",
+        "3": "Klasifikasi Keamanan",
+        "4": "Tipe Pengirim",
+        "5": "Asal Arsip",
+        "6": "Kata Kunci",
+        "7": "No Dokumen",
+        "8": "Judul",
+        "9": "Tingkat Perkembangan",
+        "10": "Tanggal Penciptaan",
+        "11": "Retensi Arsip Aktif",
+        "12": "Retensi Arsip Inaktif",
+        "13": "Jumlah"
+      }
+    },
+    "1": {
+      "name": "Bentuk Media Arsip",
+      "column": {
+        "0": "No",
+        "1": "Kode",
+        "2": "Nama"
+      }
+    },
+    "2": {
+      "name": "Sub-subjek Klasifikasi",
+      "column": {
+        "0": "No",
+        "1": "Kode",
+        "2": "Nama"
+      }
+    },
+    "3": {
+      "name": "Klasifikasi Keamanan",
+      "column": {
+        "0": "No",
+        "1": "Kode",
+        "2": "Nama"
+      }
+    },
+    "4": {
+      "name": "Asal Arsip",
+      "column": {
+        "0": "No",
+        "1": "Kode",
+        "2": "Nama"
+      }
+    },
+    "5": {
+      "name": "Tingkat Perkembangan",
+      "column": {
+        "0": "No",
+        "1": "Kode",
+        "2": "Nama"
+      }
+    },
+    "6": {
+      "name": "Tipe Pengirim",
+      "column": {
+        "0": "No",
+        "1": "Tipe Pengirim"
+      }
+    }
+  }
+}

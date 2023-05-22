@@ -7,6 +7,7 @@ using Ardita.Models.ViewModels.SubSubjectClasscification;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NPOI.HPSF;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Controllers;
@@ -129,6 +130,28 @@ public abstract class BaseController<T> : Controller
         await Task.Delay(0);
         throw new NotImplementedException();
     }
+    #endregion
+
+    #region "Global Action"
+    public async Task<IActionResult> GetFileArchive(Guid Id, bool IsDownload = true)
+    {
+        var data = await _fileArchiveDetailService.GetById(Id);
+        if (data != null)
+        {
+            var path = string.Concat(data.FilePath, data.FileNameEncrypt);
+            var bytes = System.IO.File.ReadAllBytes(path);
+
+            if(IsDownload)
+                return File(bytes, data.FileType, data.FileName);
+            else
+                return File(bytes, data.FileType);
+        }
+        if (IsDownload)
+            return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
+        else
+            return File(new byte[] { }, "application/octet-stream");
+    }
+
     #endregion
 
     #region Binding
@@ -292,7 +315,7 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchives()
     {
-        var data = await _archiveService.GetAll();
+        var data = await _archiveService.GetAll(AppUsers.CurrentUser(User).ListArchiveUnitCode);
 
         return data.Select(x => new SelectListItem
         {

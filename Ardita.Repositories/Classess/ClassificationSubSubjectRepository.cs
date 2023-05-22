@@ -35,7 +35,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxSubSubjectClassification>> GetAll()
         {
-            var results = await _context.TrxSubSubjectClassifications.Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxSubSubjectClassifications.Include(x => x.Creator).Where(x => x.IsActive == true).ToListAsync();
             return results;
         }
 
