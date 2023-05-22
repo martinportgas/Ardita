@@ -1,0 +1,49 @@
+﻿@using Ardita.Extensions;
+@{
+    Layout = GlobalConst.ViewStart;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Sirkulasi Arsip</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Sirkulasi Arsip</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Pemindahan Arsip</h5>
+                    <div class="ibox-tools">
+                        <a href="@Url.Action(GlobalConst.Form, GlobalConst.ArchiveCirculation, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table id="tbl" class="table table-striped table-hover dataTables-example" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Action</th>
+                                <th>Code</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,137 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.MstArchiveOwner;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Archive Owners</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Master Data
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveOwner, new {Area = GlobalConst.MasterData})">Master Archive Creator</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Archive Owner</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Archive Owner Code</label>
+                                        <input type="hidden" asp-for="ArchiveOwnerId" />
+                                        <input type="text" placeholder="" id="txtOwnerCode" class="form-control" asp-for="ArchiveOwnerCode">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Archive Owner Name</label>
+                                        <input type="text" placeholder="" id="txtOwnerName" class="form-control" asp-for="ArchiveOwnerName">
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveOwner, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    @if (form.isInput)
+                                    {
+                                        <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            initForms("@form.CurrentAction");
+        });
+
+        function validate() {
+            let result = true;
+
+            if ($('#txtOwnerCode').val() == "") {
+                swal("Please enter Owner Code !");
+                result = false;
+            }
+            if ($('#txtOwnerName').val() == "") {
+                swal("Please enter Owner Name !");
+                result = false;
+            }
+
+            return result;
+        }
+
+        function onSubmit(ctl, event, currentAction) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + currentAction + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#formInput").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+    </script>
+}

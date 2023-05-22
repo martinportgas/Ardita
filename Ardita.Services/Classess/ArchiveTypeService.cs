@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
@@ -14,9 +15,9 @@ namespace Ardita.Services.Classess
     {
         private readonly IArchiveTypeRepository _archiveTypeRepository;
         public ArchiveTypeService(IArchiveTypeRepository archiveTypeRepository) => _archiveTypeRepository = archiveTypeRepository;
-        public Task<int> Delete(MstArchiveType model)
+        public async Task<int> Delete(MstArchiveType model)
         {
-            throw new NotImplementedException();
+            return await _archiveTypeRepository.Delete(model);
         }
 
         public async Task<IEnumerable<MstArchiveType>> GetAll()
@@ -24,29 +25,57 @@ namespace Ardita.Services.Classess
             return await _archiveTypeRepository.GetAll();
         }
 
-        public Task<IEnumerable<MstArchiveType>> GetById(Guid id)
+        public async Task<IEnumerable<MstArchiveType>> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _archiveTypeRepository.GetById(id);
         }
 
-        public Task<DataTableResponseModel<MstArchiveType>> GetList(DataTablePostModel model)
+        public async Task<DataTableResponseModel<MstArchiveType>> GetList(DataTablePostModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var dataCount = await _archiveTypeRepository.GetCount();
+
+                var filterData = new DataTableModel
+                {
+                    sortColumn = model.columns[model.order[0].column].data,
+                    sortColumnDirection = model.order[0].dir,
+                    searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
+                    pageSize = model.length,
+                    skip = model.start
+                };
+
+                var results = await _archiveTypeRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstArchiveType>
+                {
+                    draw = model.draw,
+                    recordsTotal = dataCount,
+                    recordsFiltered = dataCount,
+                    data = results.ToList()
+                };
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public Task<int> Insert(MstArchiveType model)
+        public async Task<int> Insert(MstArchiveType model)
         {
-            throw new NotImplementedException();
+            return await _archiveTypeRepository.Insert(model);
         }
 
-        public Task<bool> InsertBulk(List<MstArchiveType> MstArchiveTypes)
+        public async Task<bool> InsertBulk(List<MstArchiveType> MstArchiveTypes)
         {
-            throw new NotImplementedException();
+            return await _archiveTypeRepository.InsertBulk(MstArchiveTypes);
         }
 
-        public Task<int> Update(MstArchiveType model)
+        public async Task<int> Update(MstArchiveType model)
         {
-            throw new NotImplementedException();
+            return await _archiveTypeRepository.Update(model);
         }
     }
 }

@@ -16,9 +16,9 @@ namespace Ardita.Services.Classess
         private readonly IArchiveOwnerRepository _archiveOwnerRepository;
 
         public ArchiveOwnerService(IArchiveOwnerRepository archiveOwnerRepository) => _archiveOwnerRepository = archiveOwnerRepository;
-        public Task<int> Delete(MstArchiveOwner model)
+        public async Task<int> Delete(MstArchiveOwner model)
         {
-            throw new NotImplementedException();
+            return await _archiveOwnerRepository.Delete(model);
         }
 
         public async Task<IEnumerable<MstArchiveOwner>> GetAll()
@@ -26,29 +26,58 @@ namespace Ardita.Services.Classess
             return await _archiveOwnerRepository.GetAll();
         }
 
-        public Task<IEnumerable<MstArchiveOwner>> GetById(Guid id)
+        public async Task<IEnumerable<MstArchiveOwner>> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var result = await _archiveOwnerRepository.GetById(id);
+            return result;
         }
 
-        public Task<DataTableResponseModel<MstArchiveOwner>> GetList(DataTablePostModel model)
+        public async Task<DataTableResponseModel<MstArchiveOwner>> GetList(DataTablePostModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var dataCount = await _archiveOwnerRepository.GetCount();
+
+                var filterData = new DataTableModel
+                {
+                    sortColumn = model.columns[model.order[0].column].data,
+                    sortColumnDirection = model.order[0].dir,
+                    searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
+                    pageSize = model.length,
+                    skip = model.start
+                };
+
+                var results = await _archiveOwnerRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<MstArchiveOwner>
+                {
+                    draw = model.draw,
+                    recordsTotal = dataCount,
+                    recordsFiltered = dataCount,
+                    data = results.ToList()
+                };
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public Task<int> Insert(MstArchiveOwner model)
+        public async Task<int> Insert(MstArchiveOwner model)
         {
-            throw new NotImplementedException();
+            return await _archiveOwnerRepository.Insert(model);
         }
 
-        public Task<bool> InsertBulk(List<MstArchiveOwner> MstArchiveOwners)
+        public async Task<bool> InsertBulk(List<MstArchiveOwner> MstArchiveOwners)
         {
-            throw new NotImplementedException();
+            return await _archiveOwnerRepository.InsertBulk(MstArchiveOwners);
         }
 
-        public Task<int> Update(MstArchiveOwner model)
+        public async Task<int> Update(MstArchiveOwner model)
         {
-            throw new NotImplementedException();
+            return await _archiveOwnerRepository.Update(model);
         }
     }
 }

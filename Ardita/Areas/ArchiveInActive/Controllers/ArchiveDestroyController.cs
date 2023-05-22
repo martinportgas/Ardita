@@ -204,7 +204,6 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 }
 
                 var listArchive = Request.Form["archive[]"].ToArray();
-                var listDestroySchedule = Request.Form["destroySchedule[]"].ToArray();
                 var listReason = Request.Form["reason[]"].ToArray();
                 if (listArchive.Length > 0)
                 {
@@ -224,7 +223,6 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                             modelDetail = new();
                             modelDetail.ArchiveDestroyId = model.ArchiveDestroyId;
                             modelDetail.ArchiveId = archiveId;
-                            modelDetail.DestroySchedule = DateTime.Parse(listDestroySchedule[i]);
                             modelDetail.Reason = listReason[i];
                             modelDetail.IsActive = true;
                             modelDetail.CreatedBy = AppUsers.CurrentUser(User).UserId;

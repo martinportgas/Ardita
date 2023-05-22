@@ -46,6 +46,7 @@ public abstract class BaseController<T> : Controller
     protected IArchiveService _archiveService { get; set; }
     protected IArchiveOwnerService _archiveOwnerService { get; set; }
     protected IArchiveTypeService _archiveTypeService { get; set; }
+    protected ISubTypeStorageService _subTypeStorageService { get; set; }
 
     //Trx
     protected IFileArchiveDetailService _fileArchiveDetailService { get; set; }
@@ -60,6 +61,7 @@ public abstract class BaseController<T> : Controller
     protected IMediaStorageInActiveService MediaStorageInActiveService { get; set; } = null!;
     protected IArchiveRentService _archiveRentService { get; set; } = null!;
   
+    protected ISubTypeStorageService SubTypeStorageService { get; set; } = null!;
     #endregion
 
     #region Main Action
@@ -212,6 +214,16 @@ public abstract class BaseController<T> : Controller
             Value = x.ArchiveUnitId.ToString(),
             Text = x.ArchiveUnitName
         }).ToList();
+    }
+    public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
+    {
+        var data = await _archiveUnitService.GetAll();
+        var result = data.Where(x => x.ArchiveUnitName.Contains(param)).Select(x => new
+        {
+            id = x.ArchiveUnitId.ToString(),
+            text = x.ArchiveUnitName
+        }).ToList();
+        return Json(result);
     }
     public async Task<List<SelectListItem>> BindLevels()
     {
@@ -442,6 +454,22 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _typeStorageService.GetAll();
         var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindTypeStorageByParam(string param = "")
+    {
+        string[] arrParam = param.Split(',');
+
+        var keyword = string.IsNullOrEmpty(arrParam[0]) ? string.Empty : arrParam[0];
+        Guid DetailId = Guid.Empty;
+        Guid.TryParse(arrParam[1], out DetailId);
+
+        var data = await _typeStorageService.GetAll();
+        var result = data.Where(x => x.ArchiveUnitId == DetailId).Select(x => new
+        {
+            id = x.TypeStorageId.ToString(),
+            text = x.TypeStorageName
+        }).ToList();
         return Json(result);
     }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)

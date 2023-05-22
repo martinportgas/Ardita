@@ -57,6 +57,7 @@ public static class GlobalConst
     public const string Level = "Level";
     public const string Row = "Row";
     public const string TypeStorage = "TypeStorage";
+    public const string SubTypeStorage = "SubTypeStorage";
     public const string Archive = "Archive";
     public const string ArchiveMonitoring = "ArchiveMonitoring";
     public const string Employee = "Employee";
@@ -67,6 +68,9 @@ public static class GlobalConst
     public const string Page = "Page";
     public const string RolePage = "RolePage";
     public const string Role = "Role";
+    public const string ArchiveOwner = "ArchiveOwner";
+    public const string ArchiveType = "ArchiveType";
+    public const string ArchiveCirculation = "ArchiveCirculation";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -143,6 +147,7 @@ public static class GlobalConst
     public const string BindGmds = "BindGmds";
     public const string BindLevels = "BindLevels";
     public const string BindArchiveUnits = "BindArchiveUnits";
+    public const string BindArchiveUnitsByParam = "BindArchiveUnitsByParam";
     public const string BindRooms = "BindRooms";
     public const string BindRacks = "BindRacks";
     public const string BindCompanies = "BindCompanies";
@@ -162,6 +167,7 @@ public static class GlobalConst
     public const string BindEmployeeByParam = "BindEmployeeByParam";
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
+    public const string BindTypeStorageByParam = "BindTypeStorageByParam";
 
     //Web Component
     public const string GET = "GET";
@@ -214,4 +220,9 @@ public static class GlobalConst
         dtSender.Rows.Add(dataRow);
         return dtSender;
     }
+    //Document Code
+    public const string RetentionExtendDoc = "PR";
+    public const string ArchiveDestroyDoc = "PH";
+    public const string ArchiveMovementDoc = "PD";
+
 }
