@@ -32,7 +32,7 @@ public class ArchiveService : IArchiveService
 
     public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
 
-    public async Task<IEnumerable<TrxArchive>> GetAll() => await _archiveRepository.GetAll();
+    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode) => await _archiveRepository.GetAll(listArchiveUnitCode);
 
     public async Task<TrxArchive> GetById(Guid id)
     {

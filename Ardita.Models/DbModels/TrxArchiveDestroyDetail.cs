@@ -11,8 +11,6 @@ public partial class TrxArchiveDestroyDetail
 
     public Guid ArchiveId { get; set; }
 
-    public DateTime? DestroySchedule { get; set; }
-
     public string? Reason { get; set; }
 
     public bool IsActive { get; set; }

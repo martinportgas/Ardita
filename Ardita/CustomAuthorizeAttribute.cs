@@ -99,7 +99,7 @@ namespace Ardita
                                join menu in menus on subMenu.MenuId equals menu.MenuId
                                where
                                     menu.Path.ToLower() == areaName.ToString().ToLower() &&
-                                    subMenu.Path.ToLower() == controllerName.ToString().ToLower() &&
+                                    (subMenu.Path.ToLower() == controllerName.ToString().ToLower() || pageDetail.Path.ToLower().Contains(controllerName.ToString().ToLower())) &&
                                     role.Code == userRoleCode.ToString()
                                select new
                                {

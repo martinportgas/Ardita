@@ -143,9 +143,6 @@
                                                             <td style="width:50%">
                                                                 <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
                                                             </td>
-                                                            <td style="width:20%">
-                                                                <input type="date" min="@(DateTime.Now.ToString("yyyy-MM-dd"))" name="destroySchedule[]" value="@(((DateTime)item.DestroySchedule).ToString("yyyy-MM-dd"))" class="form-control destroy @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                            </td>
                                                             <td style="width:25%">
                                                                 <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)">@item.Reason</textarea>
                                                             </td>

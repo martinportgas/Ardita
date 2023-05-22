@@ -4,6 +4,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -156,36 +157,39 @@ public class ArchiveController : BaseController<TrxArchive>
             var SecurityClassifications = await _securityClassificationService.GetAll();
             var Creators = await _archiveCreatorService.GetAll();
             var ArchiveTypes = await _archiveTypeService.GetAll();
+            var ArchiveOwners = await _archiveOwnerService.GetAll();
 
             List<TrxArchive> trxArchives = new();
             TrxArchive trxArchive;
             foreach (DataRow row in result.Rows)
             {
+                var subSubjectClassificationData = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode == row[2].ToString()).FirstOrDefault();
                 var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
-                var creatorData = Creators.Where(x => x.CreatorCode == row[4].ToString()).FirstOrDefault();
-                var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode == row[10].ToString()).FirstOrDefault();
-                if (securityClassificationData != null && creatorData != null)
+                var archiveOwnerData = ArchiveOwners.Where(x => x.ArchiveOwnerCode == row[5].ToString()).FirstOrDefault();
+                var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode == row[9].ToString()).FirstOrDefault();
+                if (securityClassificationData != null && subSubjectClassificationData != null && archiveOwnerData != null && archiveTypeData != null)
                 {
                     trxArchive = new();
                     trxArchive.ArchiveId = Guid.NewGuid();
-                    trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault().GmdId;
-                    trxArchive.SubSubjectClassificationId = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode == row[2].ToString()).FirstOrDefault().SubSubjectClassificationId;
+                    trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault()!.GmdId;
+                    trxArchive.SubSubjectClassificationId = subSubjectClassificationData.SubSubjectClassificationId;
                     trxArchive.SecurityClassificationId = securityClassificationData.SecurityClassificationId;
-                    trxArchive.CreatorId = creatorData.CreatorId;
-                    trxArchive.TypeSender = row[5].ToString();
-                    trxArchive.Keyword = row[6].ToString();
-                    trxArchive.ArchiveCode = row[7].ToString();
-                    trxArchive.DocumentNo = row[8].ToString();
-                    trxArchive.TitleArchive = row[9].ToString();
-                    trxArchive.ArchiveTypeId = new Guid(row[10].ToString());
-                    trxArchive.CreatedDateArchive = Convert.ToDateTime(row[11]);
-                    trxArchive.ActiveRetention = Convert.ToInt32(row[12]);
-                    trxArchive.InactiveRetention = Convert.ToInt32(row[13]);
-                    trxArchive.Volume = Convert.ToInt32(row[14]);
+                    trxArchive.CreatorId = (Guid)subSubjectClassificationData.CreatorId!;
+                    trxArchive.TypeSender = row[4].ToString()!;
+                    trxArchive.ArchiveOwnerId = archiveOwnerData.ArchiveOwnerId;
+                    trxArchive.Keyword = row[6].ToString()!;
+                    trxArchive.ArchiveCode = string.Empty;
+                    trxArchive.DocumentNo = row[7].ToString()!;
+                    trxArchive.TitleArchive = row[8].ToString()!;
+                    trxArchive.ArchiveTypeId = archiveTypeData.ArchiveTypeId;
+                    trxArchive.CreatedDateArchive = Convert.ToDateTime(row[10]);
+                    trxArchive.ActiveRetention = Convert.ToInt32(row[11]);
+                    trxArchive.InactiveRetention = Convert.ToInt32(row[12]);
+                    trxArchive.Volume = Convert.ToInt32(row[13]);
                     trxArchive.IsActive = true;
                     trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     trxArchive.CreatedDate = DateTime.Now;
-                    trxArchive.StatusId = 1;
+                    trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
 
                     trxArchives.Add(trxArchive);
                 }
@@ -204,55 +208,36 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
+            string templateName = nameof(TrxArchive).ToCleanNameOf();
             string fileName = nameof(TrxArchive).ToCleanNameOf();
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
-            var archives = await _archiveService.GetAll();
+            var archives = await _archiveService.GetAll(AppUsers.CurrentUser(User).ListArchiveUnitCode);
 
-            IWorkbook workbook;
-            workbook = new XSSFWorkbook();
-            ISheet excelSheet = workbook.CreateSheet(nameof(TrxArchive).ToCleanNameOf());
+            List<DataTable> listData = new List<DataTable>() {
+                archives.Select(x => new
+                {
+                    x.ArchiveId,
+                    x.ArchiveCode,
+                    x.Gmd.GmdName,
+                    x.SubSubjectClassification.SubSubjectClassificationName,
+                    x.SecurityClassification.SecurityClassificationName,
+                    x.TypeSender,
+                    x.ArchiveOwner.ArchiveOwnerName,
+                    x.Keyword,
+                    x.DocumentNo,
+                    x.TitleArchive,
+                    x.ArchiveType.ArchiveTypeName,
+                    x.CreatedDateArchive,
+                    x.ActiveRetention,
+                    x.InactiveRetention,
+                    x.Volume
+                }
+                ).ToList().ToDataTable()
+            };
 
-            IRow row = excelSheet.CreateRow(0);
+            IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
 
-            row.CreateCell(0).SetCellValue(GlobalConst.No);
-            row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdName).ToCleanNameOf());
-            row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName).ToCleanNameOf());
-            row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName).ToCleanNameOf());
-            row.CreateCell(4).SetCellValue(nameof(MstCreator.CreatorName).ToCleanNameOf());
-            row.CreateCell(5).SetCellValue(nameof(TrxArchive.TypeSender).ToCleanNameOf());
-            row.CreateCell(6).SetCellValue(nameof(TrxArchive.Keyword).ToCleanNameOf());
-            row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
-            row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
-            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.ArchiveType.ArchiveTypeName).ToCleanNameOf());
-            row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
-            row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
-            row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
-            row.CreateCell(14).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
-
-            int no = 1;
-            foreach (var item in archives)
-            {
-                row = excelSheet.CreateRow(no);
-                row.CreateCell(0).SetCellValue(no);
-                row.CreateCell(1).SetCellValue(item.Gmd.GmdName);
-                row.CreateCell(2).SetCellValue(item.SubSubjectClassification.SubSubjectClassificationName);
-                row.CreateCell(3).SetCellValue(item.SecurityClassification.SecurityClassificationName);
-                row.CreateCell(4).SetCellValue(item.Creator.CreatorName);
-                row.CreateCell(5).SetCellValue(item.TypeSender);
-                row.CreateCell(6).SetCellValue(item.Keyword);
-                row.CreateCell(7).SetCellValue(item.ArchiveCode);
-                row.CreateCell(8).SetCellValue(item.DocumentNo);
-                row.CreateCell(9).SetCellValue(item.TitleArchive);
-                row.CreateCell(10).SetCellValue(item.ArchiveType.ArchiveTypeName);
-                row.CreateCell(11).SetCellValue(item.CreatedDateArchive.ToString());
-                row.CreateCell(12).SetCellValue(item.ActiveRetention);
-                row.CreateCell(13).SetCellValue(item.InactiveRetention);
-                row.CreateCell(14).SetCellValue(item.Volume);
-
-                no += 1;
-            }
             using (var exportData = new MemoryStream())
             {
                 workbook.Write(exportData);
@@ -269,108 +254,28 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
-            string fileName = $"{GlobalConst.Template}-{nameof(TrxArchive).ToCleanNameOf()}";
-            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
-
-            IWorkbook workbook;
-            workbook = new XSSFWorkbook();
-            ISheet excelSheet = workbook.CreateSheet(nameof(TrxArchive).ToCleanNameOf());
-            ISheet excelSheetGMD = workbook.CreateSheet(nameof(MstGmd).ToCleanNameOf());
-            ISheet excelSheetSubSubjectClassification = workbook.CreateSheet(nameof(TrxSubSubjectClassification).ToCleanNameOf());
-            ISheet excelSheetSecurityClassification = workbook.CreateSheet(nameof(MstSecurityClassification).ToCleanNameOf());
-            ISheet excelSheetCreator = workbook.CreateSheet(nameof(MstCreator).ToCleanNameOf());
-
-            //Inititae Row
-            IRow row = excelSheet.CreateRow(0);
-            IRow rowGMD = excelSheetGMD.CreateRow(0);
-            IRow rowSubSubjectClassification = excelSheetSubSubjectClassification.CreateRow(0);
-            IRow rowSecurityClassification = excelSheetSecurityClassification.CreateRow(0);
-            IRow rowCreator = excelSheetCreator.CreateRow(0);
-
-            //Initiate Main Column
-            row.CreateCell(0).SetCellValue(GlobalConst.No);
-            row.CreateCell(1).SetCellValue(nameof(MstGmd.GmdCode).ToCleanNameOf());
-            row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode).ToCleanNameOf());
-            row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode).ToCleanNameOf());
-            row.CreateCell(4).SetCellValue(nameof(MstCreator.CreatorCode).ToCleanNameOf());
-            row.CreateCell(5).SetCellValue(nameof(TrxArchive.TypeSender).ToCleanNameOf());
-            row.CreateCell(6).SetCellValue(nameof(TrxArchive.Keyword).ToCleanNameOf());
-            row.CreateCell(7).SetCellValue(nameof(TrxArchive.ArchiveCode).ToCleanNameOf());
-            row.CreateCell(8).SetCellValue(nameof(TrxArchive.DocumentNo).ToCleanNameOf());
-            row.CreateCell(9).SetCellValue(nameof(TrxArchive.TitleArchive).ToCleanNameOf());
-            row.CreateCell(10).SetCellValue(nameof(TrxArchive.ArchiveType.ArchiveTypeCode).ToCleanNameOf());
-            row.CreateCell(11).SetCellValue(nameof(TrxArchive.CreatedDateArchive).ToCleanNameOf());
-            row.CreateCell(12).SetCellValue(nameof(TrxArchive.ActiveRetention).ToCleanNameOf());
-            row.CreateCell(13).SetCellValue(nameof(TrxArchive.InactiveRetention).ToCleanNameOf());
-            row.CreateCell(14).SetCellValue(nameof(TrxArchive.Volume).ToCleanNameOf());
-
-            //Initiate Sheet GMD 
-            rowGMD.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowGMD.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorCode));
-            rowGMD.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorName));
-
-            //Initiate Sub Subject Classification
-            rowSubSubjectClassification.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowSubSubjectClassification.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
-            rowSubSubjectClassification.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
-
-            //Initiate Security Classification
-            rowSecurityClassification.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowSecurityClassification.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
-            rowSecurityClassification.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
-
-            //Initiate Creator
-            rowCreator.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowCreator.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorCode));
-            rowCreator.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorName));
-
-
-            //Get Data
             var dataGMD = await _gmdService.GetAll();
             var dataSubSubjectClassification = await _classificationSubSubjectService.GetAll();
             var dataSecurityClassification = await _securityClassificationService.GetAll();
-            var dataCreator = await _archiveCreatorService.GetAll();
+            var dataArchiveOwner = await _archiveOwnerService.GetAll();
+            var dataArchiveType = await _archiveTypeService.GetAll();
 
-            //Assign GMD 
-            int no = 1;
-            foreach (var item in dataGMD)
-            {
-                rowGMD = excelSheetGMD.CreateRow(no);
-                rowGMD.CreateCell(0).SetCellValue(no);
-                rowGMD.CreateCell(1).SetCellValue(item.GmdCode);
-                rowGMD.CreateCell(2).SetCellValue(item.GmdName);
-                no += 1;
-            }
-            //Assign Sub Subject Classification
-            no = 1;
-            foreach (var item in dataSubSubjectClassification)
-            {
-                rowSubSubjectClassification = excelSheetSubSubjectClassification.CreateRow(no);
-                rowSubSubjectClassification.CreateCell(0).SetCellValue(no);
-                rowSubSubjectClassification.CreateCell(1).SetCellValue(item.SubSubjectClassificationCode);
-                rowSubSubjectClassification.CreateCell(2).SetCellValue(item.SubSubjectClassificationName);
-                no += 1;
-            }
-            //Assign Security Classification
-            no = 1;
-            foreach (var item in dataSecurityClassification)
-            {
-                rowSecurityClassification = excelSheetSecurityClassification.CreateRow(no);
-                rowSecurityClassification.CreateCell(0).SetCellValue(no);
-                rowSecurityClassification.CreateCell(1).SetCellValue(item.SecurityClassificationCode);
-                rowSecurityClassification.CreateCell(2).SetCellValue(item.SecurityClassificationName);
-                no += 1;
-            }
-            //Assign Creator
-            no = 1;
-            foreach (var item in dataCreator)
-            {
-                rowCreator = excelSheetCreator.CreateRow(no);
-                rowCreator.CreateCell(0).SetCellValue(no);
-                rowCreator.CreateCell(1).SetCellValue(item.CreatorCode);
-                rowCreator.CreateCell(2).SetCellValue(item.CreatorName);
-                no += 1;
-            }
+            List<DataTable> listData = new List<DataTable>() {
+                new DataTable(),
+                dataGMD.Select(x => new { x.GmdId, x.GmdCode, x.GmdName }).ToList().ToDataTable(),
+                dataSubSubjectClassification.Select(x => new { x.SubSubjectClassificationId, x.SubSubjectClassificationCode, x.SubSubjectClassificationName }).ToList().ToDataTable(),
+                dataSecurityClassification.Select(x => new { x.SecurityClassificationId, x.SecurityClassificationCode, x.SecurityClassificationName }).ToList().ToDataTable(),
+                dataArchiveOwner.Select(x => new { x.ArchiveOwnerId, x.ArchiveOwnerCode, x.ArchiveOwnerName }).ToList().ToDataTable(),
+                dataArchiveType.Select(x => new { x.ArchiveTypeId, x.ArchiveTypeCode, x.ArchiveTypeName }).ToList().ToDataTable(),
+                GlobalConst.dataSender(),
+            };
+
+            string templateName = nameof(TrxArchive).ToCleanNameOf();
+            string fileName = $"{GlobalConst.Template}-{templateName}";
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+            IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Import.ToLower());
+
             using (var exportData = new MemoryStream())
             {
                 workbook.Write(exportData);
@@ -378,7 +283,7 @@ public class ArchiveController : BaseController<TrxArchive>
                 return File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             throw new Exception();
         }
