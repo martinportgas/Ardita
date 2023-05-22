@@ -43,6 +43,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = new TrxArchiveRent();
             ViewBag.listSubSubject = await BindSubSubjectClasscifications();
             ViewBag.listArchive = await BindArchives();
+
+            ViewBag.Name = AppUsers.CurrentUser(User).EmployeeName;
+            ViewBag.RoleName = AppUsers.CurrentUser(User).RoleName;
+            ViewBag.NIK = AppUsers.CurrentUser(User).EmployeeNIK;
+            ViewBag.Email = AppUsers.CurrentUser(User).EmployeeMail;
+            ViewBag.Company = AppUsers.CurrentUser(User).CompanyName;
+            ViewBag.Phone = AppUsers.CurrentUser(User).EmployeePhone;
+
             return View(GlobalConst.Form, model);
         }
         [HttpGet]

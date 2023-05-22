@@ -27,17 +27,19 @@ namespace Ardita.Services.Classess
         private readonly ISubMenuRepository _subMenuRepository;
         private readonly IPageRepository _pageRepository;
         private readonly IRolePageRepository _rolePageRepository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IUserArchiveUnitRepository _userArchiveUnitRepository;
 
-        public UserService(IUserRepository userRepository, 
-            IRoleRepository roleRepository, 
-            IUserRoleRepository userRoleRepository, 
+        public UserService(IUserRepository userRepository,
+            IRoleRepository roleRepository,
+            IUserRoleRepository userRoleRepository,
             IEmployeeRepository employeeRepository,
             IPositionRepository positionRepository,
             IMenuRepository menuRepository,
             ISubMenuRepository subMenuRepository,
             IPageRepository pageRepository,
             IRolePageRepository rolePageRepository,
+            ICompanyRepository companyRepository,
             IUserArchiveUnitRepository userArchiveUnitRepository
             )
         {
@@ -50,6 +52,7 @@ namespace Ardita.Services.Classess
             _subMenuRepository = subMenuRepository;
             _pageRepository = pageRepository;
             _rolePageRepository = rolePageRepository;
+            _companyRepository = companyRepository;
             _userArchiveUnitRepository = userArchiveUnitRepository;
         }
         public async Task<int> Delete(MstUser model)
@@ -111,6 +114,7 @@ namespace Ardita.Services.Classess
             var userRole = await _userRoleRepository.GetAll();
             var employee = await _employeeRepository.GetAll();
             var position = await _positionRepository.GetAll();
+            var company = await _companyRepository.GetAll();
             var userArchiveUnit = await _userArchiveUnitRepository.GetAll();
 
             var result = (from usr in user
@@ -118,8 +122,9 @@ namespace Ardita.Services.Classess
                           join r in role on ur.RoleId equals r.RoleId
                           join e in employee on usr.EmployeeId equals e.EmployeeId
                           join p in position on e.PositionId equals p.PositionId
+                          join c in company on e.CompanyId equals c.CompanyId
                           where usr.Username == username && usr.Password == password
-                          && usr.IsActive == true && r.IsActive==true && e.IsActive==true
+                          && usr.IsActive == true && r.IsActive == true && e.IsActive == true
                           select new
                           {
                               Username = usr.Username,
@@ -129,8 +134,11 @@ namespace Ardita.Services.Classess
                               RoleName = r.Name,
                               EmployeeNIK = e.Nik,
                               EmployeeName = e.Name,
+                              EmployeeMail = e.Email,
+                              EmployeePhone = e.Phone,
                               PositionId = p.PositionId,
                               CompanyId = e.CompanyId,
+                              CompanyName = c.CompanyName,
                               EmployeeId = e.EmployeeId,
                           }
                 ).ToList().FirstOrDefault();
@@ -150,8 +158,11 @@ namespace Ardita.Services.Classess
                     new Claim(GlobalConst.RoleName, result.RoleName),
                     new Claim(GlobalConst.EmployeeNIK, result.EmployeeNIK),
                     new Claim(GlobalConst.EmployeeName, result.EmployeeName),
+                    new Claim(GlobalConst.EmployeeMail, string.IsNullOrEmpty(result.EmployeeMail) ? string.Empty : result.EmployeeMail),
+                    new Claim(GlobalConst.EmployeePhone, string.IsNullOrEmpty(result.EmployeePhone) ? string.Empty : result.EmployeePhone),
                     new Claim(GlobalConst.PositionId, result.PositionId.ToString()),
                     new Claim(GlobalConst.CompanyId, result.CompanyId.ToString()!),
+                    new Claim(GlobalConst.CompanyName, result.CompanyName),
                     new Claim(GlobalConst.EmployeeId, result.EmployeeId.ToString()),
                     new Claim(GlobalConst.ArchiveUnitCode, arrArchiveUnit.Length > 0  ? string.Join(",", arrArchiveUnit) : string.Empty)
                 };
