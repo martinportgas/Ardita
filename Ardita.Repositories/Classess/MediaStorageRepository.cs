@@ -110,7 +110,7 @@ public class MediaStorageRepository : IMediaStorageRepository
             bool inValid = true;
             while (inValid)
             {
-                validStorageCode = $"{storageCode}.{(countData + i).ToString("D4")}";
+                validStorageCode = $"{storageCode}.{(countData + i).ToString("D3")}";
                 int count = await _context.TrxMediaStorages.Where(x => x.MediaStorageCode == validStorageCode).CountAsync();
                 if(count > 0)
                     i++;
