@@ -85,6 +85,7 @@ public static class GlobalConst
     public const string Update = "Update";
     public const string Delete = "Delete";
     public const string Detail = "Detail";
+    public const string DetailArchive = "DetailArchive";
     public const string Preview = "Preview";
     public const string Remove = "Remove";
     public const string Save = "Save";
@@ -155,6 +156,7 @@ public static class GlobalConst
     public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
     public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
+    public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";
     public const string BindRoomByFloorId = "BindRoomByFloorId";
     public const string BindRackByRoomId = "BindRackByRoomId";
     public const string BindLevelByRackId = "BindLevelByRackId";

@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -105,5 +106,9 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
             }
         }
         return result;
+    }
+    public async Task<IEnumerable<TrxArchiveUnit>> GetByListArchiveUnit(List<string> listArchiveUnitCode)
+    {
+        return await _context.TrxArchiveUnits.Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode).ToListAsync();
     }
 }

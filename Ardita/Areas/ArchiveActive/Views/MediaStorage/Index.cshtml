@@ -39,7 +39,10 @@
                                 <th>No</th>
                                 <th>Action</th>
                                 <th>Media Storage Code</th>
-                                <th>Media Storage Name</th>
+                                <th>Lokasi</th>
+                                <th>Unit Pencipta</th>
+                                <th>Sub-subjek Klasifikasi</th>
+                                <th>Tahun</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -72,9 +75,10 @@
                     }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "mediaStorageId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "mediaStorageId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
@@ -84,34 +88,38 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.mediaStorageId);
 
-                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = ``;
 
                             if (row.statusId == 1) {
                                  edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                  edit = edit.replace("-1", row.mediaStorageId);
                             }
 
-                            var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
-                            remove = remove.replace("-1", row.mediaStorageId);
+                            var remove = ``;
 
-                            var downloadQr = `<a class="btn btn-sm btn-info" data-toggle="tooltip" title="Data Still Draft" href="#"><i class="fa fa-download"></i> </a>`;
+                            if (row.statusId == 1) {
+                                remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                                remove = remove.replace("-1", row.mediaStorageId);
+                            }
+
+                            var downloadQr = ``;
                             if (row.statusId == 5) {
                                 downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindQrCode, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
                                 downloadQr = downloadQr.replace("-1", row.mediaStorageCode);
                             }
 
-                            var downloadLbl = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindLabel, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, MediaStorageId = -1})"><i class="fa fa-download"></i> </a>`;
-                            downloadLbl = downloadLbl.replace("-1", row.mediaStorageId);
-
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr).concat(" ", downloadLbl);
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr);
                             return JoinButton;
                         }
                     },
-                    { "data": "mediaStorageCode", "Code": "mediaStorageCode", "autoWidth": true },
-                    { "data": "mediaStorageName", "Name": "mediaStorageName", "autoWidth": true },
+                    { "data": "mediaStorageCode", "name": "mediaStorageCode", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "subSubjectClassification.creator.archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "creatorName", "name": "subSubjectClassification.creator.creatorName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                    { "data": "archiveYear", "name": "archiveYear", "autoWidth": true },
                     {
-                        "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.status.color}" style="width:100%">${data}</span>`;
+                        "data": "status", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge badge-pill ${row.color}" style="width:100%">${data}</span>`;
                         }
                     },
                 ]

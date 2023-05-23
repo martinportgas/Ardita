@@ -26,7 +26,11 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         IRowService rowService,
         IMediaStorageService mediaStorageService,
         ISubTypeStorageService subTypeStorageService,
-        IHostingEnvironment hostingEnvironment)
+        IHostingEnvironment hostingEnvironment,
+        IGmdService gmdService,
+        ISecurityClassificationService securityClassificationService,
+        IArchiveOwnerService archiveOwnerService,
+        IArchiveTypeService archiveTypeService)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
         _archiveService = archiveService;
@@ -40,6 +44,10 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _mediaStorageService = mediaStorageService;
         SubTypeStorageService = subTypeStorageService;
         _hostingEnvironment = hostingEnvironment;
+        _gmdService = gmdService;
+        _securityClassificationService = securityClassificationService;
+        _archiveOwnerService = archiveOwnerService;
+        _archiveTypeService = archiveTypeService;
     }
     #endregion
 
@@ -63,7 +71,9 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     {
 
         await BindAllDropdown();
-        return View(GlobalConst.Form, new TrxMediaStorage());
+        var model = new TrxMediaStorage();
+        model.MediaStorageCode = "Auto Generated";
+        return View(GlobalConst.Form, model);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -72,6 +82,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         if (model is not null)
         {
             string[] archiveId = Request.Form[GlobalConst.DetailArray].ToArray();
+            model.StatusId = Request.Form[GlobalConst.Submit].ToString() == GlobalConst.Submit ? (int)GlobalConst.STATUS.Submit : (int)GlobalConst.STATUS.Draft;
 
             if (model.MediaStorageId != Guid.Empty)
             {
@@ -96,6 +107,20 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
             await BindAllDropdown();
 
             return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
+    public async Task<IActionResult> DetailArchive(Guid Id)
+    {
+        var data = await _archiveService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdownArchive();
+            ViewBag.isModal = true;
+            return View("../Archive/Form", data);
         }
         else
         {
@@ -157,6 +182,14 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ViewBag.listRack = await BindRacks();
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
+    }
+    protected async Task BindAllDropdownArchive()
+    {
+        ViewBag.listGmd = await BindGmds();
+        ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
+        ViewBag.listSecurityClassification = await BindSecurityClassifications();
+        ViewBag.listArchiveOwner = await BindArchiveOwners();
+        ViewBag.listArchiveType = await BindArchiveTypes();
     }
     public async Task<FileResult> BindQrCode(string text)
     {

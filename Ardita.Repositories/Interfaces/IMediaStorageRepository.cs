@@ -8,7 +8,8 @@ public interface IMediaStorageRepository
     Task<TrxMediaStorage> GetById(Guid id);
     Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id);
     Task<IEnumerable<TrxMediaStorage>> GetAll();
-    Task<IEnumerable<TrxMediaStorage>> GetByFilterModel(DataTableModel model);
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxMediaStorage model, List<TrxMediaStorageDetail> detail);
     Task<int> Delete(TrxMediaStorage model);

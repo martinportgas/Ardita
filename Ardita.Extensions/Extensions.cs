@@ -59,6 +59,11 @@ namespace Ardita.Extensions
             string currentAction = (string)html.ViewContext.RouteData.Values["action"];
             string currentController = (string)html.ViewContext.RouteData.Values["controller"];
 
+            if(currentAction == GlobalConst.DetailArchive)
+            {
+                currentAction = GlobalConst.Detail;
+            }
+
             string FormAction = GlobalConst.Save;
 
             string LastBreadcrumb = GlobalConst.Create;

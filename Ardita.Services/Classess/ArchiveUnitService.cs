@@ -17,6 +17,11 @@ public class ArchiveUnitService : IArchiveUnitService
 
     public async Task<TrxArchiveUnit> GetById(Guid id) => await _archiveUnitRepository.GetById(id);
 
+    public async Task<IEnumerable<TrxArchiveUnit>> GetByListArchiveUnit(List<string> listArchiveUnitCode)
+    {
+        return await _archiveUnitRepository.GetByListArchiveUnit(listArchiveUnitCode);
+    }
+
     public async Task<DataTableResponseModel<TrxArchiveUnit>> GetList(DataTablePostModel model)
     {
         try

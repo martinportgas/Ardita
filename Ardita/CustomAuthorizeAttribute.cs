@@ -72,6 +72,8 @@ namespace Ardita
                 actionName = "Index";
             else if (actionName.ToString() == "GetPageData")
                 actionName = "Index";
+            else if (actionName.ToString() == "DetailArchive")
+                actionName = "Detail";
 
             //else if (actionName.ToString() == "GetDataTreeView")
             //    actionName = "View";

@@ -15,7 +15,7 @@ public partial class TrxMediaStorage
 
     public string MediaStorageCode { get; set; } = null!;
 
-    public string MediaStorageName { get; set; } = null!;
+    public string? MediaStorageName { get; set; }
 
     public string ArchiveYear { get; set; } = null!;
 
@@ -38,6 +38,8 @@ public partial class TrxMediaStorage
     public virtual TrxRow Row { get; set; } = null!;
 
     public virtual MstStatus Status { get; set; } = null!;
+
+    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 
     public virtual ICollection<TrxMediaStorageDetail> TrxMediaStorageDetails { get; } = new List<TrxMediaStorageDetail>();
 

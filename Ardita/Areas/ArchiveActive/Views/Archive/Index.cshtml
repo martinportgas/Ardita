@@ -41,8 +41,13 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Archive Code</th>
-                                <th>Archive Title</th>
+                                <th>Nomor Arsip</th>
+                                <th>Nomor Dokumen</th>
+                                <th>Judul Arsip</th>
+                                <th>Bentuk Media Arsip</th>
+                                <th>Klasifikasi Keamanan</th>
+                                <th>Unit Pencipta</th>
+                                <th>Sub-subjek Klasifikasi</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -106,6 +111,8 @@
                 columnDefs: [
                     {
                         width: 50, targets: 0
+                    }, {
+                        width: 100, targets: 1
                     }
                 ],
                 fixedColumns: true,
@@ -141,7 +148,12 @@
                         }
                     },
                     { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
+                    { "data": "documentNo", "name": "documentNo", "autoWidth": true },
                     { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
+                    { "data": "gmdName", "name": "gmd.gmdName", "autoWidth": true },
+                    { "data": "securityClassificationName", "name": "securityClassification.securityClassificationName", "autoWidth": true },
+                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
                     {
                         "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;

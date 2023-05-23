@@ -1,8 +1,11 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Repositories.Classess;
 
@@ -32,31 +35,39 @@ public class MediaStorageRepository : IMediaStorageRepository
 
     public async Task<IEnumerable<TrxMediaStorage>> GetAll() => await _context.TrxMediaStorages.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
 
-    public async Task<IEnumerable<TrxMediaStorage>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<TrxMediaStorage> result;
-
-        var propertyInfo = typeof(TrxMediaStorage).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(TrxMediaStorage).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.TrxMediaStorages
+        var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
-            .Where(x => (x.MediaStorageCode + x.MediaStorageName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderBy(x => EF.Property<TrxMediaStorage>(x, propertyName))
+            .Include(x => x.SubSubjectClassification.Creator!.ArchiveUnit)
+            .Where(x => (x.MediaStorageCode + x.SubSubjectClassification.SubSubjectClassificationName + x.Status.Name + x.SubSubjectClassification.Creator!.CreatorName + x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
+            .Where(x => x.IsActive == true)
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new
+            {
+                x.MediaStorageId,
+                x.MediaStorageCode,
+                x.SubSubjectClassification.SubSubjectClassificationName,
+                x.StatusId,
+                Status = x.Status.Name,
+                x.Status.Color,
+                x.ArchiveYear,
+                x.SubSubjectClassification.Creator!.CreatorName,
+                x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName,
+            })
             .ToListAsync();
-        }
-        else
-        {
-            result = await _context.TrxMediaStorages
+
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
-            .Where(x => (x.MediaStorageCode + x.MediaStorageName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderByDescending(x => EF.Property<TrxMediaStorage>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
+            .Include(x => x.SubSubjectClassification.Creator!.ArchiveUnit)
+            .Where(x => (x.MediaStorageCode + x.SubSubjectClassification.SubSubjectClassificationName + x.Status.Name + x.SubSubjectClassification.Creator!.CreatorName + x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
+            .Where(x => x.IsActive == true)
+            .CountAsync();
 
         return result;
     }
@@ -88,28 +99,47 @@ public class MediaStorageRepository : IMediaStorageRepository
         if (model != null)
         {
             //Insert Header
-            model.IsActive = true;
-            var Row = _context.TrxRows.FirstOrDefault(r => r.RowId == model.RowId);
-            var TypeStorage = _context.TrxTypeStorages.FirstOrDefault(r => r.TypeStorageId == model.TypeStorageId);
+            var subSubjectClassificationData = await _context.TrxSubSubjectClassifications.FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
+            var creatorData = await _context.MstCreators.FirstOrDefaultAsync(x => x.CreatorId == subSubjectClassificationData!.CreatorId);
+            var typeStorageData = await _context.TrxTypeStorages.FirstOrDefaultAsync(x => x.TypeStorageId == model.TypeStorageId);
+            var storageCode = $"{creatorData!.CreatorCode}.{typeStorageData!.TypeStorageCode}.{model.ArchiveYear}";
+
+            var countData = await _context.TrxMediaStorages.Where(x => x.MediaStorageCode.Contains(storageCode)).CountAsync();
+            int i = 1;
+            var validStorageCode = string.Empty;
+            bool inValid = true;
+            while (inValid)
+            {
+                validStorageCode = $"{storageCode}.{(countData + i).ToString("D4")}";
+                int count = await _context.TrxMediaStorages.Where(x => x.MediaStorageCode == validStorageCode).CountAsync();
+                if(count > 0)
+                    i++;
+                else
+                    inValid = false;
+            }
+
+            model.MediaStorageCode = validStorageCode;
 
             foreach (var e in _context.ChangeTracker.Entries())
             {
                 e.State = EntityState.Detached;
             }
 
-            model.RowId = Row!.RowId;
-            model.TypeStorageId = TypeStorage!.TypeStorageId;
+            model.IsActive = true;
 
             _context.Entry(model).State = EntityState.Added;
             await _context.SaveChangesAsync();
 
             //Insert Detail
-            foreach (var item in detail)
+            if (detail.Any())
             {
-                item.MediaStorageId = model.MediaStorageId;
-                item.IsActive = true;
-                _context.TrxMediaStorageDetails.Add(item);
-                result += await _context.SaveChangesAsync();
+                foreach (var item in detail)
+                {
+                    item.MediaStorageId = model.MediaStorageId;
+                    item.IsActive = true;
+                    _context.TrxMediaStorageDetails.Add(item);
+                    result += await _context.SaveChangesAsync();
+                }
             }
         }
         return result;
@@ -125,20 +155,12 @@ public class MediaStorageRepository : IMediaStorageRepository
             if (data != null)
             {
                 //Update Header
-                model.IsActive = data.IsActive;
-                model.CreatedBy = data.CreatedBy;
-                model.CreatedDate = data.CreatedDate;
-
-                var Row = _context.TrxRows.FirstOrDefault(r => r.RowId == model.RowId);
-                var TypeStorage = _context.TrxTypeStorages.FirstOrDefault(r => r.TypeStorageId == model.TypeStorageId);
 
                 foreach (var e in _context.ChangeTracker.Entries())
                 {
                     e.State = EntityState.Detached;
                 }
 
-                model.RowId = Row!.RowId;
-                model.TypeStorageId = TypeStorage!.TypeStorageId;
                 _context.Entry(model).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 

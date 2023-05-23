@@ -158,6 +158,7 @@ public abstract class BaseController<T> : Controller
 
     #region Binding
     //selectlist
+    #region SelectListItem
     public async Task<List<SelectListItem>> BindCompanies()
     {
         var data = await _companyService.GetAll();
@@ -208,22 +209,21 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchiveUnits()
     {
-        var data = await _archiveUnitService.GetAll();
+        var data = await _archiveUnitService.GetByListArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
         return data.Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
             Text = x.ArchiveUnitName
         }).ToList();
     }
-    public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
+    public async Task<List<SelectListItem>> BindAllArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
-        var result = data.Where(x => x.ArchiveUnitName.Contains(param)).Select(x => new
+        return data.Select(x => new SelectListItem
         {
-            id = x.ArchiveUnitId.ToString(),
-            text = x.ArchiveUnitName
+            Value = x.ArchiveUnitId.ToString(),
+            Text = x.ArchiveUnitName
         }).ToList();
-        return Json(result);
     }
     public async Task<List<SelectListItem>> BindLevels()
     {
@@ -353,7 +353,74 @@ public abstract class BaseController<T> : Controller
             Text = x.RowName.ToString()
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
+    {
+        var data = await _typeStorageService.GetAll();
+        var result = data.Where(x => x.ArchiveUnit.CompanyId == Id).ToList();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.TypeStorageId.ToString(),
+            Text = x.TypeStorageName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindEmployeeIdBySubSubjectClassificationId(Guid Id)
+    {
+        var result = await _employeeService.GetListEmployeeBySubSubjectClassificationId(Id);
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.EmployeeId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindEmployee()
+    {
+        var result = await _employeeService.GetAll();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.EmployeeId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindArchiveRetention()
+    {
+        var result = await _archiveRetentionService.GetAll();
+        return result.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveId.ToString(),
+            Text = x.TitleArchive
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindArchiveOwners()
+    {
+        var data = await _archiveOwnerService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveOwnerId.ToString(),
+            Text = x.ArchiveOwnerName
+        }).ToList();
+    }
+    public async Task<List<SelectListItem>> BindArchiveTypes()
+    {
+        var data = await _archiveTypeService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.ArchiveTypeId.ToString(),
+            Text = x.ArchiveTypeName
+        }).ToList();
+    }
+    #endregion
     //json
+    #region Json Result
+    public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
+    {
+        var data = await _archiveUnitService.GetAll();
+        var result = data.Where(x => x.ArchiveUnitName.Contains(param)).Select(x => new
+        {
+            id = x.ArchiveUnitId.ToString(),
+            text = x.ArchiveUnitName
+        }).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
     {
         List<TrxFloor> listFloors = new();
@@ -419,15 +486,15 @@ public abstract class BaseController<T> : Controller
 
         var data = await _classificationSubSubjectService.GetById(SubSubjectClasscificationId);
         var subSubjectClassification = new SubSubjectClasscificationViewModel
-                                       {
-                                           SubSubjectClassificationId = data.SubSubjectClassificationId,
-                                           SubSubjectClassificationCode = data.SubSubjectClassificationCode,
-                                           CreatorId = data.CreatorId,
-                                           CreatorName = data.Creator?.CreatorName,
-                                           RetentionActive = data.RetentionActive,
-                                           RetentionInactive = data.RetentionInactive,
-                                           SubSubjectClassificationName = data.SubSubjectClassificationName
-                                       };
+        {
+            SubSubjectClassificationId = data.SubSubjectClassificationId,
+            SubSubjectClassificationCode = data.SubSubjectClassificationCode,
+            CreatorId = data.CreatorId,
+            CreatorName = data.Creator?.CreatorName,
+            RetentionActive = data.RetentionActive,
+            RetentionInactive = data.RetentionInactive,
+            SubSubjectClassificationName = data.SubSubjectClassificationName
+        };
 
         return Json(subSubjectClassification);
 
@@ -437,7 +504,7 @@ public abstract class BaseController<T> : Controller
         Guid ArchiveId = new(Id);
 
         var data = await _archiveService.GetById(ArchiveId);
-        ArchiveViewModel result = new() 
+        ArchiveViewModel result = new()
         {
             ArchiveId = data.ArchiveId,
             TitleArchive = data.TitleArchive,
@@ -448,12 +515,17 @@ public abstract class BaseController<T> : Controller
         };
         return Json(result);
     }
-    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id) => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id));
-
+    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year));
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id)
     {
         var data = await _typeStorageService.GetAll();
         var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubSubjectClassificationByArchiveUnitId(Guid Id)
+    {
+        var data = await _classificationSubSubjectService.GetAll();
+        var result = data.Where(x => x.Creator!.ArchiveUnitId == Id).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindTypeStorageByParam(string param = "")
@@ -471,43 +543,6 @@ public abstract class BaseController<T> : Controller
             text = x.TypeStorageName
         }).ToList();
         return Json(result);
-    }
-    public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
-    {
-        var data = await _typeStorageService.GetAll();
-        var result = data.Where(x => x.ArchiveUnit.CompanyId == Id).ToList();
-        return result.Select(x => new SelectListItem
-        {
-            Value = x.TypeStorageId.ToString(),
-            Text = x.TypeStorageName
-        }).ToList();
-    }
-    public async Task<List<SelectListItem>> BindEmployeeIdBySubSubjectClassificationId(Guid Id)
-    {
-        var result = await _employeeService.GetListEmployeeBySubSubjectClassificationId(Id);
-        return result.Select(x => new SelectListItem
-        {
-            Value = x.EmployeeId.ToString(),
-            Text = x.Name
-        }).ToList();
-    }
-    public async Task<List<SelectListItem>> BindEmployee()
-    {
-        var result = await _employeeService.GetAll();
-        return result.Select(x => new SelectListItem
-        {
-            Value = x.EmployeeId.ToString(),
-            Text = x.Name
-        }).ToList();
-    }
-    public async Task<List<SelectListItem>> BindArchiveRetention()
-    {
-        var result = await _archiveRetentionService.GetAll();
-        return result.Select(x => new SelectListItem
-        {
-            Value = x.ArchiveId.ToString(),
-            Text = x.TitleArchive
-        }).ToList();
     }
     public async Task<JsonResult> BindArchiveRetentionByParam(string param)
     {
@@ -594,23 +629,6 @@ public abstract class BaseController<T> : Controller
         var data = await _typeStorageService.GetById(Id);
         return Json(data);
     }
-    public async Task<List<SelectListItem>> BindArchiveOwners()
-    {
-        var data = await _archiveOwnerService.GetAll();
-        return data.Select(x => new SelectListItem
-        {
-            Value = x.ArchiveOwnerId.ToString(),
-            Text = x.ArchiveOwnerName
-        }).ToList();
-    }
-    public async Task<List<SelectListItem>> BindArchiveTypes()
-    {
-        var data = await _archiveTypeService.GetAll();
-        return data.Select(x => new SelectListItem
-        {
-            Value = x.ArchiveTypeId.ToString(),
-            Text = x.ArchiveTypeName
-        }).ToList();
-    }
+    #endregion
     #endregion
 }

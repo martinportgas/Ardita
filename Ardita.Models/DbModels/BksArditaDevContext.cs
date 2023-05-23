@@ -1777,6 +1777,11 @@ public partial class BksArditaDevContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_STATUS");
 
+            entity.HasOne(d => d.SubSubjectClassification).WithMany(p => p.TrxMediaStorages)
+                .HasForeignKey(d => d.SubSubjectClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_TRX_SUB_SUBJECT_CLASSIFICATION");
+
             entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.TypeStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

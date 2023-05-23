@@ -13,4 +13,5 @@ public interface IArchiveUnitRepository
     Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits);
     Task<int> Delete(TrxArchiveUnit model);
     Task<int> Update(TrxArchiveUnit model);
+    Task<IEnumerable<TrxArchiveUnit>> GetByListArchiveUnit(List<string> listArchiveUnitCode);
 }

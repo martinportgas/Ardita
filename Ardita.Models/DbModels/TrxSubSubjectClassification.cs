@@ -43,5 +43,7 @@ public partial class TrxSubSubjectClassification
 
     public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();
 
+    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+
     public virtual ICollection<TrxPermissionClassification> TrxPermissionClassifications { get; } = new List<TrxPermissionClassification>();
 }
