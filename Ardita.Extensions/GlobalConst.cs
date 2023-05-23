@@ -193,8 +193,11 @@ public static class GlobalConst
     public const string RoleName = "RoleName";
     public const string EmployeeNIK = "EmployeeNIK";
     public const string EmployeeName = "EmployeeName";
+    public const string EmployeeMail = "EmployeeMail";
+    public const string EmployeePhone = "EmployeePhone";
     public const string PositionId = "PositionId";
     public const string CompanyId = "CompanyId";
+    public const string CompanyName = "CompanyName";
     public const string EmployeeId = "EmployeeId";
     public const string ArchiveUnitCode = "ArchiveUnitCode";
 

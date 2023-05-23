@@ -15,8 +15,11 @@ namespace Ardita.Models.ViewModels
         public string RoleName { get; set; }
         public string EmployeeNIK { get; set; }
         public string EmployeeName { get; set; }
+        public string EmployeeMail { get; set; }
+        public string EmployeePhone { get; set; }
         public Guid PositionId { get; set; }
         public Guid CompanyId { get; set; }
+        public string CompanyName { get; set; }
         public Guid EmployeeId { get; set; }
         public List<string> ListArchiveUnitCode { get; set; }
 
