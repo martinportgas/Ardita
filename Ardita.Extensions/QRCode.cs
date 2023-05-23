@@ -1,11 +1,26 @@
-﻿using Net.Codecrete.QrCodeGenerator;
+﻿using Microsoft.AspNetCore.Http;
+using Net.Codecrete.QrCodeGenerator;
+using QRCoder;
+using System.Drawing;
+using System.IO;
 using System.Text;
 
 namespace Ardita.Extensions;
 
 public static class QRCodeExtension
 {
-    public static byte[] Generate(string text)
+    public static string Generate(string text)
+    {
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
+        QRCode qrCode = new QRCode(qrCodeData);
+        Bitmap qrCodeImage1 = qrCode.GetGraphic(12, Color.Black, Color.White, null, 15, 2);
+
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", $"QRCode_{text}_{DateTime.Now.ToString("ddMMyyyyHHmmssfff")}.png");
+        qrCodeImage1.Save(path);
+        return path;
+    }
+    public static byte[] GenerateOld(string text)
     {
         var qr = QrCode.EncodeText(text, QrCode.Ecc.Medium);
         string svg = qr.ToSvgString(4);

@@ -77,8 +77,8 @@ public class MediaStorageRepository : IMediaStorageRepository
         return await _context.TrxMediaStorages
             .Include(d => d.TrxMediaStorageDetails.Where(w => w.IsActive))
                 .ThenInclude(a => a.Archive)
-                .ThenInclude(s => s.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
+            .Include(s => s.SubSubjectClassification.SubjectClassification)
             .Include(t => t.TypeStorage).ThenInclude(a => a.ArchiveUnit)
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor).AsNoTracking()
             .Where(x => x.MediaStorageId == id)

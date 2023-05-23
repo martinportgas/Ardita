@@ -532,7 +532,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindRoomActiveByFloorId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -622,7 +622,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRowByLevelId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindRowArchiveByLevelId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {

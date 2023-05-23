@@ -38,7 +38,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Media Storage Code</th>
+                                <th>Kode Media Penyimpanan</th>
                                 <th>Lokasi</th>
                                 <th>Unit Pencipta</th>
                                 <th>Sub-subjek Klasifikasi</th>
@@ -104,8 +104,8 @@
 
                             var downloadQr = ``;
                             if (row.statusId == 5) {
-                                downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindQrCode, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, text = -1})"><i class="fa fa-download"></i> </a>`;
-                                downloadQr = downloadQr.replace("-1", row.mediaStorageCode);
+                                downloadQr = `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.BindLabel, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, MediaStorageId = -1})"><i class="fa fa-download"></i> </a>`;
+                                downloadQr = downloadQr.replace("-1", row.mediaStorageId);
                             }
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr);

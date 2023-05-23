@@ -418,7 +418,7 @@ public abstract class BaseController<T> : Controller
         {
             id = x.ArchiveUnitId.ToString(),
             text = x.ArchiveUnitName
-        }).ToList();
+        }).OrderBy(x => x.text).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
@@ -427,7 +427,7 @@ public abstract class BaseController<T> : Controller
         Guid ArchiveUnitId = new(Id);
 
         var data = await _floorService.GetAll();
-        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).ToList();
+        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).OrderBy(x => x.FloorName).ToList();
         return Json(listFloors);
 
     }
@@ -437,9 +437,18 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
-        list = data.Where(x => x.FloorId == id).ToList();
+        list = data.Where(x => x.FloorId == id).OrderBy(x => x.RoomName).ToList();
         return Json(list);
 
+    }
+    public async Task<JsonResult> BindRoomActiveByFloorId(string Id)
+    {
+        List<TrxRoom> list = new();
+        Guid id = new(Id);
+
+        var data = await _roomService.GetAll();
+        list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah).OrderBy(x => x.RoomName).ToList();
+        return Json(list);
     }
     public async Task<JsonResult> BindRackByRoomId(string Id)
     {
@@ -447,7 +456,7 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rackService.GetAll();
-        list = data.Where(x => x.RoomId == id).ToList();
+        list = data.Where(x => x.RoomId == id).OrderBy(x => x.RackName).ToList();
         return Json(list);
     }
     public async Task<JsonResult> BindLevelByRackId(string Id)
@@ -456,7 +465,7 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _levelService.GetAll();
-        list = data.Where(x => x.RackId == id).ToList();
+        list = data.Where(x => x.RackId == id).OrderBy(x => x.LevelName).ToList();
         return Json(list);
     }
     public async Task<JsonResult> BindRowByLevelId(string Id)
@@ -468,16 +477,25 @@ public abstract class BaseController<T> : Controller
         list = data.Where(x => x.LevelId == id).ToList();
         return Json(list);
     }
+    public async Task<JsonResult> BindRowArchiveByLevelId(string Id)
+    {
+        List<TrxRow> list = new();
+        Guid id = new(Id);
+
+        var data = await _rowService.GetAll();
+        list = data.Where(x => x.LevelId == id && x.TrxMediaStorages.FirstOrDefault() == null).OrderBy(x => x.RowName).ToList();
+        return Json(list);
+    }
     public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id)
     {
         var data = await _classificationSubjectService.GetAll();
-        var result = data.Where(x => x.ClassificationId == Id).ToList();
+        var result = data.Where(x => x.ClassificationId == Id).OrderBy(x => x.SubjectClassificationName).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindClassificationIdByClassificationTypeId(Guid Id)
     {
         var data = await _classificationService.GetAll();
-        var result = data.Where(x => x.TypeClassificationId == Id).ToList();
+        var result = data.Where(x => x.TypeClassificationId == Id).OrderBy(x => x.ClassificationName).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindSubSubjectClasscificationsById(string Id)

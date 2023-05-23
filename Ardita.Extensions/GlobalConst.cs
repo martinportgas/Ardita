@@ -150,6 +150,7 @@ public static class GlobalConst
     public const string BindArchiveUnits = "BindArchiveUnits";
     public const string BindArchiveUnitsByParam = "BindArchiveUnitsByParam";
     public const string BindRooms = "BindRooms";
+    public const string BindRoomActiveByFloorId = "BindRoomActiveByFloorId";
     public const string BindRacks = "BindRacks";
     public const string BindCompanies = "BindCompanies";
     public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
@@ -161,6 +162,7 @@ public static class GlobalConst
     public const string BindRackByRoomId = "BindRackByRoomId";
     public const string BindLevelByRackId = "BindLevelByRackId";
     public const string BindRowByLevelId = "BindRowByLevelId";
+    public const string BindRowArchiveByLevelId = "BindRowArchiveByLevelId";
     public const string BindTypeStorageById = "BindTypeStorageById";
     public const string BindDownload = "BindDownload";
     public const string BindArchiveRetention = "BindArchiveRetention";
@@ -185,6 +187,8 @@ public static class GlobalConst
 
     //Others
     public const string Password = "Password";
+    public const string UnitPengolah = "Unit Pengolah";
+    public const string UnitKearsipan = "Unit Kearsipan";
 
     //ClaimTypes
     public const string Username = "Username";
