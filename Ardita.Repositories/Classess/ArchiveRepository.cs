@@ -369,11 +369,12 @@ public class ArchiveRepository : IArchiveRepository
                                       where archive.IsActive == true && media.IsActive == true && mediaDetail.MediaStorageId != mediaStorageId
                                       select archive;
 
+        int submit = (int)GlobalConst.STATUS.Submit;
         return await _context.TrxArchives
             .Include(x => x.ArchiveType)
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageDetails)
-            .Where(x => x.IsActive == true && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId)
+            .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId)
             .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0")}", year)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();

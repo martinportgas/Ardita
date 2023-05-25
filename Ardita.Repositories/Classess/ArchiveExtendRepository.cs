@@ -104,12 +104,16 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            var count = await _context.TrxArchiveExtends.CountAsync();
+            var count = await _context.TrxArchiveExtends.CountAsync() + 1;
 
             if (model != null)
             {
+                var archiveUnit = await _context.TrxArchiveUnits.FirstOrDefaultAsync(x => x.ArchiveUnitId == model.ArchiveUnitId);
+                var company = await _context.MstCompanies.FirstOrDefaultAsync(x => x.CompanyId == archiveUnit!.CompanyId);
+
                 model.IsActive = true;
-                model.ExtendCode = $"EXT.{++count}/{DateTime.Now.Month}/{DateTime.Now.Year}";
+                model.ExtendCode = $"EXT.{count.ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                model.DocumentCode = $"PR.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.ArchiveYear}";
                 _context.TrxArchiveExtends.Add(model);
                 result = await _context.SaveChangesAsync();
             }

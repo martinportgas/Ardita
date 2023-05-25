@@ -41,6 +41,11 @@ namespace Ardita.Extensions
             string currentAction = (string)html.ViewContext.RouteData.Values["action"];
             string currentController = (string)html.ViewContext.RouteData.Values["controller"];
 
+            if(currentController == GlobalConst.ArchiveDestroy || currentController == GlobalConst.ArchiveMovement)
+            {
+                currentController = GlobalConst.ArchiveCirculation;
+            }
+
             if (String.IsNullOrEmpty(area))
                 area = currentArea;
 
@@ -96,7 +101,7 @@ namespace Ardita.Extensions
                 LastBreadcrumb = GlobalConst.Approval;
             }
 
-            var isInput = currentAction == GlobalConst.Add || currentAction == GlobalConst.Update || currentAction == GlobalConst.Remove;
+            var isInput = currentAction == GlobalConst.Add || currentAction == GlobalConst.Update;
             var isSubmitForm = isInput || currentAction == GlobalConst.Remove || currentAction == GlobalConst.Preview || currentAction == GlobalConst.Approval;
 
             FormModel model = new FormModel();

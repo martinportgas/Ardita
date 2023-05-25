@@ -72,7 +72,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
 
         await BindAllDropdown();
         var model = new TrxMediaStorage();
-        model.MediaStorageCode = "Auto Generated";
+        model.MediaStorageCode = GlobalConst.InitialCode;
         return View(GlobalConst.Form, model);
     }
     [HttpPost]

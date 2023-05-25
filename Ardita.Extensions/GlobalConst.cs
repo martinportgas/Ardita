@@ -20,6 +20,14 @@ public static class GlobalConst
         ArchiveReceived = 6,
         ArchiveNotReceived = 7,
     }
+    public enum ROLE
+    {
+        ADM = 1,
+        UPL = 2,
+        UKP = 3,
+        APR = 4,
+        USV = 5
+    }
     public const string Form = "Form";
     public const string Add = "Add";
     public const string UserId = "UserId";
@@ -134,6 +142,8 @@ public static class GlobalConst
     public const string wwwroot = "wwwroot";
     public const string Internal = "Internal";
     public const string Eksternal = "Eksternal";
+    public const string ArsipPemusnahan = "Pemusnahan Arsip";
+    public const string ArsipPemindahan = "Pemindahan Arsip";
 
     //Prefix
     public const string Trx = "Trx";
@@ -169,6 +179,7 @@ public static class GlobalConst
     public const string BindArchiveRetentionByParam = "BindArchiveRetentionByParam";
     public const string BindArchiveRetentionInActiveByParam = "BindArchiveRetentionInActiveByParam";
     public const string BindEmployeeByParam = "BindEmployeeByParam";
+    public const string BindApprovalByParam = "BindApprovalByParam";
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
     public const string BindTypeStorageByParam = "BindTypeStorageByParam";

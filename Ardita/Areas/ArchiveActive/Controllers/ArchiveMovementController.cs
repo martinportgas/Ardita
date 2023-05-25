@@ -25,7 +25,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IArchiveRetentionService archiveRetentionService,
             IArchiveApprovalService archiveApprovalService,
             ITypeStorageService typeStorageService,
-            IMediaStorageService mediaStorageService)
+            IMediaStorageService mediaStorageService,
+            IArchiveUnitService archiveUnitService,
+            IClassificationSubSubjectService classificationSubSubjectService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -36,6 +38,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _archiveMovementService = archiveMovementService;
             _typeStorageService = typeStorageService;
             _mediaStorageService = mediaStorageService;
+            _archiveUnitService = archiveUnitService;
+            _classificationSubSubjectService = classificationSubSubjectService;
         }
         #endregion
         #region MAIN ACTION
@@ -88,9 +92,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+            await BindAllDropdown();
+
             var model = new TrxArchiveMovement();
             model.MovementCode = GlobalConst.InitialCode;
+            model.DocumentCode = GlobalConst.InitialCode;
             Guid Id = Guid.Empty;
             ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
             ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
@@ -101,7 +107,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
                 return View(GlobalConst.Form, model);
@@ -116,7 +123,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorage();
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
                 return View(GlobalConst.Form, model);
@@ -131,7 +139,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorage();
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
                 return View(GlobalConst.Form, model);
@@ -146,7 +155,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                ViewBag.listTypeStorage = await BindTypeStorage();
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
                 return View(GlobalConst.Form, model);
@@ -161,6 +171,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown();
+
                 ViewBag.level = Level;
                 ViewBag.listTypeStorage = await BindTypeStorage();
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
@@ -337,7 +349,14 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive });
+        protected async Task BindAllDropdown()
+        {
+            ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
+            ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
+            ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+        }
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveCirculation, new { Area = GlobalConst.ArchiveActive });
         #endregion
     }
 }

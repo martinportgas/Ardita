@@ -43,6 +43,8 @@ public partial class MstEmployee
 
     public DateTime? UpdateDate { get; set; }
 
+    public virtual MstCompany? Company { get; set; }
+
     public virtual ICollection<MstUser> MstUsers { get; } = new List<MstUser>();
 
     public virtual MstPosition Position { get; set; } = null!;

@@ -5,6 +5,12 @@ namespace Ardita.Models.DbModels;
 
 public partial class VwArchiveRetention
 {
+    public string? ArchiveCode { get; set; }
+
+    public Guid SubSubjectClassificationId { get; set; }
+
+    public DateTime CreatedDateArchive { get; set; }
+
     public Guid ArchiveId { get; set; }
 
     public string? ArchiveNumber { get; set; }

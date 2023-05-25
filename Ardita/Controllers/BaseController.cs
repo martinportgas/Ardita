@@ -219,7 +219,7 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindAllArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
-        return data.Select(x => new SelectListItem
+        return data.Where(x => x.CompanyId == AppUsers.CurrentUser(User).CompanyId).Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
             Text = x.ArchiveUnitName
@@ -582,6 +582,10 @@ public abstract class BaseController<T> : Controller
         Guid DetailId = Guid.Empty;
         Guid.TryParse(arrParam[1], out DetailId);
         var type = arrParam[2];
+        Guid SubSubjectClassificationId = Guid.Empty;
+        Guid.TryParse(arrParam[3], out SubSubjectClassificationId);
+        int year = DateTime.Now.Year;
+        int.TryParse(arrParam[4], out year);
 
         var data = await _archiveRetentionService.GetAll();
 
@@ -601,13 +605,16 @@ public abstract class BaseController<T> : Controller
              from dataDetailDst in b.DefaultIfEmpty()
              join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
              from dataDetailMove in c.DefaultIfEmpty()
-             where dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && dataALl.TitleArchive.ToLower().Contains(keyword.ToLower())
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.CreatedDateArchive.Year == year && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {
                  id = dataALl.ArchiveId,
-                 text = dataALl.TitleArchive
+                 text = dataALl.ArchiveCode + " - " + dataALl.TitleArchive,
+                 order = dataALl.TitleArchive
              }
-             ).ToList();
+             )
+             .OrderBy(x => x.order)
+             .ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindArchiveRetentionInActiveByParam(string param)
@@ -647,6 +654,23 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _employeeService.GetAll();
         var result = data.Where(x => x.Name.ToLower().Contains(param.ToLower())).Select(x =>
+            new {
+                id = x.EmployeeId,
+                text = x.Name
+            }
+            ).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindApprovalByParam(string param = "")
+    {
+        string[] arrParam = param.Split(',');
+
+        var keyword = string.IsNullOrEmpty(arrParam[0]) ? string.Empty : arrParam[0];
+        Guid archiveUnitId = Guid.Empty;
+        Guid.TryParse(arrParam[1], out archiveUnitId);
+
+        var data = await _employeeService.GetListApproval(archiveUnitId);
+        var result = data.Where(x => x.Name.ToLower().Contains(keyword.ToLower())).Select(x =>
             new {
                 id = x.EmployeeId,
                 text = x.Name

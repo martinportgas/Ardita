@@ -65,7 +65,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<TrxArchiveDestroy> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == id);
+            var result = await _context.TrxArchiveDestroys.Include(x => x.ArchiveUnit.Company).AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == id);
             return result;
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
@@ -103,12 +103,16 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
-            var count = await _context.TrxArchiveDestroys.CountAsync();
+            var count = await _context.TrxArchiveDestroys.CountAsync() + 1;
 
             if (model != null)
             {
+                var archiveUnit = await _context.TrxArchiveUnits.FirstOrDefaultAsync(x => x.ArchiveUnitId == model.ArchiveUnitId);
+                var company = await _context.MstCompanies.FirstOrDefaultAsync(x => x.CompanyId == archiveUnit!.CompanyId);
+
                 model.IsActive = true;
-                model.DestroyCode = $"DST.{++count}/{DateTime.Now.Month}/{DateTime.Now.Year}";
+                model.DestroyCode = $"DST.{count.ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.ArchiveYear}";
                 _context.TrxArchiveDestroys.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -134,6 +138,7 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveDestroys.AsNoTracking().FirstAsync(x => x.ArchiveDestroyId == model.ArchiveDestroyId);
                 if (data != null)
                 {
+                    model.ArchiveUnit = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

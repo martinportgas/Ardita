@@ -9,12 +9,12 @@ namespace Ardita.Extensions;
 
 public static class QRCodeExtension
 {
-    public static string Generate(string text)
+    public static string Generate(string text, int size = 12)
     {
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
         QRCode qrCode = new QRCode(qrCodeData);
-        Bitmap qrCodeImage1 = qrCode.GetGraphic(12, Color.Black, Color.White, null, 15, 2);
+        Bitmap qrCodeImage1 = qrCode.GetGraphic(size, Color.Black, Color.White, null, 15, 2);
 
         string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", $"QRCode_{text}_{DateTime.Now.ToString("ddMMyyyyHHmmssfff")}.png");
         qrCodeImage1.Save(path);

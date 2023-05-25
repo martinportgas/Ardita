@@ -14,6 +14,7 @@ namespace Ardita.Services.Interfaces
         Task<MstEmployee> GetById(Guid id);
         Task<IEnumerable<MstEmployee>> GetAll();
         Task<DataTableResponseModel<object>> GetListEmployee(DataTablePostModel model);
+        Task<IEnumerable<MstEmployee>> GetListApproval(Guid ArchiveUnitId);
         Task<int> Insert(MstEmployee model);
         Task<bool> InsertBulk(List<MstEmployee> employees);
         Task<int> Delete(MstEmployee model);

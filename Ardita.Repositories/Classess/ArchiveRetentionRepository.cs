@@ -41,7 +41,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
                 x.Status,
                 x.ArchiveNumber,
                 x.TitleArchive,
-                RetentionDateArchive = x.RetentionDateArchive.ToString()
+                RetentionDateArchive = x.RetentionDateArchive == null ? "" : x.RetentionDateArchive.ToString()
             })
             .ToListAsync() : await _context.VwArchiveRetentionInActives
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
@@ -55,7 +55,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
                 x.Status,
                 x.ArchiveNumber,
                 x.TitleArchive,
-                RetentionDateArchive = x.RetentionDateArchive.ToString()
+                RetentionDateArchive = x.RetentionDateArchive == null ? "" : x.RetentionDateArchive.ToString()
             })
             .ToListAsync();
 

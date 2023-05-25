@@ -1,10 +1,10 @@
 ﻿@using Ardita.Extensions;
 @{
-    Layout = GlobalConst.ViewStart;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Sirkulasi Arsip</h2>
+        <h2>Pemindahan Arsip</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
@@ -13,7 +13,7 @@
                 Archive Active
             </li>
             <li class="active breadcrumb-item">
-                <strong>Sirkulasi Arsip</strong>
+                <strong>Pemindahan Arsip</strong>
             </li>
         </ol>
     </div>
@@ -27,7 +27,7 @@
                 <div class="ibox-title">
                     <h5>Pemindahan Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(GlobalConst.Form, GlobalConst.ArchiveCirculation, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -36,8 +36,12 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Code</th>
+                                <th>Jenis Sirkulasi Arsip</th>
+                                <th>Nomor Berita Acara</th>
+                                <th>Nomor registrasi</th>
+                                <th>Nama Pemindahan</th>
                                 <th>Status</th>
+                                <th>Note</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -47,3 +51,77 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+            var table = $('#tbl').DataTable({
+                processing: true,
+                serverSide: true,
+                scrollX: true,
+                filter: true,
+                ajax: {
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
+                    "type": "POST",
+                    "datatype": "json",
+                    //"complete": function (xhr, responseText) {
+                    //    console.log(xhr);
+                    //    console.log(responseText); //*** responseJSON: Array[0]
+                    //}
+                },
+                columnDefs: [
+                    { width: 50, targets: 0 },
+                    { width: 100, targets: 4 }
+                ],
+                fixedColumns: true,
+                order: [[0, 'desc']],
+                columns: [
+                    {
+                        "data": "id", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            //console.log(row);
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        "data": "id", "name": "id", "orderable": false, "searchable": false,
+                        "render": function (data, type, row, meta) {
+                            var url = '@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })';
+                            if(row.type == '@GlobalConst.ArsipPemusnahan'){
+                                url = '@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })';
+                            }
+                            url = url.replace("-1", data);
+
+                            var detail = `<a class="btn btn-sm btn-warning" href="${url}"><i class="fa fa-eye"></i> </a>`;
+
+                            url = url.replace('@GlobalConst.Detail', '@GlobalConst.Update');
+                            var edit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-pencil"></i> </a>`;
+
+                            url = url.replace('@GlobalConst.Update', '@GlobalConst.Remove');
+                            var remove = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="${url}"><i class="fa fa-trash"></i> </a>`;
+
+                            url = url.replace('@GlobalConst.Remove', '@GlobalConst.Preview');
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
+
+                            url = url.replace('@GlobalConst.Preview', '@GlobalConst.DownloadFile');
+                            var download = row.statusId != @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-download"></i> </a>`;
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);
+                            return JoinButton;
+                        }
+                    },
+                    { "data": "type", "name": "type", "autoWidth": true, "orderable": false },
+                    { "data": "documentCode", "name": "documentCode", "autoWidth": true },
+                    { "data": "code", "name": "code", "autoWidth": true },
+                    { "data": "name", "name": "name", "autoWidth": true },
+                    {
+                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
+                        }
+                    },
+                    { "data": "note", "name": "note", "autoWidth": true },
+                ]
+            });
+        });
+    </script>
+}
