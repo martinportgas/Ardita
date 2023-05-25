@@ -164,7 +164,8 @@
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtArchiveUnitId').val(),
+                            id: $('#txtArchiveUnitId').val(),,
+                            param: params.term
                         }
                         return query;
                     },
@@ -195,6 +196,7 @@
                     data: function (params) {
                         var query = {
                             id: $('#txtFloorId').val(),
+                            param: params.term
                         }
                         return query;
                     },

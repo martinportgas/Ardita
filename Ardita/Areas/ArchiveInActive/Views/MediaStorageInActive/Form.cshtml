@@ -257,6 +257,7 @@
                     data: function (params) {
                         var query = {
                             id: $('#txtArchiveUnitId').val(),
+                            param: params.term
                         }
                         return query;
                     },
@@ -283,7 +284,8 @@
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtArchiveUnitId').val(),
+                            id: $('#txtArchiveUnitId').val(),,
+                            param: params.term
                         }
                         return query;
                     },
@@ -314,6 +316,7 @@
                     data: function (params) {
                         var query = {
                             id: $('#txtFloorId').val(),
+                            param: params.term
                         }
                         return query;
                     },
@@ -344,6 +347,7 @@
                     data: function (params) {
                         var query = {
                             id: $('#txtRoomId').val(),
+                            param: params.term
                         }
                         return query;
                     },
@@ -374,6 +378,7 @@
                     data: function (params) {
                         var query = {
                             id: $('#txtRackId').val(),
+                            param: params.term
                         }
                         return query;
                     },

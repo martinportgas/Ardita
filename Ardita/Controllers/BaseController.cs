@@ -413,89 +413,99 @@ public abstract class BaseController<T> : Controller
     #region Json Result
     public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveUnitService.GetAll();
-        var result = data.Where(x => x.ArchiveUnitName.Contains(param)).Select(x => new
+        var result = data.Where(x => x.ArchiveUnitName.ToLower().Contains(param.ToLower())).Select(x => new
         {
             id = x.ArchiveUnitId.ToString(),
             text = x.ArchiveUnitName
         }).OrderBy(x => x.text).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id)
+    public async Task<JsonResult> BindFloorsByArchiveUnitId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxFloor> listFloors = new();
         Guid ArchiveUnitId = new(Id);
 
         var data = await _floorService.GetAll();
-        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId).OrderBy(x => x.FloorName).ToList();
+        listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId && x.FloorName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.FloorName).ToList();
         return Json(listFloors);
 
     }
-    public async Task<JsonResult> BindRoomByFloorId(string Id)
+    public async Task<JsonResult> BindRoomByFloorId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxRoom> list = new();
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
-        list = data.Where(x => x.FloorId == id).OrderBy(x => x.RoomName).ToList();
+        list = data.Where(x => x.FloorId == id && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
 
     }
-    public async Task<JsonResult> BindRoomActiveByFloorId(string Id)
+    public async Task<JsonResult> BindRoomActiveByFloorId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxRoom> list = new();
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
-        list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah).OrderBy(x => x.RoomName).ToList();
+        list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
     }
-    public async Task<JsonResult> BindRackByRoomId(string Id)
+    public async Task<JsonResult> BindRackByRoomId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxRack> list = new();
         Guid id = new(Id);
 
         var data = await _rackService.GetAll();
-        list = data.Where(x => x.RoomId == id).OrderBy(x => x.RackName).ToList();
+        list = data.Where(x => x.RoomId == id && x.RackName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RackName).ToList();
         return Json(list);
     }
-    public async Task<JsonResult> BindLevelByRackId(string Id)
+    public async Task<JsonResult> BindLevelByRackId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxLevel> list = new();
         Guid id = new(Id);
 
         var data = await _levelService.GetAll();
-        list = data.Where(x => x.RackId == id).OrderBy(x => x.LevelName).ToList();
+        list = data.Where(x => x.RackId == id && x.LevelName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.LevelName).ToList();
         return Json(list);
     }
-    public async Task<JsonResult> BindRowByLevelId(string Id)
+    public async Task<JsonResult> BindRowByLevelId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxRow> list = new();
         Guid id = new(Id);
 
         var data = await _rowService.GetAll();
-        list = data.Where(x => x.LevelId == id).ToList();
+        list = data.Where(x => x.LevelId == id && x.RowName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(list);
     }
-    public async Task<JsonResult> BindRowArchiveByLevelId(string Id)
+    public async Task<JsonResult> BindRowArchiveByLevelId(string Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         List<TrxRow> list = new();
         Guid id = new(Id);
 
         var data = await _rowService.GetAll();
-        list = data.Where(x => x.LevelId == id && x.TrxMediaStorages.FirstOrDefault() == null).OrderBy(x => x.RowName).ToList();
+        list = data.Where(x => x.LevelId == id && x.TrxMediaStorages.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
-    public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id)
+    public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubjectService.GetAll();
-        var result = data.Where(x => x.ClassificationId == Id).OrderBy(x => x.SubjectClassificationName).ToList();
+        var result = data.Where(x => x.ClassificationId == Id && x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubjectClassificationName).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindClassificationIdByClassificationTypeId(Guid Id)
+    public async Task<JsonResult> BindClassificationIdByClassificationTypeId(Guid Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationService.GetAll();
-        var result = data.Where(x => x.TypeClassificationId == Id).OrderBy(x => x.ClassificationName).ToList();
+        var result = data.Where(x => x.TypeClassificationId == Id && x.ClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.ClassificationName).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindSubSubjectClasscificationsById(string Id)
@@ -534,16 +544,18 @@ public abstract class BaseController<T> : Controller
         return Json(result);
     }
     public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year));
-    public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id)
+    public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _typeStorageService.GetAll();
-        var result = data.Where(x => x.ArchiveUnitId == Id).ToList();
+        var result = data.Where(x => x.ArchiveUnitId == Id && x.TypeStorageName.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindSubSubjectClassificationByArchiveUnitId(Guid Id)
+    public async Task<JsonResult> BindSubSubjectClassificationByArchiveUnitId(Guid Id, string param = "")
     {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubSubjectService.GetAll();
-        var result = data.Where(x => x.Creator!.ArchiveUnitId == Id).ToList();
+        var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindTypeStorageByParam(string param = "")
