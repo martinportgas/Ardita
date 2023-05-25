@@ -132,6 +132,82 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
+        public async Task<IEnumerable<object>> GetRetrievalByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveRents
+               .Include(x => x.User.Employee)
+               .Include(x => x.Archive)
+               .Include(x => x.Status)
+               .Where(x => x.RetrievalDate != null)
+               .Where($"(User.Employee.Name+RequestedDate.ToString()+RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .Select(x => new
+               {
+                   x.TrxArchiveRentId,
+                   x.User.Employee.Name,
+                   x.RequestedDate,
+                   x.RequestedReturnDate,
+                   x.StatusId,
+                   Status = x.Status.Name,
+                   Color = x.Status.Color
+               })
+               .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<int> GetRetrievalCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveRents
+             .Include(x => x.User.Employee)
+             .Include(x => x.Archive)
+             .Include(x => x.Status)
+             .Where(x => x.RetrievalDate != null)
+             .Where($"(User.Employee.Name+RequestedDate.ToString()+ReturnDate.ToString()).Contains(@0)", model.searchValue)
+             .CountAsync();
+
+            return result;
+        }
+
+        public async Task<IEnumerable<object>> GetReturnByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveRents
+               .Include(x => x.User.Employee)
+               .Include(x => x.Archive)
+               .Include(x => x.Status)
+               .Where(x => x.ReturnDate != null)
+               .Where($"(User.Employee.Name+RequestedDate.ToString()+RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .Select(x => new
+               {
+                   x.TrxArchiveRentId,
+                   x.User.Employee.Name,
+                   x.RequestedDate,
+                   x.RequestedReturnDate,
+                   x.StatusId,
+                   Status = x.Status.Name,
+                   Color = x.Status.Color
+               })
+               .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<int> GetReturnCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.TrxArchiveRents
+            .Include(x => x.User.Employee)
+            .Include(x => x.Archive)
+            .Include(x => x.Status)
+            .Where(x => x.ReturnDate != null)
+            .Where($"(User.Employee.Name+RequestedDate.ToString()+ReturnDate.ToString()).Contains(@0)", model.searchValue)
+            .CountAsync();
+
+            return result;
+        }
+
         public async Task<int> Insert(TrxArchiveRent model)
         {
             int result = 0;

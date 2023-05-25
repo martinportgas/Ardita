@@ -106,6 +106,7 @@
     <None Include="Areas\ArchiveInActive\Views\ArchiveRentApproval\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Index.cshtml" />
     <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.svg" />

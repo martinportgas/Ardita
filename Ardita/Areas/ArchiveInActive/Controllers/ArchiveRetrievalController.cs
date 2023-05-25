@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Areas.ArchiveInActive.Controllers
 {
+    [CustomAuthorize]
+    [Area(GlobalConst.ArchiveInActive)]
     public class ArchiveRetrievalController : BaseController<TrxArchiveRent>
     {
         public ArchiveRetrievalController(
@@ -27,7 +29,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
-                var result = await _archiveRentService.GetList(model);
+                var result = await _archiveRentService.GetRetrievalList(model);
                 return Json(result);
 
             }
