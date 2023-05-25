@@ -103,6 +103,20 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
 
             return RedirectToIndex();
         }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var model = await _archiveRentService.GetById(Id);
+            if (model != null)
+            {
+                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
+                return View(GlobalConst.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive });
     }
 }

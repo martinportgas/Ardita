@@ -1,0 +1,157 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.TrxArchiveRent;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Media Storage In Active</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRent, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Page</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+
+                                        <div class="profile-image">
+                                            <img src="~/img/default-user.png" class="rounded-circle circle-border m-b-md" alt="profile">
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="">
+                                                <div>
+                                                    <h2 class="no-margins">@ViewBag.Name</h2>
+                                                    <h5>@ViewBag.RoleName</h5>
+                                                    <h5>@ViewBag.NIK</h5>
+                                                    <h5>@ViewBag.Email</h5>
+                                                    <h5>@ViewBag.Company</h5>
+                                                    <h5>@ViewBag.Phone</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Klasifikasi</label>
+                                           
+                                            <input type="text" placeholder="" id="txtMdlClassification" name="txtMdlClassification" class="form-control" value="@ViewBag.SubSubjectClassification" readonly>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Pencipta</label>
+                                            <input type="text" placeholder="" id="txtMdlCreatorName" name="txtMdlCreatorName" class="form-control" value="@ViewBag.CreatorName" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tanggal Pinjam</label>
+                                            <input type="text" placeholder="" id="txtMdlRequestedDate" class="form-control" value="@ViewBag.RequestedDate" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Keterangan Pengguna</label>
+                                            <textarea class="form-control" id="txtMdlDescription" name="txtMdlDescription" readonly>@ViewBag.DescriptionByUser</textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6">
+
+                                        <div class="form-group">
+                                            <label>Judul</label>
+                                            <input type="hidden" id="txtMdlArchiveId" name="txtMdlArchiveId" />
+                                            <input type="text" placeholder="" id="txtMdlTitleArchive" class="form-control" value="@ViewBag.TitleArchive" readonly>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Unit Kearsipan</label>
+                                            <input type="text" placeholder="" id="txtMdlArchiveUnit" class="form-control" value="@ViewBag.ArchiveUnitName" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tanggal Kembali</label>
+                                            <input type="text" placeholder="" id="txtMdlRequestedReturnDate" class="form-control" value="@ViewBag.ReturnDate" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                            <form id="frmRentApproval" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ArchiveRentApproval" asp-action="@GlobalConst.SubmitApproval" asp-area="@GlobalConst.ArchiveInActive">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="hidden" value="@ViewBag.TrxArchiveRentId" name="txtTrxArchiveRentId" />
+                                        <div class="form-group">
+                                            <label>Keterangan</label>
+                                            <textarea class="form-control" id="txtDescription" name="txtDescription"></textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="float-right">
+                                    <button id="btnApprove" type="submit" value="Approve" name="btnApproval" class="btn btn-sm btn-success"><i class="fa fa-pencil"></i><span class="bold"> Approve</span></button>
+                                    <button id="btnReject" type="submit" value="Reject" name="btnApproval" class="btn btn-danger">Reject</button>
+                                    <a id="btnBack" href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-white">Back</a>
+                                </div>
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

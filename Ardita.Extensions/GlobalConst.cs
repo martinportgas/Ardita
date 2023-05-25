@@ -87,6 +87,9 @@ public static class GlobalConst
     public const string ArchiveApproval = "ArchiveApproval";
     public const string ArchiveReceived = "ArchiveReceived";
     public const string ArchiveRent = "ArchiveRent";
+    public const string ArchiveRentApproval = "ArchiveRentApproval";
+    public const string ArchiveRetrieval = "ArchiveRetrieval";
+    public const string ArchiveReturn = "ArchiveReturn";
 
     //Action
     public const string Index = "Index";

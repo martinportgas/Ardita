@@ -43,8 +43,10 @@
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveApprovalController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveDestroyController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveExtendController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRentApprovalController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRentController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetentionController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetrievalController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,8 +102,11 @@
   <ItemGroup>
     <None Include="Areas\ArchiveInActive\Views\ArchiveReceived\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveReceived\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveRentApproval\Form.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveRentApproval\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Index.cshtml" />
     <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.svg" />

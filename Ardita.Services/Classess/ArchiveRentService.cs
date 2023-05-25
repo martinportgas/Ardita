@@ -58,14 +58,9 @@ namespace Ardita.Services.Classess
             }
         }
 
-        public Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
+        public async Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> GetCountByFilterModel(DataTableModel model)
-        {
-            throw new NotImplementedException();
+            return await _archiveRentRepository.GetById(id);
         }
 
         public async Task<int> Insert(TrxArchiveRent model)
@@ -76,6 +71,104 @@ namespace Ardita.Services.Classess
         public Task<int> Update(TrxArchiveRent model)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<DataTableResponseModel<object>> GetApprovalList(DataTablePostModel model)
+        {
+            try
+            {
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].name;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+                filterData.IsArchiveActive = model.IsArchiveActive;
+
+                var dataCount = await _archiveRentRepository.GetApprovalCountByFilterModel(filterData);
+                var results = await _archiveRentRepository.GetApprovalByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<object>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<int> Approval(Guid id, string description, int status, Guid User)
+        {
+            return await _archiveRentRepository.Approval(id, description, status, User);
+        }
+
+        public async Task<DataTableResponseModel<object>> GetRetrievalList(DataTablePostModel model)
+        {
+            try
+            {
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].name;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+                filterData.IsArchiveActive = model.IsArchiveActive;
+
+                var dataCount = await _archiveRentRepository.GetRetrievalCountByFilterModel(filterData);
+                var results = await _archiveRentRepository.GetRetrievalByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<object>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<DataTableResponseModel<object>> GetReturnList(DataTablePostModel model)
+        {
+            try
+            {
+                var filterData = new DataTableModel();
+
+                filterData.sortColumn = model.columns[model.order[0].column].name;
+                filterData.sortColumnDirection = model.order[0].dir;
+                filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
+                filterData.pageSize = model.length;
+                filterData.skip = model.start;
+                filterData.IsArchiveActive = model.IsArchiveActive;
+
+                var dataCount = await _archiveRentRepository.GetReturnCountByFilterModel(filterData);
+                var results = await _archiveRentRepository.GetReturnByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<object>();
+
+                responseModel.draw = model.draw;
+                responseModel.recordsTotal = dataCount;
+                responseModel.recordsFiltered = dataCount;
+                responseModel.data = results.ToList();
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }
