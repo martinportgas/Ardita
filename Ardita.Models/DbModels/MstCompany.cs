@@ -29,5 +29,7 @@ public partial class MstCompany
 
     public virtual ICollection<MstCompanyLog> MstCompanyLogs { get; } = new List<MstCompanyLog>();
 
+    public virtual ICollection<MstEmployee> MstEmployees { get; } = new List<MstEmployee>();
+
     public virtual ICollection<TrxArchiveUnit> TrxArchiveUnits { get; } = new List<TrxArchiveUnit>();
 }

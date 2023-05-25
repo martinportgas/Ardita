@@ -534,6 +534,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
 
+            entity.HasOne(d => d.Company).WithMany(p => p.MstEmployees)
+                .HasForeignKey(d => d.CompanyId)
+                .HasConstraintName("FK_MST_EMPLOYEE_MST_COMPANY");
+
             entity.HasOne(d => d.Position).WithMany(p => p.MstEmployees)
                 .HasForeignKey(d => d.PositionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

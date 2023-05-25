@@ -46,6 +46,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
     {
         var data = await _context.TrxArchives
             .Include(x => x.Creator.ArchiveUnit)
+            .Include(x => x.SubSubjectClassification)
             .AsNoTracking()
             .Where(x => x.ArchiveId == id).ToListAsync();
             

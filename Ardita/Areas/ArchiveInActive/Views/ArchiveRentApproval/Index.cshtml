@@ -27,7 +27,7 @@
                 <div class="ibox-title">
                     <h5>Peminjaman Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                       
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -36,10 +36,11 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Nama Peminjam</th>
-                                <th>Tanggal Pinjam</th>
-                                <th>Tanggal Kembali</th>
-                                <th>Status</th>
+                                <th>NIK</th>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Archive Title</th>
+                                <th>Creator</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -58,7 +59,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive })',
                     "type": "POST",
                     "datatype": "json",
                 },
@@ -77,19 +78,18 @@
                     {
                         "data": "trxArchiveRentId", "name": "trxArchiveRentId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
-                            detail = detail.replace("-1", data);
-                            return detail;
+                            var approve = `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            approve = approve.replace("-1", data);
+
+                            var JoinButton = approve;
+                            return JoinButton;
                         }
                     },
-                    { "data": "name", "name": "user.employee.name", "autoWidth": true },
-                    { "data": "requestedDate", "name": "requestedDate", "autoWidth": true },
-                    { "data": "requestedReturnDate", "name": "requestedReturnDate", "autoWidth": true },
-                    {
-                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
-                        }
-                    },
+                    { "data": "employeeNik", "name": "user.employee.nik", "autoWidth": true },
+                    { "data": "employeeName", "name": "user.employee.name", "autoWidth": true },
+                    { "data": "companyName", "name": "user.employee.company.companyName", "autoWidth": true },
+                    { "data": "archiveTitle", "name": "archive.titleArchive", "autoWidth": true },
+                    { "data": "creatorName", "name": "archive.creator.creatorName.", "autoWidth": true }
                 ]
             });
         });
