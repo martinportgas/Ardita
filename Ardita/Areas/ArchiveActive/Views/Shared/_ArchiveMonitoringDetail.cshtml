@@ -148,11 +148,17 @@
                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.TrxFileArchiveDetails)
+                                        @if(Model.TrxFileArchiveDetails != null)
                                         {
-                                            <tr>
-                                                <td><a href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveMonitoring,  new { area = GlobalConst.ArchiveActive, Id = item.FileArchiveDetailId })">@item.FileName</a></td>
-                                            </tr>
+                                            if (Model.TrxFileArchiveDetails.Count > 0)
+                                            {
+                                                foreach (var item in Model.TrxFileArchiveDetails)
+                                                {
+                                                    <tr>
+                                                        <td><a href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveMonitoring,  new { area = GlobalConst.ArchiveActive, Id = item.FileArchiveDetailId })">@item.FileName</a></td>
+                                                    </tr>
+                                                }
+                                            }
                                         }
                                     </tbody>
                                 </table>
@@ -190,59 +196,16 @@
                 <div class="ibox-content">
                     <div class="row">
                         <!--Detail-->
-                        <div class="col-sm-6" b-r>
+                        <div class="col-sm-12">
                             <div class="form-group">
                                 <div class="form-group">
                                     <label>Kode Media</label>
                                     <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageCode" readonly>
                                 </div>
-                                <div class="form-group">
-                                    <label>Nama Media</label>
-                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageName" readonly>
-                                </div>
-
                             </div>
                         </div>
-                        <div class="col-sm-6" b-r>
-                            <div class="form-group">
-                                <div class="form-group">
-                                    <label>Unit Kearsipan</label>
-                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Jenis Penyimpanan</label>
-                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName" readonly>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-12" b-r>
-                            <div class="form-row">
-                                <div class="form-group col-md-2">
-                                    <label for="floor">Lantai</label>
-                                    <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.FloorName" readonly>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="room">Ruangan</label>
-                                    <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.RoomName" readonly>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="rack">Rak</label>
-                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName" readonly>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="level">Tingkat</label>
-                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName" readonly>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="row">Baris</label>
-                                    <input type="text" class="form-control" id="inputZip" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName" readonly>
-                                </div>
-                            </div>
-                            <div>
-                                <a href="@Url.Action(GlobalConst.Index, backController, new {Area = backArea})" class="btn btn-sm btn-danger float-right m-t-n-xs">Back</a>
-                            </div>
-                        </div>
+                        
+                        
                         
                         
                         @*<div class="col-sm-6">
@@ -263,6 +226,40 @@
                         </div>
                         </div>*@
 
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Unit Kearsipan</label>
+                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Jenis Penyimpanan</label>
+                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="floor">Lantai</label>
+                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.FloorName" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="room">Ruangan</label>
+                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.RoomName" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class ="col-sm-12">
+                            <a href="@Url.Action(GlobalConst.Index, backController, new {Area = backArea})" class="btn btn-sm btn-danger float-right m-t-n-xs">Back</a>
+                        </div>
                     </div>
                 </div>
             </div>

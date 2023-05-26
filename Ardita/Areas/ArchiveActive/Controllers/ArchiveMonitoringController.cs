@@ -27,8 +27,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         {
             try
             {
-                if(AppUsers.CurrentUser(User).RoleCode == "ADM")
-                model.PositionId = AppUsers.CurrentUser(User).PositionId;
+                if(AppUsers.CurrentUser(User).RoleCode != GlobalConst.ROLE.ADM.ToString())
+                    model.PositionId = AppUsers.CurrentUser(User).PositionId;
                 var result = await _archiveService.GetList(model);
 
                 return Json(result);
