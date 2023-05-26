@@ -348,8 +348,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var user = await _userService.GetById(data.CreatedBy);
             var employee = await _employeeService.GetById(user.EmployeeId);
 
+            var detail = await _archiveDestroyService.GetDetailByMainId(Id);
+
             string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemusnahan_Arsip.docx");
-            var file = Label.GenerateBADestroy(FilePath, data, employee);
+            var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
 
             return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
         }
