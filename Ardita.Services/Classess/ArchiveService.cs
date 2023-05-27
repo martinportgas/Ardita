@@ -209,4 +209,8 @@ public class ArchiveService : IArchiveService
 
     public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "") => await _archiveRepository.GetAvailableArchiveBySubSubjectId(subSubjectId, mediaStorageId, year);
 
+    public async Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId)
+    {
+        return await _archiveRepository.GetArchiveActiveBySubjectId(subSubjectId);
+    }
 }

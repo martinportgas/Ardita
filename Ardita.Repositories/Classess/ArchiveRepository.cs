@@ -396,6 +396,7 @@ public class ArchiveRepository : IArchiveRepository
                      join mediaHeader in _context.TrxMediaStorageInActives on submedia.MediaStorageInActiveId equals mediaHeader.MediaStorageInActiveId into tmp2
                      from submediaHeader in tmp2.DefaultIfEmpty()
                      where submedia == null && (submediaHeader.IsActive != true)
+                     where archive.SubSubjectClassificationId == subSubjectId
                      select archive;
 
         await Task.Delay(0);

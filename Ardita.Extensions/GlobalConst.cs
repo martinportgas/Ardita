@@ -186,6 +186,9 @@ public static class GlobalConst
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
     public const string BindTypeStorageByParam = "BindTypeStorageByParam";
+    public const string BindRowArchiveInActiveByLevelId = "BindRowArchiveInActiveByLevelId";
+    public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
+    public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
 
     //Web Component
     public const string GET = "GET";

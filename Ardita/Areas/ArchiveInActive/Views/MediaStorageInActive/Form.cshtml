@@ -74,34 +74,20 @@
                                             <input type="hidden" asp-for="MediaStorageInActiveId" value="@Model.MediaStorageInActiveId">
                                         </div>
                                         <div class="form-group">
-                                            <label>Sub Subject Classifications</label>
-                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                            <label>Archive Unit</label>
+                                            <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveUnitId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Archive Unit --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
+                                        
                                         <div class="form-group">
                                             <label>Type Storage</label>
                                             <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtTypeStorageId" class="select2_demo_1 form-control" asp-for="TypeStorageId"
                                                     data-placeholder="-- Select Type Storage --">
                                                 <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Archive Year</label>
-                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtArchiveYear" class="select2_demo_1 form-control" asp-for="ArchiveYear"
-                                                    data-placeholder="-- Select Archive Year --">
-                                                    @for (int i = 10; i > 0; i--)
-                                                    {
-                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                    }
-                                                    @for (int i = 0; i < 10; i++)
-                                                    {
-                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                    }
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -113,19 +99,20 @@
                                             <input type="text" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" readonly />
                                         </div>
                                         <div class="form-group">
+                                            <label>Sub Subject Classifications</label>
+                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Description</label>
                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Archive Unit</label>
-                                            <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtArchiveUnitId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Archive Unit --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
+                                        
                                         <div class="form-group">
                                             <label>Floor</label>
                                             <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
@@ -161,9 +148,28 @@
                                         <div class="form-group">
                                             <label>Row</label>
                                             <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtRowId" asp-for="RowId" class="select2_demo_1 form-control"
+                                                    id="txtRowId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Row --">
                                                 <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Year</label>
+                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveYear" class="select2_demo_1 form-control" asp-for="ArchiveYear"
+                                                    data-placeholder="-- Select Archive Year --">
+                                                @for (int i = -20; i < 0; i++)
+                                                {
+                                                <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                }
+                                                @if (form.CurrentAction == GlobalConst.Add)
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -172,23 +178,19 @@
                                     <div class="col-sm-12 b-r">
                                         <div class="form-group">
                                             <label>Sub Type Storage</label>
-                                            <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                            <select  (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubTypeStorageId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Type Storage --">
                                                 <option value=""></option>
                                             </select>
+                                            
+                                            <button class="btn btn-sm @form.ButtonSubmitClass m-t-n-xs mr-1 mt-1"
+                                                    type="button" id="btn-add-archive">
+                                                Add Archive
+                                            </button>
                                         </div>
-                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Arsip</th>
-                                                    <th>Pemilik</th>
-                                                    <th>Volume</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
+                                        <div class="detail">
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -206,29 +208,112 @@
     <script type="text/javascript">
         $(function() {
             initDropdown();
+
+
+            $("#btn-add-archive").click(function () {
+                $('.archive-dd').select2("destroy");
+
+                $(".detail").append(`<div class="detail-1 card mb-1">
+                                                        <div class="card-body">
+                                                            <h3>Sub Type Storage Name 1</h3>
+                                                                    <select 
+                                                            id="txtArchiveId" class="select2_demo_1 form-control archive-dd"
+                                                            data-placeholder="-- Select Archive --">
+                                                        <option value=""></option>
+                                                    </select>
+                                                            <table class="table table-condensed table-striped table-hover" style="border-radius: unset;width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Action</th>
+                                                                        <th>Arsip</th>
+                                                                        <th>Pemilik</th>
+                                                                        <th>Volume</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detail-1">
+                                                                    <tr>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                        <td>Lorem</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>`);
+                initDropdown();
+
+                $('#txtArchiveId').val('').trigger('change');
+
+            });
         });
 
         function initDropdown() {
+            $('#txtArchiveUnitId').on('change', function () {
+                $('#txtTypeStorageId').val('').trigger('change');
+                $('#txtFloorId').val('').trigger('change');
+                $('#txtSubSubjectClassificationId').val('').trigger('change');
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
+            });
+
+            $('#txtSubSubjectClassificationId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub-Subject Classification --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
             $('#txtSubSubjectClassificationId').on('change', function () {
                 $('#txtArchiveId').val('').trigger('change');
             });
+
             $('#txtArchiveId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
                 placeholder: '-- Select Archive --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindArchivesBySubSubjectClassificationId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindArchiveActiveBySubjectId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
                             id: $('#txtSubSubjectClassificationId').val(),
+                            param: params.term
                         }
                         return query;
                     },
                     processResults: function (data) {
                         var dataResult = $.map(data, function (item) {
                             return {
-                                text: item.titleArchive,
+                                text: item.archiveCode + " | " + item.titleArchive,
                                 id: item.archiveId
                             }
                         });
@@ -239,14 +324,6 @@
                 }
             });
 
-            $('#txtArchiveUnitId').on('change', function () {
-                $('#txtTypeStorageId').val('').trigger('change');
-                $('#txtFloorId').val('').trigger('change');
-                $("#listdtl").empty();
-                listArchiveId = [];
-                $("#txtTotalVolume").val(0);
-                $("#txtDifferenceVolume").val(0);
-            });
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -275,6 +352,39 @@
                     }
                 }
             });
+
+            $('#txtTypeStorageId').on('change', function () {
+                $('#txtSubTypeStorageId').val('').trigger('change');
+            });
+
+            $('#txtSubTypeStorageId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub Type Storage --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubTypeStorageByTypeStorageId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtTypeStorageId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.subTypeStorageCode + ' - ' + item.subTypeStorageName + ' - ' + item.volume,
+                                id: item.subTypeStorageId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
             $('#txtFloorId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -284,7 +394,7 @@
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtArchiveUnitId').val(),,
+                            id: $('#txtArchiveUnitId').val(),
                             param: params.term
                         }
                         return query;
@@ -311,7 +421,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRoomActiveByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -404,11 +514,12 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRowByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRowArchiveInActiveByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
                             id: $('#txtLevelId').val(),
+                            param: params.term
                         }
                         return query;
                     },

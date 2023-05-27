@@ -21,7 +21,8 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         IRoomService roomService,
         IRackService rackService,
         ILevelService levelService,
-        IRowService rowService
+        IRowService rowService,
+        ISubTypeStorageService subTypeStorageService
         )
     {
         MediaStorageInActiveService = mediaStorageInActiveService;
@@ -34,6 +35,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _rackService = rackService;
         _levelService = levelService;
         _rowService = rowService;
+        _subTypeStorageService = subTypeStorageService;
     }
     public override async Task<ActionResult> Index() => await base.Index();
 
@@ -69,5 +71,6 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listRack = await BindRacks();
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
+        ViewBag.listSubTypeStorage = await BindSubTypeStorage();
     }
 }

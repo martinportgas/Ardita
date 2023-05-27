@@ -14,4 +14,5 @@ public interface IArchiveService
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted);
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
+    Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
 }
