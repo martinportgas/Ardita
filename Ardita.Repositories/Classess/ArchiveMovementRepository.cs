@@ -157,9 +157,40 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<int> GetCountByFilterModel(DataTableModel model)
         {
-            var result = await _context.TrxArchiveMovements
-                .Include(x => x.Status)
-                .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Status.Name).Contains(model.searchValue))
+            var result = await
+                    _context.TrxArchiveMovements
+                    .Include(x => x.Status)
+                    .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Select(x => new {
+                        Id = x.ArchiveMovementId,
+                        x.DocumentCode,
+                        Code = x.MovementCode,
+                        Name = x.MovementName,
+                        x.StatusId,
+                        x.Note,
+                        x.Status.Color,
+                        Status = x.Status.Name,
+                        x.CreatedDate,
+                        type = GlobalConst.ArsipPemindahan
+                    })
+                .Union(
+                    _context.TrxArchiveDestroys
+                    .Include(x => x.Status)
+                    .Where(x => x.IsActive == true)
+                    .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Select(x => new {
+                        Id = x.ArchiveDestroyId,
+                        x.DocumentCode,
+                        Code = x.DestroyCode,
+                        Name = x.DestroyName,
+                        x.StatusId,
+                        x.Note,
+                        x.Status.Color,
+                        Status = x.Status.Name,
+                        x.CreatedDate,
+                        type = GlobalConst.ArsipPemusnahan
+                    })
+                )
                 .CountAsync();
 
             return result;
