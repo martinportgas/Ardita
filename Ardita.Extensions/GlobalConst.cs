@@ -108,6 +108,7 @@ public static class GlobalConst
     public const string Upload = "Upload";
     public const string GetData = "GetData";
     public const string GetDetail = "GetDetail";
+    public const string GetSubDetail = "GetSubDetail";
     public const string GetDetailArchive = "GetDetailArchive";
     public const string DownloadTemplate = "DownloadTemplate";
     public const string DownloadFile = "DownloadFile";
@@ -116,6 +117,8 @@ public static class GlobalConst
     public const string UpdatePage = "UpdatePage";
     public const string AcceptArchiveForm = "AcceptArchiveForm";
     public const string GetFileArchive = "GetFileArchive";
+    public const string ValidateQRBox = "ValidateQRBox";
+    public const string UpdateRetrieval = "UpdateRetrieval";
 
     //Html helper
     public const string Required = "required";
@@ -169,6 +172,7 @@ public static class GlobalConst
     public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
     public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
     public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
+    public const string BindArchivesInActiveBySubSubjectClassificationId = "BindArchivesInActiveBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
     public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";
     public const string BindRoomByFloorId = "BindRoomByFloorId";

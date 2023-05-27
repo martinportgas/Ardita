@@ -1,0 +1,363 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.TrxArchiveRent;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Media Storage In Active</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRent, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Page</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-6 b-r">
+                                    <input type="hidden" id="txtArchiveId" />
+                                    <input type="hidden" id="txtArchiveSort" />
+                                    <div class="form-group">
+                                        <label>Scan QR Box</label>
+                                        <input type="text" placeholder="" id="txtQRBox" class="form-control" />
+                                    </div>
+                                  
+                                    <div class="form-group">
+                                        <label>Klasifikasi</label>
+                                        <input type="text" class="form-control" id="txtClassificationName" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Judul</label>
+                                        <input type="text" class="form-control" id="txtTitleArchive" readonly />
+                                       
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Pencipta</label>
+                                        <input type="text" class="form-control" id="txtCreatorName" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Unit Kearsipan</label>
+                                        <input type="text" class="form-control" id="txtArchiveUnit" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tanggal Pinjam</label>
+                                        <input type="text" class="form-control" id="txtRequestedDate" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Validasi QR Box</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="txtValidateQRBox" />
+                                            <input type="hidden" id="txtValidateQRBoxhdn" />
+                                            <div class="input-group-append p-2" id="checkValidateTrue" style="display: none">
+                                               <i class="fa fa-check-circle" style="color: green; font-size: 16px"></i>
+                                            </div>
+                                            <div class="input-group-append p-2" id="checkValidateFalse" style="display: none">
+                                                <i class="fa fa-minus-circle" style="color: red; font-size: 16px"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Lantai</label>
+                                        <input type="text" class="form-control" id="txtFloor" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ruangan</label>
+                                        <input type="text" class="form-control" id="txtRoom" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Rak</label>
+                                        <input type="text" class="form-control" id="txtRack" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tingkat</label>
+                                        <input type="text" class="form-control" id="txtLevel" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Baris</label>
+                                        <input type="text" class="form-control" id="txtRow" readonly />
+                                    </div>
+                                   
+                                    <div class="form-group">
+                                        <label>Tanggal Kembali</label>
+                                        <input type="text" class="form-control" id="txtRequestedReturnDate" readonly />
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <table id="tbl" class="table table-striped table-hover dataTables-example" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Klasifikasi</th>
+                                        <th>Judul Arsip</th>
+                                        <th>Pencipta</th>
+                                        <th>Unit Kearsipan</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <button class="btn btn-success float-right mr-3" id="btnSubmit" disabled>Submit</button>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#txtQRBox').keypress(function (e) {
+                var key = e.which;
+                if (key == 13)  
+                {
+                    $('body').toggleClass('sk-loading');
+                    var processTable = false;
+
+                    $.ajax({
+                        'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'method': "GET",
+                        'contentType': 'application/json',
+                        'data': { "id": $(this).val() }
+                    }).done(function (data) {
+                        if(data.length > 0){
+                            $('#txtClassificationName').val(data[0].classificationName);
+                            $('#txtTitleArchive').val(data[0].titleArchive);
+                            $('#txtCreatorName').val(data[0].creatorName);
+                            $('#txtArchiveUnit').val(data[0].archiveUnit);
+                            $('#txtFloor').val(data[0].floorName);
+                            $('#txtRoom').val(data[0].roomName);
+                            $('#txtRack').val(data[0].rackName);
+                            $('#txtLevel').val(data[0].levelName);
+                            $('#txtRow').val(data[0].rowName);
+                            $('#txtRequestedDate').val(data[0].requestedDate);
+                            $('#txtRequestedReturnDate').val(data[0].requestedReturnDate);
+                            $('#txtArchiveId').val(data[0].archiveId);
+                            $('#txtArchiveSort').val(data[0].archiveSort);
+
+                            $.ajax({
+                                'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                                'method': "GET",
+                                'contentType': 'application/json',
+                                'data': {
+                                    "archiveId": $('#txtArchiveId').val(),
+                                    "sort": $('#txtArchiveSort').val()
+                                }
+                            }).done(function (data) {
+                                console.log(data);
+                                if(data.length > 0){
+                                    $('#txtValidateQRBoxhdn').val('true');
+
+                                }
+                                else{
+                                    $('#txtValidateQRBoxhdn').val('false');
+                                }
+
+
+                                $('#tbl').DataTable({
+                                    "data": data,
+                                    "destroy": true,
+                                    "columns": [
+                                        { "data": "classificationName" },
+                                        { "data": "titleArchive" },
+                                        { "data": "creatorName" },
+                                        { "data": "archiveUnit" },
+                                        {
+                                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                                return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this))" />`;
+                                            }
+                                        }
+                                    ]
+                                })
+                            });
+                        }
+                        else{
+                            $('#txtClassificationName').val('');
+                            $('#txtTitleArchive').val('');
+                            $('#txtCreatorName').val('');
+                            $('#txtArchiveUnit').val('');
+                            $('#txtFloor').val('');
+                            $('#txtRoom').val('');
+                            $('#txtRack').val('');
+                            $('#txtLevel').val('');
+                            $('#txtRow').val('');
+                            $('#txtRequestedDate').val('');
+                            $('#txtRequestedReturnDate').val('');
+                            $('#txtArchiveId').val('');
+                            $('#txtArchiveSort').val('');
+                        }
+                    });
+ 
+
+                    $('body').toggleClass('sk-loading');
+                }
+            });
+            $('#txtValidateQRBox').keypress(function(e){
+                var key = e.which;
+                if (key == 13) {
+                    $('body').toggleClass('sk-loading');
+                    $('#checkValidateTrue').hide();
+                    $('#checkValidateFalse').hide();
+                    $.ajax({
+                        'url': '@Url.Action(GlobalConst.ValidateQRBox, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'method': "GET",
+                        'contentType': 'application/json',
+                        'data': {
+                            "archiveRentId": $('#txtQRBox').val(),
+                            "mediaStorageInActiveCode": $(this).val()
+                        }
+                    }).done(function (data) {
+                        if(data){
+                            $('#checkValidateTrue').show();
+                        }else{
+                            $('#checkValidateFalse').show();
+                        }
+                            
+                        $('body').toggleClass('sk-loading');
+                    });
+                }
+            });
+            $('#btnSubmit').click(function(e){
+                e.preventDefault();
+
+                swal({
+                    title: "Do You Want To submit It?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Save",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            //$('body').toggleClass('sk-loading');
+                            submit();
+                            //$('body').toggleClass('sk-loading');
+                        } else {
+                            swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        }
+                    });
+            });
+        });
+
+
+        function initTable() {
+            var archiveId = $('#txtArchiveId').val();
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { "id": archiveId }
+            }).done(function (data) {
+                if (data.length > 0) {
+                    $('#btnRequestPinjamMdl').show();
+                } else {
+                    $('#btnRequestPinjamMdl').hide();
+                }
+
+                $('#tbl').DataTable({
+                    "data": data,
+                    "columns": [
+                        { "data": "mediaStorageInActiveCode" },
+                        { "data": "storageName" },
+                        { "data": "classificationName" },
+                        { "data": "titleArchive" },
+                        { "data": "creatorName" },
+                        { "data": "archiveUnitName" },
+                    ]
+                })
+            })
+        }
+
+        function checkValidate(e) {
+            var oTable = $('#tbl').dataTable();
+            var rowcollection = oTable.$(".check");
+            var allChecked = false;
+            rowcollection.each(function (index, elem) {
+                if ($(elem).prop('checked') == false)
+                {
+                     allChecked = false;
+                    return;
+                }
+                else
+                {
+                    allChecked = true;
+                }
+            });
+            if (allChecked == true && $('#txtValidateQRBoxhdn').val() == 'true')
+                $('#btnSubmit').prop('disabled', true);
+            else
+                $('#btnSubmit').prop('disabled', false);
+
+        }
+        function submit(){
+            console.log('tes');
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.UpdateRetrieval, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { 
+                    "archiveRentId": $(this).val() 
+                }
+            }).done(function (data) {
+                console.log(data);
+            });
+        }
+
+    </script>
+}

@@ -335,6 +335,18 @@ public abstract class BaseController<T> : Controller
             Text = x.TitleArchive.ToString()
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindArchivesInActive()
+    {
+        var data = await _archiveService.GetAllInActive(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+
+        return data
+            .Select(x => new SelectListItem
+        {
+            Value = x.ArchiveId.ToString(),
+            Text = x.TitleArchive.ToString()
+        })
+        .ToList();
+    }
     public async Task<List<SelectListItem>> BindTypeStorage()
     {
         var data = await _typeStorageService.GetAll();
@@ -544,6 +556,7 @@ public abstract class BaseController<T> : Controller
         return Json(result);
     }
     public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year));
+    public async Task<JsonResult> BindArchivesInActiveBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveInActiveBySubSubjectId(Id, mediaStorageId, year));
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;

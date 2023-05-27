@@ -119,7 +119,24 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxArchiveRents.Where(x => x.TrxArchiveRentId == id && x.StatusId == 2).ToListAsync();
             return result;
         }
+        public async Task<int> Insert(TrxArchiveRent model)
+        {
+            int result = 0;
 
+            if (model != null)
+            {
+                model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
+
+                _context.TrxArchiveRents.Add(model);
+                result = await _context.SaveChangesAsync();
+            }
+            return result;
+        }
+
+        public Task<int> Update(TrxArchiveRent model)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<int> GetCountByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxArchiveRents
@@ -132,6 +149,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
+        #region Retrieval
         public async Task<IEnumerable<object>> GetRetrievalByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxArchiveRents
@@ -169,7 +187,79 @@ namespace Ardita.Repositories.Classess
 
             return result;
         }
+        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid Id)
+        {
+            var result = await _context.TrxArchiveRents
+                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Where(x => x.TrxArchiveRentId == Id)
+                .Select(x => new { 
+                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.Archive.ArchiveId,
+                    TitleArchive = x.Archive.TitleArchive,
+                    CreatorName = x.Archive.Creator.CreatorName,
+                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName,
+                    RowName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
+                    LevelName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
+                    RackName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
+                    RoomName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
+                    FloorName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
+                    RequestedDate = x.RequestedDate,
+                    RequestedReturnDate = x.RequestedReturnDate,
+                    ArchiveSort = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
+                })
+                .ToListAsync();
+                
+            return result;
+        
 
+        }
+        public async Task<IEnumerable<object>> GetRetrievalDetailByArchiveRentId(Guid ArchiveId, int sort)
+        {
+            var result = await _context.TrxMediaStorageInActiveDetails
+                .Include(x => x.MediaStorageInActive)
+                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.Archive.Creator.ArchiveUnit)
+                .Where(x => x.ArchiveId == ArchiveId || x.Sort == sort)
+                .Select(x => new { 
+                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.Archive.ArchiveId,
+                    TitleArchive = x.Archive.TitleArchive,
+                    CreatorName = x.Archive.Creator.CreatorName,
+                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName
+                })
+                .ToListAsync();
+
+            return result;
+
+
+        }
+        public async Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode)
+        {
+            bool isValid = false;
+
+            var result = await _context.TrxArchiveRents
+                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+                .Where(x => x.TrxArchiveRentId == ArchiveRentId && x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.MediaStorageInActiveCode == mediaInActiveCode)
+                .ToListAsync();
+
+            if (result.Count > 0)
+                isValid = true;
+
+
+            return isValid;
+
+
+        }
+        public async Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId) 
+        {
+            await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET retrieval_date = {DateTime.Now}, updated_by ={UserId} WHERE trx_archive_id = {ArchiveRentId}");
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        #endregion
+        #region Return
         public async Task<IEnumerable<object>> GetReturnByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxArchiveRents
@@ -207,24 +297,7 @@ namespace Ardita.Repositories.Classess
 
             return result;
         }
-
-        public async Task<int> Insert(TrxArchiveRent model)
-        {
-            int result = 0;
-
-            if (model != null)
-            {
-                model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
-                
-                _context.TrxArchiveRents.Add(model);
-                result = await _context.SaveChangesAsync();
-            }
-            return result;
-        }
-
-        public Task<int> Update(TrxArchiveRent model)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
+       
     }
 }
