@@ -122,6 +122,17 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.TrxMediaStorageDetails)
                 .ThenInclude(ms => ms.MediaStorage)
                 .ThenInclude(ts => ts.TypeStorage)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
+                .ThenInclude(r => r.Row)
+                .ThenInclude(l => l.Level)
+                .ThenInclude(r => r!.Rack)
+                .ThenInclude(room => room!.Room)
+                .ThenInclude(f => f!.Floor)
+                .ThenInclude(aut => aut!.ArchiveUnit)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
+                .ThenInclude(ts => ts.TypeStorage)
             .Where(x => x.ArchiveId == id && x.IsActive == true)
             .FirstOrDefaultAsync();
 
@@ -343,11 +354,15 @@ public class ArchiveRepository : IArchiveRepository
                                 }
                                 string oldDirectory = string.Concat(item.FilePath, item.FileNameEncrypt);
                                 string newDirectory = string.Concat(path, item.FileNameEncrypt);
-                                Directory.Move(oldDirectory, newDirectory);
+                                if (Directory.Exists(item.FilePath))
+                                {
+                                    Directory.Move(oldDirectory, newDirectory);
+
+                                    item.FilePath = path;
+                                    _context.Update(item);
+                                    await _context.SaveChangesAsync();
+                                }
                             }
-                            item.FilePath = path;
-                            _context.Update(item);
-                            await _context.SaveChangesAsync();
                         }
                     }
                 }

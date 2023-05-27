@@ -2338,6 +2338,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasNoKey()
                 .ToView("VW_ARCHIVE_RETENTION_IN_ACTIVE");
 
+            entity.Property(e => e.ArchiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("archive_code");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.ArchiveNumber)
                 .HasMaxLength(50)
@@ -2347,10 +2351,16 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_type");
+            entity.Property(e => e.CreatedDateArchive)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date_archive");
             entity.Property(e => e.CreatorName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("creator_name");
+            entity.Property(e => e.DateReceived)
+                .HasColumnType("datetime")
+                .HasColumnName("date_received");
             entity.Property(e => e.RetentionDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("retention_date_archive");
@@ -2358,6 +2368,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("status");
+            entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.TitleArchive)
                 .HasMaxLength(200)
                 .IsUnicode(false)
