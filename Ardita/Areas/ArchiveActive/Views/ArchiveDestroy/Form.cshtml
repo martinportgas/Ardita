@@ -425,7 +425,7 @@
                 allowClear: true,
                 placeholder: '-- Select Sub-Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {

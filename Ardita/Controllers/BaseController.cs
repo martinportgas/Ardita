@@ -618,7 +618,8 @@ public abstract class BaseController<T> : Controller
              from dataDetailDst in b.DefaultIfEmpty()
              join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
              from dataDetailMove in c.DefaultIfEmpty()
-             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.CreatedDateArchive.Year == year && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.CreatedDateArchive.Year == year 
+             && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {
                  id = dataALl.ArchiveId,
@@ -638,6 +639,10 @@ public abstract class BaseController<T> : Controller
         Guid DetailId = Guid.Empty;
         Guid.TryParse(arrParam[1], out DetailId);
         var type = arrParam[2];
+        Guid SubSubjectClassificationId = Guid.Empty;
+        Guid.TryParse(arrParam[3], out SubSubjectClassificationId);
+        int year = DateTime.Now.Year;
+        int.TryParse(arrParam[4], out year);
 
         var data = await _archiveRetentionService.GetInActiveAll();
 
@@ -653,13 +658,17 @@ public abstract class BaseController<T> : Controller
              from dataDetailExt in a.DefaultIfEmpty()
              join dataDetailDst in detailDst on dataALl.ArchiveId equals dataDetailDst.ArchiveId into b
              from dataDetailDst in b.DefaultIfEmpty()
-             where dataDetailExt == null && dataDetailDst == null && dataALl.TitleArchive.ToLower().Contains(keyword.ToLower())
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.DateReceived.Year == year 
+             && dataDetailExt == null && dataDetailDst == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {
                  id = dataALl.ArchiveId,
-                 text = dataALl.TitleArchive
+                 text = dataALl.ArchiveCode + " - " + dataALl.TitleArchive,
+                 order = dataALl.TitleArchive
              }
-             ).ToList();
+             )
+             .OrderBy(x => x.order)
+             .ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindEmployeeByParam(string param = "")

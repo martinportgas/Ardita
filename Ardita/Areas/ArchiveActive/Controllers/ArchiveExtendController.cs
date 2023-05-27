@@ -72,7 +72,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            await BindAllDropdown();
+            await BindAllDropdown(false);
 
             var model = new TrxArchiveExtend();
             model.ExtendCode = GlobalConst.InitialCode;
@@ -87,7 +87,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveExtendService.GetById(Id);
             if (model != null)
             {
-                await BindAllDropdown();
+                await BindAllDropdown(false);
 
                 ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
@@ -330,10 +330,19 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        protected async Task BindAllDropdown()
+        protected async Task BindAllDropdown(bool isAll = true)
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+            if (isAll)
+            {
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.listSubSubject = await BindAllSubSubjectClasscifications();
+            }
+            else
+            {
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+            }
+
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive });
         #endregion

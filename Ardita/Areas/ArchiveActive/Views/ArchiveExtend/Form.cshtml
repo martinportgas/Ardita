@@ -229,7 +229,7 @@
                                     }
                                     else
                                     {
-                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveCirculation, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     }
                                     @if (form.isSubmitForm)
                                     {
@@ -392,7 +392,7 @@
                 allowClear: true,
                 placeholder: '-- Select Sub-Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {

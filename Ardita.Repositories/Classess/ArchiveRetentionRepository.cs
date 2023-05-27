@@ -29,6 +29,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
 
     public async Task<IEnumerable<object>> GetArchiveRetentionByFilterModel(DataTableModel model)
     {
+        System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("id-ID");
         var result = (bool)model.IsArchiveActive ? await _context.VwArchiveRetentions
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
@@ -41,7 +42,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
                 x.Status,
                 x.ArchiveNumber,
                 x.TitleArchive,
-                RetentionDateArchive = x.RetentionDateArchive == null ? "" : x.RetentionDateArchive.ToString()
+                RetentionDateArchive = x.RetentionDateArchive.ToString("dddd, dd MMMM yyyy", culture)
             })
             .ToListAsync() : await _context.VwArchiveRetentionInActives
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
@@ -55,7 +56,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
                 x.Status,
                 x.ArchiveNumber,
                 x.TitleArchive,
-                RetentionDateArchive = x.RetentionDateArchive == null ? "" : x.RetentionDateArchive.ToString()
+                RetentionDateArchive = x.RetentionDateArchive.ToString("dddd, dd MMMM yyyy", culture)
             })
             .ToListAsync();
 

@@ -92,7 +92,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         public override async Task<IActionResult> Add()
         {
-            await BindAllDropdown();
+            await BindAllDropdown(false);
 
             var model = new TrxArchiveMovement();
             model.MovementCode = GlobalConst.InitialCode;
@@ -107,7 +107,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var model = await _archiveMovementService.GetById(Id);
             if (model != null)
             {
-                await BindAllDropdown();
+                await BindAllDropdown(false);
 
                 ViewBag.subDetail = await _archiveMovementService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveMovement);
@@ -308,7 +308,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 if(ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)
+                    {
                         model.StatusId = (int)GlobalConst.STATUS.Approved;
+                        model.StatusReceived = (int)GlobalConst.STATUS.ArchiveNotReceived;
+                    }
                     else
                         model.ApproveLevel += 1;
                 }
@@ -349,12 +352,23 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         }
         #endregion
         #region HELPER
-        protected async Task BindAllDropdown()
+        protected async Task BindAllDropdown(bool isAll = true)
         {
-            ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
-            ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+            if (isAll)
+            {
+                ViewBag.listTypeStorage = await BindTypeStorage();
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
+                ViewBag.listSubSubject = await BindAllSubSubjectClasscifications();
+            }
+            else
+            {
+                ViewBag.listTypeStorage = await BindTypeStorageByCompanyId(AppUsers.CurrentUser(User).CompanyId);
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
+                ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+            }
+
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveCirculation, new { Area = GlobalConst.ArchiveActive });
         #endregion
