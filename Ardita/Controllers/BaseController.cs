@@ -545,6 +545,7 @@ public abstract class BaseController<T> : Controller
         ArchiveViewModel result = new()
         {
             ArchiveId = data.ArchiveId,
+            ArchiveCode = data.ArchiveCode!,
             TitleArchive = data.TitleArchive,
             TypeArchive = data.ArchiveType.ArchiveTypeName,
             TypeSender = data.TypeSender,
@@ -715,6 +716,12 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
         return Json(result);
     }
+    public async Task<JsonResult> BindSubTypeStorageById(Guid Id)
+    {
+        var data = await _subTypeStorageService.GetById(Id);
+        return Json(data.FirstOrDefault());
+    }
     #endregion
+
     #endregion
 }

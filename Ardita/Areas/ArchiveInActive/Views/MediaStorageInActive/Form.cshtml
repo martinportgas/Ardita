@@ -81,7 +81,7 @@
                                                 <option value=""></option>
                                             </select>
                                         </div>
-                                        
+
                                         <div class="form-group">
                                             <label>Type Storage</label>
                                             <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
@@ -112,7 +112,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        
+
                                         <div class="form-group">
                                             <label>Floor</label>
                                             <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
@@ -160,7 +160,7 @@
                                                     data-placeholder="-- Select Archive Year --">
                                                 @for (int i = -20; i < 0; i++)
                                                 {
-                                                <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
                                                 }
                                                 @if (form.CurrentAction == GlobalConst.Add)
                                                 {
@@ -178,15 +178,15 @@
                                     <div class="col-sm-12 b-r">
                                         <div class="form-group">
                                             <label>Sub Type Storage</label>
-                                            <select  (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubTypeStorageId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Type Storage --">
                                                 <option value=""></option>
                                             </select>
-                                            
+
                                             <button class="btn btn-sm @form.ButtonSubmitClass m-t-n-xs mr-1 mt-1"
-                                                    type="button" id="btn-add-archive">
-                                                Add Archive
+                                                    type="button" id="btn-add-sts">
+                                                Add Sub Type Storage
                                             </button>
                                         </div>
                                         <div class="detail">
@@ -206,53 +206,72 @@
 
 @section Scripts {
     <script type="text/javascript">
-        $(function() {
+        var totalDetail = 0;
+        var currentVolume;
+        var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
+
+        $(function () {
             initDropdown();
 
+            $('#txtTypeStorageId').on('change', function () {
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
+                if ($(this).val() != '') {
+                    getTypeStorageById($('#txtTypeStorageId').val());
+                }
+            });
 
-            $("#btn-add-archive").click(function () {
-                $('.archive-dd').select2("destroy");
+            $("#btn-add-sts").click(function () {
+                if ($("#txtSubTypeStorageId").val() == "") {
+                    alert("Pilih Dulu Sub Type Storage");
+                    return false;
+                }
 
-                $(".detail").append(`<div class="detail-1 card mb-1">
-                                                        <div class="card-body">
-                                                            <h3>Sub Type Storage Name 1</h3>
-                                                                    <select 
-                                                            id="txtArchiveId" class="select2_demo_1 form-control archive-dd"
-                                                            data-placeholder="-- Select Archive --">
-                                                        <option value=""></option>
-                                                    </select>
-                                                            <table class="table table-condensed table-striped table-hover" style="border-radius: unset;width:100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Action</th>
-                                                                        <th>Arsip</th>
-                                                                        <th>Pemilik</th>
-                                                                        <th>Volume</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="detail-1">
-                                                                    <tr>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                        <td>Lorem</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>`);
+                totalDetail += 1;
+
+                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2" type="button" onclick="addArchive(${totalDetail})">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
+
+                getSubSubjectClassificationById($('#txtSubTypeStorageId').val(), totalDetail);
                 initDropdown();
-
-                $('#txtArchiveId').val('').trigger('change');
 
             });
         });
+
+        function addArchive(totalDetail) 
+        {
+
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: $("#txtArchiveId_" + totalDetail).val() },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+                    initArchive(totalDetail, data.archiveId, data.archiveCode, data.titleArchive, data.archiveCreator, data.volume)
+                },
+                error: function () {
+                    swal({
+                        title: "Data Not Found",
+                        text: "Data Archive Not Found! Call Administrator",
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        type: "warning"
+                    });
+                }
+            });
+
+            
+        }
+
+        function initArchive(totalDetail, archiveId, titleArchive, archiveCreator, volume) {
+            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td>${archiveCode}</td><td>${titleArchive}</td><td>${archiveCreator}</td><td>${volume}</td></tr>`);
+        }
+
+        function deleteDetail(totalDetail) {
+            currentVolume = currentVolume + parseInt($("#sts-volume-" + totalDetail).text());
+            $("#txtDifferenceVolume").val(currentVolume);
+            $(".detail-" + totalDetail).remove();
+        }
 
         function initDropdown() {
             $('#txtArchiveUnitId').on('change', function () {
@@ -293,36 +312,42 @@
             });
 
             $('#txtSubSubjectClassificationId').on('change', function () {
-                $('#txtArchiveId').val('').trigger('change');
-            });
-
-            $('#txtArchiveId').select2({
-                theme: 'bootstrap4',
-                allowClear: true,
-                placeholder: '-- Select Archive --',
-                ajax: {
-                    url: '@Url.Action(GlobalConst.BindArchiveActiveBySubjectId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
-                    type: "POST",
-                    data: function (params) {
-                        var query = {
-                            id: $('#txtSubSubjectClassificationId').val(),
-                            param: params.term
-                        }
-                        return query;
-                    },
-                    processResults: function (data) {
-                        var dataResult = $.map(data, function (item) {
-                            return {
-                                text: item.archiveCode + " | " + item.titleArchive,
-                                id: item.archiveId
-                            }
-                        });
-                        return {
-                            results: dataResult
-                        };
-                    }
+                for (let i = 1; i <= totalDetail; i++) {
+                    $('#txtArchiveId_' + i).val('').trigger('change');
                 }
             });
+
+            for (let i = 1; i <= totalDetail; i++) {
+                $('#txtArchiveId_' + i).select2({
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    placeholder: '-- Select Archive --',
+                    ajax: {
+                        url: '@Url.Action(GlobalConst.BindArchiveActiveBySubjectId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                id: $('#txtSubSubjectClassificationId').val(),
+                                param: params.term
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            var dataResult = $.map(data, function (item) {
+                                return {
+                                    text: item.archiveCode + " | " + item.titleArchive,
+                                    id: item.archiveId
+                                }
+                            });
+                            return {
+                                results: dataResult
+                            };
+                        }
+                    }
+                });
+
+            }
+
 
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
@@ -537,5 +562,56 @@
                 }
             });
         }
+
+        function getTypeStorageById(id) {
+            var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+                    $("#txtTotalVolume").val(data.volume);
+                    $("#txtDifferenceVolume").val(data.volume);
+                    currentVolume = $('#txtDifferenceVolume').val();
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
+        function getSubSubjectClassificationById(id, sort) {
+            var url = '@Url.Action(GlobalConst.BindSubTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+
+                    currentVolume = currentVolume - data.volume;
+                    if (currentVolume < 0) {
+                        alert("penuh");
+                        $(".detail-" + sort).remove();
+                        totalDetail = totalDetail - 1;
+                        return false;
+                    }
+
+                    $("#sts-code-" + sort).html('<b>' + data.subTypeStorageCode + '</b>');
+                    $("#sts-name-" + sort).html('<b>' + data.subTypeStorageName + '</b>');
+                    $("#sts-volume-" + sort).html('<b>' + data.volume + '</b>');
+
+
+                    $("#txtDifferenceVolume").val(currentVolume);
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
     </script>
 }

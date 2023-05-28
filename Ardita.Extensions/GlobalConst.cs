@@ -189,6 +189,7 @@ public static class GlobalConst
     public const string BindRowArchiveInActiveByLevelId = "BindRowArchiveInActiveByLevelId";
     public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
     public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
+    public const string BindSubTypeStorageById = "BindSubTypeStorageById";
 
     //Web Component
     public const string GET = "GET";
