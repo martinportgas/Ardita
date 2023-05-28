@@ -15,14 +15,15 @@ namespace Ardita.Services.Interfaces
     public interface IUserService
     {
         Task<MstUser> GetById(Guid id);
+        Task<IEnumerable<IdxUserArchiveUnit>> GetIdxUserArchiveUnitByUserId(Guid id);
         Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id);
         Task<IEnumerable<MstUser>> GetAll();
         Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel tableModel);
         Task<List<Claim>> GetLogin(string username, string password);
         Task<List<UserMenuListViewModel>> GetUserMenu(Guid id);
-        Task<int> Insert(MstUser model);
+        Task<int> Insert(MstUser model, string[] archiveUnitIds);
         Task<bool> InsertBulk(List<MstUser> users);
         Task<int> Delete(MstUser model);
-        Task<int> Update(MstUser model);
+        Task<int> Update(MstUser model, string[] archiveUnitIds);
     }
 }

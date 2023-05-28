@@ -231,6 +231,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.IsPrimary).HasColumnName("is_primary");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             entity.Property(e => e.UpdateDate)

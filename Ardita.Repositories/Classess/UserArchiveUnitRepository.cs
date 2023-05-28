@@ -20,6 +20,21 @@ namespace Ardita.Repositories.Classess
         {
             throw new NotImplementedException();
         }
+        public async Task<int> DeleteByUserId(Guid Id)
+        {
+            int result = 0;
+
+            var data = await _context.IdxUserArchiveUnits
+                .AsNoTracking()
+                .Where(x => x.UserId == Id).ToListAsync();
+
+            if (data != null)
+            {
+                _context.IdxUserArchiveUnits.RemoveRange(data);
+                result = await _context.SaveChangesAsync();
+            }
+            return result;
+        }
 
         public async Task<IEnumerable<IdxUserArchiveUnit>> GetAll()
         {
@@ -30,10 +45,25 @@ namespace Ardita.Repositories.Classess
         {
             throw new NotImplementedException();
         }
+        public async Task<IEnumerable<IdxUserArchiveUnit>> GetByUserId(Guid id)
+        {
+            return await _context.IdxUserArchiveUnits.Include(x => x.ArchiveUnit).Where(x => x.UserId == id).ToListAsync();
+        }
 
         public Task<int> Insert(IdxUserArchiveUnit model)
         {
             throw new NotImplementedException();
+        }
+        public async Task<bool> InsertBulk(List<IdxUserArchiveUnit> models)
+        {
+            bool result = false;
+            if (models.Count() > 0)
+            {
+                await _context.AddRangeAsync(models);
+                await _context.SaveChangesAsync();
+                result = true;
+            }
+            return result;
         }
 
         public Task<int> Update(IdxUserArchiveUnit model)

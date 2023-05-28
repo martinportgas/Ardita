@@ -11,6 +11,8 @@ public partial class IdxUserRole
 
     public Guid RoleId { get; set; }
 
+    public bool IsPrimary { get; set; }
+
     public Guid CreatedBy { get; set; }
 
     public DateTime CreatedDate { get; set; }

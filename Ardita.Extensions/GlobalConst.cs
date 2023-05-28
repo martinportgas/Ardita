@@ -48,6 +48,7 @@ public static class GlobalConst
 
     //Controller
     public const string Company = "Company";
+    public const string ChangeRole = "ChangeRole";
     public const string Home = "Home";
     public const string Classification = "Classification";
     public const string ClassificationType = "ClassificationType";
@@ -203,6 +204,9 @@ public static class GlobalConst
     public const string Password = "Password";
     public const string UnitPengolah = "Unit Pengolah";
     public const string UnitKearsipan = "Unit Kearsipan";
+    public const string Notification = "Notification";
+    public const string Success = "Success";
+    public const string Failed = "Failed";
 
     //ClaimTypes
     public const string Username = "Username";

@@ -219,10 +219,11 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindAllArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
+        data = data.OrderBy(x => x.ArchiveUnitName);
         return data.Where(x => x.CompanyId == AppUsers.CurrentUser(User).CompanyId).Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
-            Text = x.ArchiveUnitName
+            Text = x.ArchiveUnitCode + " - " + x.ArchiveUnitName
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindLevels()

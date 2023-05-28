@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.UserRoles;
 
 namespace Ardita.Services.Interfaces
@@ -11,5 +12,6 @@ namespace Ardita.Services.Interfaces
         Task<int> Insert(IdxUserRole model);
         Task<int> Delete(IdxUserRole model);
         Task<int> Update(IdxUserRole model);
+        Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     }
 }

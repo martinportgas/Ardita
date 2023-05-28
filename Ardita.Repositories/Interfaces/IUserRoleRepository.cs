@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 
 namespace Ardita.Repositories.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Ardita.Repositories.Interfaces
         Task<int> Insert(IdxUserRole model);
         Task<int> Delete(IdxUserRole model);
         Task<int> Update(IdxUserRole model);
+        Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+        Task<int> GetCountByFilterModel(DataTableModel model);
     }
 }

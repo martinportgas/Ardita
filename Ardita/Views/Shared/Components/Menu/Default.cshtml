@@ -12,8 +12,8 @@
                     <img alt="image" src="~/img/bks.png" width="100%" />
                 </div>
             </li>
-            <li class="@Html.IsSelected(area: "General")">
-                <a href="@Url.Action("Index", "Home", new { Area = "General" })"><i class="fa fa-home"></i> <span class="nav-label" data-i18n="nav.menulevels">Home</a>
+            <li class="@Html.IsSelected(area: GlobalConst.General, controller: GlobalConst.Home)">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i> <span class="nav-label" data-i18n="nav.menulevels">Home</a>
             </li>
             @foreach (var menu in Model.menu)
             {
@@ -22,11 +22,14 @@
                     <ul class="nav nav-second-level collapse">
                         @foreach (var subMenu in Model.subMenu.Where(x => x.MenuId == menu.MenuId))
                         {
-                            <li class="@Html.IsSelected(controller: subMenu.Path)"><a href="@Url.Action("Index", subMenu.Path, new { Area = menu.Path })">@subMenu.Name</a></li>
+                            <li class="@Html.IsSelected(area: menu.Path, controller: subMenu.Path)"><a href="@Url.Action(GlobalConst.Index, subMenu.Path, new { Area = menu.Path })">@subMenu.Name</a></li>
                         }
                     </ul>
                 </li>
             }
+            <li class="@Html.IsSelected(area: GlobalConst.General, controller: GlobalConst.ChangeRole)">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ChangeRole, new { Area = GlobalConst.General })"><i class="fa fa-user"></i> <span class="nav-label" data-i18n="nav.menulevels">Ganti Role</a>
+            </li>
         </ul>
     </div>
 </nav>
