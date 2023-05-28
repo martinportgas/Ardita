@@ -195,8 +195,16 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
                 .Include(x => x.Archive.Creator.ArchiveUnit)
                 .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Include(x => x.User.Employee.Company)
+                .Include(x => x.User.IdxUserRoles).ThenInclude(x => x.Role)
                 .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.WaitingForRetrieval : x.StatusId == (int)GlobalConst.STATUS.Retrieved))
-                .Select(x => new { 
+                .Select(x => new {
+                    UserNik = x.User.Employee.Nik,
+                    UserName = x.User.Employee.Name,
+                    UserEmail = x.User.Employee.Email,
+                    UserPhone = x.User.Employee.Phone,
+                    UserCompany = x.User.Employee.Company.CompanyName,
+                    UserRoleName = x.User.IdxUserRoles.FirstOrDefault().Role.Name,
                     ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
                     ArchiveId = x.Archive.ArchiveId,
                     TitleArchive = x.Archive.TitleArchive,

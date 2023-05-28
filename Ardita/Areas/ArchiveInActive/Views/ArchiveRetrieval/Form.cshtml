@@ -60,6 +60,29 @@
                         <div class="col-sm-12">
                             <div class="row">
                                 <div class="col-sm-6 b-r">
+
+                                    <div class="profile-image">
+                                        <img src="~/img/default-user.png" class="rounded-circle circle-border m-b-md" alt="profile">
+                                    </div>
+                                    <div class="profile-info">
+                                        <div class="">
+                                            <div>
+                                                <h2 class="no-margins" id="txtUserName"></h2>
+                                                <h5 id="txtUserRole"></h5>
+                                                <h5 id="txtUserNik"></h5>
+                                                <h5 id="txtUserEmail"></h5>
+                                                <h5 id="txtUserCompany"></h5>
+                                                <h5 id="txtUserPhone"></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-6 b-r">
                                     <input type="hidden" id="txtArchiveId" />
                                     <input type="hidden" id="txtArchiveSort" />
                                     <div class="form-group">
@@ -323,6 +346,12 @@
                 }
             }).done(function (data) {
                 if (data.length > 0) {
+                    $('#txtUserName').text(data[0].userName);
+                    $('#txtUserRole').text(data[0].userRoleName);
+                    $('#txtUserNik').text(data[0].userNik);
+                    $('#txtUserEmail').text(data[0].userEmail);
+                    $('#txtUserCompany').text(data[0].userCompany);
+                    $('#txtUserPhone').text(data[0].userPhone);
                     $('#txtClassificationName').val(data[0].classificationName);
                     $('#txtTitleArchive').val(data[0].titleArchive);
                     $('#txtCreatorName').val(data[0].creatorName);
@@ -367,6 +396,12 @@
                     });
                 }
                 else {
+                    $('#txtUserName').text('');
+                    $('#txtUserRole').text('');
+                    $('#txtUserNik').text('');
+                    $('#txtUserEmail').text('');
+                    $('#txtUserCompany').text('');
+                    $('#txtUserPhone').text('');
                     $('#txtClassificationName').val('');
                     $('#txtTitleArchive').val('');
                     $('#txtCreatorName').val('');
@@ -399,6 +434,12 @@
                 }
             }).done(function (data) {
                 if (data.length > 0) {
+                    $('#txtUserName').text(data[0].userName);
+                    $('#txtUserRole').text(data[0].userRoleName);
+                    $('#txtUserNik').text(data[0].userNik);
+                    $('#txtUserEmail').text(data[0].userEmail);
+                    $('#txtUserCompany').text(data[0].userCompany);
+                    $('#txtUserPhone').text(data[0].userPhone);
                     $('#txtClassificationName').val(data[0].classificationName);
                     $('#txtTitleArchive').val(data[0].titleArchive);
                     $('#txtCreatorName').val(data[0].creatorName);
@@ -443,6 +484,12 @@
                     });
                 }
                 else {
+                    $('#txtUserName').text('');
+                    $('#txtUserRole').text('');
+                    $('#txtUserNik').text('');
+                    $('#txtUserEmail').text('');
+                    $('#txtUserCompany').text('');
+                    $('#txtUserPhone').text('');
                     $('#txtClassificationName').val('');
                     $('#txtTitleArchive').val('');
                     $('#txtCreatorName').val('');

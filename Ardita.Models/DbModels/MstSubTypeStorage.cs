@@ -24,4 +24,6 @@ public partial class MstSubTypeStorage
     public Guid? UpdatedBy { get; set; }
 
     public virtual ICollection<IdxSubTypeStorage> IdxSubTypeStorages { get; } = new List<IdxSubTypeStorage>();
+
+    public virtual ICollection<TrxMediaStorageInActiveDetail> TrxMediaStorageInActiveDetails { get; } = new List<TrxMediaStorageInActiveDetail>();
 }

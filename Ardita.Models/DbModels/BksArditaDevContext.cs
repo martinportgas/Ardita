@@ -123,6 +123,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<VwArchiveApprovalInActive> VwArchiveApprovalInActives { get; set; }
 
+    public virtual DbSet<VwArchiveRent> VwArchiveRents { get; set; }
+
     public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
 
     public virtual DbSet<VwArchiveRetentionInActive> VwArchiveRetentionInActives { get; set; }
@@ -1960,6 +1962,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.MediaStorageInActiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_DETAIL_TRX_MEDIA_STORAGE_IN_ACTIVE");
+
+            entity.HasOne(d => d.SubTypeStorage).WithMany(p => p.TrxMediaStorageInActiveDetails)
+                .HasForeignKey(d => d.SubTypeStorageId)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_DETAIL_TRX_SUB_TYPE_STORAGE");
         });
 
         modelBuilder.Entity<TrxPermissionClassification>(entity =>
@@ -2291,6 +2297,43 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("title");
             entity.Property(e => e.TransId).HasColumnName("trans_id");
+        });
+
+        modelBuilder.Entity<VwArchiveRent>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_ARCHIVE_RENT");
+
+            entity.Property(e => e.ArchiveUnit)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.ClassificationName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatorName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.MediaStorageInActiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.RequestedDate).HasColumnType("datetime");
+            entity.Property(e => e.RequestedReturnDate).HasColumnType("datetime");
+            entity.Property(e => e.StatusName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.StorageName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.SubSubjectClassificationName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.SubjectClassificationName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.TitleArchive)
+                .HasMaxLength(200)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwArchiveRetention>(entity =>

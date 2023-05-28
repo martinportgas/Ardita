@@ -22,7 +22,7 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
     public async Task<IEnumerable<object>> GetDetails(Guid id)
     {
         var detail = await _mediaStorageInActiveRepository.GetDetailByArchiveId(id);
-        var result = await _mediaStorageInActiveRepository.GetDetailByArchiveIdAndSort(detail.MediaStorageInActiveId, detail.Sort);
+        var result = await _mediaStorageInActiveRepository.GetDetailByArchiveIdAndSort(detail.ArchiveId, detail.Sort);
 
         return result;
     }
