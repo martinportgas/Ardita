@@ -44,12 +44,18 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
 
             return View(GlobalConst.Form, model);
         }
+        public override async Task<IActionResult> Detail(Guid id)
+        {
+            var model = new TrxArchiveRent();
+            ViewBag.ArchiveRentId = id;
+            return View(GlobalConst.Form, model);
+        }
         [HttpGet]
-        public async Task<JsonResult> GetDetail(Guid Id)
+        public async Task<JsonResult> GetDetail(Guid Id, string form)
         {
             try
             {
-                var result = await _archiveRentService.GetRetrievalByArchiveRentId(Id);
+                var result = await _archiveRentService.GetRetrievalByArchiveRentId(Id, form);
 
                 return Json(result);
 

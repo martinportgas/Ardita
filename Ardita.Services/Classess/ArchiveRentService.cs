@@ -171,9 +171,9 @@ namespace Ardita.Services.Classess
             }
         }
 
-        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id)
+        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id, string form)
         {
-            return await _archiveRentRepository.GetRetrievalByArchiveRentId(id);
+            return await _archiveRentRepository.GetRetrievalByArchiveRentId(id, form);
         }
 
         public async Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode)

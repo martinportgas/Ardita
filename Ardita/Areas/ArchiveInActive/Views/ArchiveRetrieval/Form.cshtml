@@ -5,7 +5,6 @@
 @{
     Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
-
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -89,11 +88,11 @@
                                         <label>Tanggal Pinjam</label>
                                         <input type="text" class="form-control" id="txtRequestedDate" readonly />
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" id="divValidateQRBox">
                                         <label>Validasi QR Box</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="txtValidateQRBox" />
-                                            <input type="hidden" id="txtValidateQRBoxhdn" />
+                                            <input type="hidden" id="txtValidateQRBoxhdn" value="false" />
                                             <div class="input-group-append p-2" id="checkValidateTrue" style="display: none">
                                                <i class="fa fa-check-circle" style="color: green; font-size: 16px"></i>
                                             </div>
@@ -148,6 +147,7 @@
                                 <tbody></tbody>
                             </table>
                             <button class="btn btn-success float-right mr-3" id="btnSubmit" disabled>Submit</button>
+                            <button class="btn btn-danger float-right mr-3" id="btnCancel">Cancel</button>
                         </div>
                        
                     </div>
@@ -158,92 +158,28 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        var allChecked = false;
+
         $(document).ready(function () {
+
+            if('@form.CurrentAction' == 'Detail'){
+                var detaiId = '@ViewBag.ArchiveRentId';
+                $('#txtQRBox').val(detaiId.toUpperCase());
+                $('#txtQRBox').prop('readonly', true);
+                $('#btnSubmit').hide();
+                $('#divValidateQRBox').hide();
+                searchFormDetail();
+                
+            }
+
             $('#txtQRBox').keypress(function (e) {
                 var key = e.which;
                 if (key == 13)  
                 {
-                    $('body').toggleClass('sk-loading');
-                    var processTable = false;
-
-                    $.ajax({
-                        'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
-                        'method': "GET",
-                        'contentType': 'application/json',
-                        'data': { "id": $(this).val() }
-                    }).done(function (data) {
-                        if(data.length > 0){
-                            $('#txtClassificationName').val(data[0].classificationName);
-                            $('#txtTitleArchive').val(data[0].titleArchive);
-                            $('#txtCreatorName').val(data[0].creatorName);
-                            $('#txtArchiveUnit').val(data[0].archiveUnit);
-                            $('#txtFloor').val(data[0].floorName);
-                            $('#txtRoom').val(data[0].roomName);
-                            $('#txtRack').val(data[0].rackName);
-                            $('#txtLevel').val(data[0].levelName);
-                            $('#txtRow').val(data[0].rowName);
-                            $('#txtRequestedDate').val(data[0].requestedDate);
-                            $('#txtRequestedReturnDate').val(data[0].requestedReturnDate);
-                            $('#txtArchiveId').val(data[0].archiveId);
-                            $('#txtArchiveSort').val(data[0].archiveSort);
-
-                            $.ajax({
-                                'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
-                                'method': "GET",
-                                'contentType': 'application/json',
-                                'data': {
-                                    "archiveId": $('#txtArchiveId').val(),
-                                    "sort": $('#txtArchiveSort').val()
-                                }
-                            }).done(function (data) {
-                                console.log(data);
-                                if(data.length > 0){
-                                    $('#txtValidateQRBoxhdn').val('true');
-
-                                }
-                                else{
-                                    $('#txtValidateQRBoxhdn').val('false');
-                                }
-
-
-                                $('#tbl').DataTable({
-                                    "data": data,
-                                    "destroy": true,
-                                    "columns": [
-                                        { "data": "classificationName" },
-                                        { "data": "titleArchive" },
-                                        { "data": "creatorName" },
-                                        { "data": "archiveUnit" },
-                                        {
-                                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                                return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this))" />`;
-                                            }
-                                        }
-                                    ]
-                                })
-                            });
-                        }
-                        else{
-                            $('#txtClassificationName').val('');
-                            $('#txtTitleArchive').val('');
-                            $('#txtCreatorName').val('');
-                            $('#txtArchiveUnit').val('');
-                            $('#txtFloor').val('');
-                            $('#txtRoom').val('');
-                            $('#txtRack').val('');
-                            $('#txtLevel').val('');
-                            $('#txtRow').val('');
-                            $('#txtRequestedDate').val('');
-                            $('#txtRequestedReturnDate').val('');
-                            $('#txtArchiveId').val('');
-                            $('#txtArchiveSort').val('');
-                        }
-                    });
- 
-
-                    $('body').toggleClass('sk-loading');
+                    searchFormAdd();
                 }
             });
+
             $('#txtValidateQRBox').keypress(function(e){
                 var key = e.which;
                 if (key == 13) {
@@ -260,18 +196,26 @@
                         }
                     }).done(function (data) {
                         if(data){
+                            $('#txtValidateQRBoxhdn').val('true');
                             $('#checkValidateTrue').show();
                         }else{
+                            $('#txtValidateQRBoxhdn').val('false');
                             $('#checkValidateFalse').show();
                         }
-                            
+
+                        if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
+                            $('#btnSubmit').prop('disabled', false);
+                        else
+                            $('#btnSubmit').prop('disabled', true);
+
                         $('body').toggleClass('sk-loading');
                     });
                 }
             });
+
             $('#btnSubmit').click(function(e){
                 e.preventDefault();
-
+                
                 swal({
                     title: "Do You Want To submit It?",
                     text: "Please check Information before Submiting!",
@@ -285,16 +229,16 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                            //$('body').toggleClass('sk-loading');
                             submit();
-                            //$('body').toggleClass('sk-loading');
                         } else {
                             swal("Cancelled", "You have Cancelled Form Submission!", "error");
                         }
                     });
             });
+            $('#btnCancel').click(function(e){
+                window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+            });
         });
-
 
         function initTable() {
             var archiveId = $('#txtArchiveId').val();
@@ -327,37 +271,197 @@
         function checkValidate(e) {
             var oTable = $('#tbl').dataTable();
             var rowcollection = oTable.$(".check");
-            var allChecked = false;
+            
+
             rowcollection.each(function (index, elem) {
                 if ($(elem).prop('checked') == false)
                 {
-                     allChecked = false;
-                    return;
+                   allChecked = false;
+                   return false;
                 }
                 else
                 {
                     allChecked = true;
                 }
             });
-            if (allChecked == true && $('#txtValidateQRBoxhdn').val() == 'true')
-                $('#btnSubmit').prop('disabled', true);
-            else
+
+            if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
                 $('#btnSubmit').prop('disabled', false);
+            else
+                $('#btnSubmit').prop('disabled', true);
 
         }
+
         function submit(){
-            console.log('tes');
+            $('body').toggleClass('sk-loading');
+            var archiveRentId = $('#txtQRBox').val();
             $.ajax({
                 'url': '@Url.Action(GlobalConst.UpdateRetrieval, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
                 'data': { 
-                    "archiveRentId": $(this).val() 
+                    "archiveRentId": archiveRentId
                 }
             }).done(function (data) {
-                console.log(data);
+                $('body').toggleClass('sk-loading');
+                swal({ title: "Pesan!", text: "Request Submitted", type: "success" }, function () {
+                    window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                });
+          
             });
         }
 
+        function searchFormAdd(){
+            $('body').toggleClass('sk-loading');
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { 
+                    "id": $('#txtQRBox').val(),
+                    "form": "Add"
+                }
+            }).done(function (data) {
+                if (data.length > 0) {
+                    $('#txtClassificationName').val(data[0].classificationName);
+                    $('#txtTitleArchive').val(data[0].titleArchive);
+                    $('#txtCreatorName').val(data[0].creatorName);
+                    $('#txtArchiveUnit').val(data[0].archiveUnit);
+                    $('#txtFloor').val(data[0].floorName);
+                    $('#txtRoom').val(data[0].roomName);
+                    $('#txtRack').val(data[0].rackName);
+                    $('#txtLevel').val(data[0].levelName);
+                    $('#txtRow').val(data[0].rowName);
+                    $('#txtRequestedDate').val(data[0].requestedDate);
+                    $('#txtRequestedReturnDate').val(data[0].requestedReturnDate);
+                    $('#txtArchiveId').val(data[0].archiveId);
+                    $('#txtArchiveSort').val(data[0].archiveSort);
+
+                    $.ajax({
+                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'method': "GET",
+                        'contentType': 'application/json',
+                        'data': {
+                            "archiveId": $('#txtArchiveId').val(),
+                            "sort": $('#txtArchiveSort').val()
+                        }
+                    }).done(function (data) {
+
+
+                        $('#tbl').DataTable({
+                            "data": data,
+                            "destroy": true,
+                            "columns": [
+                                { "data": "classificationName" },
+                                { "data": "titleArchive" },
+                                { "data": "creatorName" },
+                                { "data": "archiveUnit" },
+                                {
+                                    "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                        return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this))" />`;
+                                    }
+                                }
+                            ]
+                        })
+                        $('body').toggleClass('sk-loading');
+                    });
+                }
+                else {
+                    $('#txtClassificationName').val('');
+                    $('#txtTitleArchive').val('');
+                    $('#txtCreatorName').val('');
+                    $('#txtArchiveUnit').val('');
+                    $('#txtFloor').val('');
+                    $('#txtRoom').val('');
+                    $('#txtRack').val('');
+                    $('#txtLevel').val('');
+                    $('#txtRow').val('');
+                    $('#txtRequestedDate').val('');
+                    $('#txtRequestedReturnDate').val('');
+                    $('#txtArchiveId').val('');
+                    $('#txtArchiveSort').val('');
+                    $('body').toggleClass('sk-loading');
+                    swal({ title: "Pesan!", text: "Request not found!", type: "error" }, function () {
+                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                    });
+                }
+            });
+        }
+        function searchFormDetail() {
+            $('body').toggleClass('sk-loading');
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { 
+                    "id": $('#txtQRBox').val(),
+                    "form" : "Detail"
+                }
+            }).done(function (data) {
+                if (data.length > 0) {
+                    $('#txtClassificationName').val(data[0].classificationName);
+                    $('#txtTitleArchive').val(data[0].titleArchive);
+                    $('#txtCreatorName').val(data[0].creatorName);
+                    $('#txtArchiveUnit').val(data[0].archiveUnit);
+                    $('#txtFloor').val(data[0].floorName);
+                    $('#txtRoom').val(data[0].roomName);
+                    $('#txtRack').val(data[0].rackName);
+                    $('#txtLevel').val(data[0].levelName);
+                    $('#txtRow').val(data[0].rowName);
+                    $('#txtRequestedDate').val(data[0].requestedDate);
+                    $('#txtRequestedReturnDate').val(data[0].requestedReturnDate);
+                    $('#txtArchiveId').val(data[0].archiveId);
+                    $('#txtArchiveSort').val(data[0].archiveSort);
+
+                    $.ajax({
+                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'method': "GET",
+                        'contentType': 'application/json',
+                        'data': {
+                            "archiveId": $('#txtArchiveId').val(),
+                            "sort": $('#txtArchiveSort').val()
+                        }
+                    }).done(function (data) {
+
+
+                        $('#tbl').DataTable({
+                            "data": data,
+                            "destroy": true,
+                            "columns": [
+                                { "data": "classificationName" },
+                                { "data": "titleArchive" },
+                                { "data": "creatorName" },
+                                { "data": "archiveUnit" },
+                                {
+                                    "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                        return "";
+                                    }
+                                }
+                            ]
+                        })
+                        $('body').toggleClass('sk-loading');
+                    });
+                }
+                else {
+                    $('#txtClassificationName').val('');
+                    $('#txtTitleArchive').val('');
+                    $('#txtCreatorName').val('');
+                    $('#txtArchiveUnit').val('');
+                    $('#txtFloor').val('');
+                    $('#txtRoom').val('');
+                    $('#txtRack').val('');
+                    $('#txtLevel').val('');
+                    $('#txtRow').val('');
+                    $('#txtRequestedDate').val('');
+                    $('#txtRequestedReturnDate').val('');
+                    $('#txtArchiveId').val('');
+                    $('#txtArchiveSort').val('');
+                    $('body').toggleClass('sk-loading');
+                    swal({ title: "Pesan!", text: "Request not found!", type: "error" }, function () {
+                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                    });
+                }
+            });
+        }
     </script>
 }

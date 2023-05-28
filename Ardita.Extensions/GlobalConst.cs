@@ -19,6 +19,9 @@ public static class GlobalConst
         Submit = 5,
         ArchiveReceived = 6,
         ArchiveNotReceived = 7,
+        WaitingForRetrieval = 8,
+        Retrieved = 9,
+        Return = 10
     }
     public enum ROLE
     {

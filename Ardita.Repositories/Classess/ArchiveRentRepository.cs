@@ -28,9 +28,11 @@ namespace Ardita.Repositories.Classess
                     data.ApprovalDate = DateTime.Now;
                     data.ApprovalReturnDate = DateTime.Now.AddDays(7);
                     data.ApprovedBy = User;
+                    data.StatusId = (int)GlobalConst.STATUS.WaitingForRetrieval;
                 }
                 else
                 {
+                    data.StatusId = (int)GlobalConst.STATUS.Rejected;
                     data.RejectedBy = User;
                 }
                
@@ -156,7 +158,7 @@ namespace Ardita.Repositories.Classess
                .Include(x => x.User.Employee)
                .Include(x => x.Archive)
                .Include(x => x.Status)
-               .Where(x => x.RetrievalDate != null)
+               .Where(x => x.StatusId == (int)GlobalConst.STATUS.Retrieved)
                .Where($"(User.Employee.Name+RequestedDate.ToString()+RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                .Skip(model.skip).Take(model.pageSize)
@@ -181,19 +183,19 @@ namespace Ardita.Repositories.Classess
              .Include(x => x.User.Employee)
              .Include(x => x.Archive)
              .Include(x => x.Status)
-             .Where(x => x.RetrievalDate != null)
+             .Where(x => x.StatusId == (int)GlobalConst.STATUS.Retrieved)
              .Where($"(User.Employee.Name+RequestedDate.ToString()+ReturnDate.ToString()).Contains(@0)", model.searchValue)
              .CountAsync();
 
             return result;
         }
-        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid Id)
+        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid Id, string form)
         {
             var result = await _context.TrxArchiveRents
                 .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
                 .Include(x => x.Archive.Creator.ArchiveUnit)
                 .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
-                .Where(x => x.TrxArchiveRentId == Id)
+                .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.WaitingForRetrieval : x.StatusId == (int)GlobalConst.STATUS.Retrieved))
                 .Select(x => new { 
                     ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
                     ArchiveId = x.Archive.ArchiveId,
@@ -254,7 +256,8 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId) 
         {
-            await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET retrieval_date = {DateTime.Now}, updated_by ={UserId} WHERE trx_archive_id = {ArchiveRentId}");
+            int status = (int)GlobalConst.STATUS.Retrieved;
+            await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET retrieval_date = {DateTime.Now}, status_id = {status}, updated_by ={UserId} WHERE trx_archive_rent_id = {ArchiveRentId}");
             await _context.SaveChangesAsync();
             return true;
         }
