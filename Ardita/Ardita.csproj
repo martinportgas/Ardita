@@ -47,6 +47,7 @@
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRentController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetentionController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveRetrievalController.cs" />
+    <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveReturnController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -110,7 +111,9 @@
     <None Include="Areas\ArchiveInActive\Views\ArchiveRentApproval\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveReturn\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Index.cshtml" />
     <None Include="wwwroot\fonts\font-awesome\fonts\fontawesome-webfont.svg" />

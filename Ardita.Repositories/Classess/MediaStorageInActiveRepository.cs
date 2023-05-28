@@ -105,22 +105,22 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                       where detail.Sort == sort && trxMediaStorageInActive.MediaStorageInActiveId == id
                       select new
                       {
-                          MediaStorageInActiveDetailId = detail.MediaStorageInActiveDetailId,
-                          MediaStorageInActiveId = trxMediaStorageInActive.MediaStorageInActiveId,
+                         // MediaStorageInActiveDetailId = detail.MediaStorageInActiveDetailId,
+                         // MediaStorageInActiveId = trxMediaStorageInActive.MediaStorageInActiveId,
                           MediaStorageInActiveCode = trxMediaStorageInActive.MediaStorageInActiveCode,
-                          StorageName = detail.SubTypeStorageId == null ? typeStorage.TypeStorageName : mSubTypeStorage.SubTypeStorageName,
-                          Sort = detail.Sort,
-                          SubTypeStorageId = mSubTypeStorage.SubTypeStorageId,
+                          //StorageName = detail.SubTypeStorageId == null ? typeStorage.TypeStorageName : mSubTypeStorage.SubTypeStorageName,
+                         // Sort = detail.Sort,
+                        //  SubTypeStorageId = mSubTypeStorage.SubTypeStorageId,
                           ClassificationName = subjectClassification.SubjectClassificationName,
                           TitleArchive = archive.TitleArchive,
-                          ArchiveId = detail.ArchiveId,
+                         // ArchiveId = detail.ArchiveId,
                           ArchiveName = archive.TitleArchive,
                           ArchiveUnitName = archiveUnit.ArchiveUnitName,
-                          CreatorId = creator.CreatorId,
+                         // CreatorId = creator.CreatorId,
                           CreatorName = creator.CreatorName
                       };
 
-        return results;
+        return results.Distinct();
 
     }
 }

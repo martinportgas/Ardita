@@ -11,6 +11,8 @@ namespace Ardita.Repositories.Interfaces
     public interface IArchiveRentRepository
     {
         Task<IEnumerable<TrxArchiveRent>> GetById(Guid id);
+        Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id, string form);
+        Task<IEnumerable<object>> GetRetrievalDetailByArchiveRentId(Guid ArchiveId, int sort);
         Task<IEnumerable<TrxArchiveRent>> GetAll();
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<IEnumerable<object>> GetApprovalByFilterModel(DataTableModel model);
@@ -24,5 +26,7 @@ namespace Ardita.Repositories.Interfaces
         Task<int> Delete(TrxArchiveRent model);
         Task<int> Update(TrxArchiveRent model);
         Task<int> Approval(Guid id, string description, int status, Guid User);
+        Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode);
+        Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId);
     }
 }

@@ -7,6 +7,7 @@ public interface IArchiveRepository
 {
     Task<TrxArchive> GetById(Guid id);
     Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode);
+    Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> GetCountByFilterData(DataTableModel model);
@@ -16,6 +17,7 @@ public interface IArchiveRepository
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId, string path = "");
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
+    Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
     Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
     Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive);
 }
