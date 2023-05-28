@@ -30,6 +30,7 @@ namespace Ardita.Extensions
             session.EmployeeName = claims.FindFirst(GlobalConst.EmployeeName)!.Value;
             session.PositionId = positionId;
             session.CompanyId = companyId;
+            session.CompanyName = claims.FindFirst(GlobalConst.CompanyName)!.Value;
             session.EmployeeId = employeeId;
             session.ListArchiveUnitCode = new List<string>();
 
