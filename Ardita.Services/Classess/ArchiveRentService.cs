@@ -190,5 +190,13 @@ namespace Ardita.Services.Classess
         {
             return await _archiveRentRepository.UpdateArchiveRent(ArchiveRentId, UserId);
         }
+        public async Task<IEnumerable<object>> GetReturnByArchiveRentId(Guid id, string form)
+        {
+            return await _archiveRentRepository.GetReturnByArchiveRentId(id, form);
+        }
+        public async Task<IEnumerable<object>> GetReturnDetailByArchiveRentId(Guid ArchiveId, int sort)
+        {
+            return await _archiveRentRepository.GetReturnDetailByArchiveRentId(ArchiveId, sort);
+        }
     }
 }

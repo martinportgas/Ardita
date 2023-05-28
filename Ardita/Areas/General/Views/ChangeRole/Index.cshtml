@@ -4,16 +4,13 @@
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Pemusnahan Arsip</h2>
+        <h2>Ganti Role</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
             </li>
-            <li class="breadcrumb-item">
+            <li class="breadcrumb-item active">
                 General
-            </li>
-            <li class="active breadcrumb-item">
-                <strong>Ganti Role</strong>
             </li>
         </ol>
     </div>
@@ -50,6 +47,15 @@
 
         $(document).ready(function () {
             bsCustomFileInput.init();
+
+            if('@TempData[GlobalConst.Notification]' != ''){
+                if ('@TempData[GlobalConst.Notification]' == '@GlobalConst.Success'){
+                    swal({ title: "Success", text: 'Berhasil Ganti Role', type: "success" });
+                }else{
+                    swal({ title: "Failed", text: 'Gagal Ganti Role', type: "error" });
+                }
+            }
+
             var table = $('#tbl').DataTable({
                 processing: true,
                 serverSide: true,
@@ -75,7 +81,7 @@
                     {
                         "data": "roleId", "name": "roleId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.ChangeRole, GlobalConst.ChangeRole, new { Area = GlobalConst.General, Id = -1 })"><i class="fa fa-share-square-o"></i> Ganti Role </a>`;
+                            var detail = `<a class="btn btn-sm btn-success" onclick="$('body').toggleClass('sk-loading')" href="@Url.Action(GlobalConst.ChangeRole, GlobalConst.ChangeRole, new { Area = GlobalConst.General, Id = -1 })"><i class="fa fa-share-square-o"></i> Ganti Role </a>`;
                             detail = detail.replace("-1", data);
 
                             return row.aktif ? '' : detail;
@@ -84,8 +90,8 @@
                     { "data": "code", "name": "role.code", "autoWidth": true },
                     { "data": "name", "name": "role.name", "autoWidth": true },
                     {
-                        "data": "aktif", "name": "aktif", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<input type="checkbox" ${data ? 'checked' : ''} readonly />`;
+                        "data": "aktif", "name": "aktif", "orderable": false, "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<input type="checkbox" ${data ? 'checked' : ''} style="pointer-events:none" />`;
                         }
                     }
                 ]

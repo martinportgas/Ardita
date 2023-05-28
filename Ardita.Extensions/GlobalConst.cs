@@ -123,6 +123,7 @@ public static class GlobalConst
     public const string GetFileArchive = "GetFileArchive";
     public const string ValidateQRBox = "ValidateQRBox";
     public const string UpdateRetrieval = "UpdateRetrieval";
+    public const string UpdateReturn = "UpdateReturn";
 
     //Html helper
     public const string Required = "required";
