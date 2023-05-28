@@ -113,6 +113,7 @@
     <None Include="Areas\ArchiveInActive\Views\ArchiveRent\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveRetrieval\Index.cshtml" />
+    <None Include="Areas\ArchiveInActive\Views\ArchiveReturn\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\ArchiveReturn\Index.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Form.cshtml" />
     <None Include="Areas\ArchiveInActive\Views\MediaStorageInActive\Index.cshtml" />
