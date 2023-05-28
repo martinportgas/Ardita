@@ -62,28 +62,38 @@
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
-                                            <div class="form-group">
-                                                <label>Kode Registrasi</label>
-                                                <input type="hidden" asp-for="ArchiveExtendId" value="@Model.ArchiveExtendId">
-                                                <input type="hidden" asp-for="ApproveLevel">
-                                                <input type="hidden" asp-for="ApproveMax">
-                                                <input type="hidden" asp-for="CreatedBy">
-                                                <input type="hidden" asp-for="CreatedDate">
-                                                <input type="hidden" asp-for="UpdatedBy">
-                                                <input type="hidden" asp-for="UpdatedDate">
-                                                <input type="hidden" asp-for="IsActive">
-                                                <input type="hidden" asp-for="StatusId">
-                                                <input type="hidden" asp-for="IsArchiveActive">
-                                                <input type="text" placeholder="" id="txtCode" class="form-control" asp-for="ExtendCode" disabled>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Nama Perpanjangan</label>
-                                                <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ExtendName">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Deskripsi</label>
-                                                <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
-                                            </div>
+                                            <label>Kode Registrasi</label>
+                                            <input type="hidden" asp-for="ArchiveExtendId" value="@Model.ArchiveExtendId">
+                                            <input type="hidden" asp-for="ApproveLevel">
+                                            <input type="hidden" asp-for="ApproveMax">
+                                            <input type="hidden" asp-for="CreatedBy">
+                                            <input type="hidden" asp-for="CreatedDate">
+                                            <input type="hidden" asp-for="UpdatedBy">
+                                            <input type="hidden" asp-for="UpdatedDate">
+                                            <input type="hidden" asp-for="IsActive">
+                                            <input type="hidden" asp-for="StatusId">
+                                            <input type="hidden" asp-for="IsArchiveActive">
+                                            <input type="text" placeholder="" id="txtCode" class="form-control" asp-for="ExtendCode" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nomor Berita Acara</label>
+                                            <input type="text" placeholder="" id="txtDocNo" class="form-control" asp-for="DocumentCode" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Judul</label>
+                                            <input type="text" placeholder="" id="txtName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ExtendName">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Lokasi</label>
+                                            <select asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnit"
+                                                    id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pilih Lokasi --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Deskripsi</label>
+                                            <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -92,7 +102,7 @@
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Approval</th>
+                                                    <th>Persetujuan</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtlApr">
@@ -119,6 +129,40 @@
                                                 }
                                             </tbody>
                                         </table>
+                                    </div>
+                                </div>
+                                <div class="row border-top pt-3">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Sub-Subjek Klasifikasi</label>
+                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubject"
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Tahun Arsip</label>
+                                            <select asp-for="ArchiveYear"
+                                                    id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pilih Tahun Arsip --">
+                                                <option value=""></option>
+                                                @for (int i = -20; i < 0; i++)
+                                                {
+                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                }
+                                                @if (form.CurrentAction == GlobalConst.Add)
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
+                                                }
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -170,7 +214,7 @@
                                                             <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
                                                         </td>
                                                         <td style="width:25%">
-                                                            <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" ></textarea>
+                                                            <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
                                                         </td>
                                                     </tr>
                                                 }
@@ -179,10 +223,17 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    @if (form.CurrentAction == GlobalConst.Approval)
+                                    {
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveApproval, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveExtend, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                    }
                                     @if (form.isSubmitForm)
                                     {
-                                        if(form.CurrentAction != GlobalConst.Approval)
+                                        if (form.CurrentAction != GlobalConst.Approval)
                                         {
                                             <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))</button>
                                         }
@@ -242,7 +293,7 @@
             }
             elClone.appendTo(`#listdtl${nameCapital}`);
             $(`.min${nameCapital}`).show();
-            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindEmployeeByParam';
+            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionInActiveByParam' : '@GlobalConst.BindApprovalByParam';
             initSelect2(name, bindName);
         }
 
@@ -252,12 +303,15 @@
             if (countClass < 2) {
                 $(`#Add${name}`).children("tr:first-child").children('td:first-child').children().hide();
             }
+            if (countClass == 1) {
+                $('.minArs').hide();
+            }
         }
 
         function checkBefore(e) {
             var retentionBefore = e.parent().prev().children('.before').val() == '' ? 0 : parseInt(e.parent().prev().children('.before').val());
             var retentionAfter = e.val() == '' ? 0 : parseInt(e.val());
-            if (retentionBefore >= retentionAfter){
+            if (retentionBefore >= retentionAfter) {
                 swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus Lebih Besar Dari Retensi Sebelumnya!', type: "info" }, function () {
                     e.val('');
                 });
@@ -266,7 +320,7 @@
 
         function checkDuplicate(e, name) {
             var data = e.val();
-            if (!e.hasClass('current')){
+            if (!e.hasClass('current')) {
 
                 e.addClass('current');
 
@@ -284,21 +338,21 @@
                     });
                 }
 
-                if(name == 'ars'){
+                if (name == 'ars') {
                     var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })';
                     var param = new Object();
                     param.Id = data;
 
                     ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                        e.parent().next().children('.before').val(result.activeRetention);
+                        e.parent().next().children('.before').val(result.inactiveRetention);
                     });
                 }
-                
+
             }
             e.removeClass('current');
         }
 
-        function initSelect2(name, act){
+        function initSelect2(name, act) {
             $(`.${name}`).each(function () {
                 $(this).select2({
                     minimumInputLength: 0,
@@ -309,7 +363,7 @@
                         type: "POST",
                         data: function (params) {
                             var query = {
-                                param: act == '@GlobalConst.BindArchiveRetentionInActiveByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'}` : params.term
+                                param: act == '@GlobalConst.BindArchiveRetentionInActiveByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'},${$('#txtSubSubjectClassificationId').val()},${$('#txtYear').val()}` : `${params.term == undefined ? '' : params.term},${$('#txtArchiveUnitId').val()}`
                             }
                             return query;
                         },
@@ -326,12 +380,41 @@
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
-            if('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel'){
+            if ('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel') {
                 swal({ title: "Attention!", text: 'Approval Sudah Ditindaklanjuti!', type: "info" });
             }
 
-            initSelect2('ars', '@GlobalConst.BindArchiveRetentionByParam');
-            initSelect2('apr', '@GlobalConst.BindEmployeeByParam');
+            initSelect2('ars', '@GlobalConst.BindArchiveRetentionInActiveByParam');
+            initSelect2('apr', '@GlobalConst.BindApprovalByParam');
+
+            $('#txtSubSubjectClassificationId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub-Subject Classification --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
         });
     </script>
 }

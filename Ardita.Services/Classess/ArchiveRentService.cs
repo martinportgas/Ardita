@@ -170,5 +170,25 @@ namespace Ardita.Services.Classess
                 return null;
             }
         }
+
+        public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id, string form)
+        {
+            return await _archiveRentRepository.GetRetrievalByArchiveRentId(id, form);
+        }
+
+        public async Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode)
+        {
+            return await _archiveRentRepository.ValidateQRBoxWithArchiveRentId(ArchiveRentId, mediaInActiveCode);
+        }
+
+        public async Task<IEnumerable<object>> GetRetrievalDetailByArchiveRentId(Guid ArchiveId, int sort)
+        {
+            return await _archiveRentRepository.GetRetrievalDetailByArchiveRentId(ArchiveId, sort);
+        }
+
+        public async Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId)
+        {
+            return await _archiveRentRepository.UpdateArchiveRent(ArchiveRentId, UserId);
+        }
     }
 }

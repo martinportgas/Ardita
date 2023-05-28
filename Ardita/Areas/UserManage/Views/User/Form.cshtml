@@ -1,4 +1,5 @@
 ﻿@model Ardita.Models.DbModels.MstUser
+@using Ardita.Models.DbModels;
 @using Ardita.Models.ViewModels;
 @using Ardita.Extensions;
 
@@ -53,27 +54,72 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-6 b-r">
+                        <div class="col-sm-12">
                             <form role="form" id="frmUser" enctype="multipart/form-data" asp-controller="User" asp-area="UserManage" asp-action="@form.FormAction">
-                                <div class="form-group">
-                                    <label>Employee</label>
-                                    <select asp-for="EmployeeId" id="txtEmployeeId" asp-items="ViewBag.listEmployees" class="select2_demo_1 form-control"></select>
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <label>Employee</label>
+                                            <select asp-for="EmployeeId" id="txtEmployeeId" asp-items="ViewBag.listEmployees" class="select2_demo_1 form-control"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="Username">
+                                            <input type="hidden" asp-for="UserId" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Password</label>
+                                            <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="Password">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Lokasi 
+                                                @if (form.isInput)
+                                                {
+                                                    <i class="fa fa-plus-circle" style="color: blue;font-size:14px" onclick="addRow($(this))"></i>
+                                                }
+                                            </label>
+                                            @if(ViewBag.subDetail.Count > 0)
+                                            {
+                                                foreach(IdxUserArchiveUnit item in ViewBag.subDetail)
+                                                {
+                                                    <div class="input-group">
+                                                        @if (form.isInput)
+                                                        {
+                                                            <i class="fa fa-trash p-2 del" style="color: red; font-size:16px;@Html.Raw(ViewBag.subDetail.Count > 1 ? "" : "display:none")" onclick="removeRow($(this))"></i>
+                                                        }
+                                                        <div class="input-group-append" style="width:@Html.Raw(form.isInput ? "95" : "100")%">
+                                                            <select asp-items="ViewBag.listArchiveUnit" onchange="checkDuplicate($(this))" data-placeholder="-- Pilih Lokasi --" name="archiveUnitIds[]" class="form-control au" selected><option value="@item.ArchiveUnitId">@(item.ArchiveUnit.ArchiveUnitCode + " - " + item.ArchiveUnit.ArchiveUnitName)</option></select>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="input-group">
+                                                    @if (form.isInput)
+                                                    {
+                                                        <i class="fa fa-trash p-2 del" style="color: red; font-size:16px;display:none" onclick="removeRow($(this))"></i>
+                                                    }
+                                                    <div class="input-group-append" style="width:@Html.Raw(form.isInput ? "95" : "100")%">
+                                                        <select asp-items="ViewBag.listArchiveUnit" onchange="checkDuplicate($(this))" value="" data-placeholder="-- Pilih Lokasi --" name="archiveUnitIds[]" class="form-control au"><option value=""></option></select>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="Username">
-                                    <input type="hidden" asp-for="UserId" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="Password">
-                                </div>
-                                <div>
-                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.User, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
-                                    @if (form.isInput)
-                                    {
-                                        <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
-                                    }
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div>
+                                            <a href="@Url.Action(GlobalConst.Index, GlobalConst.User, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
+                                            @if (form.isSubmitForm)
+                                            {
+                                                <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -92,7 +138,33 @@
             $("#txtEmployeeId").select2({
                 theme: 'bootstrap4',
             });
+            initSelect2();
         });
+
+        function initSelect2() {
+            $('.au').each(function () {
+                $(this).select2({
+                    minimumInputLength: 0,
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    ajax: {
+                        url: '@Url.Action(@GlobalConst.BindArchiveUnitsByParam, GlobalConst.User, new { Area = GlobalConst.UserManage })',
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                param: params.term == undefined ? '' : params.term
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            });
+        }
 
         function validate() {
             if ($('#txtUserName').val() == "") {
@@ -104,6 +176,41 @@
             } else {
                 return true;
             }
+        }
+
+        function addRow(e){
+            $('.au').select2('destroy');
+            var cloning = e.parent().next().clone();
+            cloning.find('.au').val('');
+            e.parent().parent().append(cloning);
+            initSelect2();
+            $('.del').show();
+        }
+        function removeRow(e) {
+            e.parent().remove();
+            var countClass = $('.del').length;
+            if(countClass == 1){
+                $('.del').hide();
+            }
+        }
+        function checkDuplicate(e) {
+            var data = e.val();
+            if (!e.hasClass('current')) {
+
+                e.addClass('current');
+
+                $('.au').each(function () {
+                    if (!$(this).hasClass('current')) {
+                        if (data == $(this).val()) {
+                            swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                                e.val('').trigger('change');
+                            });
+                            return;
+                        }
+                    }
+                });
+            }
+            e.removeClass('current');
         }
 
         function onSubmit(ctl, event) {

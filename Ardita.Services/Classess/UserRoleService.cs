@@ -1,5 +1,8 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Models.ViewModels.UserRoles;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -72,6 +75,39 @@ namespace Ardita.Services.Classess
             userRoleListViewModel.Roles = roleResult.ToList();
 
             return userRoleListViewModel;
+        }
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
+        {
+            try
+            {
+                var filterData = new DataTableModel
+                {
+                    sortColumn = model.columns[model.order[0].column].name,
+                    sortColumnDirection = model.order[0].dir,
+                    searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
+                    pageSize = model.length,
+                    skip = model.start,
+                    PositionId = model.PositionId,
+                    SessionUser = model.SessionUser,
+                };
+
+                int dataCount = await _userRoleRepository.GetCountByFilterModel(filterData);
+                var results = await _userRoleRepository.GetByFilterModel(filterData);
+
+                var responseModel = new DataTableResponseModel<object>
+                {
+                    draw = model.draw,
+                    recordsTotal = dataCount,
+                    recordsFiltered = dataCount,
+                    data = results.ToList()
+                };
+
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public Task<int> Insert(IdxUserRole model)

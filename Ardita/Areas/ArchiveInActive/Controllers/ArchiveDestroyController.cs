@@ -22,7 +22,9 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             IEmployeeService employeeService,
             IArchiveRetentionService archiveRetentionService,
             IArchiveApprovalService archiveApprovalService,
-            IMediaStorageService mediaStorageService)
+            IMediaStorageService mediaStorageService,
+            IArchiveUnitService archiveUnitService,
+            IClassificationSubSubjectService classificationSubSubjectService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -32,6 +34,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _archiveDestroyService = archiveDestroyService;
             _archiveMovementService = archiveMovementService;
             _mediaStorageService = mediaStorageService;
+            _archiveUnitService = archiveUnitService;
+            _classificationSubSubjectService = classificationSubSubjectService;
         }
         #endregion
         #region MAIN ACTION
@@ -68,8 +72,11 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         }
         public override async Task<IActionResult> Add()
         {
+            await BindAllDropdown(false);
+
             var model = new TrxArchiveDestroy();
             model.DestroyCode = GlobalConst.InitialCode;
+            model.DocumentCode = GlobalConst.InitialCode;
             Guid Id = Guid.Empty;
             ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
             ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
@@ -80,6 +87,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown(false);
+
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
                 return View(GlobalConst.Form, model);
@@ -94,6 +103,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
                 return View(GlobalConst.Form, model);
@@ -108,6 +119,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
                 return View(GlobalConst.Form, model);
@@ -122,6 +135,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown();
+
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
                 return View(GlobalConst.Form, model);
@@ -136,6 +151,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveDestroyService.GetById(Id);
             if (model != null)
             {
+                await BindAllDropdown();
+
                 ViewBag.level = Level;
                 ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
                 ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
@@ -325,6 +342,20 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         }
         #endregion
         #region HELPER
+        protected async Task BindAllDropdown(bool isAll = true)
+        {
+            if (isAll)
+            {
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.listSubSubject = await BindAllSubSubjectClasscifications();
+            }
+            else
+            {
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+            }
+            
+        }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive });
         #endregion
     }

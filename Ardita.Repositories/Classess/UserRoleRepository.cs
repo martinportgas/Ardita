@@ -1,6 +1,9 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -65,6 +68,35 @@ namespace Ardita.Repositories.Classess
         {
             int result = 0;
 
+
+            return result;
+        }
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
+        {
+            var result = await _context.IdxUserRoles
+                    .Include(x => x.Role)
+                    .Where(x => x.UserId == AppUsers.CurrentUser(model.SessionUser!).UserId)
+                    .Where(x => (x.Role.Code + x.Role.Name).ToLower().Contains(model.searchValue!))
+                    .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                    .Skip(model.skip).Take(model.pageSize)
+                    .Select(x => new
+                    {
+                        x.RoleId,
+                        x.Role.Code,
+                        x.Role.Name,
+                        Aktif = x.RoleId == AppUsers.CurrentUser(model.SessionUser!).RoleId
+                    })
+                    .ToListAsync();
+
+            return result;
+        }
+        public async Task<int> GetCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.IdxUserRoles
+                    .Include(x => x.Role)
+                    .Where(x => x.UserId == AppUsers.CurrentUser(model.SessionUser!).UserId)
+                    .Where(x => (x.Role.Code + x.Role.Name).ToLower().Contains(model.searchValue!))
+                    .CountAsync();
 
             return result;
         }

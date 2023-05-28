@@ -42,7 +42,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             var model = new TrxArchiveRent();
             ViewBag.listSubSubject = await BindSubSubjectClasscifications();
-            ViewBag.listArchive = await BindArchives();
+            ViewBag.listArchive = await BindArchivesInActive();
 
             ViewBag.Name = AppUsers.CurrentUser(User).EmployeeName;
             ViewBag.RoleName = AppUsers.CurrentUser(User).RoleName;
@@ -58,7 +58,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
-                var result = await MediaStorageInActiveService.GetDetails(new Guid("34965E22-F1F8-4DAC-951B-00E3B8D3144D"));
+                var result = await MediaStorageInActiveService.GetDetails(Id);
                 return Json(result);
 
             }

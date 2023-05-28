@@ -200,7 +200,7 @@
                             <div class="form-group">
                                 <div class="form-group">
                                     <label>Kode Media</label>
-                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageCode" readonly>
+                                    <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.MediaStorageInActiveCode" readonly>
                                 </div>
                             </div>
                         </div>
@@ -231,13 +231,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Unit Kearsipan</label>
-                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName" readonly>
+                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName" readonly>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Jenis Penyimpanan</label>
-                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName" readonly>
+                                <input type="text" placeholder="" id="txtSubSubjectClassificationId" class="form-control" asp-for="TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.TypeStorage.TypeStorageName" readonly>
                             </div>
                         </div>
                     </div>
@@ -246,13 +246,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="floor">Lantai</label>
-                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.Floor.FloorName" readonly>
+                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName" readonly>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="room">Ruangan</label>
-                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.RoomName" readonly>
+                                <input type="text" class="form-control" id="inputCity" asp-for="TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName" readonly>
                             </div>
                         </div>
                     </div>

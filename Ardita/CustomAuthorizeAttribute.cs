@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -91,7 +92,7 @@ namespace Ardita
 
 
             var fullPath = $"{areaName}/{controllerName}/{actionName}";
-            if (fullPath != "General/Home/Index" && !actionName.ToString().ToLower().Contains("approval"))
+            if (areaName.ToString() != GlobalConst.General && !actionName.ToString().ToLower().Contains("approval"))
             {
                 var results = (from page in pages
                                join pageDetail in pageDetails on page.PageId equals pageDetail.PageId

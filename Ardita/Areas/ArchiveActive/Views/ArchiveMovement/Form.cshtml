@@ -117,7 +117,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Jenis Penyimpanan</label>
-                                                            <select onchange="getTypeStorageDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                            <select id="txtTypeStorageId" onchange="getTypeStorageDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Total Volume</label>
@@ -413,30 +413,33 @@
         }
 
         function getArchiveDetail(e, Id, totalVolume) {
-            var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
-            var param = new Object();
-            param.Id = Id;
+            if(Id != ''){
+                var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+                var param = new Object();
+                param.Id = Id;
 
-            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                e.parent().next().children('.creator').val(result.creator.creatorName);
-                e.parent().next().next().children('.volume').val(result.volume);
+                ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                    if(result != null){
 
-                var sisa = parseInt($('#txtSisa').val());
+                        var sisa = parseInt($('#txtSisa').val());
 
-                totalVolume += result.volume;
+                        var totalVolume = result.volume;
 
-                if (totalVolume > sisa) {
-                    swal({ title: "Failed!", text: 'Volume Melebihi Kapasitas, Harap pilih Arsip lain!', type: "info" }, function () {
-                        e.val('').trigger('change');
-                        e.parent().next().children('.creator').val('');
-                        e.parent().next().next().children('.volume').val('');
-                    });
-                    return;
-                }
+                        if (totalVolume > sisa) {
+                            swal({ title: "Failed!", text: 'Volume Melebihi Kapasitas, Harap pilih Arsip lain!', type: "info" }, function () {
+                                e.val('').trigger('change');
+                            });
+                            return;
+                        }
 
-                sisa -= result.volume;
-                $('#txtSisa').val(sisa);
-            });
+                        e.parent().next().find('.creator').val(result.creator.creatorName);
+                        e.parent().next().next().find('.volume').val(result.volume);
+
+                        sisa -= result.volume;
+                        $('#txtSisa').val(sisa);
+                    }
+                });
+            }
         }
 
         function getTypeStorageDetail(e) {
@@ -490,7 +493,7 @@
                 allowClear: true,
                 placeholder: '-- Select Sub-Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -505,6 +508,34 @@
                             return {
                                 text: item.subSubjectClassificationName,
                                 id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+            $('#txtTypeStorageId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Type Storage --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindTypeStorageByArchiveUnitId, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.typeStorageName,
+                                id: item.typeStorageId
                             }
                         });
                         return {

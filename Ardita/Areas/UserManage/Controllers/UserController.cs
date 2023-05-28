@@ -15,14 +15,15 @@ namespace Ardita.Areas.UserManage.Controllers
     [Area(GlobalConst.UserManage)]
     public class UserController : BaseController<MstUser>
     {
-
         public UserController(
             IUserService userService, 
-            IEmployeeService employeeService
+            IEmployeeService employeeService,
+            IArchiveUnitService archiveUnitService
            )
         {
             _userService = userService;
             _employeeService = employeeService;
+            _archiveUnitService = archiveUnitService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
         [HttpPost]
@@ -42,6 +43,8 @@ namespace Ardita.Areas.UserManage.Controllers
         public override async Task<IActionResult> Add()
         {
             ViewBag.listEmployees = await BindEmployee();
+            ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.subDetail = new IdxUserArchiveUnit();
 
             return View(GlobalConst.Form, new MstUser());
         }
@@ -52,6 +55,8 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.subDetail = await _userService.GetIdxUserArchiveUnitByUserId(Id);
                 return View(GlobalConst.Form, data);
             }
             else
@@ -78,19 +83,21 @@ namespace Ardita.Areas.UserManage.Controllers
             if (model != null)
             {
                 model.Password = Global.Encode(model.Password);
+                string[] archiveUnitIds = Request.Form["archiveUnitIds[]"].ToArray();
 
                 if (model.UserId != Guid.Empty)
                 {
                     model.UpdateBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdateDate = DateTime.Now;
 
-                    await _userService.Update(model);
+                    await _userService.Update(model, archiveUnitIds);
                 }
                 else
                 {
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
-                    await _userService.Insert(model);
+
+                    await _userService.Insert(model, archiveUnitIds);
                 }
 
             }
@@ -103,6 +110,8 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.subDetail = await _userService.GetIdxUserArchiveUnitByUserId(Id);
                 return View(GlobalConst.Form, data);
             }
             else
@@ -117,6 +126,8 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listEmployees = await BindEmployee();
+                ViewBag.listArchiveUnit = await BindAllArchiveUnits();
+                ViewBag.subDetail = await _userService.GetIdxUserArchiveUnitByUserId(Id);
                 return View(GlobalConst.Form, data);
             }
             else

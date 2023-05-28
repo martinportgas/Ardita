@@ -127,7 +127,7 @@
                             <thead>
                                 <tr>
                                     <th>Kode Media Penyimpanan</th>
-                                    <th>Jenis Penyimpanan</th>
+                                  @*  <th>Jenis Penyimpanan</th>*@
                                     <th>Klasifikasi</th>
                                     <th>Judul Arsip</th>
                                     <th>Pencipta</th>
@@ -268,7 +268,7 @@
                 allowClear: true,
                 placeholder: '-- Select Archive --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindArchivesBySubSubjectClassificationId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindArchivesInActiveBySubSubjectClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -309,9 +309,10 @@
 
                 $('#tbl').DataTable({
                     "data": data,
+                    "destroy": true,
                     "columns": [
                         { "data": "mediaStorageInActiveCode" },
-                        { "data": "storageName" },
+                       // { "data": "storageName" },
                         { "data": "classificationName" },
                         { "data": "titleArchive" },
                         { "data": "creatorName" },

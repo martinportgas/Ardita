@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Ardita.Models.ViewModels.Users;
 using Ardita.Models.ViewModels;
 using Ardita.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ardita.Services.Classess
 {
@@ -58,6 +59,11 @@ namespace Ardita.Services.Classess
         public async Task<int> Delete(MstUser model)
         {
             return await _userRepository.Delete(model);
+        }
+
+        public async Task<IEnumerable<IdxUserArchiveUnit>> GetIdxUserArchiveUnitByUserId(Guid id)
+        {
+            return await _userArchiveUnitRepository.GetByUserId(id);
         }
 
         public async Task<IEnumerable<MstUser>> GetAll()
@@ -124,7 +130,7 @@ namespace Ardita.Services.Classess
                           join p in position on e.PositionId equals p.PositionId
                           join c in company on e.CompanyId equals c.CompanyId
                           where usr.Username == username && usr.Password == password
-                          && usr.IsActive == true && r.IsActive == true && e.IsActive == true
+                          && usr.IsActive == true && r.IsActive == true && e.IsActive == true && ur.IsPrimary == true
                           select new
                           {
                               Username = usr.Username,
@@ -210,9 +216,34 @@ namespace Ardita.Services.Classess
             return results;
         }
 
-        public async Task<int> Insert(MstUser model)
+        public async Task<int> Insert(MstUser model, string[] archiveUnitIds)
         {
-            return await _userRepository.Insert(model);
+            int result = -1;
+            result = await _userRepository.Insert(model);
+
+            if(result != -1 && archiveUnitIds.Length > 0)
+            {
+                List<IdxUserArchiveUnit> idxUserArchiveUnits = new();
+                foreach (var item in archiveUnitIds)
+                {
+                    IdxUserArchiveUnit idxUserArchiveUnit = new();
+
+                    Guid archiveUnitId = Guid.Empty;
+                    if (Guid.TryParse(item, out archiveUnitId))
+                    {
+                        idxUserArchiveUnit.UserId = model.UserId;
+                        idxUserArchiveUnit.ArchiveUnitId = archiveUnitId;
+                        idxUserArchiveUnit.CreatedBy = model.CreatedBy;
+                        idxUserArchiveUnit.CreatedDate = model.CreatedDate;
+
+                        idxUserArchiveUnits.Add(idxUserArchiveUnit);
+                    }
+                }
+
+                await _userArchiveUnitRepository.InsertBulk(idxUserArchiveUnits);
+            }
+
+            return result;
         }
 
         public async Task<bool> InsertBulk(List<MstUser> users)
@@ -220,9 +251,39 @@ namespace Ardita.Services.Classess
             return await _userRepository.InsertBulk(users);
         }
 
-        public async Task<int> Update(MstUser model)
+        public async Task<int> Update(MstUser model, string[] archiveUnitIds)
         {
-            return await _userRepository.Update(model);
+            int result = -1;
+            
+            result = await _userRepository.Update(model);
+
+            if(result != -1)
+            {
+                await _userArchiveUnitRepository.DeleteByUserId(model.UserId);
+
+                if (archiveUnitIds.Length > 0)
+                {
+                    List<IdxUserArchiveUnit> idxUserArchiveUnits = new();
+                    foreach (var item in archiveUnitIds)
+                    {
+                        IdxUserArchiveUnit idxUserArchiveUnit = new();
+
+                        Guid archiveUnitId = Guid.Empty;
+                        if (Guid.TryParse(item, out archiveUnitId))
+                        {
+                            idxUserArchiveUnit.UserId = model.UserId;
+                            idxUserArchiveUnit.ArchiveUnitId = archiveUnitId;
+                            idxUserArchiveUnit.CreatedBy = model.CreatedBy;
+                            idxUserArchiveUnit.CreatedDate = model.CreatedDate;
+
+                            idxUserArchiveUnits.Add(idxUserArchiveUnit);
+                        }
+                    }
+
+                    await _userArchiveUnitRepository.InsertBulk(idxUserArchiveUnits);
+                }
+            }
+            return result;
         }
     }
 }

@@ -56,6 +56,21 @@ public class ArchiveRepository : IArchiveRepository
             .Where(x => x.IsActive == true)
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
+    public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode)
+    {
+        return await _context.TrxArchives
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator)
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+            .AsNoTracking()
+            .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
+            .Where(x => x.IsActive == true)
+            .OrderByDescending(x => x.CreatedDate).ToListAsync();
+    }
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
@@ -121,6 +136,17 @@ public class ArchiveRepository : IArchiveRepository
                 .ThenInclude(aut => aut!.ArchiveUnit)
             .Include(x => x.TrxMediaStorageDetails)
                 .ThenInclude(ms => ms.MediaStorage)
+                .ThenInclude(ts => ts.TypeStorage)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
+                .ThenInclude(r => r.Row)
+                .ThenInclude(l => l.Level)
+                .ThenInclude(r => r!.Rack)
+                .ThenInclude(room => room!.Room)
+                .ThenInclude(f => f!.Floor)
+                .ThenInclude(aut => aut!.ArchiveUnit)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
                 .ThenInclude(ts => ts.TypeStorage)
             .Where(x => x.ArchiveId == id && x.IsActive == true)
             .FirstOrDefaultAsync();
@@ -343,11 +369,15 @@ public class ArchiveRepository : IArchiveRepository
                                 }
                                 string oldDirectory = string.Concat(item.FilePath, item.FileNameEncrypt);
                                 string newDirectory = string.Concat(path, item.FileNameEncrypt);
-                                Directory.Move(oldDirectory, newDirectory);
+                                if (Directory.Exists(item.FilePath))
+                                {
+                                    Directory.Move(oldDirectory, newDirectory);
+
+                                    item.FilePath = path;
+                                    _context.Update(item);
+                                    await _context.SaveChangesAsync();
+                                }
                             }
-                            item.FilePath = path;
-                            _context.Update(item);
-                            await _context.SaveChangesAsync();
                         }
                     }
                 }
@@ -379,6 +409,21 @@ public class ArchiveRepository : IArchiveRepository
             .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0")}", year)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "")
+    {
+
+        int submit = (int)GlobalConst.STATUS.Submit;
+
+        var data = await _context.TrxArchives
+            .Include(x => x.ArchiveType)
+            .Include(x => x.Creator)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+            .Where(x => x.SubSubjectClassificationId == subSubjectId && x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.StatusId == submit)
+            //.Where($"{"TrxMediaStorageInActiveDetails.MediaStorageInActive.StatusId == @0"}", submit)
+            .ToListAsync();
+        return data;
     }
 
     public Task<int> Submit(Guid ArchiveId)
