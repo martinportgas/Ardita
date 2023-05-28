@@ -56,4 +56,42 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
             throw;
         }
     }
+
+    public async Task<int> Insert(TrxMediaStorageInActive model, string[] listSts, string[] listArchive)
+    {
+        await Task.Delay(0);
+        List<TrxMediaStorageInActiveDetail> detail = new();
+        string stsId;
+        string sort;
+        string archiveId;
+
+        foreach (var item in listSts)
+        {
+            string[] words = item!.Split('#');
+            stsId = words[0];
+            sort = words[1];
+
+            foreach (var archive in listArchive)
+            {
+                string[] wordsTwo = archive!.Split('#');
+                archiveId = wordsTwo[0];
+                var sortArchive = wordsTwo[1];
+
+                if (sort == sortArchive)
+                {
+                    TrxMediaStorageInActiveDetail detailTwo = new()
+                    {
+                        SubTypeStorageId = new Guid(stsId),
+                        ArchiveId = new Guid(archiveId),
+                        Sort = Convert.ToInt16(sort),
+                        CreatedBy = model.CreatedBy,
+                        CreatedDate = model.CreatedDate
+                    };
+                    detail.Add(detailTwo);
+                }
+            }
+        }
+
+        return await _mediaStorageInActiveRepository.Insert(model, detail);
+    }
 }

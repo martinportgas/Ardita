@@ -102,6 +102,7 @@
                                             <label>Sub Subject Classifications</label>
                                             <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                    asp-for="SubSubjectClassificationId"
                                                     data-placeholder="-- Select Sub Subject Classification --">
                                                 <option value=""></option>
                                             </select>
@@ -193,6 +194,23 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    @if (form.isSubmitForm)
+                                            {
+                                                <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Save">
+                                                    @Html.Raw(form.SaveText)
+                                                </button>
+                                                @if(form.CurrentAction != GlobalConst.Remove)
+                                                {
+                                                    <button
+                                                        class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Submit">
+                                                        @Html.Raw(form.SubmitText)
+                                                    </button>
+                                                }
+                                            }
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -209,6 +227,8 @@
         var totalDetail = 0;
         var currentVolume;
         var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
+        var listArchive = new Array();
+
 
         $(function () {
             initDropdown();
@@ -222,14 +242,17 @@
             });
 
             $("#btn-add-sts").click(function () {
-                if ($("#txtSubTypeStorageId").val() == "") {
+                var stsId = $("#txtSubTypeStorageId").val();
+                var sort = $(".sts").length + 1;
+
+                if (stsId == "") {
                     alert("Pilih Dulu Sub Type Storage");
                     return false;
                 }
 
                 totalDetail += 1;
 
-                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2" type="button" onclick="addArchive(${totalDetail})">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
+                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
 
                 getSubSubjectClassificationById($('#txtSubTypeStorageId').val(), totalDetail);
                 initDropdown();
@@ -237,41 +260,148 @@
             });
         });
 
-        function addArchive(totalDetail) 
-        {
+        function isFull(newVolume, totalDetail) {
 
-            $.ajax({
-                url: url,
-                type: "@GlobalConst.GET",
-                data: { Id: $("#txtArchiveId_" + totalDetail).val() },
-                dataType: "@GlobalConst.JSON",
-                contentType: "@GlobalConst.APPLICATIONJSON",
-                success: function (data) {
-                    initArchive(totalDetail, data.archiveId, data.archiveCode, data.titleArchive, data.archiveCreator, data.volume)
-                },
-                error: function () {
-                    swal({
-                        title: "Data Not Found",
-                        text: "Data Archive Not Found! Call Administrator",
-                        showConfirmButton: true,
-                        allowOutsideClick: false,
-                        type: "warning"
-                    });
+            var totalVolumeSts = 0;
+
+            $(".volume_" + totalDetail).each(function() {
+                var volume = $(this).html();
+                totalVolumeSts = parseInt(totalVolumeSts) + parseInt(volume);
+            });
+
+            totalVolumeSts = totalVolumeSts + parseInt(newVolume);
+
+            if (totalVolumeSts > parseInt($("#sts-volume-" + totalDetail).text())) {
+                alert("Volume Sub Type Storage Is Not Enough");
+                return true;
+            }
+
+            return false;
+        }
+
+        function addArchive(totalDetail, sort) 
+        {
+            var isDuplicated = false;
+
+            $(".archive-id").each(function() {
+                var id = $(this).html();
+                if (id == $("#txtArchiveId_" + totalDetail).val()) {
+                    alert("duplicated");
+                    isDuplicated = true;
                 }
             });
 
-            
+            if (!isDuplicated) {
+                    $.ajax({
+                    url: url,
+                    type: "@GlobalConst.GET",
+                    data: { Id: $("#txtArchiveId_" + totalDetail).val() },
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
+                    success: function (data) {
+                        if (!isFull(data.volume, totalDetail)) {
+                            initArchive(totalDetail, data.archiveId, data.archiveCode, data.titleArchive, data.archiveCreator, data.volume, sort)
+                        }
+                    },
+                    error: function () {
+                        swal({
+                            title: "Data Not Found",
+                            text: "Data Archive Not Found! Call Administrator",
+                            showConfirmButton: true,
+                            allowOutsideClick: false,
+                            type: "warning"
+                        });
+                    }
+                });
+            }
         }
 
-        function initArchive(totalDetail, archiveId, titleArchive, archiveCreator, volume) {
-            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td>${archiveCode}</td><td>${titleArchive}</td><td>${archiveCreator}</td><td>${volume}</td></tr>`);
+        function initArchive(totalDetail, archiveId, archiveCode, titleArchive, archiveCreator, volume, sort) {
+
+
+            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td style="display: none;" class="archive-id">${archiveId}</td><td>${archiveCode}</td><td>${titleArchive}</td><td>${archiveCreator}</td><td class="volume_${totalDetail}">${volume}</td><input type="hidden" name="listArchive[]" value="${archiveId}#${sort}" class="archive"/></tr>`);
         }
 
         function deleteDetail(totalDetail) {
+            var count = 1;
+
             currentVolume = currentVolume + parseInt($("#sts-volume-" + totalDetail).text());
             $("#txtDifferenceVolume").val(currentVolume);
             $(".detail-" + totalDetail).remove();
+
+            $(".sts").each(function() {
+                var value = $(this).val().split("#");
+                var stsId = value[0];
+                var existingSort = value[1];
+                $(".archive").each(function() {
+                    var valueArchive = $(this).val().split("#");
+                    var arcId = value[0];
+                    var existingSortArc = value[1];
+                    if(existingSortArc == existingSort){
+                        $(this).val(arcId + "#" + count);
+                    }
+                });
+                $(".btnInsertArchive").each(function() {
+                    var valueBtnArchive = $(this).val();
+                    if(valueBtnArchive == existingSort){
+                        $(this).val(count);
+                    }
+                });
+                $(this).val(stsId + "#" + count);
+                count ++;
+            })
         }
+
+        function getTypeStorageById(id) {
+            var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+                    $("#txtTotalVolume").val(data.volume);
+                    $("#txtDifferenceVolume").val(data.volume);
+                    currentVolume = $('#txtDifferenceVolume').val();
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
+        function getSubSubjectClassificationById(id, sort) {
+            var url = '@Url.Action(GlobalConst.BindSubTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+
+                    currentVolume = currentVolume - data.volume;
+                    if (currentVolume < 0) {
+                        currentVolume = currentVolume + data.volume;
+                        alert("Volume Type Storage Not Enough!");
+                        $(".detail-" + sort).remove();
+                        return false;
+                    }
+
+                    $("#sts-code-" + sort).html('<b>' + data.subTypeStorageCode + '</b>');
+                    $("#sts-name-" + sort).html('<b>' + data.subTypeStorageName + '</b>');
+                    $("#sts-volume-" + sort).html('<b>' + data.volume + '</b>');
+
+
+                    $("#txtDifferenceVolume").val(currentVolume);
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
 
         function initDropdown() {
             $('#txtArchiveUnitId').on('change', function () {
@@ -562,56 +692,5 @@
                 }
             });
         }
-
-        function getTypeStorageById(id) {
-            var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
-            $.ajax({
-                url: url,
-                type: "@GlobalConst.GET",
-                data: { Id: id },
-                dataType: "@GlobalConst.JSON",
-                contentType: "@GlobalConst.APPLICATIONJSON",
-                success: function (data) {
-                    $("#txtTotalVolume").val(data.volume);
-                    $("#txtDifferenceVolume").val(data.volume);
-                    currentVolume = $('#txtDifferenceVolume').val();
-                },
-                error: function () {
-                    alert("Type Storage Not Found");
-                }
-            });
-        }
-
-        function getSubSubjectClassificationById(id, sort) {
-            var url = '@Url.Action(GlobalConst.BindSubTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
-            $.ajax({
-                url: url,
-                type: "@GlobalConst.GET",
-                data: { Id: id },
-                dataType: "@GlobalConst.JSON",
-                contentType: "@GlobalConst.APPLICATIONJSON",
-                success: function (data) {
-
-                    currentVolume = currentVolume - data.volume;
-                    if (currentVolume < 0) {
-                        alert("penuh");
-                        $(".detail-" + sort).remove();
-                        totalDetail = totalDetail - 1;
-                        return false;
-                    }
-
-                    $("#sts-code-" + sort).html('<b>' + data.subTypeStorageCode + '</b>');
-                    $("#sts-name-" + sort).html('<b>' + data.subTypeStorageName + '</b>');
-                    $("#sts-volume-" + sort).html('<b>' + data.volume + '</b>');
-
-
-                    $("#txtDifferenceVolume").val(currentVolume);
-                },
-                error: function () {
-                    alert("Type Storage Not Found");
-                }
-            });
-        }
-
     </script>
 }

@@ -60,6 +60,35 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         return View(GlobalConst.Form, new TrxMediaStorageInActive());
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Save(TrxMediaStorageInActive model)
+    {
+        if (model is not null)
+        {
+
+            var listSts = Request.Form[GlobalConst.listSts].ToArray();
+            var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
+
+            model.StatusId = Request.Form[GlobalConst.Submit].ToString() == GlobalConst.Submit ? (int)GlobalConst.STATUS.Submit : (int)GlobalConst.STATUS.Draft;
+
+
+            if (model.MediaStorageInActiveId != Guid.Empty)
+            {
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                //await MediaStorageInActiveService.Update(model, archiveId);
+            }
+            else
+            {
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                model.CreatedDate = DateTime.Now;
+                await MediaStorageInActiveService.Insert(model, listSts!, listArchive!);
+            }
+        }
+        return RedirectToIndex();
+    }
+
     protected async Task BindAllDropdown()
     {
         ViewBag.listSubSubject = await BindSubSubjectClasscifications();
@@ -73,4 +102,6 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listRow = await BindRows();
         ViewBag.listSubTypeStorage = await BindSubTypeStorage();
     }
+
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive });
 }

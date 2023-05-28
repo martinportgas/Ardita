@@ -123,4 +123,33 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         return results.Distinct();
 
     }
+
+    public async Task<int> Insert(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail)
+    {
+        int result = 0;
+
+        if (model is not null)
+        {
+            foreach (var e in _context.ChangeTracker.Entries())
+            {
+                e.State = EntityState.Detached;
+            }
+            model.IsActive = true;
+
+            _context.Entry(model).State = EntityState.Added;
+            await _context.SaveChangesAsync();
+
+            if (detail.Any())
+            {
+                foreach (var item in detail)
+                {
+                    item.MediaStorageInActiveId = model.MediaStorageInActiveId;
+                    _context.TrxMediaStorageInActiveDetails.Add(item);
+                    result += await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        return result;
+    }
 }

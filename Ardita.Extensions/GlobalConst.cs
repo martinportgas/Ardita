@@ -148,6 +148,8 @@ public static class GlobalConst
     public const string Files = "files";
     public const string DetailArray = "detail[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
+    public const string listSts = "listSts[]";
+    public const string listArchive = "listArchive[]";
     public const string InitialCode = "Auto Generated";
     public const string wwwroot = "wwwroot";
     public const string Internal = "Internal";

@@ -26,4 +26,6 @@ public partial class TrxMediaStorageInActiveDetail
     public virtual TrxArchive Archive { get; set; } = null!;
 
     public virtual TrxMediaStorageInActive MediaStorageInActive { get; set; } = null!;
+
+    public virtual MstSubTypeStorage? SubTypeStorage { get; set; }
 }
