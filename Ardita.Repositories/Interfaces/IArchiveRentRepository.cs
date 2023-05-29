@@ -13,6 +13,8 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<TrxArchiveRent>> GetById(Guid id);
         Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id, string form);
         Task<IEnumerable<object>> GetRetrievalDetailByArchiveRentId(Guid ArchiveId, int sort);
+        Task<IEnumerable<object>> GetReturnByArchiveRentId(Guid id, string form);
+        Task<IEnumerable<object>> GetReturnDetailByArchiveRentId(Guid ArchiveId, int sort);
         Task<IEnumerable<TrxArchiveRent>> GetAll();
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<IEnumerable<object>> GetApprovalByFilterModel(DataTableModel model);

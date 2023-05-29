@@ -89,7 +89,7 @@
                                         <label>Scan QR Box</label>
                                         <input type="text" placeholder="" id="txtQRBox" class="form-control" />
                                     </div>
-                                  
+
                                     <div class="form-group">
                                         <label>Klasifikasi</label>
                                         <input type="text" class="form-control" id="txtClassificationName" readonly />
@@ -97,7 +97,7 @@
                                     <div class="form-group">
                                         <label>Judul</label>
                                         <input type="text" class="form-control" id="txtTitleArchive" readonly />
-                                       
+
                                     </div>
                                     <div class="form-group">
                                         <label>Pencipta</label>
@@ -111,20 +111,7 @@
                                         <label>Tanggal Pinjam</label>
                                         <input type="text" class="form-control" id="txtRequestedDate" readonly />
                                     </div>
-                                    <div class="form-group" id="divValidateQRBox">
-                                        <label>Validasi QR Box</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="txtValidateQRBox" />
-                                            <input type="hidden" id="txtValidateQRBoxhdn" value="false" />
-                                            <div class="input-group-append p-2" id="checkValidateTrue" style="display: none">
-                                               <i class="fa fa-check-circle" style="color: green; font-size: 16px"></i>
-                                            </div>
-                                            <div class="input-group-append p-2" id="checkValidateFalse" style="display: none">
-                                                <i class="fa fa-minus-circle" style="color: red; font-size: 16px"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                  
+
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -147,12 +134,12 @@
                                         <label>Baris</label>
                                         <input type="text" class="form-control" id="txtRow" readonly />
                                     </div>
-                                   
+
                                     <div class="form-group">
                                         <label>Tanggal Kembali</label>
                                         <input type="text" class="form-control" id="txtRequestedReturnDate" readonly />
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -172,7 +159,7 @@
                             <button class="btn btn-success float-right mr-3" id="btnSubmit" disabled>Submit</button>
                             <button class="btn btn-danger float-right mr-3" id="btnCancel">Cancel</button>
                         </div>
-                       
+
                     </div>
                 </div>
             </div>
@@ -185,60 +172,26 @@
 
         $(document).ready(function () {
 
-            if('@form.CurrentAction' == 'Detail'){
+            if ('@form.CurrentAction' == 'Detail') {
                 var detaiId = '@ViewBag.ArchiveRentId';
                 $('#txtQRBox').val(detaiId.toUpperCase());
                 $('#txtQRBox').prop('readonly', true);
                 $('#btnSubmit').hide();
-                $('#divValidateQRBox').hide();
                 searchFormDetail();
-                
+
             }
 
             $('#txtQRBox').keypress(function (e) {
                 var key = e.which;
-                if (key == 13)  
-                {
+                if (key == 13) {
                     searchFormAdd();
                 }
             });
 
-            $('#txtValidateQRBox').keypress(function(e){
-                var key = e.which;
-                if (key == 13) {
-                    $('body').toggleClass('sk-loading');
-                    $('#checkValidateTrue').hide();
-                    $('#checkValidateFalse').hide();
-                    $.ajax({
-                        'url': '@Url.Action(GlobalConst.ValidateQRBox, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
-                        'method': "GET",
-                        'contentType': 'application/json',
-                        'data': {
-                            "archiveRentId": $('#txtQRBox').val(),
-                            "mediaStorageInActiveCode": $(this).val()
-                        }
-                    }).done(function (data) {
-                        if(data){
-                            $('#txtValidateQRBoxhdn').val('true');
-                            $('#checkValidateTrue').show();
-                        }else{
-                            $('#txtValidateQRBoxhdn').val('false');
-                            $('#checkValidateFalse').show();
-                        }
 
-                        if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
-                            $('#btnSubmit').prop('disabled', false);
-                        else
-                            $('#btnSubmit').prop('disabled', true);
-
-                        $('body').toggleClass('sk-loading');
-                    });
-                }
-            });
-
-            $('#btnSubmit').click(function(e){
+            $('#btnSubmit').click(function (e) {
                 e.preventDefault();
-                
+
                 swal({
                     title: "Do You Want To submit It?",
                     text: "Please check Information before Submiting!",
@@ -258,8 +211,8 @@
                         }
                     });
             });
-            $('#btnCancel').click(function(e){
-                window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+            $('#btnCancel').click(function (e) {
+                window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })';
             });
         });
 
@@ -294,53 +247,51 @@
         function checkValidate(e) {
             var oTable = $('#tbl').dataTable();
             var rowcollection = oTable.$(".check");
-            
+
 
             rowcollection.each(function (index, elem) {
-                if ($(elem).prop('checked') == false)
-                {
-                   allChecked = false;
-                   return false;
+                if ($(elem).prop('checked') == false) {
+                    allChecked = false;
+                    return false;
                 }
-                else
-                {
+                else {
                     allChecked = true;
                 }
             });
 
-            if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
+            if (allChecked)
                 $('#btnSubmit').prop('disabled', false);
             else
                 $('#btnSubmit').prop('disabled', true);
 
         }
 
-        function submit(){
+        function submit() {
             $('body').toggleClass('sk-loading');
             var archiveRentId = $('#txtQRBox').val();
             $.ajax({
-                'url': '@Url.Action(GlobalConst.UpdateRetrieval, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'url': '@Url.Action(GlobalConst.UpdateReturn, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
-                'data': { 
+                'data': {
                     "archiveRentId": archiveRentId
                 }
             }).done(function (data) {
                 $('body').toggleClass('sk-loading');
                 swal({ title: "Pesan!", text: "Request Submitted", type: "success" }, function () {
-                    window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                    window.location.href = '@Url.Action(GlobalConst.Index, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })';
                 });
-          
+
             });
         }
 
-        function searchFormAdd(){
+        function searchFormAdd() {
             $('body').toggleClass('sk-loading');
             $.ajax({
-                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
-                'data': { 
+                'data': {
                     "id": $('#txtQRBox').val(),
                     "form": "Add"
                 }
@@ -352,6 +303,7 @@
                     $('#txtUserEmail').text(data[0].userEmail);
                     $('#txtUserCompany').text(data[0].userCompany);
                     $('#txtUserPhone').text(data[0].userPhone);
+
                     $('#txtClassificationName').val(data[0].classificationName);
                     $('#txtTitleArchive').val(data[0].titleArchive);
                     $('#txtCreatorName').val(data[0].creatorName);
@@ -367,7 +319,7 @@
                     $('#txtArchiveSort').val(data[0].archiveSort);
 
                     $.ajax({
-                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                         'method': "GET",
                         'contentType': 'application/json',
                         'data': {
@@ -402,6 +354,7 @@
                     $('#txtUserEmail').text('');
                     $('#txtUserCompany').text('');
                     $('#txtUserPhone').text('');
+
                     $('#txtClassificationName').val('');
                     $('#txtTitleArchive').val('');
                     $('#txtCreatorName').val('');
@@ -417,7 +370,7 @@
                     $('#txtArchiveSort').val('');
                     $('body').toggleClass('sk-loading');
                     swal({ title: "Pesan!", text: "Request not found!", type: "error" }, function () {
-                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })';
                     });
                 }
             });
@@ -425,12 +378,12 @@
         function searchFormDetail() {
             $('body').toggleClass('sk-loading');
             $.ajax({
-                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
-                'data': { 
+                'data': {
                     "id": $('#txtQRBox').val(),
-                    "form" : "Detail"
+                    "form": "Detail"
                 }
             }).done(function (data) {
                 if (data.length > 0) {
@@ -440,6 +393,7 @@
                     $('#txtUserEmail').text(data[0].userEmail);
                     $('#txtUserCompany').text(data[0].userCompany);
                     $('#txtUserPhone').text(data[0].userPhone);
+
                     $('#txtClassificationName').val(data[0].classificationName);
                     $('#txtTitleArchive').val(data[0].titleArchive);
                     $('#txtCreatorName').val(data[0].creatorName);
@@ -455,7 +409,7 @@
                     $('#txtArchiveSort').val(data[0].archiveSort);
 
                     $.ajax({
-                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                        'url': '@Url.Action(GlobalConst.GetSubDetail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                         'method': "GET",
                         'contentType': 'application/json',
                         'data': {
@@ -490,6 +444,7 @@
                     $('#txtUserEmail').text('');
                     $('#txtUserCompany').text('');
                     $('#txtUserPhone').text('');
+
                     $('#txtClassificationName').val('');
                     $('#txtTitleArchive').val('');
                     $('#txtCreatorName').val('');
@@ -505,7 +460,7 @@
                     $('#txtArchiveSort').val('');
                     $('body').toggleClass('sk-loading');
                     swal({ title: "Pesan!", text: "Request not found!", type: "error" }, function () {
-                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })';
+                        window.location.href = '@Url.Action(GlobalConst.Add, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })';
                     });
                 }
             });

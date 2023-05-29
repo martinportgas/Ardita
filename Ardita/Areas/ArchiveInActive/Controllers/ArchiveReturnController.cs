@@ -28,9 +28,64 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
-                var result = await _archiveRentService.GetRetrievalList(model);
+                var result = await _archiveRentService.GetReturnList(model);
                 return Json(result);
 
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public override async Task<IActionResult> Add()
+        {
+            var model = new TrxArchiveRent();
+
+            return View(GlobalConst.Form, model);
+        }
+        public override async Task<IActionResult> Detail(Guid id)
+        {
+            var model = new TrxArchiveRent();
+            ViewBag.ArchiveRentId = id;
+            return View(GlobalConst.Form, model);
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetDetail(Guid Id, string form)
+        {
+            try
+            {
+                var result = await _archiveRentService.GetReturnByArchiveRentId(Id, form);
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetSubDetail(Guid ArchiveId, int sort)
+        {
+            try
+            {
+                var result = await _archiveRentService.GetReturnDetailByArchiveRentId(ArchiveId, sort);
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> UpdateReturn(Guid ArchiveRentId)
+        {
+            try
+            {
+                var result = await _archiveRentService.UpdateArchiveRent(ArchiveRentId, AppUsers.CurrentUser(User).UserId);
+                return Json(result);
             }
             catch (Exception ex)
             {

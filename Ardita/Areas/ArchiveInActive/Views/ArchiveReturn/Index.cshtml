@@ -27,7 +27,7 @@
                 <div class="ibox-title">
                     <h5>Peminjaman Arsip</h5>
                     <div class="ibox-tools">
-                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
+                        <a href="@Url.Action(GlobalConst.Add, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -58,7 +58,7 @@
                 scrollX: true,
                 filter: true,
                 ajax: {
-                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive })',
+                    "url": '@Url.Action(GlobalConst.GetData, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
                     "type": "POST",
                     "datatype": "json",
                 },
@@ -77,7 +77,7 @@
                     {
                         "data": "trxArchiveRentId", "name": "trxArchiveRentId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
                             return detail;
                         }

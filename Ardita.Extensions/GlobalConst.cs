@@ -123,6 +123,7 @@ public static class GlobalConst
     public const string GetFileArchive = "GetFileArchive";
     public const string ValidateQRBox = "ValidateQRBox";
     public const string UpdateRetrieval = "UpdateRetrieval";
+    public const string UpdateReturn = "UpdateReturn";
 
     //Html helper
     public const string Required = "required";
@@ -148,6 +149,8 @@ public static class GlobalConst
     public const string Files = "files";
     public const string DetailArray = "detail[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
+    public const string listSts = "listSts[]";
+    public const string listArchive = "listArchive[]";
     public const string InitialCode = "Auto Generated";
     public const string wwwroot = "wwwroot";
     public const string Internal = "Internal";
@@ -194,6 +197,10 @@ public static class GlobalConst
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
     public const string BindTypeStorageByParam = "BindTypeStorageByParam";
+    public const string BindRowArchiveInActiveByLevelId = "BindRowArchiveInActiveByLevelId";
+    public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
+    public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
+    public const string BindSubTypeStorageById = "BindSubTypeStorageById";
 
     //Web Component
     public const string GET = "GET";

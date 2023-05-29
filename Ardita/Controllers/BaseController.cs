@@ -507,6 +507,16 @@ public abstract class BaseController<T> : Controller
         list = data.Where(x => x.LevelId == id && x.TrxMediaStorages.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
+    public async Task<JsonResult> BindRowArchiveInActiveByLevelId(string Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        List<TrxRow> list = new();
+        Guid id = new(Id);
+
+        var data = await _rowService.GetAll();
+        list = data.Where(x => x.LevelId == id && x.TrxMediaStorageInActives.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
+        return Json(list);
+    }
     public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
@@ -548,6 +558,7 @@ public abstract class BaseController<T> : Controller
         ArchiveViewModel result = new()
         {
             ArchiveId = data.ArchiveId,
+            ArchiveCode = data.ArchiveCode!,
             TitleArchive = data.TitleArchive,
             TypeArchive = data.ArchiveType.ArchiveTypeName,
             TypeSender = data.TypeSender,
@@ -706,6 +717,34 @@ public abstract class BaseController<T> : Controller
         var data = await _typeStorageService.GetById(Id);
         return Json(data);
     }
+    public async Task<JsonResult> BindSubTypeStorageByTypeStorageId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _subTypeStorageService.GetAllByTypeStorageId(Id);
+        var result = data.Where(x => x.SubTypeStorageName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubTypeStorageName).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubTypeStorage(string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _subTypeStorageService.GetAll();
+        var result = data.Where(x => x.SubTypeStorageName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubTypeStorageName).ToList();
+        return Json(result);
+    }
+
+    public async Task<JsonResult> BindArchiveActiveBySubjectId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        var result = data.Where(x => x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubTypeStorageById(Guid Id)
+    {
+        var data = await _subTypeStorageService.GetById(Id);
+        return Json(data.FirstOrDefault());
+    }
     #endregion
+
     #endregion
 }

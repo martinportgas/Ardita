@@ -74,34 +74,20 @@
                                             <input type="hidden" asp-for="MediaStorageInActiveId" value="@Model.MediaStorageInActiveId">
                                         </div>
                                         <div class="form-group">
-                                            <label>Sub Subject Classifications</label>
-                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                            <label>Archive Unit</label>
+                                            <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveUnitId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Archive Unit --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
+
                                         <div class="form-group">
                                             <label>Type Storage</label>
                                             <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtTypeStorageId" class="select2_demo_1 form-control" asp-for="TypeStorageId"
                                                     data-placeholder="-- Select Type Storage --">
                                                 <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Archive Year</label>
-                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtArchiveYear" class="select2_demo_1 form-control" asp-for="ArchiveYear"
-                                                    data-placeholder="-- Select Archive Year --">
-                                                    @for (int i = 10; i > 0; i--)
-                                                    {
-                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                    }
-                                                    @for (int i = 0; i < 10; i++)
-                                                    {
-                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                    }
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -113,19 +99,21 @@
                                             <input type="text" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control" readonly />
                                         </div>
                                         <div class="form-group">
+                                            <label>Sub Subject Classifications</label>
+                                            <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                    asp-for="SubSubjectClassificationId"
+                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Description</label>
                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Archive Unit</label>
-                                            <select asp-for="TypeStorage.ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtArchiveUnitId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Archive Unit --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
+
                                         <div class="form-group">
                                             <label>Floor</label>
                                             <select asp-for="Row!.Level!.Rack!.Room!.FloorId!" asp-items="ViewBag.listFloor" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
@@ -161,9 +149,28 @@
                                         <div class="form-group">
                                             <label>Row</label>
                                             <select asp-for="RowId" asp-items="ViewBag.listRow" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtRowId" asp-for="RowId" class="select2_demo_1 form-control"
+                                                    id="txtRowId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Row --">
                                                 <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Year</label>
+                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveYear" class="select2_demo_1 form-control" asp-for="ArchiveYear"
+                                                    data-placeholder="-- Select Archive Year --">
+                                                @for (int i = -20; i < 0; i++)
+                                                {
+                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                }
+                                                @if (form.CurrentAction == GlobalConst.Add)
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -172,24 +179,37 @@
                                     <div class="col-sm-12 b-r">
                                         <div class="form-group">
                                             <label>Sub Type Storage</label>
-                                            <select asp-items="ViewBag.listTypeStorage" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubTypeStorageId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Type Storage --">
                                                 <option value=""></option>
                                             </select>
+
+                                            <button class="btn btn-sm @form.ButtonSubmitClass m-t-n-xs mr-1 mt-1"
+                                                    type="button" id="btn-add-sts">
+                                                Add Sub Type Storage
+                                            </button>
                                         </div>
-                                        <table class="table table-condensed" style="border-radius: unset;width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Arsip</th>
-                                                    <th>Pemilik</th>
-                                                    <th>Volume</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
+                                        <div class="detail">
+                                        </div>
                                     </div>
+                                </div>
+                                <div>
+                                    @if (form.isSubmitForm)
+                                            {
+                                                <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Save">
+                                                    @Html.Raw(form.SaveText)
+                                                </button>
+                                                @if(form.CurrentAction != GlobalConst.Remove)
+                                                {
+                                                    <button
+                                                        class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Submit">
+                                                        @Html.Raw(form.SubmitText)
+                                                    </button>
+                                                }
+                                            }
                                 </div>
                             </form>
                         </div>
@@ -204,32 +224,214 @@
 
 @section Scripts {
     <script type="text/javascript">
-        $(function() {
+        var totalDetail = 0;
+        var currentVolume;
+        var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
+        var listArchive = new Array();
+
+
+        $(function () {
             initDropdown();
+
+            $('#txtTypeStorageId').on('change', function () {
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
+                if ($(this).val() != '') {
+                    getTypeStorageById($('#txtTypeStorageId').val());
+                }
+            });
+
+            $("#btn-add-sts").click(function () {
+                var stsId = $("#txtSubTypeStorageId").val();
+                var sort = $(".sts").length + 1;
+
+                if (stsId == "") {
+                    alert("Pilih Dulu Sub Type Storage");
+                    return false;
+                }
+
+                totalDetail += 1;
+
+                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
+
+                getSubSubjectClassificationById($('#txtSubTypeStorageId').val(), totalDetail);
+                initDropdown();
+
+            });
         });
 
-        function initDropdown() {
-            $('#txtSubSubjectClassificationId').on('change', function () {
-                $('#txtArchiveId').val('').trigger('change');
+        function isFull(newVolume, totalDetail) {
+
+            var totalVolumeSts = 0;
+
+            $(".volume_" + totalDetail).each(function() {
+                var volume = $(this).html();
+                totalVolumeSts = parseInt(totalVolumeSts) + parseInt(volume);
             });
-            $('#txtArchiveId').select2({
+
+            totalVolumeSts = totalVolumeSts + parseInt(newVolume);
+
+            if (totalVolumeSts > parseInt($("#sts-volume-" + totalDetail).text())) {
+                alert("Volume Sub Type Storage Is Not Enough");
+                return true;
+            }
+
+            return false;
+        }
+
+        function addArchive(totalDetail, sort) 
+        {
+            var isDuplicated = false;
+
+            $(".archive-id").each(function() {
+                var id = $(this).html();
+                if (id == $("#txtArchiveId_" + totalDetail).val()) {
+                    alert("duplicated");
+                    isDuplicated = true;
+                }
+            });
+
+            if (!isDuplicated) {
+                    $.ajax({
+                    url: url,
+                    type: "@GlobalConst.GET",
+                    data: { Id: $("#txtArchiveId_" + totalDetail).val() },
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
+                    success: function (data) {
+                        if (!isFull(data.volume, totalDetail)) {
+                            initArchive(totalDetail, data.archiveId, data.archiveCode, data.titleArchive, data.archiveCreator, data.volume, sort)
+                        }
+                    },
+                    error: function () {
+                        swal({
+                            title: "Data Not Found",
+                            text: "Data Archive Not Found! Call Administrator",
+                            showConfirmButton: true,
+                            allowOutsideClick: false,
+                            type: "warning"
+                        });
+                    }
+                });
+            }
+        }
+
+        function initArchive(totalDetail, archiveId, archiveCode, titleArchive, archiveCreator, volume, sort) {
+
+
+            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td style="display: none;" class="archive-id">${archiveId}</td><td>${archiveCode}</td><td>${titleArchive}</td><td>${archiveCreator}</td><td class="volume_${totalDetail}">${volume}</td><input type="hidden" name="listArchive[]" value="${archiveId}#${sort}" class="archive"/></tr>`);
+        }
+
+        function deleteDetail(totalDetail) {
+            var count = 1;
+
+            currentVolume = currentVolume + parseInt($("#sts-volume-" + totalDetail).text());
+            $("#txtDifferenceVolume").val(currentVolume);
+            $(".detail-" + totalDetail).remove();
+
+            $(".sts").each(function() {
+                var value = $(this).val().split("#");
+                var stsId = value[0];
+                var existingSort = value[1];
+                $(".archive").each(function() {
+                    var valueArchive = $(this).val().split("#");
+                    var arcId = value[0];
+                    var existingSortArc = value[1];
+                    if(existingSortArc == existingSort){
+                        $(this).val(arcId + "#" + count);
+                    }
+                });
+                $(".btnInsertArchive").each(function() {
+                    var valueBtnArchive = $(this).val();
+                    if(valueBtnArchive == existingSort){
+                        $(this).val(count);
+                    }
+                });
+                $(this).val(stsId + "#" + count);
+                count ++;
+            })
+        }
+
+        function getTypeStorageById(id) {
+            var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+                    $("#txtTotalVolume").val(data.volume);
+                    $("#txtDifferenceVolume").val(data.volume);
+                    currentVolume = $('#txtDifferenceVolume').val();
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
+        function getSubSubjectClassificationById(id, sort) {
+            var url = '@Url.Action(GlobalConst.BindSubTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';
+            $.ajax({
+                url: url,
+                type: "@GlobalConst.GET",
+                data: { Id: id },
+                dataType: "@GlobalConst.JSON",
+                contentType: "@GlobalConst.APPLICATIONJSON",
+                success: function (data) {
+
+                    currentVolume = currentVolume - data.volume;
+                    if (currentVolume < 0) {
+                        currentVolume = currentVolume + data.volume;
+                        alert("Volume Type Storage Not Enough!");
+                        $(".detail-" + sort).remove();
+                        return false;
+                    }
+
+                    $("#sts-code-" + sort).html('<b>' + data.subTypeStorageCode + '</b>');
+                    $("#sts-name-" + sort).html('<b>' + data.subTypeStorageName + '</b>');
+                    $("#sts-volume-" + sort).html('<b>' + data.volume + '</b>');
+
+
+                    $("#txtDifferenceVolume").val(currentVolume);
+                },
+                error: function () {
+                    alert("Type Storage Not Found");
+                }
+            });
+        }
+
+
+        function initDropdown() {
+            $('#txtArchiveUnitId').on('change', function () {
+                $('#txtTypeStorageId').val('').trigger('change');
+                $('#txtFloorId').val('').trigger('change');
+                $('#txtSubSubjectClassificationId').val('').trigger('change');
+                $("#txtTotalVolume").val(0);
+                $("#txtDifferenceVolume").val(0);
+            });
+
+            $('#txtSubSubjectClassificationId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
-                placeholder: '-- Select Archive --',
+                placeholder: '-- Select Sub-Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindArchivesBySubSubjectClassificationId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtSubSubjectClassificationId').val(),
+                            id: $('#txtArchiveUnitId').val(),
+                            param: params.term
                         }
                         return query;
                     },
                     processResults: function (data) {
                         var dataResult = $.map(data, function (item) {
+
                             return {
-                                text: item.titleArchive,
-                                id: item.archiveId
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
                             }
                         });
                         return {
@@ -239,14 +441,44 @@
                 }
             });
 
-            $('#txtArchiveUnitId').on('change', function () {
-                $('#txtTypeStorageId').val('').trigger('change');
-                $('#txtFloorId').val('').trigger('change');
-                $("#listdtl").empty();
-                listArchiveId = [];
-                $("#txtTotalVolume").val(0);
-                $("#txtDifferenceVolume").val(0);
+            $('#txtSubSubjectClassificationId').on('change', function () {
+                for (let i = 1; i <= totalDetail; i++) {
+                    $('#txtArchiveId_' + i).val('').trigger('change');
+                }
             });
+
+            for (let i = 1; i <= totalDetail; i++) {
+                $('#txtArchiveId_' + i).select2({
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    placeholder: '-- Select Archive --',
+                    ajax: {
+                        url: '@Url.Action(GlobalConst.BindArchiveActiveBySubjectId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                id: $('#txtSubSubjectClassificationId').val(),
+                                param: params.term
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            var dataResult = $.map(data, function (item) {
+                                return {
+                                    text: item.archiveCode + " | " + item.titleArchive,
+                                    id: item.archiveId
+                                }
+                            });
+                            return {
+                                results: dataResult
+                            };
+                        }
+                    }
+                });
+
+            }
+
+
             $('#txtTypeStorageId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -275,6 +507,39 @@
                     }
                 }
             });
+
+            $('#txtTypeStorageId').on('change', function () {
+                $('#txtSubTypeStorageId').val('').trigger('change');
+            });
+
+            $('#txtSubTypeStorageId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub Type Storage --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubTypeStorageByTypeStorageId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtTypeStorageId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.subTypeStorageCode + ' - ' + item.subTypeStorageName + ' - ' + item.volume,
+                                id: item.subTypeStorageId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
             $('#txtFloorId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -284,7 +549,7 @@
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtArchiveUnitId').val(),,
+                            id: $('#txtArchiveUnitId').val(),
                             param: params.term
                         }
                         return query;
@@ -311,7 +576,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRoomActiveByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -404,11 +669,12 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRowByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRowArchiveInActiveByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
                             id: $('#txtLevelId').val(),
+                            param: params.term
                         }
                         return query;
                     },

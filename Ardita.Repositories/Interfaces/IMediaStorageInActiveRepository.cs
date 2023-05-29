@@ -10,4 +10,6 @@ public interface IMediaStorageInActiveRepository
     Task<TrxMediaStorageInActiveDetail> GetDetailByArchiveId(Guid id);
     Task<IEnumerable<object>> GetDetailByArchiveIdAndSort(Guid id, int sort);
     Task<IEnumerable<object>> GetDetailArchive(Guid id);
+    Task<int> Insert(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail);
+
 }

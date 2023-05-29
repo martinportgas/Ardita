@@ -195,8 +195,16 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
                 .Include(x => x.Archive.Creator.ArchiveUnit)
                 .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Include(x => x.User.Employee.Company)
+                .Include(x => x.User.IdxUserRoles).ThenInclude(x => x.Role)
                 .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.WaitingForRetrieval : x.StatusId == (int)GlobalConst.STATUS.Retrieved))
-                .Select(x => new { 
+                .Select(x => new {
+                    UserNik = x.User.Employee.Nik,
+                    UserName = x.User.Employee.Name,
+                    UserEmail = x.User.Employee.Email,
+                    UserPhone = x.User.Employee.Phone,
+                    UserCompany = x.User.Employee.Company.CompanyName,
+                    UserRoleName = x.User.IdxUserRoles.FirstOrDefault().Role.Name,
                     ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
                     ArchiveId = x.Archive.ArchiveId,
                     TitleArchive = x.Archive.TitleArchive,
@@ -256,8 +264,24 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId) 
         {
-            int status = (int)GlobalConst.STATUS.Retrieved;
-            await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET retrieval_date = {DateTime.Now}, status_id = {status}, updated_by ={UserId} WHERE trx_archive_rent_id = {ArchiveRentId}");
+            int status = 0;
+
+            var result = await _context.TrxArchiveRents.FirstOrDefaultAsync(x => x.TrxArchiveRentId == ArchiveRentId);
+
+            if (result != null)
+            {
+                if (result.StatusId == (int)GlobalConst.STATUS.WaitingForRetrieval)
+                {
+                    status = (int)GlobalConst.STATUS.Retrieved;
+                    await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET retrieval_date = {DateTime.Now}, status_id = {status}, updated_by ={UserId} WHERE trx_archive_rent_id = {ArchiveRentId}");
+                }
+                else
+                {
+                    status = (int)GlobalConst.STATUS.Return;
+                    await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET return_date = {DateTime.Now}, status_id = {status}, updated_by ={UserId} WHERE trx_archive_rent_id = {ArchiveRentId}");
+                }
+            }
+            
             await _context.SaveChangesAsync();
             return true;
         }
@@ -269,7 +293,7 @@ namespace Ardita.Repositories.Classess
                .Include(x => x.User.Employee)
                .Include(x => x.Archive)
                .Include(x => x.Status)
-               .Where(x => x.ReturnDate != null)
+               .Where(x => x.StatusId == (int)GlobalConst.STATUS.Return)
                .Where($"(User.Employee.Name+RequestedDate.ToString()+RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                .Skip(model.skip).Take(model.pageSize)
@@ -294,13 +318,70 @@ namespace Ardita.Repositories.Classess
             .Include(x => x.User.Employee)
             .Include(x => x.Archive)
             .Include(x => x.Status)
-            .Where(x => x.ReturnDate != null)
+           .Where(x => x.StatusId == (int)GlobalConst.STATUS.Return)
             .Where($"(User.Employee.Name+RequestedDate.ToString()+ReturnDate.ToString()).Contains(@0)", model.searchValue)
             .CountAsync();
 
             return result;
         }
+
+        public async Task<IEnumerable<object>> GetReturnByArchiveRentId(Guid Id, string form)
+        {
+            var result = await _context.TrxArchiveRents
+                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Include(x => x.User.Employee.Company)
+                .Include(x => x.User.IdxUserRoles).ThenInclude(x => x.Role)
+                .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.Retrieved : x.StatusId == (int)GlobalConst.STATUS.Return))
+                .Select(x => new {
+                    UserNik = x.User.Employee.Nik,
+                    UserName = x.User.Employee.Name,
+                    UserEmail = x.User.Employee.Email,
+                    UserPhone = x.User.Employee.Phone,
+                    UserCompany = x.User.Employee.Company.CompanyName,
+                    UserRoleName = x.User.IdxUserRoles.FirstOrDefault().Role.Name,
+                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.Archive.ArchiveId,
+                    TitleArchive = x.Archive.TitleArchive,
+                    CreatorName = x.Archive.Creator.CreatorName,
+                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName,
+                    RowName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
+                    LevelName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
+                    RackName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
+                    RoomName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
+                    FloorName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
+                    RequestedDate = x.RequestedDate,
+                    RequestedReturnDate = x.RequestedReturnDate,
+                    ArchiveSort = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
+                })
+                .ToListAsync();
+
+            return result;
+
+
+        }
+        public async Task<IEnumerable<object>> GetReturnDetailByArchiveRentId(Guid ArchiveId, int sort)
+        {
+            var result = await _context.TrxMediaStorageInActiveDetails
+                .Include(x => x.MediaStorageInActive)
+                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.Archive.Creator.ArchiveUnit)
+                .Where(x => x.ArchiveId == ArchiveId || x.Sort == sort)
+                .Select(x => new {
+                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.Archive.ArchiveId,
+                    TitleArchive = x.Archive.TitleArchive,
+                    CreatorName = x.Archive.Creator.CreatorName,
+                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName
+                })
+                .ToListAsync();
+
+            return result;
+
+
+        }
         #endregion
-       
+
     }
 }
