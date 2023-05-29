@@ -583,6 +583,13 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
+    public async Task<JsonResult> BindSubjectClassificationByArchiveUnitId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _classificationSubjectService.GetAll();
+        var result = data.Where(x => x.Classification.Creator!.ArchiveUnitId == Id && x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindTypeStorageByParam(string param = "")
     {
         string[] arrParam = param.Split(',');

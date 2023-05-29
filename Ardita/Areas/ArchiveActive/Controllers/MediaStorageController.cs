@@ -16,6 +16,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     #region CTR
     public MediaStorageController(
         IClassificationSubSubjectService classificationSubSubjectService,
+        IClassificationSubjectService classificationSubjectService,
         IArchiveService archiveService,
         IArchiveUnitService archiveUnitService,
         ITypeStorageService typeStorageService,
@@ -33,6 +34,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         IArchiveTypeService archiveTypeService)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
+        _classificationSubjectService = classificationSubjectService;
         _archiveService = archiveService;
         _archiveUnitService = archiveUnitService;
         _typeStorageService = typeStorageService;
@@ -173,7 +175,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive });
     protected async Task BindAllDropdown()
     {
-        ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+        ViewBag.listSubSubject = await BindClasscificationSubjects();
         ViewBag.listArchive = await BindArchives();
         ViewBag.listArchiveUnit = await BindArchiveUnits();
         ViewBag.listTypeStorage = await BindTypeStorage();
@@ -186,7 +188,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     protected async Task BindAllDropdownArchive()
     {
         ViewBag.listGmd = await BindGmds();
-        ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
+        ViewBag.listSubSubjectClasscification = await BindClasscificationSubjects();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
         ViewBag.listArchiveOwner = await BindArchiveOwners();
         ViewBag.listArchiveType = await BindArchiveTypes();

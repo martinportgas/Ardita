@@ -20,7 +20,7 @@ public static class Label
         document.Replace(nameof(TrxRack.RackCode), data.Row!.Level!.Rack!.RackCode, false, true);
         document.Replace(nameof(TrxLevel.LevelCode), data.Row!.Level!.LevelCode, false, true);
         document.Replace(nameof(TrxRow.RowCode), data.Row!.RowCode, false, true);
-        document.Replace(nameof(TrxSubjectClassification.SubjectClassificationCode), data.SubSubjectClassification.SubjectClassification!.SubjectClassificationCode, false, true);
+        document.Replace(nameof(TrxSubjectClassification.SubjectClassificationCode), data.SubjectClassification.SubjectClassificationCode, false, true);
         document.Replace("Month", data.CreatedDate.Month.ToString("D2"), false, true);
         document.Replace("Year", data.ArchiveYear, false, true);
 

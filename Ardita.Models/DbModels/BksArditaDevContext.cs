@@ -1661,6 +1661,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.TypeClassificationId).HasColumnName("type_classification_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
@@ -1668,8 +1669,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
+            entity.HasOne(d => d.Creator).WithMany(p => p.TrxClassifications)
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_CLASSIFICATION_MST_CREATOR");
+
             entity.HasOne(d => d.TypeClassification).WithMany(p => p.TrxClassifications)
                 .HasForeignKey(d => d.TypeClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TYPE_CLASSIFICATION_ID");
         });
 
@@ -1810,7 +1817,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("media_storage_name");
             entity.Property(e => e.RowId).HasColumnName("row_id");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
-            entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
+            entity.Property(e => e.SubjectClassificationId).HasColumnName("subject_classification_id");
             entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
             entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
@@ -1828,10 +1835,10 @@ public partial class BksArditaDevContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_STATUS");
 
-            entity.HasOne(d => d.SubSubjectClassification).WithMany(p => p.TrxMediaStorages)
-                .HasForeignKey(d => d.SubSubjectClassificationId)
+            entity.HasOne(d => d.SubjectClassification).WithMany(p => p.TrxMediaStorages)
+                .HasForeignKey(d => d.SubjectClassificationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TRX_MEDIA_STORAGE_TRX_SUB_SUBJECT_CLASSIFICATION");
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_TRX_SUBJECT_CLASSIFICATION");
 
             entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.TypeStorageId)

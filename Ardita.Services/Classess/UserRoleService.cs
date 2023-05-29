@@ -41,9 +41,13 @@ namespace Ardita.Services.Classess
             return await _userRoleRepository.GetAll();
         }
 
-        public async Task<IEnumerable<IdxUserRole>> GetById(Guid id)
+        public async Task<IdxUserRole> GetById(Guid id)
         {
             return await _userRoleRepository.GetById(id);
+        }
+        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role)
+        {
+            return await _userRoleRepository.GetByUserAndRoleId(id, role);
         }
 
         public async Task<UserRoleListViewModel> GetListUserRoles(Guid Id)
@@ -118,6 +122,21 @@ namespace Ardita.Services.Classess
         public Task<int> Update(IdxUserRole model)
         {
             return _userRoleRepository.Update(model);
+        }
+
+        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
+        {
+            return await _userRoleRepository.GetIdxUserRoleByUserId(id);
+        }
+        public async Task<int> GetCountIsPrimaryByUserId(Guid id)
+        {
+            int count = 0;
+            var data = await _userRoleRepository.GetIdxUserRoleByUserId(id);
+            foreach (IdxUserRole item in data)
+            {
+                if (item.IsPrimary) count++;
+            }
+            return count;
         }
     }
 }

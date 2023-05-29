@@ -78,6 +78,10 @@
                                         <label>Nama Klasifikasi</label>
                                         <input type="text" placeholder="" id="txtPositionClassificationName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ClassificationName">
                                     </div>
+                                    <div class="form-group">
+                                        <label>Pencipta Arsip</label>
+                                        <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
+                                    </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.Classification, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>

@@ -40,8 +40,9 @@
                                 <th>Action</th>
                                 <th>Kode Media Penyimpanan</th>
                                 <th>Lokasi</th>
+                                <th>Jenis Penyimpanan</th>
+                                <th>Subjek Klasifikasi</th>
                                 <th>Unit Pencipta</th>
-                                <th>Sub-subjek Klasifikasi</th>
                                 <th>Tahun</th>
                                 <th>Status</th>
                             </tr>
@@ -113,9 +114,10 @@
                         }
                     },
                     { "data": "mediaStorageCode", "name": "mediaStorageCode", "autoWidth": true },
-                    { "data": "archiveUnitName", "name": "subSubjectClassification.creator.archiveUnit.archiveUnitName", "autoWidth": true },
-                    { "data": "creatorName", "name": "subSubjectClassification.creator.creatorName", "autoWidth": true },
-                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "typeStorage.archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "typeStorageName", "name": "typeStorage.typeStorageName", "autoWidth": true },
+                    { "data": "subjectClassificationName", "name": "subjectClassification.subjectClassificationName", "autoWidth": true },
+                    { "data": "creatorName", "name": "subjectClassification.classification.creator.creatorName", "autoWidth": true },
                     { "data": "archiveYear", "name": "archiveYear", "autoWidth": true },
                     {
                         "data": "status", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {

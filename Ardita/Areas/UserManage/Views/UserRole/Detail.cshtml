@@ -43,6 +43,12 @@
                                     <select name="RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
                                 </div>
                                 <div class="form-group">
+                                    <label>Role Utama ?</label>
+                                    <div>
+                                        <input class="m-l-sm" type="checkbox" name="IsPrimary" value="@GlobalConst.Yes" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit"><i class="fa fa-pencil">Add</i></button>
                                 </div>
@@ -53,8 +59,9 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Role Code</th>
-                                        <th>Role Name</th>
+                                        <th>Kode Role</th>
+                                        <th>Nama Role</th>
+                                        <th style="text-align:center">Role Utama</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -66,6 +73,7 @@
                                                 <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
                                                 <td>@item.Role.Code</td>
                                                 <td>@item.Role.Name</td>
+                                                <td align="center"><input type="checkbox" style="pointer-events:none" @Html.Raw(item.IsPrimary ? "checked" : "") /> </td>
                                             </tr>
                                         }
                                     }

@@ -392,8 +392,20 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "")
+    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "")
     {
+        string year = DateTime.Now.Year.ToString();
+        string month = DateTime.Now.Month.ToString();
+        if (!string.IsNullOrEmpty(monthYear))
+        {
+            string[] arrMonthYear = monthYear.Split('-');
+            if(arrMonthYear.Length > 1)
+            {
+                year = arrMonthYear[0];
+                month = arrMonthYear[1];
+            }
+
+        }
         var listNotAvailableArchive = from archive in _context.TrxArchives
                                       join mediaDetail in _context.TrxMediaStorageDetails on archive.ArchiveId equals mediaDetail.ArchiveId
                                       join media in _context.TrxMediaStorages on mediaDetail.MediaStorageId equals media.MediaStorageId
@@ -402,11 +414,12 @@ public class ArchiveRepository : IArchiveRepository
 
         int submit = (int)GlobalConst.STATUS.Submit;
         return await _context.TrxArchives
+            .Include(x => x.SubSubjectClassification)
             .Include(x => x.ArchiveType)
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageDetails)
-            .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassificationId == subSubjectId)
-            .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0")}", year)
+            .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
+            .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0 && CreatedDateArchive.Month == @1")}", year, month)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();
     }

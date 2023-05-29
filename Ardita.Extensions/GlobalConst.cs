@@ -182,6 +182,7 @@ public static class GlobalConst
     public const string BindArchivesInActiveBySubSubjectClassificationId = "BindArchivesInActiveBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
     public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";
+    public const string BindSubjectClassificationByArchiveUnitId = "BindSubjectClassificationByArchiveUnitId";
     public const string BindRoomByFloorId = "BindRoomByFloorId";
     public const string BindRackByRoomId = "BindRackByRoomId";
     public const string BindLevelByRackId = "BindLevelByRackId";
@@ -221,6 +222,7 @@ public static class GlobalConst
     public const string Notification = "Notification";
     public const string Success = "Success";
     public const string Failed = "Failed";
+    public const string Yes = "Yes";
 
     //ClaimTypes
     public const string Username = "Username";

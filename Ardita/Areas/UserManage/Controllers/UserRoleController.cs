@@ -47,7 +47,7 @@ namespace Ardita.Areas.UserManage.Controllers
 
             if (data != null)
             {
-                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(Id);
+                ViewBag.listUserRole = await _userRoleService.GetIdxUserRoleByUserId(Id);
                 ViewBag.listRoles = await BindRoles();
                 return View(data);
             }
@@ -64,15 +64,44 @@ namespace Ardita.Areas.UserManage.Controllers
             {
                 Guid.TryParse(Request.Form["UserId"], out UserId);
                 Guid.TryParse(Request.Form["RoleId"], out RoleId);
+                bool IsPrimary = Request.Form["IsPrimary"] == GlobalConst.Yes;
 
-                model.UserRoleId = Guid.NewGuid();
-                model.UserId = UserId;
-                model.RoleId = RoleId;
-                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                model.CreatedDate = DateTime.Now;
-                await _userRoleService.Insert(model);
+                int countPrimary = await _userRoleService.GetCountIsPrimaryByUserId(UserId);
 
-                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(UserId);
+                var data = await _userRoleService.GetByUserAndRoleId(UserId, RoleId);
+                bool isNew = data == null;
+
+                var listUserRole = await _userRoleService.GetIdxUserRoleByUserId(UserId);
+                var count = isNew ? 0 : 1;
+                if (listUserRole.Count() > count)
+                {
+                    if(isNew && IsPrimary || !isNew)
+                    {
+                        foreach (IdxUserRole item in listUserRole)
+                        {
+                            item.IsPrimary = !IsPrimary;
+                            if (item.RoleId == RoleId)
+                                item.IsPrimary = IsPrimary;
+                            await _userRoleService.Update(item);
+
+                            if (!IsPrimary)
+                                break;
+                        }
+                    }
+                }
+
+                if (isNew)
+                {
+                    model.UserRoleId = Guid.NewGuid();
+                    model.UserId = UserId;
+                    model.RoleId = RoleId;
+                    model.IsPrimary = IsPrimary || countPrimary == 0;
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.CreatedDate = DateTime.Now;
+                    await _userRoleService.Insert(model);
+                }
+
+                ViewBag.listUserRole = await _userRoleService.GetIdxUserRoleByUserId(UserId);
                 ViewBag.listRoles = await BindRoles();
             }
             return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Area = GlobalConst.UserManage, Id = UserId });
@@ -83,12 +112,29 @@ namespace Ardita.Areas.UserManage.Controllers
             
             if (data != null)
             {
-                await _userRoleService.Delete(data.FirstOrDefault());
+                await _userRoleService.Delete(data);
 
-                ViewBag.listUserRole = await _userService.GetIdxUserRoleByUserId(data.FirstOrDefault().UserId);
+                int countPrimary = await _userRoleService.GetCountIsPrimaryByUserId(data.UserId);
+
+                var dataUserRole = await _userRoleService.GetIdxUserRoleByUserId(data.UserId);
+
+                if(countPrimary == 0)
+                {
+                    if(dataUserRole.Count() > 0)
+                    {
+                        foreach (IdxUserRole item in dataUserRole)
+                        {
+                            item.IsPrimary = true;
+                            await _userRoleService.Update(item);
+                            break;
+                        }
+                    }
+                }
+
+                ViewBag.listUserRole = dataUserRole;
                 ViewBag.listRoles = await BindRoles();
             }
-            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Areas = GlobalConst.UserManage, Id = data.FirstOrDefault().UserId });
+            return RedirectToAction(GlobalConst.Detail, GlobalConst.UserRole, new { Areas = GlobalConst.UserManage, Id = data.UserId });
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.UserRole, new { Area = GlobalConst.UserManage });
     }

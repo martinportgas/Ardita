@@ -25,5 +25,7 @@ public partial class TrxSubjectClassification
 
     public virtual TrxClassification Classification { get; set; } = null!;
 
+    public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+
     public virtual ICollection<TrxSubSubjectClassification> TrxSubSubjectClassifications { get; } = new List<TrxSubSubjectClassification>();
 }
