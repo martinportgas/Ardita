@@ -2,6 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ardita.Services.Classess;
 
@@ -26,7 +27,10 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
 
         return result;
     }
-
+    public async Task<TrxMediaStorageInActive> GetById(Guid id)
+    {
+        return await _mediaStorageInActiveRepository.GetById(id);
+    }
     public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try

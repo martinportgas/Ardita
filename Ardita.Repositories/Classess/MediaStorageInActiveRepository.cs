@@ -34,6 +34,12 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                 .ToListAsync();
     }
 
+    public async Task<TrxMediaStorageInActive> GetById(Guid id)
+    {
+        var data = await _context.TrxMediaStorageInActives.AsNoTracking().FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
+        return data!;
+    }
+
     public async Task<int> GetCountByFilterModel(DataTableModel model)
     {
         return await _context.TrxMediaStorageInActives

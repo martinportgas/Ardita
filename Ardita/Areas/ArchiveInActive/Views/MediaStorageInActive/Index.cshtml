@@ -80,12 +80,8 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.mediaStorageInActiveId);
 
-                            var edit = `<a class="btn btn-sm btn-primary" data-toggle="tooltip" title="Data Has Been Submitted" href="#"><i class="fa fa-pencil"></i> </a>`;
-
-                            if (row.statusId == 1) {
-                                edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
-                                edit = edit.replace("-1", row.mediaStorageInActiveId);
-                            }
+                            var edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            edit = edit.replace("-1", row.mediaStorageInActiveId);
 
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.mediaStorageInActiveId);

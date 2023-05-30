@@ -22,7 +22,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _archiveRentService = archiveRentService;
             _classificationSubSubjectService = classificationSubSubjectService;
             _archiveService = archiveService;
-            MediaStorageInActiveService = mediaStorageInActiveService;
+            _MediaStorageInActiveService = mediaStorageInActiveService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
         public override async Task<JsonResult> GetData(DataTablePostModel model)
@@ -58,7 +58,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
-                var result = await MediaStorageInActiveService.GetDetails(Id);
+                var result = await _MediaStorageInActiveService.GetDetails(Id);
                 return Json(result);
 
             }
@@ -72,7 +72,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             try
             {
-                var result = await MediaStorageInActiveService.GetDetailArchive(Id);
+                var result = await _MediaStorageInActiveService.GetDetailArchive(Id);
                 return Json(result);
 
             }

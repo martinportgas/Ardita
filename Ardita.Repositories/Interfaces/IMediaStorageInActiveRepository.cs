@@ -5,6 +5,7 @@ namespace Ardita.Repositories.Interfaces;
 
 public interface IMediaStorageInActiveRepository
 {
+    Task<TrxMediaStorageInActive> GetById(Guid id);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCountByFilterModel(DataTableModel model);
     Task<TrxMediaStorageInActiveDetail> GetDetailByArchiveId(Guid id);

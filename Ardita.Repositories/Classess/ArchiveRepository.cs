@@ -168,7 +168,7 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveOwner)
                 .Include(x => x.ArchiveType)
                 .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
-                .Where($"{(model.PositionId != null ? $"and SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
                 .CountAsync();
 

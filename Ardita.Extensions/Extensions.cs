@@ -41,7 +41,7 @@ namespace Ardita.Extensions
             string currentAction = (string)html.ViewContext.RouteData.Values["action"];
             string currentController = (string)html.ViewContext.RouteData.Values["controller"];
 
-            if(currentController == GlobalConst.ArchiveDestroy || currentController == GlobalConst.ArchiveMovement)
+            if(currentArea == GlobalConst.ArchiveActive && currentController == GlobalConst.ArchiveDestroy || currentArea == GlobalConst.ArchiveActive && currentController == GlobalConst.ArchiveMovement)
             {
                 currentController = GlobalConst.ArchiveCirculation;
             }
