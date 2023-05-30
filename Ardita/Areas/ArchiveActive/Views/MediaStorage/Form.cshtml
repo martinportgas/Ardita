@@ -177,7 +177,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Tahun Arsip</label>
-                                            <input type="month" id="txtYear" class="form-control" asp-for="ArchiveYear" />
+                                            <input type="month" id="txtYear" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ArchiveYear" />
                                             @*<select asp-for="ArchiveYear"
                                                     id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pilih Tahun Arsip --">

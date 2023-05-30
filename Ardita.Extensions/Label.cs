@@ -21,8 +21,10 @@ public static class Label
         document.Replace(nameof(TrxLevel.LevelCode), data.Row!.Level!.LevelCode, false, true);
         document.Replace(nameof(TrxRow.RowCode), data.Row!.RowCode, false, true);
         document.Replace(nameof(TrxSubjectClassification.SubjectClassificationCode), data.SubjectClassification.SubjectClassificationCode, false, true);
-        document.Replace("Month", data.CreatedDate.Month.ToString("D2"), false, true);
-        document.Replace("Year", data.ArchiveYear, false, true);
+
+        string[] arrDate = data.ArchiveYear.Split('-');
+        document.Replace("Month", arrDate.Length > 1 ? arrDate[1] : data.CreatedDate.Month.ToString("D2"), false, true);
+        document.Replace("Year", arrDate.Length > 0 ? arrDate[0] : data.CreatedDate.Year.ToString(), false, true);
 
         var file = QRCodeExtension.Generate(data.MediaStorageCode);
 
