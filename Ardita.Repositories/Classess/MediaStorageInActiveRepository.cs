@@ -36,7 +36,18 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
 
     public async Task<TrxMediaStorageInActive> GetById(Guid id)
     {
-        var data = await _context.TrxMediaStorageInActives.AsNoTracking().FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
+        var data = await _context.TrxMediaStorageInActives
+            .Include(d => d.TrxMediaStorageInActiveDetails)
+                .ThenInclude(a => a.Archive)
+                .ThenInclude(c => c.Creator)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(x => x.SubTypeStorage)
+            .Include(s => s.SubSubjectClassification)
+            .Include(t => t.TypeStorage)
+                .ThenInclude(a => a.ArchiveUnit)
+            .Include(r => r.Row!.Level!.Rack!.Room!.Floor)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
         return data!;
     }
 
