@@ -50,7 +50,7 @@
                               
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, @form.CurrentController, new { Area = @form.CurrentArea })" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
-                                    @if (form.isInput)
+                                    @if (form.isSubmitForm)
                                     {
                                         <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
                                     }

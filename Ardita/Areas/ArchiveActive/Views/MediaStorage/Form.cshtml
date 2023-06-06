@@ -358,6 +358,7 @@
                 $('#table-archive').DataTable().destroy();
                 $('#table-archive').DataTable({
                     data: dataRes,
+                    lengthMenu: [100],
                     columnDefs: [
                         {
                             targets: [8],
