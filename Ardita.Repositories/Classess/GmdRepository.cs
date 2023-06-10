@@ -31,7 +31,7 @@ public class GmdRepository : IGmdRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstGmd>> GetAll() => await _context.MstGmds.Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<MstGmd>> GetAll() => await _context.MstGmds.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
     
     public async Task<IEnumerable<MstGmd>> GetByFilterModel(DataTableModel model)
     {

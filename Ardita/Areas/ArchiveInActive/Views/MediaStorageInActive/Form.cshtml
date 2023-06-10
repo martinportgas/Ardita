@@ -191,6 +191,10 @@
                                             </button>
                                         </div>
                                         <div class="detail">
+                                            @*
+                                                detail section
+                                                dynamic from java script
+                                            *@
                                         </div>
                                     </div>
                                 </div>
@@ -246,22 +250,17 @@
             });
 
             $("#btn-add-sts").click(function () {
-                var stsId = $("#txtSubTypeStorageId").val();
-                var sort = $(".sts").length + 1;
-
-                if (stsId == "") {
-                    alert("Pilih Dulu Sub Type Storage");
-                    return false;
-                }
-
-                totalDetail += 1;
-
-                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
-
-                getSubSubjectClassificationById($('#txtSubTypeStorageId').val(), totalDetail);
-                initDropdown();
-
+                initSubTypeStorage();
             });
+
+            if ("@form.CurrentAction" != "@GlobalConst.Add") 
+            {
+                @foreach (var d in Model.TrxMediaStorageInActiveDetails)
+                {
+                    @:initSubTypeStorage("@d.SubTypeStorageId");
+                    @:initArchive(totalDetail, "@d.Sort", "@d.ArchiveId");
+                }
+            }
         });
 
         function isFull(newVolume, totalDetail) {
@@ -285,9 +284,34 @@
 
         function addArchive(totalDetail, sort) 
         {
+            initArchive(totalDetail, sort);
+        }
+
+        function initSubTypeStorage(subTypeStorageId = "") {
+
+            var stsId = subTypeStorageId != "" ? subTypeStorageId : $("#txtSubTypeStorageId").val();
+            var sort = $(".sts").length + 1;
+
+            if (subTypeStorageId == "") {
+                if (stsId == "") {
+                    alert("Pilih Dulu Sub Type Storage");
+                    return false;
+                }
+            }
+
+            totalDetail += 1;
+
+            $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Sub Type Storage Code</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Name</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Sub Type Storage Volume</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Insert Archive</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Volume</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Delete</button></div></div>`);
+
+            getSubSubjectClassificationById(stsId, totalDetail);
+            initDropdown();
+            
+        }
+
+        function initArchive(totalDetail, sort, archiveId) {
             var isDuplicated = false;
 
-            $(".archive-id").each(function() {
+            $(".archive-id").each(function () {
                 var id = $(this).html();
                 if (id == $("#txtArchiveId_" + totalDetail).val()) {
                     alert("duplicated");
@@ -295,16 +319,20 @@
                 }
             });
 
+            var arcId = archiveId != "" ? archiveId : $("#txtArchiveId_" + totalDetail).val();
+
+
             if (!isDuplicated) {
-                    $.ajax({
+                $.ajax({
                     url: url,
                     type: "@GlobalConst.GET",
-                    data: { Id: $("#txtArchiveId_" + totalDetail).val() },
+                    data: { Id: arcId },
                     dataType: "@GlobalConst.JSON",
                     contentType: "@GlobalConst.APPLICATIONJSON",
                     success: function (data) {
                         if (!isFull(data.volume, totalDetail)) {
-                            initArchive(totalDetail, data.archiveId, data.archiveCode, data.titleArchive, data.archiveCreator, data.volume, sort)
+
+                            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
                         }
                     },
                     error: function () {
@@ -318,12 +346,6 @@
                     }
                 });
             }
-        }
-
-        function initArchive(totalDetail, archiveId, archiveCode, titleArchive, archiveCreator, volume, sort) {
-
-
-            $("#detail-" + totalDetail).append(`<tr><td>Hapus</td><td style="display: none;" class="archive-id">${archiveId}</td><td>${archiveCode}</td><td>${titleArchive}</td><td>${archiveCreator}</td><td class="volume_${totalDetail}">${volume}</td><input type="hidden" name="listArchive[]" value="${archiveId}#${sort}" class="archive"/></tr>`);
         }
 
         function deleteDetail(totalDetail) {
@@ -405,7 +427,6 @@
                 }
             });
         }
-
 
         function initDropdown() {
             $('#txtArchiveUnitId').on('change', function () {

@@ -60,7 +60,7 @@
                             <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="form-group">
                                     <div class="form-group">
-                                        <label>Creator</label>
+                                        <label>Archive Unit</label>
                                         <select asp-for="ArchiveUnitId" asp-items="ViewBag.listArchiveUnit" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                 id="txtArchiveUnitId" class="select2_demo_1 form-control"
                                                 data-placeholder="-- Select Archive Unit --">

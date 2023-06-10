@@ -55,6 +55,12 @@ public class ArchiveRepository : IArchiveRepository
             .AsNoTracking()
             .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
             .Where(x => x.IsActive == true)
+            .Where(x => x.Gmd.IsActive == true)
+            .Where(x => x.SubSubjectClassification.IsActive == true)
+            .Where(x => x.SecurityClassification.IsActive == true)
+            .Where(x => x.Creator.IsActive == true)
+            .Where(x => x.ArchiveOwner.IsActive == true)
+            .Where(x => x.ArchiveType.IsActive == true)
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
     public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode)

@@ -24,7 +24,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstSubmenu>> GetAll()
         {
-            var result = await _context.MstSubmenus.ToListAsync();
+            var result = await _context.MstSubmenus.Where(x => x.IsActive == true).ToListAsync();
             return result;
         }
 

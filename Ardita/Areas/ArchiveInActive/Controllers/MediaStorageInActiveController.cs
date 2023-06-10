@@ -88,48 +88,22 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         }
         return RedirectToIndex();
     }
+
     public override async Task<IActionResult> Detail(Guid Id)
     {
-        var data = await _MediaStorageInActiveService.GetById(Id);
-        if (data is not null)
-        {
-            await BindAllDropdown();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
+
     public override async Task<IActionResult> Update(Guid Id)
     {
-        var data = await _MediaStorageInActiveService.GetById(Id);
-        if (data is not null)
-        {
-            await BindAllDropdown();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
+
     public override async Task<IActionResult> Remove(Guid Id)
     {
-        var data = await _MediaStorageInActiveService.GetById(Id);
-        if (data is not null)
-        {
-            await BindAllDropdown();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Delete(TrxMediaStorageInActive model)
@@ -155,6 +129,21 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
         ViewBag.listSubTypeStorage = await BindSubTypeStorage();
+    }
+
+    private async Task<IActionResult> InitFormView(Guid Id)
+    {
+        var data = await _MediaStorageInActiveService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
     }
 
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive });

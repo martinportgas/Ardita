@@ -45,9 +45,11 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<TrxRoom>> GetAll()
         {
             var results = await _context.TrxRooms
-               .Include(x => x.Floor.ArchiveUnit)
+               .Include(x => x.Floor!.ArchiveUnit)
                 .AsNoTracking()
                 .Where(x=>x.IsActive == true)
+                .Where(x=>x.Floor!.IsActive == true)
+                .Where(x=>x.Floor!.ArchiveUnit!.IsActive == true)
                 .ToListAsync();
             return results;
         }
