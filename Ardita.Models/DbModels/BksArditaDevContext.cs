@@ -131,7 +131,7 @@ public partial class BksArditaDevContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.STAGGING;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1120,6 +1120,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.GmdId).HasColumnName("gmd_id");
             entity.Property(e => e.InactiveRetention).HasColumnName("inactive_retention");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsUsed).HasColumnName("is_used");
+            entity.Property(e => e.IsUsedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("is_used_date");
             entity.Property(e => e.Keyword)
                 .HasMaxLength(200)
                 .IsUnicode(false)

@@ -17,7 +17,7 @@ public partial class VwArchiveRetention
 
     public string TitleArchive { get; set; } = null!;
 
-    public DateTime RetentionDateArchive { get; set; }
+    public DateTime? RetentionDateArchive { get; set; }
 
     public string? ArchiveType { get; set; }
 

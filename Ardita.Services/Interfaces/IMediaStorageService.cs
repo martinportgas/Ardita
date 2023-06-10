@@ -13,4 +13,5 @@ public interface IMediaStorageService
     Task<int> Delete(TrxMediaStorage model);
     Task<int> Update(TrxMediaStorage model, string[] archiveId);
     Task<int> UpdateDetail(TrxMediaStorageDetail model);
+    Task<bool> UpdateDetailIsUsed(Guid archiveId);
 }

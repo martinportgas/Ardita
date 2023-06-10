@@ -51,7 +51,7 @@ public class MediaStorageRepository : IMediaStorageRepository
                 x.MediaStorageId,
                 x.MediaStorageCode,
                 x.StatusId,
-                Status = x.Status.Name,
+                Status = x.Status.Name == "Submit" ? "Tersimpan" : x.Status.Name,
                 x.Status.Color,
                 x.ArchiveYear,
                 x.TypeStorage.ArchiveUnit.ArchiveUnitName,
@@ -220,5 +220,12 @@ public class MediaStorageRepository : IMediaStorageRepository
             }
         }
         return result;
+    }
+
+    public async Task<bool> UpdateDetailIsUsed(Guid archiveId)
+    {
+        await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE SET is_used = 1, is_used_date = {DateTime.Now} WHERE archive_id = {archiveId}");
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

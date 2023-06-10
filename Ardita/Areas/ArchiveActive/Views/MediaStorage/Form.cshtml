@@ -212,6 +212,7 @@
                                                     <th>Jumlah</th>
                                                     <th>Detail</th>
                                                     <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAll" class="text-center">Pilih Semua </label><input type="checkbox" id="checkAll" required/></th>
+                                                    <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAllIsUsed" class="text-center">Pilih Semua</label><input type="checkbox" id="checkAllIsUsed" /></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtl">
@@ -225,13 +226,15 @@
                                                    class="btn btn-sm btn-default float-right m-t-n-xs">
                                                 @Html.Raw(form.BackText)
                                             </a>
-                                            @if (form.isSubmitForm)
+                                            @if (form.isSubmitForm || form.CurrentAction == "IsUsed")
                                             {
                                                 <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
-                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Save">
+                                                        type="submit" id="btn-submit" 
+                                                        name="@GlobalConst.Submit" 
+                                                        value="@(form.CurrentAction == @GlobalConst.IsUsed ? @GlobalConst.IsUsed : @GlobalConst.Save)">
                                                     @Html.Raw(form.SaveText)
                                                 </button>
-                                                @if(form.CurrentAction != GlobalConst.Remove)
+                                                @if(form.CurrentAction != GlobalConst.Remove && form.CurrentAction != GlobalConst.IsUsed)
                                                 {
                                                     <button
                                                         class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
@@ -349,6 +352,10 @@
                         }
                     });
                 }else{
+                    if('@form.CurrentAction' == 'IsUsed'){
+                        $('#checkAll').prop('required', false);
+                    }
+
                     $.each(result, function (key, value) {
                         if (value.trxMediaStorageDetails.length > 0) {
                             dataRes.push(value);
@@ -366,6 +373,14 @@
                         },
                         {
                             targets: [8],
+                            orderDataType: 'dom-checkbox'
+                        },
+                        {
+                            targets: [9],
+                            className: `text-center ${'@form.CurrentAction' == 'IsUsed' ? '' : 'd-none'}`
+                        },
+                        {
+                            targets: [9],
                             orderDataType: 'dom-checkbox'
                         }
                     ],
@@ -408,10 +423,15 @@
                         {
                             "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                                 var rowChecked = row.trxMediaStorageDetails.length > 0 ? row.trxMediaStorageDetails[0].mediaStorageId == '@Model.MediaStorageId' : false;
-                                console.log(row.trxMediaStorageDetails.length, '@Model.MediaStorageId')
                                 return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this), ${row.volume})" ${rowChecked ? 'checked' : ''} />`;
                             }
                         },
+                        {
+                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                console.log(row.isUsed);
+                                return `<input type="checkbox" class="check2" value='${data}' name="detailIsUsed[]"  ${row.isUsed == 1 ? 'checked' : ''} />`;
+                            }
+                        }
                     ]
                 });
             });
