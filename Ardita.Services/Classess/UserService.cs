@@ -73,7 +73,9 @@ namespace Ardita.Services.Classess
 
         public async Task<MstUser> GetById(Guid id)
         {
-            return await _userRepository.GetById(id);
+            var result = await _userRepository.GetById(id);
+            result.Password = Global.Decode(result.Password);
+            return result;
         }
         public async Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel model)
         {

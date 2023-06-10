@@ -39,8 +39,9 @@ namespace Ardita
             {
                 filterContext.Result = new RedirectToRouteResult(
                    new RouteValueDictionary {
-                        { "controller", "Login" },
-                        { "action", "Authentication" } }
+                        { "controller", "Authentication" },
+                        { "action", "Login" },
+                        { "area", null}}
                    );
                 return;
             }

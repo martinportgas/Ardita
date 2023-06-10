@@ -69,7 +69,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Password</label>
-                                            <input type="password" placeholder="" id="txtUserPassword" class="form-control" asp-for="Password">
+                                            <input type="text" placeholder="" id="txtUserPassword" class="form-control mb-2" asp-for="Password">
+                                            <input class="check" type="checkbox" onclick="passwordVisibility()">&nbsp;&nbsp; Show Password
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -139,7 +140,20 @@
                 theme: 'bootstrap4',
             });
             initSelect2();
+
+            var x = document.getElementById("txtUserPassword");
+            x.type = "password";
         });
+
+        function passwordVisibility() {
+            var x = document.getElementById("txtUserPassword");
+
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
 
         function initSelect2() {
             $('.au').each(function () {
