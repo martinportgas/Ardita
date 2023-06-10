@@ -110,6 +110,7 @@ public static class GlobalConst
     public const string Export = "Export";
     public const string Import = "Import";
     public const string Upload = "Upload";
+    public const string UploadForm = "UploadForm";
     public const string GetData = "GetData";
     public const string GetDetail = "GetDetail";
     public const string GetSubDetail = "GetSubDetail";

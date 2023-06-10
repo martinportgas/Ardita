@@ -42,8 +42,9 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode)
+    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null)
     {
+        listArchiveUnitCode = listArchiveUnitCode == null ? new List<string> { } : listArchiveUnitCode;
         return await _context.TrxArchives
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification)

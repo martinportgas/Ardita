@@ -56,66 +56,73 @@ namespace Ardita.Extensions
         }
         public static DataTable ImportExcel(IFormFile file, string folderName, string path)
         {
-            var results = new DataTable();
+            try
+            {
+                var results = new DataTable();
 
-            string newPath = Path.Combine(path, folderName);
-            StringBuilder sb = new StringBuilder();
-            if (!Directory.Exists(newPath))
-            {
-                Directory.CreateDirectory(newPath);
-            }
-            if (file.Length > 0)
-            {
-                string sFileExtension = Path.GetExtension(file.FileName).ToLower();
-                ISheet sheet;
-                string fullPath = Path.Combine(newPath, file.FileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
+                string newPath = Path.Combine(path, folderName);
+                StringBuilder sb = new StringBuilder();
+                if (!Directory.Exists(newPath))
                 {
-                    file.CopyTo(stream);
-                    stream.Position = 0;
-                    if (sFileExtension == ".xls")
+                    Directory.CreateDirectory(newPath);
+                }
+                if (file.Length > 0)
+                {
+                    string sFileExtension = Path.GetExtension(file.FileName).ToLower();
+                    ISheet sheet;
+                    string fullPath = Path.Combine(newPath, file.FileName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
-                    }
-                    else
-                    {
-                        XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
-                    }
-                    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    int cellCount = headerRow.LastCellNum;
-
-
-                    for (int j = 0; j < cellCount; j++)
-                    {
-                        NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
-                        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                        results.Columns.Add(cell.ToString().Replace(" ", ""), typeof(string));
-                    }
-
-                    DataRow dataRow;
-                    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    {
-                        IRow row = sheet.GetRow(i);
-                        if (row == null) continue;
-                        if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-
-                        dataRow = results.NewRow();
-                        for (int j = row.FirstCellNum; j < cellCount; j++)
+                        file.CopyTo(stream);
+                        stream.Position = 0;
+                        if (sFileExtension == ".xls")
                         {
-
-                            if (row.GetCell(j) != null)
-                            {
-                                dataRow[j] = row.GetCell(j).ToString();
-
-                            }
+                            HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
+                            sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
                         }
-                        results.Rows.Add(dataRow.ItemArray);
+                        else
+                        {
+                            XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
+                            sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
+                        }
+                        IRow headerRow = sheet.GetRow(0); //Get Header Row
+                        int cellCount = headerRow.LastCellNum;
+
+
+                        for (int j = 0; j < cellCount; j++)
+                        {
+                            NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
+                            if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
+                            results.Columns.Add(cell.ToString().Replace(" ", ""), typeof(string));
+                        }
+
+                        DataRow dataRow;
+                        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
+                        {
+                            IRow row = sheet.GetRow(i);
+                            if (row == null) continue;
+                            if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
+
+                            dataRow = results.NewRow();
+                            for (int j = row.FirstCellNum; j < cellCount; j++)
+                            {
+
+                                if (row.GetCell(j) != null)
+                                {
+                                    dataRow[j] = row.GetCell(j).ToString();
+
+                                }
+                            }
+                            results.Rows.Add(dataRow.ItemArray);
+                        }
                     }
                 }
+                return results;
             }
-            return results;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
         public static void WriteExcelToResponse(this IWorkbook book, HttpContext httpContext, string templateName)
         {
