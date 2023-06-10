@@ -41,7 +41,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxPermissionClassification>> GetAll()
         {
-            var results = await _context.TrxPermissionClassifications.ToListAsync();
+            var results = await _context.TrxPermissionClassifications.AsNoTracking().ToListAsync();
             return results;
         }
 

@@ -90,6 +90,7 @@ namespace Ardita.Services.Classess
             var result = (from emp in listEmp
                           join pos in listPosition on emp.PositionId equals pos.PositionId
                           join prs in listPermission on pos.PositionId equals prs.PositionId
+                          where emp.IsActive == true && pos.IsActive == true
                           select emp).ToList();
 
             return result;

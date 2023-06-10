@@ -49,8 +49,12 @@ namespace Ardita.Repositories.Classess
         {
             var results = await _context
                 .TrxLevels.AsNoTracking()
-                .Include(x => x.Rack.Room.Floor.ArchiveUnit)
+                .Include(x => x.Rack!.Room!.Floor!.ArchiveUnit)
                 .Where(x => x.IsActive == true)
+                .Where(x => x.Rack!.IsActive == true)
+                .Where(x => x.Rack!.Room!.IsActive == true)
+                .Where(x => x.Rack!.Room!.Floor!.IsActive == true)
+                .Where(x => x.Rack!.Room!.Floor!.ArchiveUnit!.IsActive == true)
                 .ToListAsync();
             return results;
         }

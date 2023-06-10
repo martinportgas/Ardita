@@ -31,7 +31,14 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstCreator>> GetAll() => await _context.MstCreators.Include(x=> x.ArchiveUnit).ThenInclude(x=> x.Company).Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<MstCreator>> GetAll() 
+        => await _context.MstCreators
+        .Include(x=> x.ArchiveUnit)
+        .ThenInclude(x=> x.Company)
+        .Where(x => x.IsActive == true 
+            && x.ArchiveUnit.IsActive == true 
+            && x.ArchiveUnit.Company.IsActive == true)
+        .ToListAsync();
 
     public async Task<IEnumerable<MstCreator>> GetByFilterModel(DataTableModel model)
     {

@@ -27,7 +27,9 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.MstMenus
                 .Include(x => x.MstSubmenus)
-                .AsNoTracking().ToListAsync();
+                .AsNoTracking()
+                .Where(x => x.IsActive == true)
+                .ToListAsync();
             return result;
         }
 

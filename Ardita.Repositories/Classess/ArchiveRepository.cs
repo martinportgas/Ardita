@@ -42,8 +42,9 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode)
+    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null)
     {
+        listArchiveUnitCode = listArchiveUnitCode == null ? new List<string> { } : listArchiveUnitCode;
         return await _context.TrxArchives
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification)
@@ -54,6 +55,12 @@ public class ArchiveRepository : IArchiveRepository
             .AsNoTracking()
             .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
             .Where(x => x.IsActive == true)
+            .Where(x => x.Gmd.IsActive == true)
+            .Where(x => x.SubSubjectClassification.IsActive == true)
+            .Where(x => x.SecurityClassification.IsActive == true)
+            .Where(x => x.Creator.IsActive == true)
+            .Where(x => x.ArchiveOwner.IsActive == true)
+            .Where(x => x.ArchiveType.IsActive == true)
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
     public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode)

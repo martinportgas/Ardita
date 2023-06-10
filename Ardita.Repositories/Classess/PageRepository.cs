@@ -49,7 +49,9 @@ namespace Ardita.Repositories.Classess
                     .Include(x => x.MstPageDetails)
                     .Include(x => x.IdxRolePages).ThenInclude(x => x.Role)
                     .AsNoTracking()
-                .Where(x => x.IsActive == true).ToListAsync();
+                    .Where(x => x.IsActive == true)
+                    .Where(x => x.Submenu.IsActive == true)
+                    .ToListAsync();
             return result;
         }
         public async Task<IEnumerable<MstPage>> GetByFilterModel(DataTableModel model)

@@ -35,7 +35,12 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxSubSubjectClassification>> GetAll()
         {
-            var results = await _context.TrxSubSubjectClassifications.Include(x => x.Creator).Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxSubSubjectClassifications
+                .Include(x => x.Creator)
+                .AsNoTracking()
+                .Where(x => x.IsActive == true)
+                .Where(x => x.Creator!.IsActive == true)
+                .ToListAsync();
             return results;
         }
 
@@ -130,7 +135,12 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxSubSubjectClassification>> GetByArchiveUnit(List<string> listArchiveUnitCode)
         {
-            return await _context.TrxSubSubjectClassifications.Include(c => c.Creator!.ArchiveUnit).Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode).ToListAsync();
+            return await _context.TrxSubSubjectClassifications
+                .Include(c => c.Creator!.ArchiveUnit)
+                .AsNoTracking()
+                .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
+                .Where(x => x.IsActive == true)
+                .ToListAsync();
         }
     }
 }

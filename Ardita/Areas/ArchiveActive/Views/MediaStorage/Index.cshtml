@@ -94,7 +94,6 @@
                             if (row.statusId == 1) {
                                 edit = `<a class="btn btn-sm btn-primary" data-toggle = "tooltip" data-placement = "left" title = "Edit" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                  edit = edit.replace("-1", row.mediaStorageId);
-                            }
 
                             var remove = ``;
 
