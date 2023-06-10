@@ -8,7 +8,7 @@
 	<RazorCompileOnPublish>false</RazorCompileOnPublish>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Compile Remove="Areas\ArchiveInActive\**" />
     <Compile Remove="Areas\Page\**" />
     <Compile Remove="Areas\Position\**" />
@@ -84,7 +84,7 @@
   <ItemGroup>
     <Compile Include="Areas\ArchiveInActive\Controllers\ArchiveReceivedController.cs" />
     <Compile Include="Areas\ArchiveInActive\Controllers\MediaStorageInActiveController.cs" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />

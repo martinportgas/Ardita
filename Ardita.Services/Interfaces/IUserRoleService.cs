@@ -6,7 +6,10 @@ namespace Ardita.Services.Interfaces
 {
     public interface IUserRoleService
     {
-        Task<IEnumerable<IdxUserRole>> GetById(Guid id);
+        Task<IdxUserRole> GetById(Guid id);
+        Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role);
+        Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id);
+        Task<int> GetCountIsPrimaryByUserId(Guid id);
         Task<IEnumerable<IdxUserRole>> GetAll();
         Task<UserRoleListViewModel> GetListUserRoles(Guid Id);
         Task<int> Insert(IdxUserRole model);

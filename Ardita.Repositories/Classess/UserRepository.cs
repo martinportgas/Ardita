@@ -95,15 +95,6 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
-        {
-            var result = await _context.IdxUserRoles
-                .Include(x => x.User)
-                .Include(x => x.Role)
-               .AsNoTracking().Where(x => x.UserId == id).ToListAsync();
-            return result;
-        }
-
         public async Task<int> Insert(MstUser model)
         {
             int result = 0;

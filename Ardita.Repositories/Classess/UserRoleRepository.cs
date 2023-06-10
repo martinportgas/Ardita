@@ -2,6 +2,7 @@
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 
@@ -33,12 +34,24 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<IdxUserRole>> GetById(Guid id)
+        public async Task<IdxUserRole> GetById(Guid id)
         {
-            var results = await _context.IdxUserRoles.AsNoTracking().Where(x => x.UserRoleId == id).ToListAsync();
+            var results = await _context.IdxUserRoles.AsNoTracking().FirstOrDefaultAsync(x => x.UserRoleId == id);
             return results;
         }
-
+        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role)
+        {
+            var results = await _context.IdxUserRoles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == id && x.RoleId == role);
+            return results;
+        }
+        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
+        {
+            var result = await _context.IdxUserRoles
+                .Include(x => x.User)
+                .Include(x => x.Role)
+               .AsNoTracking().Where(x => x.UserId == id).ToListAsync();
+            return result;
+        }
         public async Task<int> Insert(IdxUserRole model)
         {
             int result = 0;
@@ -66,10 +79,10 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> Update(IdxUserRole model)
         {
-            int result = 0;
-
-
-            return result;
+            model.User = null;
+            model.Role = null;
+            _context.IdxUserRoles.Update(model);
+            return await _context.SaveChangesAsync();
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {

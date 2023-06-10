@@ -39,8 +39,10 @@ public class MediaStorageRepository : IMediaStorageRepository
     {
         var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
-            .Include(x => x.SubSubjectClassification.Creator!.ArchiveUnit)
-            .Where(x => (x.MediaStorageCode + x.SubSubjectClassification.SubSubjectClassificationName + x.Status.Name + x.SubSubjectClassification.Creator!.CreatorName + x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
+            .Include(x => x.SubjectClassification.Classification.Creator)
+            .Include(x => x.TypeStorage.ArchiveUnit)
+            .Where(x => (x.MediaStorageCode + x.SubjectClassification.SubjectClassificationName + x.Status.Name 
+            + x.SubjectClassification.Classification.Creator.CreatorName + x.TypeStorage.TypeStorageName + x.TypeStorage.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
             .Where(x => x.IsActive == true)
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
@@ -48,13 +50,14 @@ public class MediaStorageRepository : IMediaStorageRepository
             {
                 x.MediaStorageId,
                 x.MediaStorageCode,
-                x.SubSubjectClassification.SubSubjectClassificationName,
                 x.StatusId,
                 Status = x.Status.Name,
                 x.Status.Color,
                 x.ArchiveYear,
-                x.SubSubjectClassification.Creator!.CreatorName,
-                x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName,
+                x.TypeStorage.ArchiveUnit.ArchiveUnitName,
+                x.TypeStorage.TypeStorageName,
+                x.SubjectClassification.SubjectClassificationName,
+                x.SubjectClassification.Classification.Creator.CreatorName
             })
             .ToListAsync();
 
@@ -64,8 +67,10 @@ public class MediaStorageRepository : IMediaStorageRepository
     {
         var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
-            .Include(x => x.SubSubjectClassification.Creator!.ArchiveUnit)
-            .Where(x => (x.MediaStorageCode + x.SubSubjectClassification.SubSubjectClassificationName + x.Status.Name + x.SubSubjectClassification.Creator!.CreatorName + x.SubSubjectClassification.Creator!.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
+            .Include(x => x.SubjectClassification.Classification.Creator)
+            .Include(x => x.TypeStorage.ArchiveUnit)
+            .Where(x => (x.MediaStorageCode + x.SubjectClassification.SubjectClassificationName + x.Status.Name
+            + x.SubjectClassification.Classification.Creator.CreatorName + x.TypeStorage.TypeStorageName + x.TypeStorage.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
             .Where(x => x.IsActive == true)
             .CountAsync();
 
@@ -78,7 +83,7 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(d => d.TrxMediaStorageDetails.Where(w => w.IsActive))
                 .ThenInclude(a => a.Archive)
                 .ThenInclude(c => c.Creator)
-            .Include(s => s.SubSubjectClassification.SubjectClassification)
+            .Include(s => s.SubjectClassification)
             .Include(t => t.TypeStorage).ThenInclude(a => a.ArchiveUnit)
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor).AsNoTracking()
             .Where(x => x.MediaStorageId == id)
@@ -99,8 +104,9 @@ public class MediaStorageRepository : IMediaStorageRepository
         if (model != null)
         {
             //Insert Header
-            var subSubjectClassificationData = await _context.TrxSubSubjectClassifications.FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
-            var creatorData = await _context.MstCreators.FirstOrDefaultAsync(x => x.CreatorId == subSubjectClassificationData!.CreatorId);
+            var subjectClassification = await _context.TrxSubjectClassifications.FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubjectClassificationId);
+            var classificationData = await _context.TrxClassifications.FirstOrDefaultAsync(x => x.ClassificationId == subjectClassification!.ClassificationId);
+            var creatorData = await _context.MstCreators.FirstOrDefaultAsync(x => x.CreatorId == classificationData!.CreatorId);
             var typeStorageData = await _context.TrxTypeStorages.FirstOrDefaultAsync(x => x.TypeStorageId == model.TypeStorageId);
             var storageCode = $"{creatorData!.CreatorCode}.{typeStorageData!.TypeStorageCode}.{model.ArchiveYear}";
 

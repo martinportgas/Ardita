@@ -149,6 +149,8 @@ public static class GlobalConst
     public const string Files = "files";
     public const string DetailArray = "detail[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
+    public const string listSts = "listSts[]";
+    public const string listArchive = "listArchive[]";
     public const string InitialCode = "Auto Generated";
     public const string wwwroot = "wwwroot";
     public const string Internal = "Internal";
@@ -180,6 +182,7 @@ public static class GlobalConst
     public const string BindArchivesInActiveBySubSubjectClassificationId = "BindArchivesInActiveBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
     public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";
+    public const string BindSubjectClassificationByArchiveUnitId = "BindSubjectClassificationByArchiveUnitId";
     public const string BindRoomByFloorId = "BindRoomByFloorId";
     public const string BindRackByRoomId = "BindRackByRoomId";
     public const string BindLevelByRackId = "BindLevelByRackId";
@@ -195,6 +198,10 @@ public static class GlobalConst
     public const string BindQrCode = "BindQrCode";
     public const string BindLabel = "BindLabel";
     public const string BindTypeStorageByParam = "BindTypeStorageByParam";
+    public const string BindRowArchiveInActiveByLevelId = "BindRowArchiveInActiveByLevelId";
+    public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
+    public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
+    public const string BindSubTypeStorageById = "BindSubTypeStorageById";
 
     //Web Component
     public const string GET = "GET";
@@ -215,6 +222,7 @@ public static class GlobalConst
     public const string Notification = "Notification";
     public const string Success = "Success";
     public const string Failed = "Failed";
+    public const string Yes = "Yes";
 
     //ClaimTypes
     public const string Username = "Username";

@@ -191,45 +191,27 @@ namespace Ardita.Areas.MasterData.Controllers
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet(nameof(TrxSubSubjectClassification).ToCleanNameOf());
-                ISheet excelSheetCreator = workbook.CreateSheet(nameof(MstCreator).ToCleanNameOf());
                 ISheet excelSheetSubject = workbook.CreateSheet(nameof(TrxSubjectClassification).ToCleanNameOf());
                 ISheet excelSheetSecurity = workbook.CreateSheet(nameof(MstSecurityClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
-                IRow rowCreator = excelSheetCreator.CreateRow(0);
                 IRow rowSubject = excelSheetSubject.CreateRow(0);
                 IRow rowSecurity = excelSheetSecurity.CreateRow(0);
 
                 row.CreateCell(0).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
                 row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
-                row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
-                row.CreateCell(3).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(4).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
-                row.CreateCell(5).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
-                row.CreateCell(6).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
-                row.CreateCell(7).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
-
-                rowCreator.CreateCell(0).SetCellValue(nameof(MstCreator.CreatorCode));
-                rowCreator.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorName));
-
-                var dataCreator = await _archiveCreatorService.GetAll();
-
-                int no = 1;
-                foreach (var item in dataCreator)
-                {
-                    rowCreator = excelSheetCreator.CreateRow(no);
-
-                    rowCreator.CreateCell(0).SetCellValue(item.CreatorCode);
-                    rowCreator.CreateCell(1).SetCellValue(item.CreatorName);
-                    no += 1;
-                }
+                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                row.CreateCell(4).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
+                row.CreateCell(5).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
+                row.CreateCell(6).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
 
                 rowSubject.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
                 rowSubject.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
 
                 var dataclassificationSubject = await _classificationSubjectService.GetAll();
 
-                no = 1;
+                int no = 1;
                 foreach (var item in dataclassificationSubject)
                 {
                     rowSubject = excelSheetSubject.CreateRow(no);
@@ -351,22 +333,21 @@ namespace Ardita.Areas.MasterData.Controllers
 
             foreach (DataRow row in result.Rows)
             {
-                var dataCreator = dataCreators.Where(x => x.CreatorCode == row[2].ToString()).FirstOrDefault();
-                var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault();
-                var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).FirstOrDefault();
+                var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[2].ToString()).FirstOrDefault();
+                var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
 
-                if (dataCreator != null && dataSubject != null && dataSecurity != null)
+                if (dataSubject != null && dataSecurity != null)
                 {
                     model = new();
                     model.SubSubjectClassificationId = Guid.NewGuid();
                     model.SubSubjectClassificationCode = row[0].ToString();
                     model.SubSubjectClassificationName = row[1].ToString();
-                    model.CreatorId = dataCreator.CreatorId;
+                    model.CreatorId = dataSubject.Classification.CreatorId;
                     model.SubjectClassificationId = dataSubject.SubjectClassificationId;
                     model.SecurityClassificationId = dataSecurity.SecurityClassificationId;
-                    model.RetentionActive = int.Parse(row[5].ToString());
-                    model.RetentionInactive = int.Parse(row[6].ToString());
-                    model.BasicInformation = row[7].ToString();
+                    model.RetentionActive = int.Parse(row[4].ToString());
+                    model.RetentionInactive = int.Parse(row[5].ToString());
+                    model.BasicInformation = row[6].ToString();
                     model.IsActive = true;  
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;

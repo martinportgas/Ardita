@@ -87,7 +87,10 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                var dataCreator = await _context.TrxSubjectClassifications.Include(x => x.Classification).AsNoTracking().FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubSubjectClassificationId);
+
                 model.IsActive = true;
+                model.CreatorId = dataCreator!.Classification.CreatorId;
                 _context.TrxSubSubjectClassifications.Add(model);
                 result = await _context.SaveChangesAsync();
             }
@@ -113,8 +116,11 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxSubSubjectClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 if (data != null)
                 {
+                    var dataCreator = await _context.TrxSubjectClassifications.Include(x => x.Classification).AsNoTracking().FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubSubjectClassificationId);
+
                     model.Creator = null;
                     model.SubjectClassification = null;
+                    model.CreatorId = dataCreator!.Classification.CreatorId;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

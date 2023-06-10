@@ -21,10 +21,11 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         IRoomService roomService,
         IRackService rackService,
         ILevelService levelService,
-        IRowService rowService
+        IRowService rowService,
+        ISubTypeStorageService subTypeStorageService
         )
     {
-        MediaStorageInActiveService = mediaStorageInActiveService;
+        _MediaStorageInActiveService = mediaStorageInActiveService;
         _classificationSubSubjectService = classificationSubSubjectService;
         _archiveService = archiveService;
         _archiveUnitService = archiveUnitService;
@@ -34,6 +35,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _rackService = rackService;
         _levelService = levelService;
         _rowService = rowService;
+        _subTypeStorageService = subTypeStorageService;
     }
     public override async Task<ActionResult> Index() => await base.Index();
 
@@ -41,7 +43,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
     {
         try
         {
-            var result = await MediaStorageInActiveService.GetList(model);
+            var result = await _MediaStorageInActiveService.GetList(model);
 
             return Json(result);
 
@@ -58,6 +60,89 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         return View(GlobalConst.Form, new TrxMediaStorageInActive());
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Save(TrxMediaStorageInActive model)
+    {
+        if (model is not null)
+        {
+
+            var listSts = Request.Form[GlobalConst.listSts].ToArray();
+            var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
+
+            model.StatusId = Request.Form[GlobalConst.Submit].ToString() == GlobalConst.Submit ? (int)GlobalConst.STATUS.Submit : (int)GlobalConst.STATUS.Draft;
+
+
+            if (model.MediaStorageInActiveId != Guid.Empty)
+            {
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                //await _MediaStorageInActiveService.Update(model, listSts!, listArchive!);
+            }
+            else
+            {
+                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                model.CreatedDate = DateTime.Now;
+                await _MediaStorageInActiveService.Insert(model, listSts!, listArchive!);
+            }
+        }
+        return RedirectToIndex();
+    }
+    public override async Task<IActionResult> Detail(Guid Id)
+    {
+        var data = await _MediaStorageInActiveService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
+    public override async Task<IActionResult> Update(Guid Id)
+    {
+        var data = await _MediaStorageInActiveService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
+    public override async Task<IActionResult> Remove(Guid Id)
+    {
+        var data = await _MediaStorageInActiveService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Delete(TrxMediaStorageInActive model)
+    {
+        if (model != null && model.MediaStorageInActiveId != Guid.Empty)
+        {
+            model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+            model.UpdatedDate = DateTime.Now;
+            //await _MediaStorageInActiveService.Delete(model);
+        }
+        return RedirectToIndex();
+    }
+
     protected async Task BindAllDropdown()
     {
         ViewBag.listSubSubject = await BindSubSubjectClasscifications();
@@ -69,5 +154,8 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listRack = await BindRacks();
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
+        ViewBag.listSubTypeStorage = await BindSubTypeStorage();
     }
+
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive });
 }

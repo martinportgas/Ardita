@@ -166,10 +166,10 @@
                                 <div class="row border-top pt-3">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>Sub-Subjek Klasifikasi</label>
-                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubject"
+                                            <label>Subjek Klasifikasi</label>
+                                            <select asp-for="SubjectClassificationId" asp-items="ViewBag.listSubSubject"
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
-                                                    data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
+                                                    data-placeholder="-- Pilih Subjek Klasifikasi --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
@@ -177,7 +177,8 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Tahun Arsip</label>
-                                            <select asp-for="ArchiveYear"
+                                            <input type="month" id="txtYear" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ArchiveYear" />
+                                            @*<select asp-for="ArchiveYear"
                                                     id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pilih Tahun Arsip --">
                                                 <option value=""></option>
@@ -193,7 +194,7 @@
                                                 {
                                                     <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
                                                 }
-                                            </select>
+                                            </select>*@
                                         </div>
                                     </div>
                                 </div>
@@ -203,6 +204,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th>Sub-subjek Klasifikasi</th>
                                                     <th>Nomor Arsip</th>
                                                     <th>Judul Arsip</th>
                                                     <th>Tingkat Perkembangan</th>
@@ -356,13 +358,14 @@
                 $('#table-archive').DataTable().destroy();
                 $('#table-archive').DataTable({
                     data: dataRes,
+                    lengthMenu: [100],
                     columnDefs: [
                         {
-                            targets: [7],
+                            targets: [8],
                             className: `text-center ${@form.isInput.ToString().ToLower() ? '' : 'd-none'}`
                         },
                         {
-                            targets: [7],
+                            targets: [8],
                             orderDataType: 'dom-checkbox'
                         }
                     ],
@@ -372,6 +375,7 @@
                                 return meta.row + meta.settings._iDisplayStart + 1;
                             }
                         },
+                        { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
                         { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                         { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
                         { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
@@ -453,9 +457,9 @@
             $('#txtSubSubjectClassificationId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
-                placeholder: '-- Select Sub-Subject Classification --',
+                placeholder: '-- Select Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -468,8 +472,8 @@
                         var dataResult = $.map(data, function (item) {
 
                             return {
-                                text: item.subSubjectClassificationName,
-                                id: item.subSubjectClassificationId
+                                text: item.subjectClassificationName,
+                                id: item.subjectClassificationId
                             }
                         });
                         return {

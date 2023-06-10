@@ -44,6 +44,7 @@ namespace Ardita.Repositories.Classess
                     data.ApproveLevel = model.ApproveLevel;
                     data.IsActive = model.IsActive;
                     data.StatusId = model.StatusId;
+                    data.StatusReceived = model.StatusReceived;
                     data.UpdatedBy = model.UpdatedBy;
                     data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);

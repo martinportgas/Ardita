@@ -34,6 +34,12 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                 .ToListAsync();
     }
 
+    public async Task<TrxMediaStorageInActive> GetById(Guid id)
+    {
+        var data = await _context.TrxMediaStorageInActives.AsNoTracking().FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
+        return data!;
+    }
+
     public async Task<int> GetCountByFilterModel(DataTableModel model)
     {
         return await _context.TrxMediaStorageInActives
@@ -70,5 +76,34 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
             
         return results;
 
+    }
+
+    public async Task<int> Insert(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail)
+    {
+        int result = 0;
+
+        if (model is not null)
+        {
+            foreach (var e in _context.ChangeTracker.Entries())
+            {
+                e.State = EntityState.Detached;
+            }
+            model.IsActive = true;
+
+            _context.Entry(model).State = EntityState.Added;
+            await _context.SaveChangesAsync();
+
+            if (detail.Any())
+            {
+                foreach (var item in detail)
+                {
+                    item.MediaStorageInActiveId = model.MediaStorageInActiveId;
+                    _context.TrxMediaStorageInActiveDetails.Add(item);
+                    result += await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        return result;
     }
 }

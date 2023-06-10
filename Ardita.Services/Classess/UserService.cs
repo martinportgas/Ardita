@@ -75,18 +75,10 @@ namespace Ardita.Services.Classess
         {
             return await _userRepository.GetById(id);
         }
-
-        public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
-        {
-            return await _userRepository.GetIdxUserRoleByUserId(id);
-        }
-
         public async Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel model)
         {
             try
             {
-                
-
                 var filterData = new DataTableModel();
 
                 filterData.sortColumn = model.columns[model.order[0].column].name;

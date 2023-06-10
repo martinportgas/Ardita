@@ -17,10 +17,11 @@ namespace Ardita.Areas.MasterData.Controllers;
 public class ClassificationController : BaseController<TrxClassification>
 {
     #region MEMBER AND CTR
-    public ClassificationController(IClassificationService classificationService, IClassificationTypeService classificationTypeService)
+    public ClassificationController(IClassificationService classificationService, IClassificationTypeService classificationTypeService, IArchiveCreatorService archiveCreatorService)
     {
         _classificationService = classificationService;
         _classificationTypeService = classificationTypeService;
+        _archiveCreatorService = archiveCreatorService;
     }
     #endregion
     #region MAIN ACTION
@@ -43,6 +44,7 @@ public class ClassificationController : BaseController<TrxClassification>
     public override async Task<IActionResult> Add()
     {
         ViewBag.listClassificationType = await BindClassificationTypes();
+        ViewBag.ListArchiveCreator = await BindArchiveCreators();
         return View(GlobalConst.Form, new TrxClassification());
     }
     public override async Task<IActionResult> Update(Guid Id)
@@ -50,7 +52,8 @@ public class ClassificationController : BaseController<TrxClassification>
         var model = await _classificationService.GetById(Id);
         if (model != null)
         {
-            ViewBag.listClassificationType = await BindClassificationTypes(); 
+            ViewBag.listClassificationType = await BindClassificationTypes();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
             return View(GlobalConst.Form, model);
         }
         else
@@ -64,6 +67,7 @@ public class ClassificationController : BaseController<TrxClassification>
         if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
             return View(GlobalConst.Form, model);
         }
         else
@@ -77,6 +81,7 @@ public class ClassificationController : BaseController<TrxClassification>
         if (model != null)
         {
             ViewBag.listClassificationType = await BindClassificationTypes();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
             return View(GlobalConst.Form, model);
         }
         else

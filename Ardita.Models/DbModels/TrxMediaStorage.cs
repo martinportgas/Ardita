@@ -7,7 +7,7 @@ public partial class TrxMediaStorage
 {
     public Guid MediaStorageId { get; set; }
 
-    public Guid SubSubjectClassificationId { get; set; }
+    public Guid SubjectClassificationId { get; set; }
 
     public Guid TypeStorageId { get; set; }
 
@@ -39,7 +39,7 @@ public partial class TrxMediaStorage
 
     public virtual MstStatus Status { get; set; } = null!;
 
-    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
+    public virtual TrxSubjectClassification SubjectClassification { get; set; } = null!;
 
     public virtual ICollection<TrxMediaStorageDetail> TrxMediaStorageDetails { get; } = new List<TrxMediaStorageDetail>();
 

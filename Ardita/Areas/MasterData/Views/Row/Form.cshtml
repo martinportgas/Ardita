@@ -64,7 +64,7 @@
                                     <div class="form-group">
                                         <label>Unit Kearsipan</label>
                                         <input type="hidden" value="@Model.RowId" asp-for="RowId" />
-                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
+                                        <select id="txtArchiveUnitId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Level.Rack.Room.Floor.ArchiveUnitId" asp-items="ViewBag.listArchiveUnits" data-placeholder="-- Pilih Unit Kearsipan --"><option value=""></option></select>
                                     </div>
                                     <div class="form-group">
                                         <label>Lantai</label>
@@ -94,7 +94,7 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.Row, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
-                                    @if (form.isInput)
+                                    @if (form.isSubmitForm)
                                     {
                                         <button onclick="onSubmit(this, event);"id="btn-submit" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
                                     }
