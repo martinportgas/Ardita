@@ -47,9 +47,11 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.Employee.Position)
                 .Include(x => x.IdxUserRoles)
                 .ThenInclude(x => x.Role)
-                
                 .AsNoTracking()
-                .Where(x => x.IsActive == true).ToListAsync();
+                .Where(x => x.IsActive == true)
+                .Where(x => x.Employee.IsActive == true)
+                .Where(x => x.Employee.Position.IsActive == true)
+                .ToListAsync();
             return result;
         }
 

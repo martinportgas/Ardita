@@ -36,7 +36,7 @@ public class CompanyRepository : ICompanyRepository
 
     public async Task<IEnumerable<MstCompany>> GetAll()
     {
-        var results = await _context.MstCompanies.Where(x => x.IsActive == true).ToListAsync();
+        var results = await _context.MstCompanies.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
         return results;
     }
 

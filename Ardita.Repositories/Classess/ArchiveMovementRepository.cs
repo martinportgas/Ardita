@@ -56,7 +56,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxArchiveMovement>> GetAll()
         {
-            var results = await _context.TrxArchiveMovements.Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxArchiveMovements.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
             return results;
         }
         public async Task<int> GetCount()

@@ -32,7 +32,13 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() => await _context.TrxArchiveUnits.Include(x=> x.Company).Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() 
+        => await _context.TrxArchiveUnits
+        .Include(x=> x.Company)
+        .Where(x => x.IsActive == true)
+        .Where(x => x.Company.IsActive == true)
+        .AsNoTracking()
+        .ToListAsync();
 
     public async Task<IEnumerable<TrxArchiveUnit>> GetByFilterModel(DataTableModel model)
     {
@@ -109,6 +115,9 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
     }
     public async Task<IEnumerable<TrxArchiveUnit>> GetByListArchiveUnit(List<string> listArchiveUnitCode)
     {
-        return await _context.TrxArchiveUnits.Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode).ToListAsync();
+        return await _context.TrxArchiveUnits
+            .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
+            .Where(x => x.IsActive == true)
+            .ToListAsync();
     }
 }

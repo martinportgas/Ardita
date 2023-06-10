@@ -46,7 +46,10 @@ namespace Ardita.Repositories.Classess
             var result = await _context.MstEmployees
                 .Include(x => x.Position)
                 .AsNoTracking()
-                .Where(x => x.IsActive == true).ToListAsync();
+                .Where(x => x.IsActive == true)
+                .Where(x => x.Position.IsActive == true)
+                .AsNoTracking()
+                .ToListAsync();
             return result;
         }
 

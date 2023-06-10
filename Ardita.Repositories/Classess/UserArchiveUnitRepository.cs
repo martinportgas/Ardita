@@ -38,7 +38,12 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<IdxUserArchiveUnit>> GetAll()
         {
-            return await _context.IdxUserArchiveUnits.Include(u => u.User).Include(a=> a.ArchiveUnit).ToListAsync();
+            return await _context.IdxUserArchiveUnits
+                .Include(u => u.User)
+                .Include(a=> a.ArchiveUnit)
+                .Where(x => x.User.IsActive == true)
+                .Where(x => x.ArchiveUnit.IsActive == true)
+                .ToListAsync();
         }
 
         public Task<IEnumerable<IdxUserArchiveUnit>> GetById(Guid id)
