@@ -141,6 +141,34 @@ public class ArchiveController : BaseController<TrxArchive>
             return RedirectToIndex();
         }
     }
+    public override async Task<IActionResult> Submit(TrxArchive model)
+    {
+        var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
+        if(listArchive.Length > 0)
+        {
+            for (int i = 0; i < listArchive.Length; i++)
+            {
+                Guid archiveId = Guid.Empty;
+                Guid.TryParse(listArchive[i], out archiveId);
+                var data = await _archiveService.GetById(archiveId);
+                if(data != null)
+                {
+                    data.StatusId = (int)GlobalConst.STATUS.Submit;
+                    data.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                    data.UpdatedDate = DateTime.Now;
+
+                    await _archiveService.Submit(data);
+                }
+            }
+            TempData[GlobalConst.Notification] = GlobalConst.Success;
+        }
+        else
+        {
+            TempData[GlobalConst.Notification] = GlobalConst.NothingSelected;
+        }
+
+        return RedirectToIndex();
+    }
     #endregion
 
     #region EXPORT/IMPORT
