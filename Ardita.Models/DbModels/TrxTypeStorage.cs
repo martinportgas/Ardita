@@ -34,4 +34,6 @@ public partial class TrxTypeStorage
     public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();
 
     public virtual ICollection<TrxMediaStorage> TrxMediaStorages { get; } = new List<TrxMediaStorage>();
+
+    public virtual ICollection<TrxTypeStorageDetail> TrxTypeStorageDetails { get; } = new List<TrxTypeStorageDetail>();
 }

@@ -637,7 +637,7 @@ public abstract class BaseController<T> : Controller
              from dataDetailDst in b.DefaultIfEmpty()
              join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
              from dataDetailMove in c.DefaultIfEmpty()
-             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.CreatedDateArchive.Year == year 
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString()) 
              && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {

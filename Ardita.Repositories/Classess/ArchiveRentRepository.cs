@@ -118,7 +118,9 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveRents.Where(x => x.TrxArchiveRentId == id && x.StatusId == 2).ToListAsync();
+            var result = await _context.TrxArchiveRents
+                .Include(x => x.Archive.SubSubjectClassification)
+                .Where(x => x.TrxArchiveRentId == id && x.StatusId == 2).ToListAsync();
             return result;
         }
         public async Task<int> Insert(TrxArchiveRent model)

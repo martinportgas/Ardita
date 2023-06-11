@@ -98,4 +98,9 @@ public class MediaStorageService : IMediaStorageService
     {
         return await _mediaStorageRepository.UpdateDetail(model);
     }
+
+    public async Task<bool> UpdateDetailIsUsed(Guid archiveId)
+    {
+        return await _mediaStorageRepository.UpdateDetailIsUsed(archiveId);
+    }
 }

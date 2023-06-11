@@ -25,5 +25,7 @@ public partial class MstSubTypeStorage
 
     public virtual ICollection<IdxSubTypeStorage> IdxSubTypeStorages { get; } = new List<IdxSubTypeStorage>();
 
+    public virtual ICollection<MstSubTypeStorageDetail> MstSubTypeStorageDetails { get; } = new List<MstSubTypeStorageDetail>();
+
     public virtual ICollection<TrxMediaStorageInActiveDetail> TrxMediaStorageInActiveDetails { get; } = new List<TrxMediaStorageInActiveDetail>();
 }

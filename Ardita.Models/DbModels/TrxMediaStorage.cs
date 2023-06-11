@@ -7,6 +7,8 @@ public partial class TrxMediaStorage
 {
     public Guid MediaStorageId { get; set; }
 
+    public Guid? GmdDetailId { get; set; }
+
     public Guid SubjectClassificationId { get; set; }
 
     public Guid TypeStorageId { get; set; }
@@ -34,6 +36,8 @@ public partial class TrxMediaStorage
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual MstGmdDetail? GmdDetail { get; set; }
 
     public virtual TrxRow Row { get; set; } = null!;
 

@@ -108,8 +108,11 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveRentService.GetById(Id);
             if (model != null)
             {
-                ViewBag.subDetail = await _archiveExtendService.GetDetailByMainId(Id);
-                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveExtend);
+                ViewBag.ArchiveRentId = model.FirstOrDefault().TrxArchiveRentId;
+                ViewBag.ArchiveId = model.FirstOrDefault().ArchiveId;
+                ViewBag.TitleArchive = model.FirstOrDefault().Archive.TitleArchive;
+                ViewBag.SubSubJectClassificationId = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+              //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }
             else

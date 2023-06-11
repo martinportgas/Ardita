@@ -100,6 +100,7 @@ public static class GlobalConst
     public const string Update = "Update";
     public const string Delete = "Delete";
     public const string Detail = "Detail";
+    public const string IsUsed = "IsUsed";
     public const string DetailArchive = "DetailArchive";
     public const string Preview = "Preview";
     public const string Remove = "Remove";
@@ -110,6 +111,7 @@ public static class GlobalConst
     public const string Export = "Export";
     public const string Import = "Import";
     public const string Upload = "Upload";
+    public const string UploadForm = "UploadForm";
     public const string GetData = "GetData";
     public const string GetDetail = "GetDetail";
     public const string GetSubDetail = "GetSubDetail";
@@ -148,6 +150,7 @@ public static class GlobalConst
     public const string Template = "Template";
     public const string Files = "files";
     public const string DetailArray = "detail[]";
+    public const string DetailIsUsedArray = "detailIsUsed[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
     public const string listSts = "listSts[]";
     public const string listArchive = "listArchive[]";

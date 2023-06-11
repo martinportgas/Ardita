@@ -88,6 +88,9 @@
                                     <div class="col-sm-6 border-top mt-2 mb-1 b-r">
                                         <div class="form-group">
                                             <label>Sub Subject Classifications</label>
+
+                                            <input type="hidden" id="txtArchiveRentId" readonly/>
+
                                             <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Subject Classification --">

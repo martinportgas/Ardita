@@ -39,6 +39,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstGmd> MstGmds { get; set; }
 
+    public virtual DbSet<MstGmdDetail> MstGmdDetails { get; set; }
+
     public virtual DbSet<MstGmdLog> MstGmdLogs { get; set; }
 
     public virtual DbSet<MstMenu> MstMenus { get; set; }
@@ -58,6 +60,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstStatus> MstStatuses { get; set; }
 
     public virtual DbSet<MstSubTypeStorage> MstSubTypeStorages { get; set; }
+
+    public virtual DbSet<MstSubTypeStorageDetail> MstSubTypeStorageDetails { get; set; }
 
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
@@ -118,6 +122,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<TrxSubjectClassification> TrxSubjectClassifications { get; set; }
 
     public virtual DbSet<TrxTypeStorage> TrxTypeStorages { get; set; }
+
+    public virtual DbSet<TrxTypeStorageDetail> TrxTypeStorageDetails { get; set; }
 
     public virtual DbSet<VwArchiveApproval> VwArchiveApprovals { get; set; }
 
@@ -577,6 +583,35 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("updated_date");
         });
 
+        modelBuilder.Entity<MstGmdDetail>(entity =>
+        {
+            entity.HasKey(e => e.GmdDetailId);
+
+            entity.ToTable("MST_GMD_DETAIL");
+
+            entity.Property(e => e.GmdDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("gmd_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.GmdId).HasColumnName("gmd_id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("name");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("unit");
+
+            entity.HasOne(d => d.Gmd).WithMany(p => p.MstGmdDetails)
+                .HasForeignKey(d => d.GmdId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_GMD_DETAIL_MST_GMD");
+        });
+
         modelBuilder.Entity<MstGmdLog>(entity =>
         {
             entity.HasKey(e => e.GmdIdLog);
@@ -903,6 +938,34 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.Volume).HasColumnName("volume");
         });
 
+        modelBuilder.Entity<MstSubTypeStorageDetail>(entity =>
+        {
+            entity.HasKey(e => e.SubTypeStorageDetailId);
+
+            entity.ToTable("MST_SUB_TYPE_STORAGE_DETAIL");
+
+            entity.Property(e => e.SubTypeStorageDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("sub_type_storage_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
+            entity.Property(e => e.Size).HasColumnName("size");
+            entity.Property(e => e.SubTypeStorageId).HasColumnName("sub_type_storage_id");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.MstSubTypeStorageDetails)
+                .HasForeignKey(d => d.GmdDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_SUB_TYPE_STORAGE_DETAIL_MST_GMD_DETAIL");
+
+            entity.HasOne(d => d.SubTypeStorage).WithMany(p => p.MstSubTypeStorageDetails)
+                .HasForeignKey(d => d.SubTypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_SUB_TYPE_STORAGE_DETAIL_MST_SUB_TYPE_STORAGE");
+        });
+
         modelBuilder.Entity<MstSubmenu>(entity =>
         {
             entity.HasKey(e => e.SubmenuId).HasName("PK_SUBMENU");
@@ -1113,13 +1176,22 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date_archive");
             entity.Property(e => e.CreatorId).HasColumnName("creator_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("description");
             entity.Property(e => e.DocumentNo)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("document_no");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.GmdId).HasColumnName("gmd_id");
             entity.Property(e => e.InactiveRetention).HasColumnName("inactive_retention");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsUsed).HasColumnName("is_used");
+            entity.Property(e => e.IsUsedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("is_used_date");
             entity.Property(e => e.Keyword)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -1157,6 +1229,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.CreatorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CREATOR_ID");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxArchives)
+                .HasForeignKey(d => d.GmdDetailId)
+                .HasConstraintName("FK_TRX_ARCHIVE_MST_GMD_DETAIL");
 
             entity.HasOne(d => d.Gmd).WithMany(p => p.TrxArchives)
                 .HasForeignKey(d => d.GmdId)
@@ -1806,6 +1882,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.MediaStorageCode)
                 .HasMaxLength(50)
@@ -1824,6 +1901,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxMediaStorages)
+                .HasForeignKey(d => d.GmdDetailId)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_MST_GMD_DETAIL");
 
             entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorages)
                 .HasForeignKey(d => d.RowId)
@@ -2224,6 +2305,34 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveUnitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ARCHIVE_UNIT_ID_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<TrxTypeStorageDetail>(entity =>
+        {
+            entity.HasKey(e => e.TypeStorageDetailId);
+
+            entity.ToTable("TRX_TYPE_STORAGE_DETAIL");
+
+            entity.Property(e => e.TypeStorageDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("type_storage_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
+            entity.Property(e => e.Size).HasColumnName("size");
+            entity.Property(e => e.TypeStorageId).HasColumnName("type_storage_id");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxTypeStorageDetails)
+                .HasForeignKey(d => d.GmdDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_TYPE_STORAGE_DETAIL_MST_GMD_DETAIL");
+
+            entity.HasOne(d => d.TypeStorage).WithMany(p => p.TrxTypeStorageDetails)
+                .HasForeignKey(d => d.TypeStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_TYPE_STORAGE_DETAIL_TRX_TYPE_STORAGE");
         });
 
         modelBuilder.Entity<VwArchiveApproval>(entity =>

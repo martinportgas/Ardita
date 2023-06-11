@@ -4,6 +4,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
@@ -143,6 +144,12 @@ public class ArchiveController : BaseController<TrxArchive>
     #endregion
 
     #region EXPORT/IMPORT
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -150,57 +157,144 @@ public class ArchiveController : BaseController<TrxArchive>
         try
         {
             IFormFile file = Request.Form.Files[0];
-
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-            var Gmds = await _gmdService.GetAll();
-            var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
-            var SecurityClassifications = await _securityClassificationService.GetAll();
-            var Creators = await _archiveCreatorService.GetAll();
-            var ArchiveTypes = await _archiveTypeService.GetAll();
-            var ArchiveOwners = await _archiveOwnerService.GetAll();
-
-            List<TrxArchive> trxArchives = new();
-            TrxArchive trxArchive;
-            foreach (DataRow row in result.Rows)
+            if(file.Length > 0)
             {
-                var subSubjectClassificationData = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode == row[2].ToString()).FirstOrDefault();
-                var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
-                var archiveOwnerData = ArchiveOwners.Where(x => x.ArchiveOwnerCode == row[5].ToString()).FirstOrDefault();
-                var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode == row[9].ToString()).FirstOrDefault();
-                if (securityClassificationData != null && subSubjectClassificationData != null && archiveOwnerData != null && archiveTypeData != null)
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                var archiveAll = await _archiveService.GetAll();
+                var Gmds = await _gmdService.GetAll();
+                var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
+                var SecurityClassifications = await _securityClassificationService.GetAll();
+                var Creators = await _archiveCreatorService.GetAll();
+                var ArchiveTypes = await _archiveTypeService.GetAll();
+                var ArchiveOwners = await _archiveOwnerService.GetAll();
+
+                if (result.Rows.Count > 0)
                 {
-                    trxArchive = new();
-                    trxArchive.ArchiveId = Guid.NewGuid();
-                    trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault()!.GmdId;
-                    trxArchive.SubSubjectClassificationId = subSubjectClassificationData.SubSubjectClassificationId;
-                    trxArchive.SecurityClassificationId = securityClassificationData.SecurityClassificationId;
-                    trxArchive.CreatorId = (Guid)subSubjectClassificationData.CreatorId!;
-                    trxArchive.TypeSender = row[4].ToString()!;
-                    trxArchive.ArchiveOwnerId = archiveOwnerData.ArchiveOwnerId;
-                    trxArchive.Keyword = row[6].ToString()!;
-                    trxArchive.ArchiveCode = string.Empty;
-                    trxArchive.DocumentNo = row[7].ToString()!;
-                    trxArchive.TitleArchive = row[8].ToString()!;
-                    trxArchive.ArchiveTypeId = archiveTypeData.ArchiveTypeId;
-                    trxArchive.CreatedDateArchive = Convert.ToDateTime(row[10]);
-                    trxArchive.ActiveRetention = Convert.ToInt32(row[11]);
-                    trxArchive.InactiveRetention = Convert.ToInt32(row[12]);
-                    trxArchive.Volume = Convert.ToInt32(row[13]);
-                    trxArchive.IsActive = true;
-                    trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    trxArchive.CreatedDate = DateTime.Now;
-                    trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
+                    List<TrxArchive> trxArchives = new();
+                    TrxArchive trxArchive;
+                    bool valid = true;
+                    int errorCount = 0;
+                    result.Columns.Add("Keterangan");
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+                        var subSubjectClassificationData = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode.ToLower() == row[2].ToString().ToLower()).FirstOrDefault();
+                        if (subSubjectClassificationData == null)
+                        {
+                            valid = false;
+                            error += "_Subjek Klasifikasi Tidak Valid";
+                        }
+                        var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode.ToLower() == row[3].ToString().ToLower()).FirstOrDefault();
+                        if (securityClassificationData == null)
+                        {
+                            valid = false;
+                            error += "_Klasifikasi Keamanan Tidak Valid";
+                        }
+                        if (row[4].ToString()!.ToLower() != "internal" && row[4].ToString()!.ToLower() != "eksternal")
+                        {
+                            valid = false;
+                            error += "_Tipe Pengirim Tidak Valid";
+                        }
+                        var archiveOwnerData = ArchiveOwners.Where(x => x.ArchiveOwnerCode.ToLower() == row[5].ToString().ToLower()).FirstOrDefault();
+                        if (archiveOwnerData == null)
+                        {
+                            valid = false;
+                            error += "_Asal Arsip Tidak Valid";
+                        }
+                        var dataDocNo = archiveAll.Where(x => x.DocumentNo.ToLower() == row[7].ToString().ToLower()).FirstOrDefault();
+                        if(dataDocNo != null)
+                        {
+                            valid = false;
+                            error += "_Nomor Dokumen Sudah Teregister";
+                        }
+                        else
+                        {
+                            dataDocNo = trxArchives.Where(x => x.DocumentNo.ToLower() == row[7].ToString().ToLower()).FirstOrDefault();
+                            {
+                                valid = false;
+                                error += "_Duplikat Nomor Dokumen";
+                            }
+                        }
+                        var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode.ToLower() == row[9].ToString().ToLower()).FirstOrDefault();
+                        if (archiveTypeData == null)
+                        {
+                            valid = false;
+                            error += "_Tipe Arsip Tidak Valid";
+                        }
+                        DateTime dateArchive = DateTime.Now;
+                        if (!DateTime.TryParse(row[10].ToString(), out dateArchive))
+                        {
+                            valid = false;
+                            error += "_Tanggal Arsip Tidak Valid";
+                        }
+                        int activeRetention = 0;
+                        if (!int.TryParse(row[11].ToString(), out activeRetention))
+                        {
+                            valid = false;
+                            error += "_Retensi Aktif Tidak Valid";
+                        }
+                        int inActiveRetention = 0;
+                        if (!int.TryParse(row[12].ToString(), out inActiveRetention))
+                        {
+                            valid = false;
+                            error += "_Retensi In Aktif Tidak Valid";
+                        }
+                        int total = 0;
+                        if (!int.TryParse(row[13].ToString(), out total))
+                        {
+                            valid = false;
+                            error += "_Jumlah Tidak Valid";
+                        }
+                        if (valid)
+                        {
+                            trxArchive = new();
+                            trxArchive.ArchiveId = Guid.NewGuid();
+                            trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault()!.GmdId;
+                            trxArchive.SubSubjectClassificationId = subSubjectClassificationData!.SubSubjectClassificationId;
+                            trxArchive.SecurityClassificationId = securityClassificationData!.SecurityClassificationId;
+                            trxArchive.CreatorId = (Guid)subSubjectClassificationData.CreatorId!;
+                            trxArchive.TypeSender = row[4].ToString()!;
+                            trxArchive.ArchiveOwnerId = archiveOwnerData!.ArchiveOwnerId;
+                            trxArchive.Keyword = row[6].ToString()!;
+                            trxArchive.ArchiveCode = string.Empty;
+                            trxArchive.DocumentNo = row[7].ToString()!;
+                            trxArchive.TitleArchive = row[8].ToString()!;
+                            trxArchive.ArchiveTypeId = archiveTypeData!.ArchiveTypeId;
+                            trxArchive.CreatedDateArchive = dateArchive;
+                            trxArchive.ActiveRetention = activeRetention;
+                            trxArchive.InactiveRetention = inActiveRetention;
+                            trxArchive.Volume = total;
+                            trxArchive.IsActive = true;
+                            trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            trxArchive.CreatedDate = DateTime.Now;
+                            trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
 
-                    trxArchives.Add(trxArchive);
+                            trxArchives.Add(trxArchive);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    //if (valid)
+                    //    await _archiveService.InsertBulk(trxArchives);
                 }
+                return View(GlobalConst.UploadForm);
             }
-            await _archiveService.InsertBulk(trxArchives);
-            return RedirectToIndex();
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }

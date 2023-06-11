@@ -86,18 +86,34 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
             string[] archiveId = Request.Form[GlobalConst.DetailArray].ToArray();
             model.StatusId = Request.Form[GlobalConst.Submit].ToString() == GlobalConst.Submit ? (int)GlobalConst.STATUS.Submit : (int)GlobalConst.STATUS.Draft;
 
-            if (model.MediaStorageId != Guid.Empty)
+            if (Request.Form[GlobalConst.Submit] == GlobalConst.IsUsed)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                await _mediaStorageService.Update(model, archiveId);
+
+                var detailIsUsed = Request.Form[GlobalConst.DetailIsUsedArray].ToArray();
+                for (int i = 0; i < detailIsUsed.ToArray().Length; i++)
+                {
+                    await _mediaStorageService.UpdateDetailIsUsed(new Guid(detailIsUsed[i]));
+                }
             }
             else
             {
-                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                model.CreatedDate = DateTime.Now;
-                await _mediaStorageService.Insert(model, archiveId);
+                if (model.MediaStorageId != Guid.Empty)
+                {
+                    model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.UpdatedDate = DateTime.Now;
+                    await _mediaStorageService.Update(model, archiveId);
+                }
+                else
+                {
+                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    model.CreatedDate = DateTime.Now;
+                    await _mediaStorageService.Insert(model, archiveId);
+                }
             }
+
+           
         }
         return RedirectToIndex();
     }
@@ -144,6 +160,20 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         }
     }
     public override async Task<IActionResult> Remove(Guid Id)
+    {
+        var data = await _mediaStorageService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
+    public async Task<IActionResult> IsUsed(Guid Id)
     {
         var data = await _mediaStorageService.GetById(Id);
         if (data is not null)
@@ -208,7 +238,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchive.docx");
         var file = Label.GenerateLabelArchive(FilePath, data);
 
-        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, "Label.pdf");
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.MediaStorageCode}.pdf");
     }
     #endregion
 }

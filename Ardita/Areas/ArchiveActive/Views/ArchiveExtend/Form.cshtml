@@ -164,6 +164,30 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Arsip</label>
+                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Retensi Sebelumnya</label>
+                                            <input readonly type="number" id="txtRetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Retensi Selanjutnya</label>
+                                            <input type="number" onchange="checkBefore($(this))" id="txtRetentionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Alasan Perpanjangan</label>
+                                            <textarea id="txtReason" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -179,45 +203,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtlArs">
-                                                @if (ViewBag.subDetail.Count > 0)
-                                                {
-                                                    foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
-                                                    {
-                                                        <tr>
-                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                            <td style="width:50%">
-                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
-                                                            </td>
-                                                            <td style="width:10%">
-                                                                <input readonly type="number" name="retentionBefore[]" value="@item.RetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                            </td>
-                                                            <td style="width:10%">
-                                                                <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" value="@item.RetensionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                            </td>
-                                                            <td style="width:25%">
-                                                                <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)">@item.Reason</textarea>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <tr>
-                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                        <td style="width:50%">
-                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
-                                                        </td>
-                                                        <td style="width:10%">
-                                                            <input readonly type="number" name="retentionBefore[]" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                        </td>
-                                                        <td style="width:10%">
-                                                            <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                        </td>
-                                                        <td style="width:25%">
-                                                            <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" ></textarea>
-                                                        </td>
-                                                    </tr>
-                                                }
+                                               
                                             </tbody>
                                         </table>
                                     </div>
@@ -282,19 +268,48 @@
         }
 
         function addRow(e, name) {
-            var nameCapital = toCapitalCase(name);
-            $(`.${name}`).select2('destroy');
-            var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
-            elClone.find(`.${name}`).val('');
-            if (name == 'ars') {
-                elClone.find('.before').val('');
-                elClone.find('.after').val('');
-                elClone.find('.reason').val('');
+            //var nameCapital = toCapitalCase(name);
+            //$(`.${name}`).select2('destroy');
+            //var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
+            //elClone.find(`.${name}`).val('');
+            //if (name == 'ars') {
+            //    elClone.find('.before').val('');
+            //    elClone.find('.after').val('');
+            //    elClone.find('.reason').val('');
+            //}
+            //elClone.appendTo(`#listdtl${nameCapital}`);
+            //$(`.min${nameCapital}`).show();
+            //var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
+            //initSelect2(name, bindName);
+
+           
+
+            var arsipId = $('#txtArchiveId').val();
+            var arsipDesc = $('#txtArchiveId').select2('data')[0].text;
+            var retentionBefore = $('#txtRetentionBefore').val();
+            var retentionAfter = $('#txtRetentionAfter').val();
+            var reason = $('#txtReason').val();
+
+            if(checkDuplicate($('#txtArchiveId'), 'ars')){
+                $('#listdtlArs').append(`<tr name="detailRow[]">
+                                     <td class="text-center"></td>
+                                     <td class="text-left">
+                                                        <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                <input type="hidden" class="form-control ars" style="border: none !important;" name="archiveId[]" value="${arsipId}" />
+                                     </td>
+                                      <td class="text-left">
+                                            <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="${retentionBefore}" readonly />
+                                      </td>
+                                      <td class="text-left">
+                                                        <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="${retentionAfter}" readonly />
+                                      </td>
+                                      <td class="text-left">
+                                                <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="${reason}" readonly />
+                                      </td>
+                    </tr>`);
             }
-            elClone.appendTo(`#listdtl${nameCapital}`);
-            $(`.min${nameCapital}`).show();
-            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
-            initSelect2(name, bindName);
+
+          
         }
 
         function removeRow(e, name) {
@@ -344,14 +359,39 @@
                     param.Id = data;
 
                     ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                        e.parent().next().children('.before').val(result.activeRetention);
+                        $('#txtRetentionBefore').val(result.activeRetention)
                     });
                 }
                 
             }
             e.removeClass('current');
         }
+        function checkDuplicateByButton(e, name) {
+            var data = e.val();
+            var valid;
 
+            if (!e.hasClass('current')) {
+
+                e.addClass('current');
+
+                if (e.hasClass(name)) {
+                    $(`.${name}`).each(function () {
+                        if (!$(this).hasClass('current')) {
+                            if (data == $(this).val()) {
+                                swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                                    valid = false;
+                                });
+                            }else{
+                                valid = true;
+                            }
+                        }
+                    });
+                }
+                
+
+            }
+            e.removeClass('current');
+        }
         function initSelect2(name, act){
             $(`.${name}`).each(function () {
                 $(this).select2({
