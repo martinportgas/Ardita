@@ -222,7 +222,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 var listArchive = Request.Form["archive[]"].ToArray();
                 var listRetentionBefore = Request.Form["retentionBefore[]"].ToArray();
                 var listRetentionAfter = Request.Form["retentionAfter[]"].ToArray();
-                var listReason = Request.Form["reason[]"].ToArray();
+                var listReason = Request.Form["reasonExtend[]"].ToArray();
                 if (listArchive.Length > 0)
                 {
                     result = await _archiveExtendService.DeleteDetailByMainId(model.ArchiveExtendId);

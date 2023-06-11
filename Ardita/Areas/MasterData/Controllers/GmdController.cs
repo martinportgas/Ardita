@@ -45,41 +45,17 @@ public class GmdController : BaseController<MstGmd>
 
     public override async Task<IActionResult> Update(Guid Id)
     {
-        var data = await _gmdService.GetById(Id);
-        if (data.Any())
-        {
-            return View(GlobalConst.Form, data.FirstOrDefault());
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     public override async Task<IActionResult> Remove(Guid Id)
     {
-        var data = await _gmdService.GetById(Id);
-        if (data.Any())
-        {
-            return View(GlobalConst.Form, data.FirstOrDefault());
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     public override async Task<IActionResult> Detail(Guid Id)
     {
-        var data = await _gmdService.GetById(Id);
-        if (data.Any())
-        {
-            return View(GlobalConst.Form, data.FirstOrDefault());
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     [HttpPost]
@@ -88,18 +64,20 @@ public class GmdController : BaseController<MstGmd>
     {
         if (model != null)
         {
+            var listDetail = Request.Form[GlobalConst.DetailArray].ToArray();
+
             if (model.GmdId != Guid.Empty)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                await _gmdService.Update(model);
+                await _gmdService.Update(model, listDetail!);
             }
 
             else
             {
                 model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 model.CreatedDate = DateTime.Now;
-                await _gmdService.Insert(model);
+                await _gmdService.Insert(model, listDetail!);
             }
         }
         return RedirectToIndex();
@@ -228,5 +206,18 @@ public class GmdController : BaseController<MstGmd>
 
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Gmd, new { Area = GlobalConst.MasterData });
+
+    private async Task<IActionResult> InitFormView(Guid Id)
+    {
+        var data = await _gmdService.GetById(Id);
+        if (data.Any())
+        {
+            return View(GlobalConst.Form, data.FirstOrDefault());
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
     #endregion
 }

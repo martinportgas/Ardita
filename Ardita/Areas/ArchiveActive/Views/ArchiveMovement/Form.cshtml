@@ -204,6 +204,24 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="col-sm-6 archive-div">
+                                                        <div class="form-group">
+                                                            <label>Arsip</label>
+                                                            <select id="txtArchive" onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 archive-div">
+                                                        <div class="form-group">
+                                                            <label>Pemilik</label>
+                                                            <input readonly type="text" class="form-control creator" id="txtCreator" value="" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 archive-div">
+                                                        <div class="form-group">
+                                                            <label>Volume</label>
+                                                            <input readonly type="text" class="form-control volume" id="txtVolume" value="" />
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-12">
@@ -215,41 +233,31 @@
                                                                     <th>Arsip</th>
                                                                     <th>Pemilik</th>
                                                                     <th>Volume</th>
+                                                                    <th></th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="listdtlArs">
                                                                 @if (ViewBag.subDetail.Count > 0)
                                                                 {
-                                                                    foreach (Ardita.Models.DbModels.TrxArchiveMovementDetail item in ViewBag.subDetail)
+                                                                    foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
                                                                     {
                                                                         <tr>
-                                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                                            <td style="width:55%">
-                                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
+                                                                            <td class="text-center"></td>
+                                                                            <td class="text-left">
+                                                                                <input type="text" class="form-control" style="border: none !important;" value="@item.Archive.TitleArchive" readonly />
+                                                                                <input type="hidden" class="" style="border: none !important;" name="archive[]" value="@item.ArchiveId" />
                                                                             </td>
-                                                                            <td style="width:20%">
-                                                                                <input readonly type="text" class="form-control creator" value="@item.Archive.Creator.CreatorName" />
+                                                                            <td class="text-left">
+                                                                                <input class="form-control" style="border: none !important;" name="creator[]" value="@item.RetentionBefore" readonly />
                                                                             </td>
-                                                                            <td style="width:20%">
-                                                                                <input readonly type="text" class="form-control volume" value="@item.Archive.Volume" />
+                                                                            <td class="text-left">
+                                                                                <input class="form-control" style="border: none !important;" name="volume[]" value="@item.RetensionAfter" readonly />
+                                                                            </td>
+                                                                            <td>
+                                                                                <button class="btn btn-danger remove" type="button">Remove</button>
                                                                             </td>
                                                                         </tr>
                                                                     }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <tr>
-                                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                                        <td style="width:55%">
-                                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" asp-items="ViewBag.listArchiveRetention" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
-                                                                        </td>
-                                                                        <td style="width:20%">
-                                                                            <input readonly type="text" class="form-control creator" />
-                                                                        </td>
-                                                                        <td style="width:20%">
-                                                                            <input readonly type="text" class="form-control volume" />
-                                                                        </td>
-                                                                    </tr>
                                                                 }
                                                             </tbody>
                                                         </table>
@@ -319,18 +327,42 @@
         }
 
         function addRow(e, name) {
-            var nameCapital = toCapitalCase(name);
-            $(`.${name}`).select2('destroy');
-            var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
-            elClone.find(`.${name}`).val('');
-            if (name == 'ars') {
-                elClone.find('.creator').val('');
-                elClone.find('.volume').val('');
-            }
-            elClone.appendTo(`#listdtl${nameCapital}`);
-            $(`.min${nameCapital}`).show();
-            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
-            initSelect2(name, bindName);
+            //var nameCapital = toCapitalCase(name);
+            //$(`.${name}`).select2('destroy');
+            //var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
+            //elClone.find(`.${name}`).val('');
+            //if (name == 'ars') {
+            //    elClone.find('.creator').val('');
+            //    elClone.find('.volume').val('');
+            //}
+            //elClone.appendTo(`#listdtl${nameCapital}`);
+            //$(`.min${nameCapital}`).show();
+            //var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
+            //initSelect2(name, bindName);
+
+            var arsipId = $('#txtArchive').val();
+            var arsipDesc = $('#txtArchive').select2('data')[0].text;
+            var creator = $('#txtCreator').val();
+            var volume = $('#txtVolume').val();
+
+            // if(checkDuplicateByButton($('#txtArchiveId'), 'ars')){
+            $('#listdtlArs').append(`<tr name="detailRow[]">
+                                             <td class="text-center"></td>
+                                             <td class="text-left">
+                                                 <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                 <input type="hidden" class="form-control ars" style="border: none !important;" name="archive[]" value="${arsipId}" />
+                                             </td>
+                                              <td class="text-left">
+                                                            <input class="form-control" style="border: none !important;" name="creator[]" value="${creator}" readonly />
+                                              </td>
+                                              <td class="text-left">
+                                                 <input class="form-control" style="border: none !important;" name="volume[]" value="${volume}" readonly />
+                                              </td>
+                                              <td>
+                                                         <button class="btn btn-danger remove" type="button">Remove</button>
+                                              </td>
+                            </tr>`);
+            // }
         }
 
         function removeRow(e, name) {
@@ -432,8 +464,8 @@
                             return;
                         }
 
-                        e.parent().next().find('.creator').val(result.creator.creatorName);
-                        e.parent().next().next().find('.volume').val(result.volume);
+                        $('#txtCreator').val(result.creator.creatorName);
+                        $('#txtVolume').val(result.volume);
 
                         sisa -= result.volume;
                         $('#txtSisa').val(sisa);
@@ -543,6 +575,11 @@
                         };
                     }
                 }
+            });
+
+            $('#listdtlArs').on('click', '.remove', function () {
+                var child = $(this).closest('tr').nextAll();
+                $(this).closest('tr').remove();
             });
         });
     </script>
