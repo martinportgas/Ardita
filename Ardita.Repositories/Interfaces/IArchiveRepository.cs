@@ -20,4 +20,5 @@ public interface IArchiveRepository
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
     Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
     Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive);
+    Task<int> Submit(TrxArchive model);
 }

@@ -29,12 +29,15 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox ">
+                <form role="form" id="formSubmit" enctype="multipart/form-data" asp-controller="@GlobalConst.Archive" asp-area="@GlobalConst.ArchiveActive" asp-action="@GlobalConst.Submit">
                 <div class="ibox-title">
                     <h5>Archive</h5>
                     <div class="ibox-tools">
                         <a href="@Url.Action(GlobalConst.Add, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                         <a href="@Url.Action(GlobalConst.Export, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-info" style="color:white !important"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                         <a href="@Url.Action(GlobalConst.UploadForm, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-success" style="color:white !important"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
+                        <a onclick="submitAll()" class="btn btn-sm btn-warning" style="color:white !important"><i class="fa fa-paper-plane"></i><span class="bold"> Submit Selected</span></a>
+                        <a href="@Url.Action(GlobalConst.Submit, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-default" style="color:black !important"><i class="fa fa-filter"></i><span class="bold"> Advance Filter</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -51,6 +54,7 @@
                                 <th>Unit Pencipta</th>
                                 <th>Sub-subjek Klasifikasi</th>
                                 <th>Status</th>
+                                <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAll" class="text-center">Pilih Semua </label><input type="checkbox" id="checkAll"/></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -58,6 +62,7 @@
                         </tbody>
                     </table>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -65,7 +70,48 @@
 
 @section Scripts {
     <script type="text/javascript">
+
+        function submitAll(){
+            swal({
+                title: "Anda yakin ingin submit?",
+                text: "Mohon periksa kembali sebelum submit!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $("#formSubmit").submit();
+                    } else {
+                        swal("Dibatalkan", "Anda telah membatalkan submit!", "error");
+                    }
+                });
+        }
+
         $(document).ready(function () {
+
+            $('#checkAll').on('change', function () {
+                var checked = $(this).prop('checked');
+
+                $(`.check`).each(function () {
+                    $(this).prop('checked', checked);
+                });
+            });
+
+            var notif = '@TempData[GlobalConst.Notification]';
+
+            if (notif != '') {
+                if (notif == '@GlobalConst.Success') {
+                    swal({ title: "Success!", text: 'Berhasil Submit!', type: "success" });
+                }else{
+                    swal({ title: "Failed!", text: notif, type: "info" });
+                }
+            }
+
             bsCustomFileInput.init();
 
             var table = $('#tbl').DataTable({
@@ -83,7 +129,13 @@
                         width: 50, targets: 0
                     }, {
                         width: 100, targets: 1
-                    }
+                    }, {
+                        width: 100, targets: 10
+                    },
+                    {
+                        targets: [10],
+                        className: `text-center`
+                    },
                 ],
                 fixedColumns: true,
                 order: [[0, 'desc']],
@@ -127,6 +179,11 @@
                     {
                         "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
+                        }
+                    },
+                    {
+                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return row.statusId == 1 ? `<input type="checkbox" class="check" value='${data}' name="listArchive[]" />` : '';
                         }
                     }
                 ]

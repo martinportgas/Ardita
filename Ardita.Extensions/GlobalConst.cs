@@ -224,6 +224,7 @@ public static class GlobalConst
     public const string UnitKearsipan = "Unit Kearsipan";
     public const string Notification = "Notification";
     public const string Success = "Success";
+    public const string NothingSelected = "Tidak ada yang dipilih";
     public const string Failed = "Failed";
     public const string Yes = "Yes";
 
