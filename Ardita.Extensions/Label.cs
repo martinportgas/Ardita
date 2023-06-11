@@ -17,9 +17,9 @@ public static class Label
         byte[] toArray;
         Document document = new();
         document.LoadFromFile(template);
-        document.Replace(nameof(TrxRack.RackCode), data.Row!.Level!.Rack!.RackCode, false, true);
-        document.Replace(nameof(TrxLevel.LevelCode), data.Row!.Level!.LevelCode, false, true);
-        document.Replace(nameof(TrxRow.RowCode), data.Row!.RowCode, false, true);
+        document.Replace(nameof(TrxRack.RackCode), data.Row!.Level!.Rack!.RackName, false, true);
+        document.Replace(nameof(TrxLevel.LevelCode), data.Row!.Level!.LevelName, false, true);
+        document.Replace(nameof(TrxRow.RowCode), data.Row!.RowName, false, true);
         document.Replace(nameof(TrxSubjectClassification.SubjectClassificationCode), data.SubjectClassification.SubjectClassificationCode, false, true);
 
         string[] arrDate = data.ArchiveYear.Split('-');

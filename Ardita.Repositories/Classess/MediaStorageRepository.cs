@@ -41,6 +41,7 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(x => x.Status)
             .Include(x => x.SubjectClassification.Classification.Creator)
             .Include(x => x.TypeStorage.ArchiveUnit)
+            .Include(x => x.Row.Level.Rack)
             .Where(x => (x.MediaStorageCode + x.SubjectClassification.SubjectClassificationName + x.Status.Name 
             + x.SubjectClassification.Classification.Creator.CreatorName + x.TypeStorage.TypeStorageName + x.TypeStorage.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
             .Where(x => x.IsActive == true)
@@ -50,6 +51,7 @@ public class MediaStorageRepository : IMediaStorageRepository
             {
                 x.MediaStorageId,
                 x.MediaStorageCode,
+                LabelCode = x.Row.Level!.Rack!.RackName + "-" + x.Row.Level.LevelName + "-" + x.Row.RowName,
                 x.StatusId,
                 Status = x.Status.Name == "Submit" ? "Tersimpan" : x.Status.Name,
                 x.Status.Color,

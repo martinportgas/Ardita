@@ -42,9 +42,10 @@ namespace Ardita.Areas.UserManage.Controllers
         }
         public override async Task<IActionResult> Add()
         {
+
             ViewBag.listEmployees = await BindEmployee();
             ViewBag.listArchiveUnit = await BindAllArchiveUnits();
-            ViewBag.subDetail = new IdxUserArchiveUnit();
+            ViewBag.subDetail = new List<IdxUserArchiveUnit>();
 
             return View(GlobalConst.Form, new MstUser());
         }

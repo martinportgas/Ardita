@@ -101,16 +101,16 @@
 
                             var edit = ``;
 
-                            if (row.statusId == 1) {
+                            //if (row.statusId == 1) {
                                 edit = `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                 edit = edit.replace("-1", row.archiveId);
-                            }
+                            //}
 
                             var remove = ``;
-                            if (row.statusId == 1) {
+                            //if (row.statusId == 1) {
                                 remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                                 remove = remove.replace("-1", row.archiveId);
-                            }
+                            //}
                             
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
