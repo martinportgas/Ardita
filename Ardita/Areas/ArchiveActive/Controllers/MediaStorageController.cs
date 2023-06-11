@@ -238,7 +238,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchive.docx");
         var file = Label.GenerateLabelArchive(FilePath, data);
 
-        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.MediaStorageCode}.pdf");
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.Row.Level!.Rack!.RackName + "-" + data.Row.Level.LevelName + "-" + data.Row.RowName}.pdf");
     }
     #endregion
 }
