@@ -9,10 +9,6 @@ public partial class TrxArchiveExtend
 
     public Guid ArchiveUnitId { get; set; }
 
-    public Guid SubSubjectClassificationId { get; set; }
-
-    public string ArchiveYear { get; set; } = null!;
-
     public string ExtendCode { get; set; } = null!;
 
     public string ExtendName { get; set; } = null!;
@@ -44,8 +40,6 @@ public partial class TrxArchiveExtend
     public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
     public virtual MstStatus Status { get; set; } = null!;
-
-    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 
     public virtual ICollection<TrxArchiveExtendDetail> TrxArchiveExtendDetails { get; } = new List<TrxArchiveExtendDetail>();
 }
