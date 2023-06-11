@@ -9,6 +9,8 @@ public partial class TrxArchive
 
     public Guid GmdId { get; set; }
 
+    public Guid? GmdDetailId { get; set; }
+
     public Guid SubSubjectClassificationId { get; set; }
 
     public Guid SecurityClassificationId { get; set; }
@@ -37,6 +39,8 @@ public partial class TrxArchive
 
     public int Volume { get; set; }
 
+    public string? Description { get; set; }
+
     public long StatusId { get; set; }
 
     public long? IsUsed { get; set; }
@@ -60,6 +64,8 @@ public partial class TrxArchive
     public virtual MstCreator Creator { get; set; } = null!;
 
     public virtual MstGmd Gmd { get; set; } = null!;
+
+    public virtual MstGmdDetail? GmdDetail { get; set; }
 
     public virtual MstSecurityClassification SecurityClassification { get; set; } = null!;
 
