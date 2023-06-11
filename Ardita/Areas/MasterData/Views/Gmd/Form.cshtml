@@ -67,7 +67,7 @@
                                             <label>Unit</label>
                                             <input type="text" placeholder="" id="txtDetailUnit" class="form-control">
                                         </div>
-                                        @if (form.CurrentAction != GlobalConst.Detail)
+                                        @if (form.CurrentAction != GlobalConst.Detail || form.CurrentAction != GlobalConst.Remove)
                                         {
                                             <div class="form-group">
                                                 <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>

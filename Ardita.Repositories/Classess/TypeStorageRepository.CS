@@ -20,7 +20,12 @@ public class TypeStorageRepository : ITypeStorageRepository
         .Where(x => x.ArchiveUnit.Company.IsActive == true)
         .ToListAsync();
     
-    public async Task<TrxTypeStorage> GetById(Guid id) => await _context.TrxTypeStorages.FirstAsync(x => x.TypeStorageId == id);
+    public async Task<TrxTypeStorage> GetById(Guid id) 
+        => await _context.TrxTypeStorages
+        .Include(x => x.TrxTypeStorageDetails)
+        .ThenInclude(x =>x.GmdDetail)
+        .AsNoTracking()
+        .FirstAsync(x => x.TypeStorageId == id);
     
     public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync(x => x.IsActive == true);
 
@@ -70,15 +75,29 @@ public class TypeStorageRepository : ITypeStorageRepository
         return result;
     }
 
-    public async Task<int> Insert(TrxTypeStorage model)
+    public async Task<int> Insert(TrxTypeStorage model, List<TrxTypeStorageDetail> detail)
     {
         int result = 0;
+        List<TrxTypeStorageDetail> details = new();
+
 
         if (model != null)
         {
             model.IsActive = true;
             _context.TrxTypeStorages.Add(model);
             result = await _context.SaveChangesAsync();
+
+            foreach (var item in detail)
+            {
+                item.CreatedDate = model.CreatedDate;
+                item.CreatedBy = model.CreatedBy;
+                item.TypeStorageId = model.TypeStorageId;
+
+                details.Add(item);
+            }
+
+            _context.TrxTypeStorageDetails.AddRange(details);
+            result += await _context.SaveChangesAsync();
         }
         return result;
     }
@@ -94,9 +113,11 @@ public class TypeStorageRepository : ITypeStorageRepository
         return result;
     }
 
-    public async Task<int> Update(TrxTypeStorage model)
+    public async Task<int> Update(TrxTypeStorage model, List<TrxTypeStorageDetail> detail)
     {
         int result = 0;
+        List<TrxTypeStorageDetail> newDetail = new();
+        List<TrxTypeStorageDetail> oldDetail = new();
 
         if (model != null && model.TypeStorageId != Guid.Empty)
         {
@@ -108,6 +129,26 @@ public class TypeStorageRepository : ITypeStorageRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.TrxTypeStorages.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Insert Detail
+                oldDetail = await _context.TrxTypeStorageDetails.AsNoTracking().Where(x => x.TypeStorageId == model.TypeStorageId).ToListAsync();
+                if (oldDetail.Any())
+                {
+                    _context.TrxTypeStorageDetails.RemoveRange(oldDetail);
+                    result += await _context.SaveChangesAsync();
+                }
+
+                foreach (var item in detail)
+                {
+                    item.CreatedDate = model.CreatedDate;
+                    item.CreatedBy = model.CreatedBy;
+                    item.TypeStorageId = model.TypeStorageId;
+
+                    newDetail.Add(item);
+                }
+
+                _context.TrxTypeStorageDetails.AddRange(newDetail);
+                result += await _context.SaveChangesAsync();
             }
         }
         return result;

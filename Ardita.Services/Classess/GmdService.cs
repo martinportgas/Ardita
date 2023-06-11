@@ -20,6 +20,10 @@ public class GmdService : IGmdService
 
     public async Task<IEnumerable<MstGmd>> GetById(Guid id) => await _GmdRepository.GetById(id);
 
+    public async Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid id) => await _GmdRepository.GetDetailByGmdId(id);
+
+    public async Task<MstGmdDetail> GetDetailById(Guid Id) => await _GmdRepository.GetDetailById(Id);
+
     public async Task<DataTableResponseModel<MstGmd>> GetList(DataTablePostModel model)
     {
         try
@@ -94,4 +98,5 @@ public class GmdService : IGmdService
 
         return details;
     }
+
 }
