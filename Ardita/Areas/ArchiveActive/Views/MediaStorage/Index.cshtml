@@ -38,7 +38,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Kode Media Penyimpanan</th>
+                                <th>Kode Label</th>
                                 <th>Lokasi</th>
                                 <th>Jenis Penyimpanan</th>
                                 <th>Subjek Klasifikasi</th>
@@ -94,6 +94,7 @@
                             if (row.statusId == 1) {
                                 edit = `<a class="btn btn-sm btn-primary" data-toggle = "tooltip" data-placement = "left" title = "Edit" href="@Url.Action(GlobalConst.Update, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                                  edit = edit.replace("-1", row.mediaStorageId);
+                            }
 
                             var remove = ``;
 
@@ -110,7 +111,7 @@
 
                             var isUsed = ``;
                             if (row.statusId == 5) {
-                                isUsed = `<a class="btn btn-sm btn-danger" data-toggle = "tooltip" data-placement = "left" title = "Out Indicator" href="@Url.Action(GlobalConst.IsUsed, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1})"><i class="fa fa-pencil"></i> </a>`;
+                                isUsed = `<a class="btn btn-sm btn-success" data-toggle = "tooltip" data-placement = "left" title = "Out Indicator" href="@Url.Action(GlobalConst.IsUsed, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = -1})"><i class="fa fa-folder-open"></i> </a>`;
                                 isUsed = isUsed.replace("-1", row.mediaStorageId);
                             }
 
@@ -118,7 +119,7 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "mediaStorageCode", "name": "mediaStorageCode", "autoWidth": true },
+                    { "data": "labelCode", "name": "labelCode", "autoWidth": true },
                     { "data": "archiveUnitName", "name": "typeStorage.archiveUnit.archiveUnitName", "autoWidth": true },
                     { "data": "typeStorageName", "name": "typeStorage.typeStorageName", "autoWidth": true },
                     { "data": "subjectClassificationName", "name": "subjectClassification.subjectClassificationName", "autoWidth": true },
