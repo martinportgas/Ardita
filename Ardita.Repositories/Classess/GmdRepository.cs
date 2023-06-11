@@ -62,19 +62,38 @@ public class GmdRepository : IGmdRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstGmd>> GetById(Guid id) => await _context.MstGmds.Where(x => x.GmdId== id).ToListAsync();
+    public async Task<IEnumerable<MstGmd>> GetById(Guid id) 
+        => await _context.MstGmds
+        .Include(x => x.MstGmdDetails)
+        .Where(x => x.GmdId== id)
+        .AsNoTracking()
+        .ToListAsync();
 
     public async Task<int> GetCount() => await _context.MstGmds.CountAsync(x => x.IsActive == true);
 
-    public async Task<int> Insert(MstGmd model)
+    public async Task<int> Insert(MstGmd model, List<MstGmdDetail> details)
     {
         int result = 0;
+        List<MstGmdDetail> gmdDetails = new();
+
 
         if (model != null)
         {
             model.IsActive = true;
             _context.MstGmds.Add(model);
             result = await _context.SaveChangesAsync();
+
+            foreach (var item in details)
+            {
+                item.CreatedDate = model.CreatedDate;
+                item.CreatedBy = model.CreatedBy;
+                item.GmdId = model.GmdId;
+
+                gmdDetails.Add(item);
+            }
+
+            _context.MstGmdDetails.AddRange(gmdDetails);
+            result += await _context.SaveChangesAsync();
         }
         return result;
     }
@@ -91,20 +110,46 @@ public class GmdRepository : IGmdRepository
         return result;
     }
 
-    public async Task<int> Update(MstGmd model)
+    public async Task<int> Update(MstGmd model, List<MstGmdDetail> details)
     {
         int result = 0;
+        List<MstGmdDetail> gmdDetails = new();
+        List<MstGmdDetail> oldGmdDetails = new();
 
         if (model != null && model.GmdId != Guid.Empty)
         {
             var data = await _context.MstGmds.AsNoTracking().FirstAsync(x => x.GmdId == model.GmdId);
             if (data != null)
             {
+                //Insert Header
                 model.CreatedBy = data.CreatedBy;
                 model.CreatedDate = data.CreatedDate;
                 model.IsActive = data.IsActive;
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Insert Detail
+                oldGmdDetails = await _context.MstGmdDetails.AsNoTracking().Where(x => x.GmdId == model.GmdId).ToListAsync();
+                if (oldGmdDetails.Any())
+                {
+                    _context.MstGmdDetails.RemoveRange(oldGmdDetails);
+                    result += await _context.SaveChangesAsync();
+                }
+
+                _context.MstGmdDetails.RemoveRange(gmdDetails);
+                result += await _context.SaveChangesAsync();
+
+                foreach (var item in details)
+                {
+                    item.CreatedDate = model.CreatedDate;
+                    item.CreatedBy = model.CreatedBy;
+                    item.GmdId = model.GmdId;
+
+                    gmdDetails.Add(item);
+                }
+
+                _context.MstGmdDetails.AddRange(gmdDetails);
+                result += await _context.SaveChangesAsync();
             }
         }
         return result;

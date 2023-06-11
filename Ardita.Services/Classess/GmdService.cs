@@ -54,12 +54,44 @@ public class GmdService : IGmdService
 
     }
 
-    public async Task<int> Insert(MstGmd model) => await _GmdRepository.Insert(model);
+    public async Task<int> Insert(MstGmd model, string[] listDetail)
+    {
+
+        List<MstGmdDetail> details = await GetDetail(listDetail);
+
+        return await _GmdRepository.Insert(model, details);
+    }
+
+    public async Task<int> Update(MstGmd model, string[] listDetail)
+    {
+        List<MstGmdDetail> details = await GetDetail(listDetail);
+
+        return await _GmdRepository.Update(model, details);
+    }
 
     public async Task<bool> InsertBulk(List<MstGmd> mstGmds)
     {
         return await _GmdRepository.InsertBulk(mstGmds);
     }
 
-    public async Task<int> Update(MstGmd model) => await _GmdRepository.Update(model);
+    private static async Task<List<MstGmdDetail>> GetDetail(string[] listDetail)
+    {
+        await Task.Delay(0);
+        List<MstGmdDetail> details = new();
+
+
+        foreach (var item in listDetail)
+        {
+            string[] words = item!.Split('#');
+            MstGmdDetail detailTwo = new()
+            {
+                Name = words[0],
+                Unit = words[1]
+            };
+
+            details.Add(detailTwo);
+        }
+
+        return details;
+    }
 }

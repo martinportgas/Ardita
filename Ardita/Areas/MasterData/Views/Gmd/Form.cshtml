@@ -36,24 +36,57 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-6 b-r">
+                        <div class="col-sm-12">
                             <form role="form" id="frmGmd" enctype="multipart/form-data" asp-controller=@form.CurrentController asp-area=@form.CurrentArea asp-action=@form.FormAction>
-                                <div class="form-group">
-                                    <label>Gmd Code</label>
-                                    <input type="text" placeholder="" id="txtGmdCode" class="form-control" asp-for="@Model.GmdCode">
-                                    <input type="hidden" placeholder="" id="txtGmdId" class="form-control" asp-for="@Model.GmdId">
-                                </div>
-                                <div class="form-group">
-                                    <label>Gmd Name</label>
-                                    <input type="text" placeholder="" id="txtGmdName" class="form-control" asp-for="@Model.GmdName">
-                                </div>
-                              
-                                <div>
-                                    <a href="@Url.Action(GlobalConst.Index, @form.CurrentController, new { Area = @form.CurrentArea })" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
-                                    @if (form.isSubmitForm)
-                                    {
-                                        <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
-                                    }
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <label>Gmd Code</label>
+                                            <input type="text" placeholder="" id="txtGmdCode" class="form-control" asp-for="@Model.GmdCode">
+                                            <input type="hidden" placeholder="" id="txtGmdId" class="form-control" asp-for="@Model.GmdId">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Gmd Name</label>
+                                            <input type="text" placeholder="" id="txtGmdName" class="form-control" asp-for="@Model.GmdName">
+                                        </div>
+
+                                        <div>
+                                            <a href="@Url.Action(GlobalConst.Index, @form.CurrentController, new { Area = @form.CurrentArea })" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                            @if (form.isSubmitForm)
+                                            {
+                                                <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Gmd Detail Name</label>
+                                            <input type="text" placeholder="" id="txtDetailName" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Unit</label>
+                                            <input type="text" placeholder="" id="txtDetailUnit" class="form-control">
+                                        </div>
+                                        @if (form.CurrentAction != GlobalConst.Detail)
+                                        {
+                                            <div class="form-group">
+                                                <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>
+                                            </div>
+                                        }
+                                        
+                                        <table class="table table-striped table-hover dataTables-example mt-5" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10%">Action</th>
+                                                    <th>Gmd Detail Name</th>
+                                                    <th>Unit</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="detail">
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -70,7 +103,30 @@
     <script type="text/javascript">
         $(document).ready(function () {
             initForms("@form.CurrentAction");
+
+            $("#btn-add-detail").click(function () {
+                initDetail($("#txtDetailName").val(), $("#txtDetailUnit").val());
+            });
+
+            if ("@form.CurrentAction" != "@GlobalConst.Add") 
+            {
+                @foreach (var d in Model.MstGmdDetails)
+                {
+                    @:initDetail("@d.Name", "@d.Unit");
+                }
+            }
         });
+
+        function initDetail(name, unit) {
+            if(name === "" || unit === "") {
+                alert("Please Input Detail Name and Unit");
+                return false;
+            }
+            $(".detail").append(`<tr><td><i class="fa fa-trash"></i></td><td>${name}</td><td>${unit}</td></tr><input type="hidden" name="detail[]" value="${name}#${unit}">`);
+
+            $("#txtDetailName").val("");
+            $("#txtDetailUnit").val("");
+        }
 
         function validate() {
             if ($('#txtGmdCode').val() == "") {
