@@ -19,7 +19,15 @@ public class TypeStorageRepository : ITypeStorageRepository
         .Where(x => x.ArchiveUnit.IsActive == true)
         .Where(x => x.ArchiveUnit.Company.IsActive == true)
         .ToListAsync();
-    
+
+    public async Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId)
+        => await _context.TrxTypeStorageDetails
+        .Include(x => x.TypeStorage)
+        .Include(x => x.GmdDetail.Gmd)
+
+        .Where(x => x.TypeStorageId == TypeStorageId)
+        .ToListAsync();
+
     public async Task<TrxTypeStorage> GetById(Guid id) => await _context.TrxTypeStorages.FirstAsync(x => x.TypeStorageId == id);
     
     public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync(x => x.IsActive == true);

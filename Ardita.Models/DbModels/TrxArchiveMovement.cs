@@ -11,10 +11,6 @@ public partial class TrxArchiveMovement
 
     public Guid ArchiveUnitIdFrom { get; set; }
 
-    public Guid SubSubjectClassificationId { get; set; }
-
-    public string ArchiveYear { get; set; } = null!;
-
     public string MovementCode { get; set; } = null!;
 
     public string MovementName { get; set; } = null!;
@@ -22,6 +18,8 @@ public partial class TrxArchiveMovement
     public string? Description { get; set; }
 
     public Guid TypeStorageId { get; set; }
+
+    public Guid GmdDetailId { get; set; }
 
     public int TotalVolume { get; set; }
 
@@ -57,19 +55,13 @@ public partial class TrxArchiveMovement
 
     public Guid? UpdatedBy { get; set; }
 
-    public virtual TrxArchiveUnit ArchiveUnitIdDestinationNavigation { get; set; } = null!;
-
-    public virtual TrxArchiveUnit ArchiveUnitIdFromNavigation { get; set; } = null!;
+    public virtual MstGmdDetail GmdDetail { get; set; } = null!;
 
     public virtual MstStatus Status { get; set; } = null!;
 
     public virtual MstStatus? StatusReceivedNavigation { get; set; }
 
-    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
-
     public virtual ICollection<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; } = new List<TrxArchiveMovementDetail>();
 
     public virtual ICollection<TrxArchiveReceived> TrxArchiveReceiveds { get; } = new List<TrxArchiveReceived>();
-
-    public virtual TrxTypeStorage TypeStorage { get; set; } = null!;
 }
