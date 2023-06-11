@@ -205,6 +205,8 @@ public static class GlobalConst
     public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
     public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
     public const string BindSubTypeStorageById = "BindSubTypeStorageById";
+    public const string BindGmdDetailByGmdId = "BindGmdDetailByGmdId";
+    public const string BindGmdDetailById = "BindGmdDetailById";
     public const string BindGMDDetailVolumeByTypeStorageId = "BindGMDDetailVolumeByTypeStorageId";
     public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
 
@@ -226,6 +228,7 @@ public static class GlobalConst
     public const string UnitKearsipan = "Unit Kearsipan";
     public const string Notification = "Notification";
     public const string Success = "Success";
+    public const string NothingSelected = "Tidak ada yang dipilih";
     public const string Failed = "Failed";
     public const string Yes = "Yes";
 

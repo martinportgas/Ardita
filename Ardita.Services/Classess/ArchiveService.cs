@@ -114,7 +114,10 @@ public class ArchiveService : IArchiveService
     {
         return await _archiveRepository.InsertBulk(trxArchives);
     }
-
+    public async Task<int> Submit(TrxArchive model)
+    {
+        return await _archiveRepository.Submit(model);
+    }
     public async Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted)
     {
         int result;

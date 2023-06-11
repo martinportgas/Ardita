@@ -16,11 +16,12 @@ namespace Ardita.Areas.MasterData.Controllers;
 [Area(GlobalConst.MasterData)]
 public class TypeStorageController : BaseController<TrxTypeStorage>
 {
-    public TypeStorageController(IArchiveUnitService archiveUnitService, IRoomService roomService, ITypeStorageService typeStorage)
+    public TypeStorageController(IArchiveUnitService archiveUnitService, IRoomService roomService, ITypeStorageService typeStorage, IGmdService gmdService)
     {
         _archiveUnitService = archiveUnitService;
         _roomService = roomService;
         _typeStorageService = typeStorage;
+        _gmdService = gmdService;
     }
 
     #region MAIN ACTION
@@ -41,58 +42,24 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
 
     public override async Task<IActionResult> Add()
     {
-        ViewBag.listArchiveUnit = await BindArchiveUnits();
-        ViewBag.listTypeStorage = await BindTypeStorage();
+        await BindAllDropdown();
 
         return View(GlobalConst.Form, new TrxTypeStorage());
     }
 
     public override async Task<IActionResult> Update(Guid Id)
     {
-        var data = await _typeStorageService.GetById(Id);
-        if (data is not null)
-        {
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listTypeStorage = await BindTypeStorage();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     public override async Task<IActionResult> Remove(Guid Id)
     {
-        var data = await _typeStorageService.GetById(Id);
-        if (data is not null)
-        {
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listTypeStorage = await BindTypeStorage();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     public override async Task<IActionResult> Detail(Guid Id)
     {
-        var data = await _typeStorageService.GetById(Id);
-        if (data is not null)
-        {
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listTypeStorage = await BindTypeStorage();
-
-            return View(GlobalConst.Form, data);
-        }
-        else
-        {
-            return RedirectToIndex();
-        }
+        return await InitFormView(Id);
     }
 
     [HttpPost]
@@ -101,18 +68,21 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     {
         if (model != null)
         {
+            var listDetail = Request.Form[GlobalConst.DetailArray].ToArray();
+
+
             if (model.TypeStorageId != Guid.Empty)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                await _typeStorageService.Update(model);
+                await _typeStorageService.Update(model, listDetail!);
             }
 
             else
             {
                 model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                 model.CreatedDate = DateTime.Now;
-                await _typeStorageService.Insert(model);
+                await _typeStorageService.Insert(model, listDetail!);
             }
         }
         return RedirectToIndex();
@@ -293,5 +263,26 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
     #region HELPER
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData });
 
+    protected async Task BindAllDropdown()
+    {
+        ViewBag.listArchiveUnit = await BindArchiveUnits();
+        ViewBag.listTypeStorage = await BindTypeStorage();
+        ViewBag.listGmd = await BindGmds();
+    }
+
+    private async Task<IActionResult> InitFormView(Guid Id)
+    {
+        var data = await _typeStorageService.GetById(Id);
+        if (data is not null)
+        {
+            await BindAllDropdown();
+
+            return View(GlobalConst.Form, data);
+        }
+        else
+        {
+            return RedirectToIndex();
+        }
+    }
     #endregion
 }

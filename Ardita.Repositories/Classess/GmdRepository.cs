@@ -32,6 +32,8 @@ public class GmdRepository : IGmdRepository
     }
 
     public async Task<IEnumerable<MstGmd>> GetAll() => await _context.MstGmds.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+
+    public async Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id) => await _context.MstGmdDetails.Where(x => x.GmdId == Id).AsNoTracking().ToListAsync();
     
     public async Task<IEnumerable<MstGmd>> GetByFilterModel(DataTableModel model)
     {
@@ -136,8 +138,6 @@ public class GmdRepository : IGmdRepository
                     result += await _context.SaveChangesAsync();
                 }
 
-                _context.MstGmdDetails.RemoveRange(gmdDetails);
-                result += await _context.SaveChangesAsync();
 
                 foreach (var item in details)
                 {
@@ -154,4 +154,6 @@ public class GmdRepository : IGmdRepository
         }
         return result;
     }
+
+    public async Task<MstGmdDetail> GetDetailById(Guid Id) => await _context.MstGmdDetails.AsNoTracking().FirstAsync(x => x.GmdDetailId == Id);
 }

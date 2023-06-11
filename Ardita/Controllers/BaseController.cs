@@ -424,6 +424,23 @@ public abstract class BaseController<T> : Controller
     #endregion
     //json
     #region Json Result
+    public async Task<JsonResult> BindGmdDetailByGmdId(string Id, string param = "")
+    {
+
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        List<MstGmdDetail> list = new();
+        Guid id = new(Id);
+
+        var data = await _gmdService.GetDetailByGmdId(new Guid(Id));
+        list = data.Where(x => x.Name!.ToLower().Contains(param.ToLower())).OrderBy(x => x.Name).ToList();
+        return Json(list);
+    }
+    public async Task<JsonResult> BindGmdDetailById(string Id)
+    {
+        Guid id = new(Id);
+        var data = await _gmdService.GetDetailById(new Guid(Id));
+        return Json(data);
+    }
     public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;

@@ -206,7 +206,33 @@ public class ArchiveRepository : IArchiveRepository
 
         return pathResult;
     }
+    public async Task<int> Submit(TrxArchive model)
+    {
+        int result = 0;
 
+        if (model != null)
+        {
+            //using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var e in _context.ChangeTracker.Entries())
+                {
+                    e.State = EntityState.Detached;
+                }
+
+                _context.Entry(model).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+                //await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        return result;
+    }
     public async Task<int> Insert(TrxArchive model, List<FileModel> files, string path = "")
     {
         int result = 0;
