@@ -26,6 +26,15 @@ public class TypeStorageRepository : ITypeStorageRepository
         .ThenInclude(x =>x.GmdDetail)
         .AsNoTracking()
         .FirstAsync(x => x.TypeStorageId == id);
+
+    public async Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId)
+        => await _context.TrxTypeStorageDetails
+        .Include(x => x.TypeStorage)
+        .Include(x => x.GmdDetail.Gmd)
+
+        .Where(x => x.TypeStorageId == TypeStorageId)
+        .ToListAsync();
+
     
     public async Task<int> GetCount() => await _context.TrxTypeStorages.CountAsync(x => x.IsActive == true);
 

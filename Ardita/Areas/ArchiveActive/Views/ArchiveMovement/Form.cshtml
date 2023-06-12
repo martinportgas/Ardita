@@ -117,7 +117,15 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Jenis Penyimpanan</label>
-                                                            <select id="txtTypeStorageId" onchange="getTypeStorageDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                            <select id="txtTypeStorageId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>GMD Detail</label>
+                                                            <select id="txtGMDDetail" onchange="getGMDDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetailId" asp-items="ViewBag.listGMDDetail" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Unit</label>
+                                                            <input readonly type="text" class="form-control" id="txtUnit" value="" />
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Total Volume</label>
@@ -175,7 +183,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Sub-Subjek Klasifikasi</label>
-                                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubject"
+                                                            <select asp-items="ViewBag.listSubSubject"
                                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                                     data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
                                                                 <option value=""></option>
@@ -185,7 +193,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Tahun Arsip</label>
-                                                            <select asp-for="ArchiveYear"
+                                                            <select
                                                                     id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                                     data-placeholder="-- Pilih Tahun Arsip --">
                                                                 <option value=""></option>
@@ -207,7 +215,7 @@
                                                     <div class="col-sm-6 archive-div">
                                                         <div class="form-group">
                                                             <label>Arsip</label>
-                                                            <select id="txtArchive" onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
+                                                            <select id="txtArchive" onchange="bindCreatorAndVolume($(this))" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? string.Empty : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6 archive-div">
@@ -239,7 +247,7 @@
                                                             <tbody id="listdtlArs">
                                                                 @if (ViewBag.subDetail.Count > 0)
                                                                 {
-                                                                    foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
+                                                                    foreach (Ardita.Models.DbModels.TrxArchiveMovementDetail item in ViewBag.subDetail)
                                                                     {
                                                                         <tr>
                                                                             <td class="text-center"></td>
@@ -248,10 +256,10 @@
                                                                                 <input type="hidden" class="" style="border: none !important;" name="archive[]" value="@item.ArchiveId" />
                                                                             </td>
                                                                             <td class="text-left">
-                                                                                <input class="form-control" style="border: none !important;" name="creator[]" value="@item.RetentionBefore" readonly />
+                                                                                <input class="form-control" style="border: none !important;" name="creator[]" value="@item.Archive.Creator.CreatorName" readonly />
                                                                             </td>
                                                                             <td class="text-left">
-                                                                                <input class="form-control" style="border: none !important;" name="volume[]" value="@item.RetensionAfter" readonly />
+                                                                                <input class="form-control" style="border: none !important;" name="volume[]" value="@item.Archive.Volume" readonly />
                                                                             </td>
                                                                             <td>
                                                                                 <button class="btn btn-danger remove" type="button">Remove</button>
@@ -327,42 +335,61 @@
         }
 
         function addRow(e, name) {
-            //var nameCapital = toCapitalCase(name);
-            //$(`.${name}`).select2('destroy');
-            //var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
-            //elClone.find(`.${name}`).val('');
-            //if (name == 'ars') {
-            //    elClone.find('.creator').val('');
-            //    elClone.find('.volume').val('');
-            //}
-            //elClone.appendTo(`#listdtl${nameCapital}`);
-            //$(`.min${nameCapital}`).show();
-            //var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
-            //initSelect2(name, bindName);
 
-            var arsipId = $('#txtArchive').val();
-            var arsipDesc = $('#txtArchive').select2('data')[0].text;
-            var creator = $('#txtCreator').val();
-            var volume = $('#txtVolume').val();
+            var volume_gmd = $('#txtSisa').val();
+            var volume_archive = $('#txtVolume').val();
 
-            // if(checkDuplicateByButton($('#txtArchiveId'), 'ars')){
-            $('#listdtlArs').append(`<tr name="detailRow[]">
-                                             <td class="text-center"></td>
-                                             <td class="text-left">
-                                                 <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
-                                                 <input type="hidden" class="form-control ars" style="border: none !important;" name="archive[]" value="${arsipId}" />
-                                             </td>
-                                              <td class="text-left">
-                                                            <input class="form-control" style="border: none !important;" name="creator[]" value="${creator}" readonly />
-                                              </td>
-                                              <td class="text-left">
-                                                 <input class="form-control" style="border: none !important;" name="volume[]" value="${volume}" readonly />
-                                              </td>
-                                              <td>
-                                                         <button class="btn btn-danger remove" type="button">Remove</button>
-                                              </td>
-                            </tr>`);
-            // }
+            var volume_total = parseInt(volume_gmd) - parseInt(volume_archive);
+            var duplicate = false;
+
+            $('.arc-row').each(function(){
+                if($(this).val() == $('#txtArchive').val()){
+                    swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                        $('#txtArchive').val('').trigger('change');
+                        $('#txtVolume').val('');
+                        $('#txtCreator').val('');
+                    });
+                    duplicate = true;
+                    return;
+                }
+            });
+
+            if (volume_total < 0) {
+                swal({ title: "Failed!", text: 'Volume Melebihi Kapasitas, Harap pilih Arsip lain!', type: "info" }, function () {
+                    $('#txtArchive').val('').trigger('change');
+                    $('#txtVolume').val('');
+                    $('#txtCreator').val('');
+                });
+            }else{
+                if(!duplicate){
+                    var arsipId = $('#txtArchive').val();
+                    var arsipDesc = $('#txtArchive').select2('data')[0].text;
+                    var creator = $('#txtCreator').val();
+                    var volume = $('#txtVolume').val();
+
+                    $('#txtSisa').val(volume_total);
+                    $('#listdtlArs').append(`<tr name="detailRow[]">
+                                                             <td class="text-center"></td>
+                                                             <td class="text-left">
+                                                                 <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                                 <input type="hidden" class="form-control arc-row" style="border: none !important;" name="archive[]" value="${arsipId}" />
+                                                             </td>
+                                                              <td class="text-left">
+                                                                            <input class="form-control" style="border: none !important;" name="creator[]" value="${creator}" readonly />
+                                                              </td>
+                                                              <td class="text-left">
+                                                                 <input class="form-control volume-row" style="border: none !important;" name="volume[]" value="${volume}" readonly />
+                                                              </td>
+                                                              <td>
+                                                                         <button class="btn btn-danger remove" type="button">Remove</button>
+                                                              </td>
+                                            </tr>`);
+                }
+            
+            }
+
+           
+ 
         }
 
         function removeRow(e, name) {
@@ -398,6 +425,30 @@
                         }
                     }
                 });
+            });
+        }
+
+        function initGMD() {
+            
+            $('#txtGMDDetail').select2({
+                minimumInputLength: 0,
+                theme: 'bootstrap4',
+                allowClear: true,
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindGMDDetailByTypeStorageId, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            param: params.term, id : $('#txtTypeStorageId').val()
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
             });
         }
 
@@ -475,7 +526,7 @@
         }
 
         function getTypeStorageDetail(e) {
-            var url = '@Url.Action("GetDetailTypeStorage", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+            var url = '@Url.Action("BindGMDDetailByTypeStorageId", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
             var param = new Object();
             param.Id = e.val();
 
@@ -502,6 +553,69 @@
             });
         }
 
+        function getGMDDetail(e) {
+            var url = '@Url.Action("BindGMDDetailVolumeByTypeStorageId", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+            var param = new Object();
+            param.TypeStorageId = $('#txtTypeStorageId').val();
+            param.GMDDetailId = e.val();
+
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                console.log(result[0].volume);
+
+                var rVolume = result[0].volume;
+                var totalVolume = 0;
+                $(`.volume`).each(function () {
+                    totalVolume += $(this).val() == '' ? 0 : parseInt($(this).val());
+                });
+
+                if (totalVolume > rVolume) {
+                    swal({ title: "Failed!", text: 'Volume Melebihi Kapasitas, Harap pilih Jenis Penyimpanan lain!', type: "info" }, function () {
+                        e.val('').trigger('change');
+                        $('#txtTotal').val('');
+                        $('#txtSisa').val('');
+                    });
+                    return;
+                }
+
+                var sisa = rVolume - totalVolume;
+
+                $('#txtTotal').val(rVolume);
+                $('#txtSisa').val(sisa);
+                $('#txtUnit').val(result[0].unit);
+            });
+        }
+        
+        function bindCreatorAndVolume(e){
+            var Id = e.val();
+            if (Id != '') {
+                var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+                var param = new Object();
+                param.Id = Id;
+
+                ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                    if (result != null) {
+
+                        var sisa = parseInt($('#txtSisa').val());
+
+                        var totalVolume = result.volume;
+
+                        if (totalVolume > sisa) {
+                            swal({ title: "Failed!", text: 'Volume Melebihi Kapasitas, Harap pilih Arsip lain!', type: "info" }, function () {
+                                e.val('').trigger('change');
+                            });
+                            return;
+                        }
+
+                        $('#txtCreator').val(result.creator.creatorName);
+                        $('#txtVolume').val(result.volume);
+
+                        //sisa -= result.volume;
+                        //$('#txtSisa').val(sisa);
+                    }
+                });
+            }
+        }
+
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
@@ -511,6 +625,7 @@
 
             initSelect2('ars', '@GlobalConst.BindArchiveRetentionByParam');
             initSelect2('apr', '@GlobalConst.BindApprovalByParam');
+            initGMD();
 
             var menuActive = 'Arsip Aktif'
             var subMenuActive = 'Sirkulasi Arsip'
@@ -578,6 +693,11 @@
             });
 
             $('#listdtlArs').on('click', '.remove', function () {
+                var sisa = $('#txtSisa').val();
+                var vol = $(this).parent().prev().find('.volume-row').val();
+                var total = parseInt(sisa) + parseInt(vol);
+                $('#txtSisa').val(total);
+
                 var child = $(this).closest('tr').nextAll();
                 $(this).closest('tr').remove();
             });

@@ -778,6 +778,31 @@ public abstract class BaseController<T> : Controller
         var data = await _subTypeStorageService.GetById(Id);
         return Json(data.FirstOrDefault());
     }
+
+    public async Task<JsonResult> BindGMDDetailByTypeStorageId(string param, Guid Id)
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _typeStorageService.GetAllByTypeStorageId(Id);
+        var result = data
+            .Where(x => x.GmdDetail.Name.ToLower().Contains(param))
+            .Select(x => new {
+           id = x.GmdDetail.GmdDetailId.ToString(),
+           text = x.GmdDetail.Name
+        });
+        return Json(result);
+    }
+    public async Task<JsonResult> BindGMDDetailVolumeByTypeStorageId(Guid TypeStorageId, Guid GMDDetailId)
+    {
+        var data = await _typeStorageService.GetAllByTypeStorageId(TypeStorageId);
+        var result = data
+            .Where(x  => x.GmdDetailId == GMDDetailId)
+            .Select(x => new {
+                volume = x.Size,
+                unit = x.GmdDetail.Unit
+            });
+        return Json(result);
+    }
     #endregion
 
     #endregion

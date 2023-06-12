@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ namespace Ardita.Repositories.Classess
                     data.Note = model.Note;
                     data.ApproveLevel = model.ApproveLevel;
                     data.IsActive = model.IsActive;
-                    data.StatusId = model.StatusId;
+                    data.StatusId = model.StatusId == (int)GlobalConst.STATUS.Approved ? (int)GlobalConst.STATUS.UsulMusnah : model.StatusId;
                     data.UpdatedBy = model.UpdatedBy;
                     data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);
@@ -112,7 +113,7 @@ namespace Ardita.Repositories.Classess
 
                 model.IsActive = true;
                 model.DestroyCode = $"DST.{count.ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
-                model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.ArchiveYear}";
+                model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.CreatedDate.Year}";
                 _context.TrxArchiveDestroys.Add(model);
                 result = await _context.SaveChangesAsync();
             }
