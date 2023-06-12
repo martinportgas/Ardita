@@ -126,6 +126,7 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.ArchiveOwner)
             .Include(x => x.ArchiveType)
             .Include(x => x.Gmd)
+            .Include(x => x.GmdDetail)
             .Include(x => x.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
                 .ThenInclude(au => au!.ArchiveUnit)

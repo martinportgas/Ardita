@@ -96,6 +96,10 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
+                                            <label>GMD Unit</label>
+                                            <input type="text" placeholder="" id="txtGmdDetailUnit" class="form-control" asp-for="GmdDetail!.Unit" disabled>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Sender</label>
                                             <br />
                                             <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
@@ -286,16 +290,16 @@
 
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
+        var listFileArchiveDetailId = [];
+
+        $(function () {
+
             if('@ViewBag.isModal' != ''){
                 $('.navbar').hide();
                 $('.page-heading').hide();
                 $('#btn-cancel').hide();
             }
-        });
-        var listFileArchiveDetailId = [];
 
-        $(function () {
             listFileArchiveDetailId = [];
             initForms("@form.CurrentAction");
 
@@ -344,6 +348,8 @@
             if ("@form.CurrentAction" == "@GlobalConst.Add") {
                 $('#txtCreatedDateArchive').val("");
             }
+
+            initDropdown();
         });
 
         function deleteFile(id) {
@@ -454,5 +460,52 @@
                 });
         }
 
+        function initDropdown() {
+            $('#txtGmdId').on('change', function () {
+                $('#txtGmdDetailId').val('').trigger('change');
+            });
+
+            $('#txtGmdDetailId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub Type Storage --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindGmdDetailByGmdId, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtGmdId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.name + ' - ' + item.unit,
+                                id: item.gmdDetailId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtGmdDetailId').on('change', function () {
+                var url = '@Url.Action(GlobalConst.BindGmdDetailById, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData })';
+                $.ajax({
+                    url: url,
+                    type: "@GlobalConst.GET",
+                    data: { Id: $('#txtGmdDetailId').val() },
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
+                    success: function (data) {
+                        $("#txtGmdDetailUnit").val(data.unit);
+                    }
+                });
+            });
+        }
     </script>
 }
