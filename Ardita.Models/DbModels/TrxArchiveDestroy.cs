@@ -9,10 +9,6 @@ public partial class TrxArchiveDestroy
 
     public Guid ArchiveUnitId { get; set; }
 
-    public Guid SubSubjectClassificationId { get; set; }
-
-    public string ArchiveYear { get; set; } = null!;
-
     public string DestroyCode { get; set; } = null!;
 
     public string DestroyName { get; set; } = null!;
@@ -28,6 +24,8 @@ public partial class TrxArchiveDestroy
     public DateTime DestroySchedule { get; set; }
 
     public long StatusId { get; set; }
+
+    public string? Responsible { get; set; }
 
     public string? Note { get; set; }
 
@@ -46,8 +44,6 @@ public partial class TrxArchiveDestroy
     public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
     public virtual MstStatus Status { get; set; } = null!;
-
-    public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 
     public virtual ICollection<TrxArchiveDestroyDetail> TrxArchiveDestroyDetails { get; } = new List<TrxArchiveDestroyDetail>();
 }

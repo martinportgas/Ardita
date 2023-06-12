@@ -21,7 +21,9 @@ public static class GlobalConst
         ArchiveNotReceived = 7,
         WaitingForRetrieval = 8,
         Retrieved = 9,
-        Return = 10
+        Return = 10,
+        UsulMusnah = 11,
+        Musnah = 12
     }
     public enum ROLE
     {

@@ -39,8 +39,6 @@ public partial class TrxSubSubjectClassification
 
     public virtual TrxSubjectClassification? SubjectClassification { get; set; }
 
-    public virtual ICollection<TrxArchiveDestroy> TrxArchiveDestroys { get; } = new List<TrxArchiveDestroy>();
-
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 
     public virtual ICollection<TrxMediaStorageInActive> TrxMediaStorageInActives { get; } = new List<TrxMediaStorageInActive>();
