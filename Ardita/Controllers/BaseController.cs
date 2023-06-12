@@ -246,6 +246,16 @@ public abstract class BaseController<T> : Controller
             Text = x.GmdName
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindGmdDetail()
+    {
+        var data = await _gmdService.GetAllDetail();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.GmdDetailId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);

@@ -156,4 +156,6 @@ public class GmdRepository : IGmdRepository
     }
 
     public async Task<MstGmdDetail> GetDetailById(Guid Id) => await _context.MstGmdDetails.AsNoTracking().FirstAsync(x => x.GmdDetailId == Id);
+
+    public async Task<IEnumerable<MstGmdDetail>> GetAllDetail() => await _context.MstGmdDetails.AsNoTracking().ToListAsync();
 }

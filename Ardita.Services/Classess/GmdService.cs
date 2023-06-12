@@ -99,4 +99,6 @@ public class GmdService : IGmdService
         return details;
     }
 
+    public async Task<IEnumerable<MstGmdDetail>> GetAllDetail() => await _GmdRepository.GetAllDetail();
+    
 }

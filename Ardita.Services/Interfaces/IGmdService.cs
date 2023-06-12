@@ -7,6 +7,7 @@ public interface IGmdService
 {
     Task<IEnumerable<MstGmd>> GetById(Guid id);
     Task<IEnumerable<MstGmd>> GetAll();
+    Task<IEnumerable<MstGmdDetail>> GetAllDetail();
     Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id);
     Task<MstGmdDetail> GetDetailById(Guid Id);
     Task<DataTableResponseModel<MstGmd>> GetList(DataTablePostModel model);

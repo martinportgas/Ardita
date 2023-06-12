@@ -417,6 +417,7 @@ public class ArchiveController : BaseController<TrxArchive>
     protected async Task BindAllDropdown()
     {
         ViewBag.listGmd = await BindGmds();
+        ViewBag.listGmdDetail = await BindGmdDetail();
         ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
         ViewBag.listArchiveOwner = await BindArchiveOwners();

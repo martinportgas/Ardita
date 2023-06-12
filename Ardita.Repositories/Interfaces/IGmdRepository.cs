@@ -9,6 +9,7 @@ public interface IGmdRepository
     Task<IEnumerable<MstGmd>> GetAll();
     Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id);
     Task<MstGmdDetail> GetDetailById(Guid Id);
+    Task<IEnumerable<MstGmdDetail>> GetAllDetail();
     Task<IEnumerable<MstGmd>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(MstGmd model, List<MstGmdDetail> details);

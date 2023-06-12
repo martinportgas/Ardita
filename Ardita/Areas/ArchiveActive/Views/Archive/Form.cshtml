@@ -88,6 +88,14 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
+                                            <label>GMD Detail</label>
+                                            <select asp-for="GmdDetailId" asp-items="ViewBag.listGmdDetail" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtGmdDetailId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select GMD Detail--">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Sender</label>
                                             <br />
                                             <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
