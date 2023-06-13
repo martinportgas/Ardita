@@ -376,6 +376,16 @@ public abstract class BaseController<T> : Controller
             Text = x.RowName.ToString()
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindRowsWithDetails()
+    {
+        string spr = " - ";
+        var data = await _rowService.GetAll();
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.RowId.ToString(),
+            Text = x.RowName + spr + x.Level.LevelName + spr + x.Level.Rack.RackName + spr + x.Level.Rack.Room.RoomName + spr + x.Level.Rack.Room.Floor.FloorName + spr + x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
     {
         var data = await _typeStorageService.GetAll();

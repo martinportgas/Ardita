@@ -24,5 +24,7 @@ namespace Ardita.Models.ViewModels
         public bool? IsArchiveActive { get; set; }
         public ClaimsPrincipal? SessionUser { get; set; }
         public List<string> listArchiveUnitCode { get; set; }
+        public SearchModel? advanceSearch { get; set; }
+        public string? whereClause { get; set; }
     }
 }

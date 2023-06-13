@@ -235,6 +235,11 @@ public static class GlobalConst
     public const string NothingSelected = "Tidak ada yang dipilih";
     public const string Failed = "Failed";
     public const string Yes = "Yes";
+    public const string Error = "Error";
+    public const string Used = "Digunakan";
+    public const string Available = "Tersedia";
+    public static DateTime MinDate = DateTime.Parse("1900-01-01");
+    public static DateTime MaxDate = DateTime.Now;
 
     //ClaimTypes
     public const string Username = "Username";
@@ -279,5 +284,19 @@ public static class GlobalConst
     public const string RetentionExtendDoc = "PR";
     public const string ArchiveDestroyDoc = "PH";
     public const string ArchiveMovementDoc = "PD";
+
+    //where clause
+    public const string WhereClauseArchiveMonitoring = @"archiveCode + creator.creatorName + archiveOwner.archiveOwnerName + typeSender + keyword 
+    + titleArchive + subSubjectClassification.subjectClassification.subjectClassificationName + subSubjectClassification.subSubjectClassificationName 
+    + securityClassification.securityClassificationName + documentNo + createdDateArchive.ToString() + archiveType.archiveTypeName 
+    + trxMediaStorageDetails.FirstOrDefault().mediaStorage.typeStorage.typeStorageName
+    + trxMediaStorageDetails.FirstOrDefault().mediaStorage.row.level.rack.rackName 
+    + trxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName 
+    + TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName
+    + volume.ToString()
+    ";
+
+    public const string WhereClauseArchiveRegist = @"archiveCode + documentNo + titleArchive + gmd.gmdName + securityClassification.securityClassificationName 
+    + creator.creatorName + subSubjectClassification.subSubjectClassificationName";
 
 }

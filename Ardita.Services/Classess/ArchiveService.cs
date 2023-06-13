@@ -7,6 +7,7 @@ using Ardita.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
 
@@ -45,6 +46,10 @@ public class ArchiveService : IArchiveService
         try
         {
             List<string> listArchiveUnitCode = model.SessionUser != null ? AppUsers.CurrentUser(model.SessionUser).ListArchiveUnitCode : new List<string>();
+            DateTime startDate = GlobalConst.MinDate;
+            DateTime endDate = GlobalConst.MaxDate;
+            bool validStart = DateTime.TryParse(model.columns[0].search.value, out startDate);
+            bool validEnd = DateTime.TryParse(model.columns[1].search.value, out endDate);
 
             var filterData = new DataTableModel
             {
@@ -54,7 +59,14 @@ public class ArchiveService : IArchiveService
                 pageSize = model.length,
                 skip = model.start,
                 PositionId = model.PositionId,
-                listArchiveUnitCode = listArchiveUnitCode
+                listArchiveUnitCode = listArchiveUnitCode,
+                whereClause = model.whereClause,
+                advanceSearch = new SearchModel
+                {
+                    StartDate = validStart ? startDate : GlobalConst.MinDate,
+                    EndDate = validEnd ? endDate : GlobalConst.MaxDate,
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                }
             };
 
             int dataCount = await _archiveRepository.GetCountByFilterData(filterData);

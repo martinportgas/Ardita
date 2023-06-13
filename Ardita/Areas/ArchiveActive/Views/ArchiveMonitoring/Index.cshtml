@@ -1,5 +1,5 @@
 ﻿@using Ardita.Extensions;
-
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
 }
@@ -27,6 +27,80 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
+                    <h4>Pencarian</h4>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-sm-8">
+                        <div class="form-group row" style="display:none">
+                            <label class="col-lg-3 col-form-label">Periode Arsip</label>
+                            <div class="col-lg-4">
+                                <input type="date" id="txtStartDate" class="form-control" />
+                            </div>
+                            <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                <strong>s/d</strong>
+                            </div>
+                            <div class="col-lg-4">
+                                <input type="date" id="txtEndDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Pencipta Arsip</label>
+                            <div class="col-lg-9">
+                                <select id="txtCreatorId" class="form-control" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Semua --"><option value=""></option></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Tahun</label>
+                            <div class="col-lg-9">
+                                <select id="txtYear" class="form-control"
+                                        data-placeholder="-- Semua --">
+                                    <option value=""></option>
+                                    @for (int i = 0; i > -20; i--)
+                                    {
+                                        <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Lokasi Simpan</label>
+                            <div class="col-lg-9">
+                                <select asp-items="ViewBag.listRow"
+                                        id="txtRowId" class="form-control"
+                                        data-placeholder="-- Semua --">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Status</label>
+                            <div class="col-lg-9">
+                                <input style="vertical-align:middle" type="radio" value="" id="all" checked name="status" />
+                                <label for="all">Semua </label>
+                                <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@GlobalConst.Available" id="available" name="status" />
+                                <label for="available">@GlobalConst.Available </label>
+                                <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@GlobalConst.Used" id="use" name="status" />
+                                <label for="use">@GlobalConst.Used</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-success float-right m-t-n-xs" id="btnSearch"><i class="fa fa-filter"></i> Cari</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
                     <h5>Archive</h5>
                     <div class="ibox-tools">
                         
@@ -38,17 +112,22 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Media</th>
+                                <th>Kode Dokumen</th>
+                                <th>Pencipta Arsip</th>
+                                <th>Asal Arsip</th>
                                 <th>Pengirim</th>
-                                <th>Klasifikasi Arsip</th>
                                 <th>Kata Kunci</th>
                                 <th>Judul Arsip</th>
-                                <th>Pencipta Arsip</th>
+                                <th>Subjek Klasifikasi</th>
+                                <th>Sub Subjek Klasifikasi</th>
+                                <th>Klasifikasi Keamanan</th>
+                                <th>Nomor Dokumen</th>
+                                <th>Tanggal Penciptaan</th>
                                 <th>Tipe Arsip</th>
-                                <th>Tanggal Dibuat</th>
-                                <th>Retensi Aktif</th>
-                                <th>Retensi In Aktif</th>
-                                <th>Volume</th>
+                                <th>Media Arsip</th>
+                                <th>Jumlah</th>
+                                <th>Lokasi Simpan</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -105,18 +184,48 @@
                             return detail;
                         }
                     },
-                    { "data": "gmdName", "name": "gmd.gmdName", "autoWidth": true },
+                    { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
+                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
+                    { "data": "archiveOwnerName", "name": "archiveOwner.archiveOwnerName", "autoWidth": true },
                     { "data": "typeSender", "name": "typeSender", "autoWidth": true },
-                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
                     { "data": "keyword", "name": "keyword", "autoWidth": true },
                     { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
-                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
-                    { "data": "typeArchive", "name": "archiveType.archiveTypeName", "autoWidth": true },
+                    { "data": "subjectClassificationName", "name": "subSubjectClassification.subjectClassification.subjectClassificationName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                    { "data": "securityClassificationName", "name": "securityClassification.securityClassificationName", "autoWidth": true },
+                    { "data": "documentNo", "name": "documentNo", "autoWidth": true },
                     { "data": "createdDateArchive", "name": "createdDateArchive", "autoWidth": true },
-                    { "data": "activeRetention", "name": "activeRetention", "autoWidth": true },
-                    { "data": "inactiveRetention", "name": "inactiveRetention", "autoWidth": true },
+                    { "data": "typeArchive", "name": "archiveType.archiveTypeName", "autoWidth": true },
+                    { "data": "mediaStorage", "name": "trxMediaStorageDetails.FirstOrDefault().mediaStorage.typeStorage.typeStorageName", "autoWidth": true },
                     { "data": "volume", "name": "volume", "autoWidth": true },
+                    { "data": "labelCode", "name": "TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName", "autoWidth": true, "orderable": false },
+                    {
+                        "data": "statusUse", "name": "IsUsed", "autoWidth": true, "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            var status = `<span class="badge badge-pill badge-${data == '@GlobalConst.Used' ? 'primary' : 'success'}">${data}</span>`;
+
+                            return status;
+                        }
+                    },
                 ]
+            });
+
+            var defaultSearch = 'TrxMediaStorageDetails.FirstOrDefault() != null';
+
+            table.column(2).search(`${defaultSearch}`).draw();
+
+            $('#btnSearch').on('click', function () {
+                var and = ' && ';
+                var creator = $('#txtCreatorId').val() == '' ? '1=1' : `CreatorId == \"${$('#txtCreatorId').val()}\"`;
+                var year = $('#txtYear').val() == '' ? '1=1' : `createdDateArchive.Year == $('#txtYear').val()`;
+                var row = $('#txtRowId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.RowId == \"${$('#txtRowId').val()}\"`;
+                var status = $('input[name="status"]:checked').val() == '' ? '1=1' : `IsUsed == ${$('input[name="status"]:checked').val() == '@GlobalConst.Used'}`;
+                var search = defaultSearch + and + creator + and + year + and + row + and + status;
+                table
+                    .column(0).search($('#txtStartDate').val())
+                    .column(1).search($('#txtEndDate').val())
+                    .column(2).search(search)
+                    .draw();
             });
         });
 

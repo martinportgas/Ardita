@@ -13,21 +13,29 @@ namespace Ardita.Areas.ArchiveActive.Controllers
     [Area(GlobalConst.ArchiveActive)]
     public class ArchiveMonitoringController : BaseController<TrxArchive>
     {
-        public override async Task<ActionResult> Index() => await base.Index();
-
         public ArchiveMonitoringController(
-            IArchiveService archiveService,
-            IFileArchiveDetailService fileArchiveDetailService
-            )
+        IArchiveCreatorService archiveCreatorService,
+        IRowService rowService,
+        IArchiveService archiveService,
+        IFileArchiveDetailService fileArchiveDetailService)
         {
+            _archiveCreatorService = archiveCreatorService;
+            _rowService = rowService;
             _fileArchiveDetailService = fileArchiveDetailService;
             _archiveService = archiveService;
+        }
+        public override async Task<ActionResult> Index()
+        {
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.listRow = await BindRowsWithDetails();
+            return View();
         }
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
-                if(AppUsers.CurrentUser(User).RoleCode != GlobalConst.ROLE.ADM.ToString())
+                model.whereClause = GlobalConst.WhereClauseArchiveMonitoring;
+                if (AppUsers.CurrentUser(User).RoleCode != GlobalConst.ROLE.ADM.ToString())
                     model.PositionId = AppUsers.CurrentUser(User).PositionId;
                 var result = await _archiveService.GetList(model);
 
