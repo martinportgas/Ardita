@@ -43,7 +43,7 @@ public partial class TrxArchive
 
     public long StatusId { get; set; }
 
-    public long? IsUsed { get; set; }
+    public bool? IsUsed { get; set; }
 
     public DateTime? IsUsedDate { get; set; }
 

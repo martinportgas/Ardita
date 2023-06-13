@@ -95,18 +95,25 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="${url}"><i class="fa fa-eye"></i> </a>`;
 
                             url = url.replace('@GlobalConst.Detail', '@GlobalConst.Update');
-                            var edit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-pencil"></i> </a>`;
 
                             url = url.replace('@GlobalConst.Update', '@GlobalConst.Remove');
-                            var remove = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="${url}"><i class="fa fa-trash"></i> </a>`;
+                            var remove = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-danger" href="${url}"><i class="fa fa-trash"></i> </a>`;
 
                             url = url.replace('@GlobalConst.Remove', '@GlobalConst.Preview');
-                            var submit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-success" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
+
 
                             url = url.replace('@GlobalConst.Preview', '@GlobalConst.DownloadFile');
-                            var download = row.statusId != @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-download"></i> </a>`;
+                            var download = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-download"></i> </a>`;
+                            var musnah = '';
+                            if (row.type == '@GlobalConst.ArsipPemusnahan') {
+                                url = url.replace('@GlobalConst.DownloadFile', '@GlobalConst.Destroy');
+                                musnah = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);
+                            }
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download).concat(" ", musnah);
                             return JoinButton;
                         }
                     },

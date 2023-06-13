@@ -87,13 +87,13 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var edit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
+                            var edit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.Update, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-pencil"></i> </a>`;
                             edit = edit.replace("-1", data);
 
-                            var remove = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
+                            var remove = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
-                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Preview, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Preview, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
                             var download = row.statusId != @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;

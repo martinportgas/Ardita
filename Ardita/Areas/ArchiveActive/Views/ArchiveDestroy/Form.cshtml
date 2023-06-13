@@ -6,6 +6,8 @@
     Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
+
+
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -75,7 +77,7 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                            <form id="frmDestroy" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                                 <div class="row">
                                                     <div class="col-sm-6 b-r">
                                                         <div class="form-group">
@@ -240,7 +242,6 @@
                                                                                 <input class="form-control" style="border: none !important;" name="reason[]" value="@item.Reason" readonly />
                                                                             </td>
                                                                             <td>
-                                                                                <button class="btn btn-danger remove" type="button">Remove</button>
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -250,6 +251,11 @@
                                                     </div>
                                                 </div>
                                                 <div>
+                                                    @if (form.CurrentAction == GlobalConst.Destroy)
+                                                    {
+                                                        <button type="button" onclick="onDestroy(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs"><i class="fa fa-gavel"> Konfirmasi Musnah</i></button>
+                                                    }
+
                                                     @if (form.CurrentAction == GlobalConst.Approval)
                                                     {
                                                         <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveApproval, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
@@ -416,7 +422,27 @@
                 });
             });
         }
-
+        function onDestroy(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To @form.CurrentAction It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $("#frmDestroy").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
@@ -476,6 +502,7 @@
                 var child = $(this).closest('tr').nextAll();
                 $(this).closest('tr').remove();
             });
+
         });
     </script>
 }

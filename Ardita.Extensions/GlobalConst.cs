@@ -37,6 +37,7 @@ public static class GlobalConst
     public const string Add = "Add";
     public const string UserId = "UserId";
     public const string Submit = "Submit";
+    public const string SubmitDestroy = "SubmitDestroy";
     public const string SubMenuPageDetail = "SubMenuPageDetail";
     public const string SubMenuForm = "SubMenuForm";
     public const string PageForm = "PageForm";
@@ -106,6 +107,7 @@ public static class GlobalConst
     public const string DetailArchive = "DetailArchive";
     public const string Preview = "Preview";
     public const string Remove = "Remove";
+    public const string Destroy = "Destroy";
     public const string Save = "Save";
     public const string Create = "Create";
     public const string Approval = "Approval";

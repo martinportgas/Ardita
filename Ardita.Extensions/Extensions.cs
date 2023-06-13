@@ -101,6 +101,12 @@ namespace Ardita.Extensions
                 LastBreadcrumb = GlobalConst.Approval;
             }
 
+            if (currentAction == GlobalConst.Destroy)
+            {
+                FormAction = GlobalConst.SubmitDestroy;
+                LastBreadcrumb = GlobalConst.Destroy;
+            }
+
             var isInput = currentAction == GlobalConst.Add || currentAction == GlobalConst.Update;
             var isSubmitForm = isInput || currentAction == GlobalConst.Remove || currentAction == GlobalConst.Preview || currentAction == GlobalConst.Approval;
 

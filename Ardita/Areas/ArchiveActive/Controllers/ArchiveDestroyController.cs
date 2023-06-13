@@ -296,12 +296,10 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 if (ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)
-                        model.StatusId = (int)GlobalConst.STATUS.Approved;
+                        model.StatusId = (int)GlobalConst.STATUS.UsulMusnah;
                     else
                         model.ApproveLevel += 1;
 
-                    if (model.StatusId == (int)GlobalConst.STATUS.UsulMusnah)
-                        model.StatusId = (int)GlobalConst.STATUS.Musnah;
                 }
                 if (ApprovalAction == GlobalConst.Reject)
                 {
@@ -360,6 +358,36 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
 
             return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+        }
+
+        public async Task<IActionResult> Destroy(Guid Id)
+        {
+            var model = await _archiveDestroyService.GetById(Id);
+            if (model != null)
+            {
+                await BindAllDropdown();
+
+                ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
+                return View(GlobalConst.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitDestroy(TrxArchiveDestroy model)
+        {
+            if (model != null && model.ArchiveDestroyId != Guid.Empty)
+            {
+                model.StatusId = (int)GlobalConst.STATUS.Musnah;
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                await _archiveDestroyService.Submit(model);
+            }
+            return RedirectToIndex();
         }
         #endregion
         #region HELPER
