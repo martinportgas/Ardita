@@ -168,7 +168,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Sub-Subjek Klasifikasi</label>
-                                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubject"
+                                                            <select asp-items="ViewBag.listSubSubject"
                                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                                     data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
                                                                 <option value=""></option>
@@ -178,7 +178,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Tahun Arsip</label>
-                                                            <select asp-for="ArchiveYear"
+                                                            <select
                                                                     id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                                     data-placeholder="-- Pilih Tahun Arsip --">
                                                                 <option value=""></option>

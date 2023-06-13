@@ -112,7 +112,7 @@ namespace Ardita.Repositories.Classess
 
                 model.IsActive = true;
                 model.DestroyCode = $"DST.{count.ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
-                model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.ArchiveYear}";
+                model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.CreatedDate.Year}";
                 _context.TrxArchiveDestroys.Add(model);
                 result = await _context.SaveChangesAsync();
             }

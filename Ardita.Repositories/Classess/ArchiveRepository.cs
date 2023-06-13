@@ -13,9 +13,9 @@ public class ArchiveRepository : IArchiveRepository
 {
     private readonly BksArditaDevContext _context;
     private readonly IConfiguration _configuration;
-    private readonly string _whereClause = @"TitleArchive+TypeSender+Keyword+ActiveRetention.ToString()+CreatedDateArchive.ToString()
-                                            +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
-                                            +Creator.CreatorName+ArchiveType.ArchiveTypeName";
+    //private readonly string _whereClause = @"TitleArchive+TypeSender+Keyword+ActiveRetention.ToString()+CreatedDateArchive.ToString()
+    //                                        +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
+    //                                        +Creator.CreatorName+ArchiveType.ArchiveTypeName";
 
     public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration)
     {
@@ -83,15 +83,21 @@ public class ArchiveRepository : IArchiveRepository
     {
         var result = await _context.TrxArchives
                 .Include(x => x.Gmd)
+                .Include(x => x.GmdDetail)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
                 .Include(x => x.ArchiveOwner)
                 .Include(x => x.ArchiveType)
+                .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
                 .Where(x => x.IsActive == true)
-                .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
+                .Where(x => x.TrxMediaStorageDetails != null)
+                .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
-                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode )
+                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new
@@ -105,6 +111,8 @@ public class ArchiveRepository : IArchiveRepository
                     x.InactiveRetention,
                     x.Volume,
                     x.Gmd.GmdName,
+                    x.GmdDetail.Name,
+                    x.SubSubjectClassification.SubjectClassification.SubjectClassificationName,
                     x.SubSubjectClassification.SubSubjectClassificationName,
                     x.SecurityClassification.SecurityClassificationName,
                     x.Creator.CreatorName,
@@ -113,7 +121,11 @@ public class ArchiveRepository : IArchiveRepository
                     x.Status.Color,
                     x.ArchiveCode,
                     Status = x.Status.Name,
-                    x.DocumentNo
+                    x.DocumentNo,
+                    x.ArchiveOwner.ArchiveOwnerName,
+                    MediaStorage = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName,
+                    LabelCode = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName,
+                    StatusUse = x.IsUsed == true ? GlobalConst.Used : GlobalConst.Available
                 })
                 .ToListAsync();
 
@@ -169,14 +181,20 @@ public class ArchiveRepository : IArchiveRepository
     {
         var result = await _context.TrxArchives
                 .Include(x => x.Gmd)
+                .Include(x => x.GmdDetail)
                 .Include(x => x.SecurityClassification)
                 .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
                 .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
                 .Include(x => x.ArchiveOwner)
                 .Include(x => x.ArchiveType)
-                .Where($"({_whereClause}).Contains(@0) ", model.searchValue)
+                .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
+                .Where(x => x.IsActive == true)
+                .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(model.advanceSearch!.Search)
                 .CountAsync();
 
         return result;
@@ -243,6 +261,7 @@ public class ArchiveRepository : IArchiveRepository
 
             try
             {
+                model.IsUsed = false;
                 model.IsActive = true;
                 model.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{model.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}.{(_context.TrxArchives.Count() + 1).ToString("D4")}";
 
@@ -306,6 +325,7 @@ public class ArchiveRepository : IArchiveRepository
             foreach (var item in trxArchives)
             {
                 lastCOunt = lastCOunt + 1;
+                item.IsUsed = false;
                 item.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{item.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}{lastCOunt.ToString("D4")}";
             }
 

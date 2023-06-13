@@ -46,6 +46,7 @@ public class ArchiveController : BaseController<TrxArchive>
         try
         {
             model.SessionUser = User;
+            model.whereClause = GlobalConst.WhereClauseArchiveRegist;
             var result = await _archiveService.GetList(model);
 
             return Json(result);

@@ -21,6 +21,7 @@ namespace Ardita.Models.ViewModels
         public Guid? EmployeeId { get; set; }
         public bool? IsArchiveActive { get; set; }
         public ClaimsPrincipal? SessionUser { get; set; }
+        public string? whereClause { get; set; }
     }
 
     public class Column
