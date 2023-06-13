@@ -5,10 +5,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using System.Data;
 
 namespace Ardita.Areas.ArchiveActive.Controllers;
@@ -19,7 +16,7 @@ public class ArchiveController : BaseController<TrxArchive>
 {
     #region CTR
     public ArchiveController(
-        IArchiveService archiveService, 
+        IArchiveService archiveService,
         IGmdService gmdService,
         IClassificationSubSubjectService classificationSubSubjectService,
         ISecurityClassificationService securityClassificationService,
@@ -60,8 +57,10 @@ public class ArchiveController : BaseController<TrxArchive>
     public override async Task<IActionResult> Add()
     {
         await BindAllDropdown();
-        var model = new TrxArchive();
-        model.ArchiveCode = "Auto Generated";
+        var model = new TrxArchive
+        {
+            ArchiveCode = "Auto Generated"
+        };
 
         return View(GlobalConst.Form, model);
     }
@@ -145,14 +144,14 @@ public class ArchiveController : BaseController<TrxArchive>
     public override async Task<IActionResult> Submit(TrxArchive model)
     {
         var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
-        if(listArchive.Length > 0)
+        if (listArchive.Length > 0)
         {
             for (int i = 0; i < listArchive.Length; i++)
             {
                 Guid archiveId = Guid.Empty;
                 Guid.TryParse(listArchive[i], out archiveId);
                 var data = await _archiveService.GetById(archiveId);
-                if(data != null)
+                if (data != null)
                 {
                     data.StatusId = (int)GlobalConst.STATUS.Submit;
                     data.UpdatedBy = AppUsers.CurrentUser(User).UserId;
@@ -186,7 +185,7 @@ public class ArchiveController : BaseController<TrxArchive>
         try
         {
             IFormFile file = Request.Form.Files[0];
-            if(file.Length > 0)
+            if (file.Length > 0)
             {
                 var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var archiveAll = await _archiveService.GetAll();
@@ -231,7 +230,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             error += "_Asal Arsip Tidak Valid";
                         }
                         var dataDocNo = archiveAll.Where(x => x.DocumentNo.ToLower() == row[7].ToString().ToLower()).FirstOrDefault();
-                        if(dataDocNo != null)
+                        if (dataDocNo != null)
                         {
                             valid = false;
                             error += "_Nomor Dokumen Sudah Teregister";
@@ -418,6 +417,7 @@ public class ArchiveController : BaseController<TrxArchive>
     protected async Task BindAllDropdown()
     {
         ViewBag.listGmd = await BindGmds();
+        ViewBag.listGmdDetail = await BindGmdDetail();
         ViewBag.listSubSubjectClasscification = await BindSubSubjectClasscifications();
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
         ViewBag.listArchiveOwner = await BindArchiveOwners();
@@ -427,15 +427,15 @@ public class ArchiveController : BaseController<TrxArchive>
     public async Task<IActionResult> BindDownload(Guid Id)
     {
         var data = await _fileArchiveDetailService.GetById(Id);
-        if(data != null)
+        if (data != null)
         {
             string path = string.Concat(data.FilePath, data.FileNameEncrypt);
-            if(System.IO.File.Exists(path))
+            if (System.IO.File.Exists(path))
             {
                 return File(System.IO.File.OpenRead(path), "application/octet-stream", data.FileName);
             }
         }
         return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
-    } 
-    #endregion 
+    }
+    #endregion
 }

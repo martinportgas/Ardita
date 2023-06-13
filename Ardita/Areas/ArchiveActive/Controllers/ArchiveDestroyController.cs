@@ -299,11 +299,17 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                         model.StatusId = (int)GlobalConst.STATUS.Approved;
                     else
                         model.ApproveLevel += 1;
+
+                    if (model.StatusId == (int)GlobalConst.STATUS.UsulMusnah)
+                        model.StatusId = (int)GlobalConst.STATUS.Musnah;
                 }
                 if (ApprovalAction == GlobalConst.Reject)
                 {
                     model.StatusId = (int)GlobalConst.STATUS.Rejected;
                 }
+                
+                
+
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveDestroyService.Submit(model);

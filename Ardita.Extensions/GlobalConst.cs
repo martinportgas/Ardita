@@ -21,7 +21,9 @@ public static class GlobalConst
         ArchiveNotReceived = 7,
         WaitingForRetrieval = 8,
         Retrieved = 9,
-        Return = 10
+        Return = 10,
+        UsulMusnah = 11,
+        Musnah = 12
     }
     public enum ROLE
     {
@@ -205,6 +207,10 @@ public static class GlobalConst
     public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
     public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
     public const string BindSubTypeStorageById = "BindSubTypeStorageById";
+    public const string BindGmdDetailByGmdId = "BindGmdDetailByGmdId";
+    public const string BindGmdDetailById = "BindGmdDetailById";
+    public const string BindGMDDetailVolumeByTypeStorageId = "BindGMDDetailVolumeByTypeStorageId";
+    public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
 
     //Web Component
     public const string GET = "GET";

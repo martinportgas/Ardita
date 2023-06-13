@@ -167,7 +167,7 @@
                                     <div class="col-sm-6 archive-div">
                                         <div class="form-group">
                                             <label>Arsip</label>
-                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
+                                            <select onchange="bindingRetention($(this))" id="txtArchive" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" data-placeholder="-- Pilih Arsip --"></select>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 archive-div">
@@ -293,49 +293,51 @@
         }
 
         function addRow(e, name) {
-            //var nameCapital = toCapitalCase(name);
-            //$(`.${name}`).select2('destroy');
-            //var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
-            //elClone.find(`.${name}`).val('');
-            //if (name == 'ars') {
-            //    elClone.find('.before').val('');
-            //    elClone.find('.after').val('');
-            //    elClone.find('.reason').val('');
-            //}
-            //elClone.appendTo(`#listdtl${nameCapital}`);
-            //$(`.min${nameCapital}`).show();
-            //var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionByParam' : '@GlobalConst.BindApprovalByParam';
-            //initSelect2(name, bindName);
+            var duplicate = false;
+
+            $('.arc-row').each(function () {
+                if ($(this).val() == $('#txtArchive').val()) {
+                    swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                        $('#txtArchive').val('').trigger('change');
+                        $('#txtRetentionBefore').val('');
+                        $('#txtRetentionAfter').val('');
+                        $('#txtReason').val('');
+                    });
+                    duplicate = true;
+                    return;
+                }
+            });
+
+            if(!duplicate){
+                var arsipId = $('#txtArchive').val();
+                var arsipDesc = $('#txtArchive').select2('data')[0].text;
+                var retentionBefore = $('#txtRetentionBefore').val();
+                var retentionAfter = $('#txtRetentionAfter').val();
+                var reason = $('#txtReason').val();
+
+                $('#listdtlArs').append(`<tr name="detailRow[]">
+                                             <td class="text-center"></td>
+                                             <td class="text-left">
+                                                 <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                         <input type="hidden" class="form-control arc-row" style="border: none !important;" name="archive[]" value="${arsipId}" />
+                                             </td>
+                                              <td class="text-left">
+                                                    <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="${retentionBefore}" readonly />
+                                              </td>
+                                              <td class="text-left">
+                                                 <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="${retentionAfter}" readonly />
+                                              </td>
+                                              <td class="text-left">
+                                                 <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="${reason}" readonly />
+                                              </td>
+                                              <td>
+                                                         <button class="btn btn-danger remove" type="button">Remove</button>
+                                              </td>
+                            </tr>`);
+            }
 
            
-
-            var arsipId = $('#txtArchiveId').val();
-            var arsipDesc = $('#txtArchiveId').select2('data')[0].text;
-            var retentionBefore = $('#txtRetentionBefore').val();
-            var retentionAfter = $('#txtRetentionAfter').val();
-            var reason = $('#txtReason').val();
-
-           // if(checkDuplicateByButton($('#txtArchiveId'), 'ars')){
-                $('#listdtlArs').append(`<tr name="detailRow[]">
-                                     <td class="text-center"></td>
-                                     <td class="text-left">
-                                         <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
-                                         <input type="hidden" class="form-control ars" style="border: none !important;" name="archive[]" value="${arsipId}" />
-                                     </td>
-                                      <td class="text-left">
-                                            <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="${retentionBefore}" readonly />
-                                      </td>
-                                      <td class="text-left">
-                                         <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="${retentionAfter}" readonly />
-                                      </td>
-                                      <td class="text-left">
-                                         <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="${reason}" readonly />
-                                      </td>
-                                      <td>
-                                                 <button class="btn btn-danger remove" type="button">Remove</button>
-                                      </td>
-                    </tr>`);
-           // }
+ 
 
           
         }
@@ -394,32 +396,17 @@
             }
             e.removeClass('current');
         }
-        function checkDuplicateByButton(e, name) {
-            var data = e.val();
-            var valid;
 
-            if (!e.hasClass('current')) {
+        function bindingRetention(e){
+            var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })';
+            var param = new Object();
+            param.Id = e.val();
 
-                e.addClass('current');
-
-                if (e.hasClass(name)) {
-                    $(`.${name}`).each(function () {
-                        if (!$(this).hasClass('current')) {
-                            if (data == $(this).val()) {
-                                swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
-                                    valid = false;
-                                });
-                            }else{
-                                valid = true;
-                            }
-                        }
-                    });
-                }
-                
-
-            }
-            e.removeClass('current');
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                $('#txtRetentionBefore').val(result.activeRetention)
+            });
         }
+
         function initSelect2(name, act){
             $(`.${name}`).each(function () {
                 $(this).select2({

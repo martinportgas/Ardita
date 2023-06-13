@@ -246,6 +246,16 @@ public abstract class BaseController<T> : Controller
             Text = x.GmdName
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindGmdDetail()
+    {
+        var data = await _gmdService.GetAllDetail();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.GmdDetailId.ToString(),
+            Text = x.Name
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
@@ -434,6 +444,23 @@ public abstract class BaseController<T> : Controller
     #endregion
     //json
     #region Json Result
+    public async Task<JsonResult> BindGmdDetailByGmdId(string Id, string param = "")
+    {
+
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        List<MstGmdDetail> list = new();
+        Guid id = new(Id);
+
+        var data = await _gmdService.GetDetailByGmdId(new Guid(Id));
+        list = data.Where(x => x.Name!.ToLower().Contains(param.ToLower())).OrderBy(x => x.Name).ToList();
+        return Json(list);
+    }
+    public async Task<JsonResult> BindGmdDetailById(string Id)
+    {
+        Guid id = new(Id);
+        var data = await _gmdService.GetDetailById(new Guid(Id));
+        return Json(data);
+    }
     public async Task<JsonResult> BindArchiveUnitsByParam(string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
@@ -760,6 +787,31 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _subTypeStorageService.GetById(Id);
         return Json(data.FirstOrDefault());
+    }
+
+    public async Task<JsonResult> BindGMDDetailByTypeStorageId(string param, Guid Id)
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _typeStorageService.GetAllByTypeStorageId(Id);
+        var result = data
+            .Where(x => x.GmdDetail.Name.ToLower().Contains(param))
+            .Select(x => new {
+           id = x.GmdDetail.GmdDetailId.ToString(),
+           text = x.GmdDetail.Name
+        });
+        return Json(result);
+    }
+    public async Task<JsonResult> BindGMDDetailVolumeByTypeStorageId(Guid TypeStorageId, Guid GMDDetailId)
+    {
+        var data = await _typeStorageService.GetAllByTypeStorageId(TypeStorageId);
+        var result = data
+            .Where(x  => x.GmdDetailId == GMDDetailId)
+            .Select(x => new {
+                volume = x.Size,
+                unit = x.GmdDetail.Unit
+            });
+        return Json(result);
     }
     #endregion
 

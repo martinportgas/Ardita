@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ namespace Ardita.Repositories.Classess
                     data.Note = model.Note;
                     data.ApproveLevel = model.ApproveLevel;
                     data.IsActive = model.IsActive;
-                    data.StatusId = model.StatusId;
+                    data.StatusId = model.StatusId == (int)GlobalConst.STATUS.Approved ? (int)GlobalConst.STATUS.UsulMusnah : model.StatusId;
                     data.UpdatedBy = model.UpdatedBy;
                     data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);
