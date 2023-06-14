@@ -217,7 +217,7 @@
 
                                         <div class="form-group" id="created_date">
                                             <label class="font-normal">Created Date</label>
-                                            <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive">
+                                            <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive" max="@DateTime.Now.ToString("yyyy-MM-dd")">
                                         </div>
                                         <div class="form-group">
                                             <label>Active Retention</label>
@@ -241,17 +241,20 @@
                                     @if (isEditable)
                                     {
                                         <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveActive})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                        
                                         <button onclick="onSubmit(this, event, 'submit');"
                                                 class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                 type="submit" id="btn-submit">
-                                            Submit
+                                            <i class="fa fa-paper-plane"></i> Submit
                                         </button>
-
-                                        <button onclick="onSubmit(this, event, 'draft');"
-                                                class="btn btn-sm btn-warning float-right m-t-n-xs mr-1"
-                                                type="submit" id="btn-submit">
-                                            Save As Draft
-                                        </button>
+                                        @if (Model.StatusId != (int)GlobalConst.STATUS.Submit)
+                                        {
+                                            <button onclick="onSubmit(this, event, 'draft');"
+                                                    class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                    type="submit" id="btn-submit">
+                                                <i class="fa fa-save"></i> Save As Draft
+                                            </button>
+                                        }
                                     }
                                     else
                                     {
@@ -262,7 +265,7 @@
                                             <button onclick="onSubmit(this, event, 'submit');"
                                                     class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                     type="submit" id="btn-submit">
-                                                Submit
+                                                <i class="fa fa-trash"></i> Delete
                                             </button>
                                         }
                                         

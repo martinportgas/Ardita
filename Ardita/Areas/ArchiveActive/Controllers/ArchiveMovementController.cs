@@ -1,6 +1,6 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
@@ -26,7 +26,9 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IMediaStorageService mediaStorageService,
             IArchiveUnitService archiveUnitService,
             IClassificationSubSubjectService classificationSubSubjectService,
-            IGmdService gmdService)
+            IGmdService gmdService,
+            IUserService userService,
+            IHostingEnvironment hostingEnvironment)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -40,6 +42,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _archiveUnitService = archiveUnitService;
             _classificationSubSubjectService = classificationSubSubjectService;
             _gmdService = gmdService;
+            _userService = userService;
+            _hostingEnvironment = hostingEnvironment;
         }
         #endregion
         #region MAIN ACTION
@@ -347,7 +351,20 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            return File(new byte[] { }, "application/octet-stream", "BeritaAcaraPemindahan.pdf");
+            TrxArchiveMovement data = await _archiveMovementService.GetById(Id);
+
+            var user = await _userService.GetById(data.CreatedBy);
+            var employee = await _employeeService.GetById(user.EmployeeId);
+
+            var userReceived = await _userService.GetById((Guid)data.ReceivedBy);
+            var employeeReceived = await _employeeService.GetById(userReceived.EmployeeId);
+
+            var detail = await _archiveMovementService.GetDetailByMainId(Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemindahan_Arsip.docx");
+            var file = Label.GenerateBAMovement(FilePath, data, detail, employee, employeeReceived);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
         }
         #endregion
         #region HELPER

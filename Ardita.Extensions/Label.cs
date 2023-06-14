@@ -165,6 +165,137 @@ public static class Label
 
         return toArray;
     }
+    public static byte[] GenerateBAMovement(string template, TrxArchiveMovement data, IEnumerable<TrxArchiveMovementDetail> detail, dynamic FromData, dynamic ReceivedData)
+    {
+        System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("id-ID");
+        byte[] toArray;
+        Document document = new();
+        document.LoadFromFile(template);
+        document.Replace("[CompanyName]", data.ArchiveUnitIdFromNavigation.Company.CompanyName, false, true);
+        document.Replace("[DocumentNo]", data.DocumentCode, false, true);
+        document.Replace("[ApproveDate]", ((DateTime)data.UpdatedDate).ToString("dd-MM-yyyy"), false, true);
+        document.Replace("[Title]", data.MovementName, false, true);
+        document.Replace("[Day]", data.CreatedDate.ToString("dddd", culture), false, true);
+        document.Replace("[Date]", data.CreatedDate.Day.ToString(), false, true);
+        document.Replace("[Month]", data.CreatedDate.ToString("MMMM", culture), false, true);
+        document.Replace("[Year]", data.CreatedDate.ToString("yyyy"), false, true);
+        document.Replace("[CompanyAddress]", data.ArchiveUnitIdFromNavigation.Company.Address, false, true);
+        document.Replace("[CreatedBy]", FromData.Name, false, true);
+        document.Replace("[PositionName]", FromData.Position.Name, false, true);
+        document.Replace("[ArchiveUnitFrom]", data.ArchiveUnitIdFromNavigation.ArchiveUnitName, false, true);
+        document.Replace("[ReceivedBy]", ReceivedData.Name, false, true);
+        document.Replace("[ReceivedPositionName]", ReceivedData.Position.Name, false, true);
+        document.Replace("[ArchiveUnitDes]", data.ArchiveUnitIdDestinationNavigation.ArchiveUnitName, false, true);
+        document.Replace("[CountArchive]", detail.Count().ToString(), false, true);
+
+        var file = QRCodeExtension.Generate(FromData.Nik + " - " + FromData.Name, 2);
+        int index = 0;
+        TextRange range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString("QRFrom", true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
+        }
+
+        file = QRCodeExtension.Generate(ReceivedData.Nik + " - " + ReceivedData.Name, 2);
+        index = 0;
+        range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString("QRTo", true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+
+            }
+        }
+
+        Section section = document.Sections[0];
+        TextSelection selection2 = document.FindString("[ListArchive]", true, true);
+        range = selection2.GetAsOneRange();
+        Paragraph paragraph = range.OwnerParagraph;
+        Body body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        string[] Header = { "No", "Nomor Arsip", "Nomor Dokumen", "Judul Arsip", "Bentuk Media Arsip", "Klasifikasi Keamanan" };
+
+        Table table = section.AddTable(true);
+        table.ResetCells(detail.Count() + 1, Header.Length);
+
+        TableRow FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 23;
+        FRow.RowFormat.BackColor = Color.LightGray;
+        for (int i = 0; i < Header.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Header[i]);
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 10;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        int x = 1;
+        foreach (TrxArchiveMovementDetail item in detail)
+        {
+            TableRow DataRow = table.Rows[x];
+            DataRow.Height = 20;
+
+            SetRowData(0, DataRow, x.ToString());
+            SetRowData(1, DataRow, item.Archive.ArchiveCode!);
+            SetRowData(2, DataRow, item.Archive.DocumentNo!);
+            SetRowData(3, DataRow, item.Archive.TitleArchive);
+            SetRowData(4, DataRow, item.Archive.Gmd.GmdName);
+            SetRowData(5, DataRow, item.Archive.SecurityClassification.SecurityClassificationName);
+
+            x++;
+        }
+
+        table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        using (MemoryStream memoryStream = new())
+        {
+            document.SaveToStream(memoryStream, FileFormat.PDF);
+            toArray = memoryStream.ToArray();
+        }
+
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+
+        return toArray;
+    }
     private static void SetRowData(int index, TableRow dataRow, string value)
     {
         dataRow.Cells[index].CellFormat.VerticalAlignment = VerticalAlignment.Middle;

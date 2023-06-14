@@ -67,7 +67,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<TrxArchiveMovement> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveMovements.Include(x => x.GmdDetail).AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
+            var result = await _context.TrxArchiveMovements.Include(x => x.GmdDetail).Include(x => x.ArchiveUnitIdFromNavigation.Company).Include(x => x.ArchiveUnitIdDestinationNavigation.Company).AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
             return result;
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
@@ -93,7 +93,7 @@ namespace Ardita.Repositories.Classess
             //        sortDestroy = model.sortColumn;
             //        break;
             //}
-                
+            long? statusReceived = (int)GlobalConst.STATUS.ArchiveNotReceived;
             var result = await 
                     _context.TrxArchiveMovements
                     .Include(x => x.Status)
@@ -104,6 +104,7 @@ namespace Ardita.Repositories.Classess
                         Code = x.MovementCode,
                         Name = x.MovementName,
                         x.StatusId,
+                        x.StatusReceived,
                         x.Note,
                         x.Status.Color,
                         Status = x.Status.Name,
@@ -121,6 +122,7 @@ namespace Ardita.Repositories.Classess
                         Code = x.DestroyCode,
                         Name = x.DestroyName,
                         x.StatusId,
+                        StatusReceived = statusReceived,
                         x.Note,
                         x.Status.Color,
                         Status = x.Status.Name,
@@ -236,6 +238,9 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxArchiveMovements.AsNoTracking().FirstAsync(x => x.ArchiveMovementId == model.ArchiveMovementId);
                 if (data != null)
                 {
+                    model.GmdDetail = null;
+                    model.ArchiveUnitIdFromNavigation = null;
+                    model.ArchiveUnitIdDestinationNavigation = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
                 }

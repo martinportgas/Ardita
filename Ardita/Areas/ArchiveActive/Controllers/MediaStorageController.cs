@@ -92,9 +92,10 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
                 model.UpdatedDate = DateTime.Now;
 
                 var detailIsUsed = Request.Form[GlobalConst.DetailIsUsedArray].ToArray();
+                var usedBy = Request.Form[GlobalConst.UsedBy];
                 for (int i = 0; i < detailIsUsed.ToArray().Length; i++)
                 {
-                    await _mediaStorageService.UpdateDetailIsUsed(new Guid(detailIsUsed[i]));
+                    await _mediaStorageService.UpdateDetailIsUsed(new Guid(detailIsUsed[i]), usedBy);
                 }
             }
             else
@@ -214,6 +215,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ViewBag.listRack = await BindRacks();
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
+        ViewBag.listGMDDetail = await BindGmdDetail();
     }
     protected async Task BindAllDropdownArchive()
     {

@@ -82,6 +82,7 @@ public class MediaStorageRepository : IMediaStorageRepository
     public async Task<TrxMediaStorage> GetById(Guid id) 
     {
         return await _context.TrxMediaStorages
+            .Include(g => g.GmdDetail)
             .Include(d => d.TrxMediaStorageDetails.Where(w => w.IsActive))
                 .ThenInclude(a => a.Archive)
                 .ThenInclude(c => c.Creator)
@@ -224,9 +225,9 @@ public class MediaStorageRepository : IMediaStorageRepository
         return result;
     }
 
-    public async Task<bool> UpdateDetailIsUsed(Guid archiveId)
+    public async Task<bool> UpdateDetailIsUsed(Guid archiveId, string usedBy)
     {
-        await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE SET is_used = 1, is_used_date = {DateTime.Now} WHERE archive_id = {archiveId}");
+        await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE SET is_used = 1, is_used_date = {DateTime.Now}, is_used_by = '{usedBy}' WHERE archive_id = {archiveId}");
         await _context.SaveChangesAsync();
         return true;
     }

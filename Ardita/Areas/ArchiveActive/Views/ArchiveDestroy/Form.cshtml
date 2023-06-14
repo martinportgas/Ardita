@@ -170,52 +170,54 @@
                                                         </table>
                                                     </div>
                                                 </div>
-                                                <div class="row border-top pt-3">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label>Sub-Subjek Klasifikasi</label>
-                                                            <select asp-items="ViewBag.listSubSubject"
-                                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
-                                                                    data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
-                                                                <option value=""></option>
-                                                            </select>
+                                                @if (form.isInput)
+                                                {
+                                                    <div class="row border-top pt-3">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>Sub-Subjek Klasifikasi</label>
+                                                                <select asp-items="ViewBag.listSubSubject"
+                                                                        id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                                        data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
+                                                                    <option value=""></option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>Tahun Arsip</label>
+                                                                <select id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                                        data-placeholder="-- Pilih Tahun Arsip --">
+                                                                    <option value=""></option>
+                                                                    @for (int i = -20; i < 0; i++)
+                                                                    {
+                                                                        <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                                    }
+                                                                    @if (form.CurrentAction == GlobalConst.Add)
+                                                                    {
+                                                                        <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 archive-div">
+                                                            <div class="form-group">
+                                                                <label>Arsip</label>
+                                                                <select id="txtArchive" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? string.Empty : GlobalConst.Disabled)" data-placeholder="-- Pilih Arsip --"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>Alasan Pemusnahan</label>
+                                                                <textarea placeholder="" id="txtDestroyReason" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label>Tahun Arsip</label>
-                                                            <select 
-                                                                    id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
-                                                                    data-placeholder="-- Pilih Tahun Arsip --">
-                                                                <option value=""></option>
-                                                                @for (int i = -20; i < 0; i++)
-                                                                {
-                                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                                }
-                                                                @if (form.CurrentAction == GlobalConst.Add)
-                                                                {
-                                                                    <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6 archive-div">
-                                                        <div class="form-group">
-                                                            <label>Arsip</label>
-                                                            <select id="txtArchive" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? string.Empty : GlobalConst.Disabled)" data-placeholder="-- Pilih Arsip --"></select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                         <div class="form-group">
-                                                            <label>Alasan Pemusnahan</label>
-                                                            <textarea placeholder="" id="txtDestroyReason" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                }
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ars')" id="addArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Arsip</button>

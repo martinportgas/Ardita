@@ -88,16 +88,24 @@
                                             <label>Jenis Penyimpanan</label>
                                             <select asp-items="ViewBag.listTypeStorage"
                                                     id="txtTypeStorageId" class="select2_demo_1 form-control  @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId"
-                                                    data-placeholder="-- Pilih Jenis Penyimpanan --">
+                                                    data-placeholder="-- Pilih Jenis Media Penyimpanan --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Total Volume</label>
+                                            <label>GMD Detail</label>
+                                            <select id="txtGMDDetail" onchange="getGMDDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetailId" asp-items="ViewBag.listGMDDetail" data-placeholder="-- Pilih Bentuk Media Penyimpanan --"><option value=""></option></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Satuan</label>
+                                            <input readonly type="text" class="form-control" id="txtUnit" value="@(Model.GmdDetail == null ? "" : Model.GmdDetail.Unit)" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Jumlah</label>
                                             <input type="text" asp-for="TotalVolume" id="txtTotalVolume" class="form-control readonly" readonly />
                                         </div>
                                         <div class="form-group">
-                                            <label>Sisa Volume</label>
+                                            <label>Jumlah Tersedia</label>
                                             <input type="text" asp-for="DifferenceVolume" id="txtDifferenceVolume" class="form-control readonly" readonly />
                                         </div>
                                     </div>
@@ -212,7 +220,7 @@
                                                     <th>Jumlah</th>
                                                     <th>Detail</th>
                                                     <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAll" class="text-center">Pilih Semua </label><input type="checkbox" id="checkAll" required/></th>
-                                                    <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAllIsUsed" class="text-center">Pilih Semua</label><input type="checkbox" id="checkAllIsUsed" /></th>
+                                                    <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAllIsUsed" class="text-center">Gunakan Semua</label><input type="checkbox" id="checkAllIsUsed" /></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="listdtl">
@@ -222,24 +230,46 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
+                                            @if(form.CurrentAction == GlobalConst.IsUsed)
+                                            {
+                                                <div style="width:100%;display:flex;justify-content:end">
+                                                    <div style="width:30%;">
+                                                        <input type="text" name="@GlobalConst.UsedBy" class="form-control" placeholder="Pengguna Arsip" id="txtUsedBy" required>
+                                                        <br />
+                                                    </div>
+                                                </div>
+                                            }
                                             <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                                    class="btn btn-sm btn-default float-right m-t-n-xs">
                                                 @Html.Raw(form.BackText)
                                             </a>
-                                            @if (form.isSubmitForm || form.CurrentAction == "IsUsed")
+                                            @if (form.isSubmitForm || form.CurrentAction == GlobalConst.IsUsed)
                                             {
-                                                <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
-                                                        type="submit" id="btn-submit" 
-                                                        name="@GlobalConst.Submit" 
-                                                        value="@(form.CurrentAction == @GlobalConst.IsUsed ? @GlobalConst.IsUsed : @GlobalConst.Save)">
-                                                    @Html.Raw(form.SaveText)
-                                                </button>
+                                                
                                                 @if(form.CurrentAction != GlobalConst.Remove && form.CurrentAction != GlobalConst.IsUsed)
                                                 {
+                                                    @if (Model.StatusId != (int)GlobalConst.STATUS.Submit)
+                                                    {
+                                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                                type="submit" id="btn-submit"
+                                                                name="@GlobalConst.Submit"
+                                                                value="@(form.CurrentAction == @GlobalConst.IsUsed ? @GlobalConst.IsUsed : @GlobalConst.Save)">
+                                                            @Html.Raw(form.SaveText)
+                                                        </button>
+                                                    }
                                                     <button
                                                         class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
                                                         type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Submit">
                                                         @Html.Raw(form.SubmitText)
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                            type="submit" id="btn-submit"
+                                                            name="@GlobalConst.Submit"
+                                                            value="@(form.CurrentAction == @GlobalConst.IsUsed ? @GlobalConst.IsUsed : @GlobalConst.Save)">
+                                                        @Html.Raw(form.SaveText)
                                                     </button>
                                                 }
                                             }
@@ -265,12 +295,12 @@
             initDropdown();
             initTableArchive();
 
-            $('#txtTypeStorageId').on('change', function () {
+            $('#txtGMDDetail').on('change', function () {
                 $("#txtTotalVolume").val(0);
                 $("#txtDifferenceVolume").val(0);
                 initTableArchive();
                 if ($(this).val() != '') {
-                    getTypeStorageById($('#txtTypeStorageId').val());
+                    getGMDDetail($(this));
                 }
             });
 
@@ -313,6 +343,19 @@
 
         });
 
+        function getGMDDetail(e) {
+            var url = '@Url.Action("BindGMDDetailVolumeByTypeStorageId", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+            var param = new Object();
+            param.TypeStorageId = $('#txtTypeStorageId').val();
+            param.GMDDetailId = e.val();
+
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                $('#txtTotalVolume').val(result[0].volume);
+                $('#txtDifferenceVolume').val(result[0].volume);
+                $('#txtUnit').val(result[0].unit);
+            });
+        }
+
         function checkValidate(e, rowVolume) {
             var sisaVolume = $('#txtDifferenceVolume').val() == '' ? 0 : parseInt($('#txtDifferenceVolume').val());
             if(e.prop('checked')){
@@ -341,6 +384,7 @@
             param.Id = $('#txtSubSubjectClassificationId').val();
             param.mediaStorageId = '@Model.MediaStorageId'
             param.year = $('#txtYear').val();
+            param.gmdDetailId = $('#txtGMDDetail').val();
 
             ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
                 var dataRes = [];
@@ -438,6 +482,27 @@
         }
 
         function initDropdown() {
+            $('#txtGMDDetail').select2({
+                minimumInputLength: 0,
+                theme: 'bootstrap4',
+                allowClear: true,
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindGMDDetailByTypeStorageId, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            param: params.term, id: $('#txtTypeStorageId').val()
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+
             $('#txtArchiveId').select2({
                 theme: 'bootstrap4',
                 allowClear: true,
@@ -682,114 +747,6 @@
                 }
             });
         }
-
-        //function initListArchive(archiveId, volume, typeArchive, titleArchive, archiveCreator, isEdit) {
-        //    var remove = `<a onclick ="deleteArchive($(this), '-1', '-2')" class="btn btn-sm btn-default btn-delete-archive" id="-1")><i class="fa fa-trash"></i> </a>`;
-        //    var view = `<a id="btn-view-archive" href="@Url.Action(GlobalConst.Detail, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })" class="btn btn-sm btn-warning" id="-1")><i class="fa fa-eye"></i> </a>`;
-
-        //    listArchiveId.push(archiveId);
-        //    remove = remove.replace("-1", archiveId);
-        //    remove = remove.replace("-2", volume);
-        //    view = view.replace("-1", archiveId);
-
-        //    $('#table-archive > tbody:last-child').append(`<tr id=${archiveId}><td> ${typeArchive} </td><td> ${titleArchive} </td><td> ${archiveCreator} </td><td> ${volume} </td><td> ${remove} ${view}</td></tr>`);
-
-        //    if (isEdit == false) {
-        //        $("#txtDifferenceVolume").val($("#txtDifferenceVolume").val() - volume);
-        //    }
-        //}
-
-        //function addArchive() {
-        //    var id = $('#txtArchiveId').val();
-        //    var typeStorageId = $('#txtTypeStorageId').val();
-        //    var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
-
-        //    if (typeStorageId == "") {
-        //        swal({
-        //            title: "Type Storage Not Found!",
-        //            text: "Please Select Type Storage First",
-        //            showConfirmButton: true,
-        //            allowOutsideClick: false,
-        //            type: "warning"
-        //        });
-
-        //        return false;
-        //    }
-
-        //    if (id == "") {
-        //        swal({
-        //            title: "Data Not Completed!",
-        //            text: "Please Select Sub Subject Classification and Archive First!",
-        //            showConfirmButton: true,
-        //            allowOutsideClick: false,
-        //            type: "warning"
-        //        });
-
-        //        return false;
-        //    }
-
-        //    if (validateArchive(id) == true) {
-        //        swal({
-        //            title: "Please Wait",
-        //            text: "Insert Data In Progress",
-        //            showConfirmButton: false,
-        //            allowOutsideClick: false,
-        //            icon: "~/img/bks.png"
-        //        });
-
-        //        $.ajax({
-        //            url: url,
-        //            type: "@GlobalConst.GET",
-        //            data: { Id: id },
-        //            dataType: "@GlobalConst.JSON",
-        //            contentType: "@GlobalConst.APPLICATIONJSON",
-        //            success: function (data) {
-        //                if ($("#txtDifferenceVolume").val() <= data.volume) {
-        //                    swal({
-        //                        title: "Volume Is Full",
-        //                        text: "Please Select Another Archives With Minimun Volume",
-        //                        showConfirmButton: true,
-        //                        allowOutsideClick: false,
-        //                        type: "warning"
-        //                    });
-
-        //                    return false;
-        //                }
-        //                initListArchive(data.archiveId, data.volume, data.typeArchive, data.titleArchive, data.archiveCreator, false);
-        //                swal({
-        //                    title: "Success",
-        //                    type: "success",
-        //                    timer: 1000
-        //                });
-        //            },
-        //            error: function () {
-        //                swal({
-        //                    title: "Data Not Found",
-        //                    text: "Data Archive Not Found! Call Administrator",
-        //                    showConfirmButton: true,
-        //                    allowOutsideClick: false,
-        //                    type: "warning"
-        //                });
-        //            }
-        //        });
-        //    }
-        //    else {
-        //        swal({
-        //            title: "Duplicated",
-        //            text: "The Archive Has Been Inserted, Please Select Another",
-        //            showConfirmButton: true,
-        //            allowOutsideClick: false,
-        //            type: "warning"
-        //        });
-        //    }
-        //}
-
-        //function initTableArchive2() {
-        //    resetTableArchive();
-
-            
-        //    initBtnDeleteArchive();
-        //}
 
         function getTypeStorageById(id) {
             var url = '@Url.Action(GlobalConst.BindTypeStorageById, form.CurrentController, new { Area = form.CurrentArea })';

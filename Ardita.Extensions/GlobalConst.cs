@@ -237,6 +237,7 @@ public static class GlobalConst
     public const string Yes = "Yes";
     public const string Error = "Error";
     public const string Used = "Digunakan";
+    public const string UsedBy = "UsedBy";
     public const string Available = "Tersedia";
     public static DateTime MinDate = DateTime.Parse("1900-01-01");
     public static DateTime MaxDate = DateTime.Now;

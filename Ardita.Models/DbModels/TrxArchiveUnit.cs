@@ -39,6 +39,10 @@ public partial class TrxArchiveUnit
 
     public virtual ICollection<TrxArchiveExtend> TrxArchiveExtends { get; } = new List<TrxArchiveExtend>();
 
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementArchiveUnitIdDestinationNavigations { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementArchiveUnitIdFromNavigations { get; } = new List<TrxArchiveMovement>();
+
     public virtual ICollection<TrxFloor> TrxFloors { get; } = new List<TrxFloor>();
 
     public virtual ICollection<TrxTypeStorage> TrxTypeStorages { get; } = new List<TrxTypeStorage>();

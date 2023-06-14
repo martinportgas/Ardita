@@ -604,7 +604,7 @@ public abstract class BaseController<T> : Controller
         };
         return Json(result);
     }
-    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year));
+    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year, gmdDetailId));
     public async Task<JsonResult> BindArchivesInActiveBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveInActiveBySubSubjectId(Id, mediaStorageId, year));
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id, string param = "")
     {

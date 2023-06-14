@@ -446,7 +446,7 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "")
+    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "", Guid gmdDetailId = new Guid())
     {
         string year = DateTime.Now.Year.ToString();
         string month = DateTime.Now.Month.ToString();
@@ -467,15 +467,17 @@ public class ArchiveRepository : IArchiveRepository
                                       select archive;
 
         int submit = (int)GlobalConst.STATUS.Submit;
-        return await _context.TrxArchives
+        var result = await _context.TrxArchives
             .Include(x => x.SubSubjectClassification)
             .Include(x => x.ArchiveType)
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageDetails)
             .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
             .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0 && CreatedDateArchive.Month == @1")}", year, month)
+            .Where(x => x.GmdDetailId == gmdDetailId)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();
+        return result;
     }
 
     public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "")

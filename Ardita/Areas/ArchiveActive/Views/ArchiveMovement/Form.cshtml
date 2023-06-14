@@ -117,11 +117,11 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Jenis Penyimpanan</label>
-                                                            <select id="txtTypeStorageId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                            <select id="txtTypeStorageId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TypeStorageId" asp-items="ViewBag.listTypeStorage" data-placeholder="-- Pilih Jenis Media Penyimpanan --"><option value=""></option></select>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>GMD Detail</label>
-                                                            <select id="txtGMDDetail" onchange="getGMDDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetailId" asp-items="ViewBag.listGMDDetail" data-placeholder="-- Pilih Jenis Penyimpanan --"><option value=""></option></select>
+                                                            <select id="txtGMDDetail" onchange="getGMDDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetailId" asp-items="ViewBag.listGMDDetail" data-placeholder="-- Pilih Bentuk Media Penyimpanan --"><option value=""></option></select>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Unit</label>
@@ -144,7 +144,7 @@
                                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                                         </div>
                                                     </div>
-                                                    @*<div class="col-sm-6">
+                                                    <div class="col-sm-6">
                                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
                                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                                             <thead>
@@ -177,7 +177,7 @@
                                                                 }
                                                             </tbody>
                                                         </table>
-                                                    </div>*@
+                                                    </div>
                                                 </div>
                                                 @if (form.isInput)
                                                 {
