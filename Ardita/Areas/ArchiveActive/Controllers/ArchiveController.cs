@@ -189,7 +189,7 @@ public class ArchiveController : BaseController<TrxArchive>
             {
                 var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var archiveAll = await _archiveService.GetAll();
-                var Gmds = await _gmdService.GetAll();
+                var Gmds = await _gmdService.GetAllDetail();
                 var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
                 var SecurityClassifications = await _securityClassificationService.GetAll();
                 var Creators = await _archiveCreatorService.GetAll();
@@ -206,6 +206,12 @@ public class ArchiveController : BaseController<TrxArchive>
                     foreach (DataRow row in result.Rows)
                     {
                         string error = string.Empty;
+                        var GmdDetailData = Gmds.Where(x => x.Name.ToLower() == row[1].ToString().ToLower()).FirstOrDefault();
+                        if (GmdDetailData == null)
+                        {
+                            valid = false;
+                            error += "_Bentuk Media Arsip Tidak Valid";
+                        }
                         var subSubjectClassificationData = SubSubjecClassifications.Where(x => x.SubSubjectClassificationCode.ToLower() == row[2].ToString().ToLower()).FirstOrDefault();
                         if (subSubjectClassificationData == null)
                         {
@@ -277,7 +283,8 @@ public class ArchiveController : BaseController<TrxArchive>
                         {
                             trxArchive = new();
                             trxArchive.ArchiveId = Guid.NewGuid();
-                            trxArchive.GmdId = Gmds.Where(x => x.GmdCode == row[1].ToString()).FirstOrDefault()!.GmdId;
+                            trxArchive.GmdId = GmdDetailData.GmdId;
+                            trxArchive.GmdDetailId = GmdDetailData.GmdDetailId;
                             trxArchive.SubSubjectClassificationId = subSubjectClassificationData!.SubSubjectClassificationId;
                             trxArchive.SecurityClassificationId = securityClassificationData!.SecurityClassificationId;
                             trxArchive.CreatorId = (Guid)subSubjectClassificationData.CreatorId!;
@@ -376,7 +383,7 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
-            var dataGMD = await _gmdService.GetAll();
+            var dataGMDDetail = await _gmdService.GetAllDetail();
             var dataSubSubjectClassification = await _classificationSubSubjectService.GetAll();
             var dataSecurityClassification = await _securityClassificationService.GetAll();
             var dataArchiveOwner = await _archiveOwnerService.GetAll();
@@ -384,7 +391,7 @@ public class ArchiveController : BaseController<TrxArchive>
 
             List<DataTable> listData = new List<DataTable>() {
                 new DataTable(),
-                dataGMD.Select(x => new { x.GmdId, x.GmdCode, x.GmdName }).ToList().ToDataTable(),
+                dataGMDDetail.Select(x => new { x.GmdDetailId, x.Name, x.Unit }).ToList().ToDataTable(),
                 dataSubSubjectClassification.Select(x => new { x.SubSubjectClassificationId, x.SubSubjectClassificationCode, x.SubSubjectClassificationName }).ToList().ToDataTable(),
                 dataSecurityClassification.Select(x => new { x.SecurityClassificationId, x.SecurityClassificationCode, x.SecurityClassificationName }).ToList().ToDataTable(),
                 dataArchiveOwner.Select(x => new { x.ArchiveOwnerId, x.ArchiveOwnerCode, x.ArchiveOwnerName }).ToList().ToDataTable(),
