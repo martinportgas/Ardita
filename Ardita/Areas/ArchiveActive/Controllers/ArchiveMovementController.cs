@@ -11,8 +11,6 @@ namespace Ardita.Areas.ArchiveActive.Controllers
 {
     [CustomAuthorize]
     [Area(GlobalConst.ArchiveActive)]
-
-    [Controller]
     public class ArchiveMovementController : BaseController<TrxArchiveMovement>
     {
         #region MEMBER AND CTR
@@ -27,7 +25,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             ITypeStorageService typeStorageService,
             IMediaStorageService mediaStorageService,
             IArchiveUnitService archiveUnitService,
-            IClassificationSubSubjectService classificationSubSubjectService)
+            IClassificationSubSubjectService classificationSubSubjectService,
+            IGmdService gmdService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -40,6 +39,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _mediaStorageService = mediaStorageService;
             _archiveUnitService = archiveUnitService;
             _classificationSubSubjectService = classificationSubSubjectService;
+            _gmdService = gmdService;
         }
         #endregion
         #region MAIN ACTION
@@ -299,12 +299,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             return RedirectToIndex();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public override async Task<IActionResult> SubmitApproval(TrxArchiveMovement model)
         {
             if (model != null && model.ArchiveMovementId != Guid.Empty)
             {
-                var ApprovalAction = Request.Form[GlobalConst.Submit];
+                var ApprovalAction = Request.Form[GlobalConst.Approval];
                 if(ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)
@@ -360,6 +359,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 ViewBag.listArchiveUnit = await BindAllArchiveUnits();
                 ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
                 ViewBag.listSubSubject = await BindAllSubSubjectClasscifications();
+                ViewBag.listGMDDetail = await BindGmdDetail();
             }
             else
             {
@@ -367,6 +367,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 ViewBag.listArchiveUnit = await BindArchiveUnits();
                 ViewBag.listArchiveUnitAll = await BindAllArchiveUnits();
                 ViewBag.listSubSubject = await BindSubSubjectClasscifications();
+                ViewBag.listGMDDetail = await BindGmdDetail();
             }
 
         }

@@ -75,7 +75,7 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                            <form id="frmMovement" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                                 <div class="row">
                                                     <div class="col-sm-6 b-r">
                                                         <div class="form-group">
@@ -125,7 +125,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Unit</label>
-                                                            <input readonly type="text" class="form-control" id="txtUnit" value="" />
+                                                            <input readonly type="text" class="form-control" id="txtUnit" value="@Model.GmdDetail.Unit" />
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Total Volume</label>
@@ -144,7 +144,7 @@
                                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-6">
+                                                    @*<div class="col-sm-6">
                                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
                                                         <table class="table table-condensed" style="border-radius: unset;width:100%">
                                                             <thead>
@@ -177,60 +177,62 @@
                                                                 }
                                                             </tbody>
                                                         </table>
-                                                    </div>
+                                                    </div>*@
                                                 </div>
-                                                <div class="row border-top pt-3">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label>Sub-Subjek Klasifikasi</label>
-                                                            <select asp-items="ViewBag.listSubSubject"
-                                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
-                                                                    data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
-                                                                <option value=""></option>
-                                                            </select>
+                                                @if (form.isInput)
+                                                {
+                                                    <div class="row border-top pt-3">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>Sub-Subjek Klasifikasi</label>
+                                                                <select asp-items="ViewBag.listSubSubject"
+                                                                        id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                                        data-placeholder="-- Pilih Sub-Subjek Klasifikasi --">
+                                                                    <option value=""></option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>Tahun Arsip</label>
+                                                                <select id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                                        data-placeholder="-- Pilih Tahun Arsip --">
+                                                                    <option value=""></option>
+                                                                    @for (int i = -20; i < 0; i++)
+                                                                    {
+                                                                        <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                                                    }
+                                                                    @if (form.CurrentAction == GlobalConst.Add)
+                                                                    {
+                                                                        <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 archive-div">
+                                                            <div class="form-group">
+                                                                <label>Arsip</label>
+                                                                <select id="txtArchive" onchange="bindCreatorAndVolume($(this))" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? string.Empty : GlobalConst.Disabled)" data-placeholder="-- Pilih Arsip --"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 archive-div">
+                                                            <div class="form-group">
+                                                                <label>Pemilik</label>
+                                                                <input readonly type="text" class="form-control creator" id="txtCreator" value="" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 archive-div">
+                                                            <div class="form-group">
+                                                                <label>Volume</label>
+                                                                <input readonly type="text" class="form-control volume" id="txtVolume" value="" />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label>Tahun Arsip</label>
-                                                            <select
-                                                                    id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
-                                                                    data-placeholder="-- Pilih Tahun Arsip --">
-                                                                <option value=""></option>
-                                                                @for (int i = -20; i < 0; i++)
-                                                                {
-                                                                    <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
-                                                                }
-                                                                @if (form.CurrentAction == GlobalConst.Add)
-                                                                {
-                                                                    <option value="@DateTime.Now.ToString("yyyy")" selected>@DateTime.Now.ToString("yyyy")</option>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <option value="@DateTime.Now.ToString("yyyy")">@DateTime.Now.ToString("yyyy")</option>
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6 archive-div">
-                                                        <div class="form-group">
-                                                            <label>Arsip</label>
-                                                            <select id="txtArchive" onchange="bindCreatorAndVolume($(this))" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? string.Empty : GlobalConst.Disabled)" id="txtArchiveId" data-placeholder="-- Pilih Arsip --"></select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6 archive-div">
-                                                        <div class="form-group">
-                                                            <label>Pemilik</label>
-                                                            <input readonly type="text" class="form-control creator" id="txtCreator" value="" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6 archive-div">
-                                                        <div class="form-group">
-                                                            <label>Volume</label>
-                                                            <input readonly type="text" class="form-control volume" id="txtVolume" value="" />
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                }
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'ars')" id="addArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Arsip</button>
@@ -262,7 +264,10 @@
                                                                                 <input class="form-control" style="border: none !important;" name="volume[]" value="@item.Archive.Volume" readonly />
                                                                             </td>
                                                                             <td>
+                                                                                @if (form.isInput)
+                                                                                {
                                                                                 <button class="btn btn-danger remove" type="button">Remove</button>
+                                                                                }
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -289,8 +294,9 @@
 
                                                         if (form.CurrentAction == GlobalConst.Approval && ViewBag.level == Model.ApproveLevel)
                                                         {
-                                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">@Html.Raw(form.ApprovalText)</button>
-                                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="submit" name="submit" value="Reject">@Html.Raw(form.RejectText)</button>
+                                                            <input type="hidden" name="@GlobalConst.Approval" id="valueSubmit">
+                                                            <button onclick="onApprove(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="button" id="btnApprove" value="@GlobalConst.Approve">@Html.Raw(form.ApprovalText)</button>
+                                                            <button onclick="onApprove(this, event);" class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="button" value="@GlobalConst.Reject">@Html.Raw(form.RejectText)</button>
                                                             <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" type="button" onclick="showReason(this.id)" id="btnReason">@Html.Raw(form.RejectText)</button>
                                                             <button class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" style="display:none" type="button" onclick="showReason(this.id)" id="btnRefresh">@Html.Raw($"{GlobalConst.IconRefresh}{GlobalConst.Cancel} {GlobalConst.Reject}")</button>
                                                             <div style="width:100%;display:flex;justify-content:end">
@@ -615,7 +621,33 @@
                 });
             }
         }
-
+        function onApprove(ctl, event) {
+            event.preventDefault();
+            var valSubmit = ctl.value;
+            if(valSubmit == '@GlobalConst.Reject' && $('#txtNote').val() == ''){
+                swal("Failed", "Harap isi alasan reject!", "error");
+            }else{
+                swal({
+                    title: "Do You Want To Approve It?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Approve",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#valueSubmit').val(valSubmit);
+                            $("#frmMovement").submit();
+                        } else {
+                            swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        }
+                    });
+            }
+        }
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 

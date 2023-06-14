@@ -67,7 +67,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<TrxArchiveMovement> GetById(Guid id)
         {
-            var result = await _context.TrxArchiveMovements.AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
+            var result = await _context.TrxArchiveMovements.Include(x => x.GmdDetail).AsNoTracking().FirstOrDefaultAsync(x => x.ArchiveMovementId == id);
             return result;
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)

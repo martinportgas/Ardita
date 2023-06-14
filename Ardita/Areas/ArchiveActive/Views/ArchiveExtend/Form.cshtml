@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                            <form id="frmExtend" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
@@ -224,7 +224,10 @@
                                                                 <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="@item.Reason" readonly />
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-danger remove" type="button">Remove</button>
+                                                                @if (form.isInput)
+                                                                {
+                                                                    <button class="btn btn-danger remove" type="button">Remove</button>
+                                                                }
                                                             </td>
                                                         </tr>
                                                     }
@@ -251,8 +254,9 @@
 
                                         if (form.CurrentAction == GlobalConst.Approval && ViewBag.level == Model.ApproveLevel)
                                         {
-                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">@Html.Raw(form.ApprovalText)</button>
-                                            <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="submit" name="submit" value="Reject">@Html.Raw(form.RejectText)</button>
+                                            <input type="hidden" name="@GlobalConst.Approval" id="valueSubmit">
+                                            <button onclick="onApprove(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="button" id="btnApprove" value="@GlobalConst.Approve">@Html.Raw(form.ApprovalText)</button>
+                                            <button onclick="onApprove(this, event);" class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" style="display:none" id="btnReject" type="button" value="@GlobalConst.Reject">@Html.Raw(form.RejectText)</button>
                                             <button class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" type="button" onclick="showReason(this.id)" id="btnReason">@Html.Raw(form.RejectText)</button>
                                             <button class="btn btn-sm btn-warning float-right m-t-n-xs mr-1" style="display:none" type="button" onclick="showReason(this.id)" id="btnRefresh">@Html.Raw($"{GlobalConst.IconRefresh}{GlobalConst.Cancel} {GlobalConst.Reject}")</button>
                                             <div style="width:100%;display:flex;justify-content:end">
@@ -432,7 +436,33 @@
             });
         }
 
-
+        function onApprove(ctl, event) {
+            event.preventDefault();
+            var valSubmit = ctl.value;
+            if (valSubmit == '@GlobalConst.Reject' && $('#txtNote').val() == '') {
+                swal("Failed", "Harap isi alasan reject!", "error");
+            } else {
+                swal({
+                    title: "Do You Want To Approve It?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Approve",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#valueSubmit').val(valSubmit);
+                            $("#frmExtend").submit();
+                        } else {
+                            swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        }
+                    });
+            }
+        }
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
