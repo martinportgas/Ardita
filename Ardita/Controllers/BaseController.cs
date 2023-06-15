@@ -383,7 +383,7 @@ public abstract class BaseController<T> : Controller
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
-            Text = x.RowName + spr + x.Level.LevelName + spr + x.Level.Rack.RackName + spr + x.Level.Rack.Room.RoomName + spr + x.Level.Rack.Room.Floor.FloorName + spr + x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+            Text = x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName + spr + x.Level.Rack.Room.Floor.FloorName + spr + x.Level.Rack.Room.RoomName + spr + x.Level.Rack.RackName + spr + x.Level.LevelName + spr + x.RowName
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)

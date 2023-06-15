@@ -315,8 +315,8 @@ public class ArchiveController : BaseController<TrxArchive>
                     ViewBag.result = JsonConvert.SerializeObject(result);
                     ViewBag.errorCount = errorCount;
 
-                    //if (valid)
-                    //    await _archiveService.InsertBulk(trxArchives);
+                    if (valid)
+                        await _archiveService.InsertBulk(trxArchives);
                 }
                 return View(GlobalConst.UploadForm);
             }
