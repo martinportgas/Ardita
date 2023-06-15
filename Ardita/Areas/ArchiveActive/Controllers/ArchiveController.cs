@@ -235,20 +235,6 @@ public class ArchiveController : BaseController<TrxArchive>
                             valid = false;
                             error += "_Asal Arsip Tidak Valid";
                         }
-                        var dataDocNo = archiveAll.Where(x => x.DocumentNo.ToLower() == row[7].ToString().ToLower()).FirstOrDefault();
-                        if (dataDocNo != null)
-                        {
-                            valid = false;
-                            error += "_Nomor Dokumen Sudah Teregister";
-                        }
-                        else
-                        {
-                            dataDocNo = trxArchives.Where(x => x.DocumentNo.ToLower() == row[7].ToString().ToLower()).FirstOrDefault();
-                            {
-                                valid = false;
-                                error += "_Duplikat Nomor Dokumen";
-                            }
-                        }
                         var archiveTypeData = ArchiveTypes.Where(x => x.ArchiveTypeCode.ToLower() == row[9].ToString().ToLower()).FirstOrDefault();
                         if (archiveTypeData == null)
                         {
