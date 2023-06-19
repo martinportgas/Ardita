@@ -45,8 +45,8 @@
       "name": "Bentuk Media Arsip",
       "column": {
         "0": "No",
-        "1": "Kode",
-        "2": "Nama"
+        "1": "Bentuk Media Arsip",
+        "2": "Satuan"
       }
     },
     "2": {

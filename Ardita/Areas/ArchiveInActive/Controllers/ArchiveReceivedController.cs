@@ -62,8 +62,8 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
     {
         if (model is not null)
         {
-            model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
-            model.UpdatedDate = DateTime.Now;
+            model.ReceivedBy = AppUsers.CurrentUser(User).UserId;
+            model.DateReceived = DateTime.Now;
             await ArchiveReceivedService.Update(model);
            
         }

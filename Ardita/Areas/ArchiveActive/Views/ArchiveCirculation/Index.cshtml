@@ -103,14 +103,22 @@
                             url = url.replace('@GlobalConst.Remove', '@GlobalConst.Preview');
                             var submit = row.statusId == @((int)GlobalConst.STATUS.Rejected) || row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-success" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
 
-
-                            url = url.replace('@GlobalConst.Preview', '@GlobalConst.DownloadFile');
-                            var download = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-download"></i> </a>`;
+                            var download = '';
+                           
                             var musnah = '';
-                            if (row.type == '@GlobalConst.ArsipPemusnahan') {
-                                url = url.replace('@GlobalConst.DownloadFile', '@GlobalConst.Destroy');
-                                musnah = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-primary" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
 
+                            if (row.type == '@GlobalConst.ArsipPemusnahan') {
+                                url = url.replace('@GlobalConst.Preview', '@GlobalConst.DownloadFile');
+                                download = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) && row.statusId != @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-info" href="${url}"><i class="fa fa-download"></i> </a>`;
+
+                                url = url.replace('@GlobalConst.DownloadFile', '@GlobalConst.Destroy');
+                                musnah = row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) ? '' : `<a class="btn btn-sm btn-info" href="${url}"><i class="fa fa-paper-plane"></i> </a>`;
+
+                            }
+
+                            if (row.type == '@GlobalConst.ArsipPemindahan') {
+                                url = url.replace('@GlobalConst.Preview', '@GlobalConst.DownloadFile');
+                                download = row.statusReceived != @((int)GlobalConst.STATUS.ArchiveReceived) ? '' : `<a class="btn btn-sm btn-info" href="${url}"><i class="fa fa-download"></i> </a>`;
                             }
 
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download).concat(" ", musnah);

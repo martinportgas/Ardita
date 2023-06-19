@@ -47,6 +47,8 @@ public partial class TrxArchiveMovement
 
     public bool IsActive { get; set; }
 
+    public Guid? ReceivedBy { get; set; }
+
     public DateTime CreatedDate { get; set; }
 
     public Guid CreatedBy { get; set; }
@@ -54,6 +56,10 @@ public partial class TrxArchiveMovement
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual TrxArchiveUnit ArchiveUnitIdDestinationNavigation { get; set; } = null!;
+
+    public virtual TrxArchiveUnit ArchiveUnitIdFromNavigation { get; set; } = null!;
 
     public virtual MstGmdDetail GmdDetail { get; set; } = null!;
 

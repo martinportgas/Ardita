@@ -383,7 +383,7 @@ public abstract class BaseController<T> : Controller
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
-            Text = x.RowName + spr + x.Level.LevelName + spr + x.Level.Rack.RackName + spr + x.Level.Rack.Room.RoomName + spr + x.Level.Rack.Room.Floor.FloorName + spr + x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+            Text = x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName + spr + x.Level.Rack.Room.Floor.FloorName + spr + x.Level.Rack.Room.RoomName + spr + x.Level.Rack.RackName + spr + x.Level.LevelName + spr + x.RowName
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
@@ -604,7 +604,7 @@ public abstract class BaseController<T> : Controller
         };
         return Json(result);
     }
-    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year));
+    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) => Json(await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year, gmdDetailId));
     public async Task<JsonResult> BindArchivesInActiveBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveInActiveBySubSubjectId(Id, mediaStorageId, year));
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id, string param = "")
     {

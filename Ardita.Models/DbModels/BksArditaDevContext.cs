@@ -1189,6 +1189,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.InactiveRetention).HasColumnName("inactive_retention");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsUsed).HasColumnName("is_used");
+            entity.Property(e => e.IsUsedBy)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("is_used_by");
             entity.Property(e => e.IsUsedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("is_used_date");
@@ -1491,6 +1495,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("note");
+            entity.Property(e => e.ReceivedBy).HasColumnName("received_by");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.StatusReceived).HasColumnName("status_received");
             entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
@@ -1499,6 +1504,16 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.ArchiveUnitIdDestinationNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdDestinationNavigations)
+                .HasForeignKey(d => d.ArchiveUnitIdDestination)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT1");
+
+            entity.HasOne(d => d.ArchiveUnitIdFromNavigation).WithMany(p => p.TrxArchiveMovementArchiveUnitIdFromNavigations)
+                .HasForeignKey(d => d.ArchiveUnitIdFrom)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT");
 
             entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxArchiveMovements)
                 .HasForeignKey(d => d.GmdDetailId)

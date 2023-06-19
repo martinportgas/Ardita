@@ -287,12 +287,11 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             return RedirectToIndex();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public override async Task<IActionResult> SubmitApproval(TrxArchiveDestroy model)
         {
             if (model != null && model.ArchiveDestroyId != Guid.Empty)
             {
-                var ApprovalAction = Request.Form[GlobalConst.Submit];
+                var ApprovalAction = Request.Form[GlobalConst.Approval];
                 if (ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)

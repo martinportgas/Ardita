@@ -45,6 +45,8 @@ public partial class TrxArchive
 
     public bool? IsUsed { get; set; }
 
+    public string? IsUsedBy { get; set; }
+
     public DateTime? IsUsedDate { get; set; }
 
     public bool IsActive { get; set; }

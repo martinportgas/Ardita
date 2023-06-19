@@ -65,6 +65,8 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
             {
                 data.StatusReceived = (int)GlobalConst.STATUS.ArchiveReceived;
                 data.DescriptionReceived = model.DescriptionReceived;
+                data.ReceivedBy = model.ReceivedBy;
+                data.DateReceived = model.DateReceived;
                 _context.Update(data);
                 result = await _context.SaveChangesAsync();
             }
