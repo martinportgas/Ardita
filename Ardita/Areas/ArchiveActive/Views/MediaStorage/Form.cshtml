@@ -1,5 +1,6 @@
 ﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
+@using Ardita.Models.DbModels;
 @model Ardita.Models.DbModels.TrxMediaStorage;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -11,6 +12,7 @@
     {
         isEditable = true;
     }
+    int i = 0;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -222,37 +224,108 @@
                                             <div class="sk-circle11 sk-circle"></div>
                                             <div class="sk-circle12 sk-circle"></div>
                                         </div>
-                                        <table id="table-archive" class="table table-condensed mt-2" style="border-radius: unset;width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Sub-subjek Klasifikasi</th>
-                                                    <th>Nomor Arsip</th>
-                                                    <th>Judul Arsip</th>
-                                                    <th>Tingkat Perkembangan</th>
-                                                    <th>Unit Pencipta</th>
-                                                    <th>Jumlah</th>
-                                                    <th>Detail</th>
-                                                    <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAll" class="text-center">Pilih Semua </label><input type="checkbox" id="checkAll" required/></th>
-                                                    <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAllIsUsed" class="text-center">Gunakan Semua</label><input type="checkbox" id="checkAllIsUsed" /></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="listdtl">
-                                            </tbody>
-                                        </table>
+                                        @if(form.CurrentAction != GlobalConst.IsUsed)
+                                        {
+                                            <table id="table-archive" class="table table-condensed mt-2" style="border-radius: unset;width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Sub-subjek Klasifikasi</th>
+                                                        <th>Nomor Arsip</th>
+                                                        <th>Judul Arsip</th>
+                                                        <th>Tingkat Perkembangan</th>
+                                                        <th>Unit Pencipta</th>
+                                                        <th>Jumlah</th>
+                                                        <th>Detail</th>
+                                                        <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAll" class="text-center">Pilih Semua </label><input type="checkbox" id="checkAll" required /></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="listdtl">
+                                                </tbody>
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <div class="tabs-container">
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    <li><a class="nav-link active" data-toggle="tab" href="#tab-1">Registrasi</a></li>
+                                                    <li><a class="nav-link" data-toggle="tab" href="#tab-2">History</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div role="tabpanel" id="tab-1" class="tab-pane active">
+                                                        <div class="panel-body">
+                                                            <table id="table-archive" class="table table-condensed mt-2" style="border-radius: unset;width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>No</th>
+                                                                        <th>Sub-subjek Klasifikasi</th>
+                                                                        <th>Nomor Arsip</th>
+                                                                        <th>Judul Arsip</th>
+                                                                        <th>Tingkat Perkembangan</th>
+                                                                        <th>Unit Pencipta</th>
+                                                                        <th>Jumlah</th>
+                                                                        <th>Detail</th>
+                                                                        <th style="display:flex;flex-direction:column;text-align:center;padding-right:8px !important"><label for="checkAllIsUsed" class="text-center">Gunakan Semua</label><input type="checkbox" id="checkAllIsUsed" /></th>
+                                                                        <th>Pengguna</th>
+                                                                        <th>Tanggal Penggunaaan</th>
+                                                                        <th>Tanggal Pengembalian</th>
+                                                                        <th>Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="listdtl">
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div role="tabpanel" id="tab-2" class="tab-pane">
+                                                        <div class="panel-body">
+                                                            <table id="table-history" class="table table-condensed mt-2" style="border-radius: unset;width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>No</th>
+                                                                        <th>Nomor Dokumen</th>
+                                                                        <th>Judul Arsip</th>
+                                                                        <th>Tingkat Perkembangan</th>
+                                                                        <th>Unit Pencipta</th>
+                                                                        <th>Jumlah</th>
+                                                                        <th>Pengguna</th>
+                                                                        <th>Tanggal Penggunaaan</th>
+                                                                        <th>Tanggal Pengembalian</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if(ViewBag.DetailOutIndicatior.Count > 0)
+                                                                    {
+                                                                        foreach (TrxArchiveOutIndicator item in ViewBag.DetailOutIndicatior)
+                                                                        {
+                                                                            if(item.ReturnDate != null)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>@(++i)</td>
+                                                                                    <td>@item.Archive.DocumentNo</td>
+                                                                                    <td>@item.Archive.TitleArchive</td>
+                                                                                    <td>@item.Archive.ArchiveType.ArchiveTypeName</td>
+                                                                                    <td>@item.Archive.Creator.CreatorName</td>
+                                                                                    <td>@item.Archive.Volume</td>
+                                                                                    <td>@item.UsedBy</td>
+                                                                                    <td>@item.UsedDate.ToString("dddd, dd MMMM yyyy")</td>
+                                                                                    <td>@(((DateTime)item.ReturnDate).ToString("dddd, dd MMMM yyyy"))</td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                        }
                                         <div id="listArchiveId"></div> @*this div for containing list archive id values send to controller*@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            @if(form.CurrentAction == GlobalConst.IsUsed)
-                                            {
-                                                <div style="width:100%;display:flex;justify-content:end">
-                                                    <div style="width:30%;">
-                                                        <input type="text" name="@GlobalConst.UsedBy" class="form-control" placeholder="Pengguna Arsip" id="txtUsedBy" required>
-                                                        <br />
-                                                    </div>
-                                                </div>
-                                            }
                                             <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                                    class="btn btn-sm btn-default float-right m-t-n-xs">
                                                 @Html.Raw(form.BackText)
@@ -455,77 +528,150 @@
                 }
                 $('#table-archive').show();
                 $('#table-archive').DataTable().destroy();
-                $('#table-archive').DataTable({
-                    data: dataRes,
-                    lengthMenu: [100],
-                    columnDefs: [
-                        {
-                            targets: [8],
-                            className: `text-center ${@form.isInput.ToString().ToLower() ? '' : 'd-none'}`
-                        },
-                        {
-                            targets: [8],
-                            orderDataType: 'dom-checkbox'
-                        },
-                        {
-                            targets: [9],
-                            className: `text-center ${'@form.CurrentAction' == 'IsUsed' ? '' : 'd-none'}`
-                        },
-                        {
-                            targets: [9],
-                            orderDataType: 'dom-checkbox'
-                        }
-                    ],
-                    columns: [
-                        {
-                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                return meta.row + meta.settings._iDisplayStart + 1;
+                if('@form.CurrentAction' == '@GlobalConst.IsUsed'){
+                    $('#table-history').DataTable();
+
+                    $('#table-archive').DataTable({
+                        data: dataRes,
+                        lengthMenu: [100],
+                        columnDefs: [
+                            {
+                                targets: [8],
+                                className: 'd-none'
+                            },
+                            {
+                                targets: [8],
+                                orderDataType: 'dom-checkbox'
                             }
-                        },
-                        { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
-                        { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
-                        { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
-                        { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
-                        { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
-                        { "data": "volume", "name": "volume", "autoWidth": true },
-                        {
-                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h2 class="modal-title">Preview</h2>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-lg-12">
-                                                                            <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
-                                                                                <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
-                                                                    </object>
+                        ],
+                        columns: [
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
+                            { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
+                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
+                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "volume", "name": "volume", "autoWidth": true },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Preview</h2>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12">
+                                                                                    <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
+                                                                                        <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
+                                                                            </object>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr />
                                                                 </div>
                                                             </div>
-                                                            <hr />
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                    </div>`.replace('-1AingMaung', data);
-                                return modal + `<a data-toggle="modal" href="#myModal${data}" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </a>`;
+                                                            </div>`.replace('-1AingMaung', data);
+                                    return modal + `<a data-toggle="modal" href="#myModal${data}" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </a>`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    return `<input type="checkbox" class="check2" value='${data}' name="detailIsUsed[]"  checked />`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var available = row.trxArchiveOutIndicators.length > 0 ? row.trxArchiveOutIndicators[0].returnDate != null ? true : false : true;
+                                    console.log(row.trxArchiveOutIndicators[0].returnDate);
+                                    var value = available ? '' : row.trxArchiveOutIndicators[0].usedBy;
+                                    return `<input type="text" class="form-control" value='${value}' name="usedBy[]" ${available ? '' : 'readonly'} />`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var available = row.trxArchiveOutIndicators.length > 0 ? row.trxArchiveOutIndicators[0].returnDate != null ? true : false : true;
+                                    var value = available ? '' : row.trxArchiveOutIndicators[0].usedDate.split('T')[0];
+                                    return `<input type="date" class="form-control" value='${value}' name="usedDate[]" ${available ? '' : 'readonly'} />`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    return `<input type="date" class="form-control" value='' name="returnDate[]" />`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var available = row.trxArchiveOutIndicators.length > 0 ? row.trxArchiveOutIndicators[0].returnDate != null ? true : false : true;
+                                    return `<span class="badge badge-pill badge-${available ? 'primary' : 'success'}">${available ? 'Tersedia' : 'Digunakan'}</span>`;
+                                }
                             }
-                        },
-                        {
-                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                var rowChecked = row.trxMediaStorageDetails.length > 0 ? row.trxMediaStorageDetails[0].mediaStorageId == '@Model.MediaStorageId' : false;
-                                return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this), ${row.volume})" ${rowChecked ? 'checked' : ''} />`;
+                        ]
+                    });
+                }else{
+                    $('#table-archive').DataTable({
+                        data: dataRes,
+                        lengthMenu: [100],
+                        columnDefs: [
+                            {
+                                targets: [8],
+                                className: `text-center ${@form.isInput.ToString().ToLower() ? '' : 'd-none'}`
+                            },
+                            {
+                                targets: [8],
+                                orderDataType: 'dom-checkbox'
                             }
-                        },
-                        {
-                            "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                console.log(row.isUsed);
-                                return `<input type="checkbox" class="check2" value='${data}' name="detailIsUsed[]"  ${row.isUsed == 1 ? 'checked' : ''} />`;
+                        ],
+                        columns: [
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
+                            { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
+                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
+                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "volume", "name": "volume", "autoWidth": true },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Preview</h2>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12">
+                                                                                    <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
+                                                                                        <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
+                                                                            </object>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                            </div>`.replace('-1AingMaung', data);
+                                    return modal + `<a data-toggle="modal" href="#myModal${data}" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </a>`;
+                                }
+                            },
+                            {
+                                "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                    var rowChecked = row.trxMediaStorageDetails.length > 0 ? row.trxMediaStorageDetails[0].mediaStorageId == '@Model.MediaStorageId' : false;
+                                    return `<input type="checkbox" class="check" value='${data}' data-volume="${row.volume}" name="detail[]" onchange="checkValidate($(this), ${row.volume})" ${rowChecked ? 'checked' : ''} />`;
+                                }
                             }
-                        }
-                    ]
-                });
+                        ]
+                    });
+                }
                 $('#data-table').toggleClass('sk-loading');
             });
         }
@@ -536,7 +682,7 @@
                 theme: 'bootstrap4',
                 allowClear: true,
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindGMDDetailByTypeStorageId, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })',
+                    url: '@Url.Action(GlobalConst.BindGMDDetailByTypeStorageId, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {

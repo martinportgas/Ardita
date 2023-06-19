@@ -35,7 +35,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             try
             {
                 model.whereClause = GlobalConst.WhereClauseArchiveMonitoring;
-                if (AppUsers.CurrentUser(User).RoleCode != GlobalConst.ROLE.ADM.ToString())
+                if (AppUsers.CurrentUser(User).RoleCode == GlobalConst.ROLE.USV.ToString())
                     model.PositionId = AppUsers.CurrentUser(User).PositionId;
                 var result = await _archiveService.GetList(model);
 

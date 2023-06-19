@@ -26,15 +26,15 @@
       "name": "Arsip",
       "column": {
         "0": "No",
-        "1": "Bentuk Media Arsip",
-        "2": "Sub-subjek Klasifikasi",
-        "3": "Klasifikasi Keamanan",
+        "1": "Nama Bentuk Media Arsip",
+        "2": "Kode Sub-subjek Klasifikasi",
+        "3": "Kode Klasifikasi Keamanan",
         "4": "Tipe Pengirim",
-        "5": "Asal Arsip",
+        "5": "Kode Asal Arsip",
         "6": "Kata Kunci",
         "7": "No Dokumen",
         "8": "Judul",
-        "9": "Tingkat Perkembangan",
+        "9": "Kode Tingkat Perkembangan",
         "10": "Tanggal Penciptaan",
         "11": "Retensi Arsip Aktif",
         "12": "Retensi Arsip Inaktif",
@@ -45,7 +45,7 @@
       "name": "Bentuk Media Arsip",
       "column": {
         "0": "No",
-        "1": "Bentuk Media Arsip",
+        "1": "Nama Bentuk Media Arsip",
         "2": "Satuan"
       }
     },

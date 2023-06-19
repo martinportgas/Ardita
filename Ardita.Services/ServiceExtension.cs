@@ -50,6 +50,7 @@ public static class ServiceExtension
         services.AddScoped<IArchiveTypeService, ArchiveTypeService>();
         services.AddScoped<IArchiveRentService, ArchiveRentService>();
         services.AddScoped<ISubTypeStorageService, SubTypeStorageService>();
+        services.AddScoped<IArchiveOutIndicatorService, ArchiveOutIndicatorService>();
         return services;
     }
 }

@@ -155,6 +155,9 @@ public static class GlobalConst
     public const string Files = "files";
     public const string DetailArray = "detail[]";
     public const string DetailIsUsedArray = "detailIsUsed[]";
+    public const string UsedByArray = "usedBy[]";
+    public const string UsedDateArray = "usedDate[]";
+    public const string ReturnDateArray = "returnDate[]";
     public const string IdFileDeletedArray = "idFileDeleted[]";
     public const string listSts = "listSts[]";
     public const string listArchive = "listArchive[]";

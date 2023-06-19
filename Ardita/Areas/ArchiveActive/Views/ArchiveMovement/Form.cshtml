@@ -124,15 +124,15 @@
                                                             <select id="txtGMDDetail" onchange="getGMDDetail($(this))" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetailId" asp-items="ViewBag.listGMDDetail" data-placeholder="-- Pilih Bentuk Media Penyimpanan --"><option value=""></option></select>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Unit</label>
-                                                            <input readonly type="text" class="form-control" id="txtUnit" value="@Model.GmdDetail.Unit" />
+                                                            <label>Satuan</label>
+                                                            <input readonly type="text" class="form-control" id="txtUnit" value="@(Model.GmdDetail == null ? "" : Model.GmdDetail.Unit)" />
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Total Volume</label>
+                                                            <label>Jumlah</label>
                                                             <input readonly type="text" placeholder="" id="txtTotal" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TotalVolume">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Sisa Volume</label>
+                                                            <label>Jumlah Tersedia</label>
                                                             <input readonly type="text" placeholder="" id="txtSisa" class="form-control" asp-for="DifferenceVolume">
                                                         </div>
                                                         <div class="form-group">
@@ -420,7 +420,7 @@
                         type: "POST",
                         data: function (params) {
                             var query = {
-                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveMovementId'},${'@GlobalConst.ArchiveMovement'},${$('#txtSubSubjectClassificationId').val()},${$('#txtYear').val()}` : `${params.term == undefined ? '' : params.term},${$('#txtArchiveUnitId').val()}`
+                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveMovementId'},${'@GlobalConst.ArchiveMovement'},${$('#txtSubSubjectClassificationId').val()},${$('#txtYear').val()},${$('#txtGMDDetail').val()}` : `${params.term == undefined ? '' : params.term},${$('#txtArchiveUnitId').val()}`
                             }
                             return query;
                         },

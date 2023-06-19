@@ -472,11 +472,13 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.ArchiveType)
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageDetails)
+            .Include(x => x.TrxArchiveOutIndicators.Where(z => z.IsActive == true))
             .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
             .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0 && CreatedDateArchive.Month == @1")}", year, month)
             .Where(x => x.GmdDetailId == gmdDetailId)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();
+
         return result;
     }
 

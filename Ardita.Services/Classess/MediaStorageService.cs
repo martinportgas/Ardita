@@ -11,7 +11,10 @@ public class MediaStorageService : IMediaStorageService
 {
     private readonly IMediaStorageRepository _mediaStorageRepository;
 
-    public MediaStorageService(IMediaStorageRepository mediaStorageRepository) => _mediaStorageRepository = mediaStorageRepository;
+    public MediaStorageService(IMediaStorageRepository mediaStorageRepository)
+    {
+        _mediaStorageRepository = mediaStorageRepository;
+    }
 
     public async Task<int> Delete(TrxMediaStorage model) => await _mediaStorageRepository.Delete(model);
 
@@ -99,8 +102,8 @@ public class MediaStorageService : IMediaStorageService
         return await _mediaStorageRepository.UpdateDetail(model);
     }
 
-    public async Task<bool> UpdateDetailIsUsed(Guid archiveId, string usedBy)
+    public async Task<bool> UpdateDetailIsUsed(Guid archiveId, string usedBy, bool isUsed)
     {
-        return await _mediaStorageRepository.UpdateDetailIsUsed(archiveId, usedBy);
+        return await _mediaStorageRepository.UpdateDetailIsUsed(archiveId, usedBy, isUsed);
     }
 }

@@ -225,9 +225,9 @@ public class MediaStorageRepository : IMediaStorageRepository
         return result;
     }
 
-    public async Task<bool> UpdateDetailIsUsed(Guid archiveId, string usedBy)
+    public async Task<bool> UpdateDetailIsUsed(Guid archiveId, string usedBy, bool isUsed)
     {
-        await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE SET is_used = 1, is_used_date = {DateTime.Now}, is_used_by = '{usedBy}' WHERE archive_id = {archiveId}");
+        await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE SET is_used = {(isUsed ? 1 : 0)}, is_used_date = {DateTime.Now}, is_used_by = '{usedBy}' WHERE archive_id = {archiveId}");
         await _context.SaveChangesAsync();
         return true;
     }

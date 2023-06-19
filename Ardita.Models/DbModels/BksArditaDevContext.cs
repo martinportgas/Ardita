@@ -87,6 +87,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<TrxArchiveMovementDetail> TrxArchiveMovementDetails { get; set; }
 
+    public virtual DbSet<TrxArchiveOutIndicator> TrxArchiveOutIndicators { get; set; }
+
     public virtual DbSet<TrxArchiveReceived> TrxArchiveReceiveds { get; set; }
 
     public virtual DbSet<TrxArchiveRent> TrxArchiveRents { get; set; }
@@ -1558,6 +1560,43 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_DETAIL_TRX_ARCHIVE_MOVEMENT");
         });
 
+        modelBuilder.Entity<TrxArchiveOutIndicator>(entity =>
+        {
+            entity.HasKey(e => e.ArchiveOutIndicatorId);
+
+            entity.ToTable("TRX_ARCHIVE_OUT_INDICATOR");
+
+            entity.Property(e => e.ArchiveOutIndicatorId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("archive_out_indicator_id");
+            entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.MediaStorageId).HasColumnName("media_storage_id");
+            entity.Property(e => e.ReturnDate)
+                .HasColumnType("datetime")
+                .HasColumnName("return_date");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+            entity.Property(e => e.UsedBy)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("used_by");
+            entity.Property(e => e.UsedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("used_date");
+
+            entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveOutIndicators)
+                .HasForeignKey(d => d.ArchiveId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_OUT_INDICATOR_TRX_ARCHIVE");
+        });
+
         modelBuilder.Entity<TrxArchiveReceived>(entity =>
         {
             entity.HasKey(e => e.ArchiveReceivedId);
@@ -2458,6 +2497,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("creator_name");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.RetentionDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("retention_date_archive");

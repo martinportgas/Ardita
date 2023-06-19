@@ -60,7 +60,8 @@ public abstract class BaseController<T> : Controller
     protected IArchiveReceivedService ArchiveReceivedService { get; set; } = null!;
     protected IMediaStorageInActiveService _MediaStorageInActiveService { get; set; } = null!;
     protected IArchiveRentService _archiveRentService { get; set; } = null!;
-  
+    protected IArchiveOutIndicatorService _archiveOutIndicatorService { get; set; } = null!;
+
     protected ISubTypeStorageService SubTypeStorageService { get; set; } = null!;
     #endregion
 
@@ -655,6 +656,8 @@ public abstract class BaseController<T> : Controller
         Guid.TryParse(arrParam[3], out SubSubjectClassificationId);
         int year = DateTime.Now.Year;
         int.TryParse(arrParam[4], out year);
+        Guid GmdDetailId = Guid.Empty;
+        Guid.TryParse(arrParam[5], out GmdDetailId);
 
         var data = await _archiveRetentionService.GetAll();
 
@@ -674,7 +677,7 @@ public abstract class BaseController<T> : Controller
              from dataDetailDst in b.DefaultIfEmpty()
              join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
              from dataDetailMove in c.DefaultIfEmpty()
-             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString()) 
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString()) && dataALl.GmdDetailId == GmdDetailId
              && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {

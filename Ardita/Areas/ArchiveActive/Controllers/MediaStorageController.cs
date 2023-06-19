@@ -2,6 +2,7 @@
 using Ardita.Extensions;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -31,7 +32,8 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         IGmdService gmdService,
         ISecurityClassificationService securityClassificationService,
         IArchiveOwnerService archiveOwnerService,
-        IArchiveTypeService archiveTypeService)
+        IArchiveTypeService archiveTypeService,
+        IArchiveOutIndicatorService archiveOutIndicatorService)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
         _classificationSubjectService = classificationSubjectService;
@@ -50,6 +52,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _securityClassificationService = securityClassificationService;
         _archiveOwnerService = archiveOwnerService;
         _archiveTypeService = archiveTypeService;
+        _archiveOutIndicatorService = archiveOutIndicatorService;
     }
     #endregion
 
@@ -71,7 +74,6 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
     }
     public override async Task<IActionResult> Add()
     {
-
         await BindAllDropdown();
         var model = new TrxMediaStorage();
         model.MediaStorageCode = GlobalConst.InitialCode;
@@ -88,15 +90,20 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
 
             if (Request.Form[GlobalConst.Submit] == GlobalConst.IsUsed)
             {
-                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
-                model.UpdatedDate = DateTime.Now;
-
                 var detailIsUsed = Request.Form[GlobalConst.DetailIsUsedArray].ToArray();
-                var usedBy = Request.Form[GlobalConst.UsedBy];
+                var usedBy = Request.Form[GlobalConst.UsedByArray].ToArray();
+                var usedDate = Request.Form[GlobalConst.UsedDateArray].ToArray();
+                var returnDate = Request.Form[GlobalConst.ReturnDateArray].ToArray();
+
                 for (int i = 0; i < detailIsUsed.ToArray().Length; i++)
                 {
-                    await _mediaStorageService.UpdateDetailIsUsed(new Guid(detailIsUsed[i]), usedBy);
-                }
+                    if (!string.IsNullOrEmpty(usedBy[i]) && !string.IsNullOrEmpty(usedDate[i]))
+                    {
+                        var result = await _archiveOutIndicatorService.Process(model.MediaStorageId, detailIsUsed[i], usedBy[i], usedDate[i], returnDate[i], AppUsers.CurrentUser(User).UserId);
+
+                        await _mediaStorageService.UpdateDetailIsUsed(new Guid(detailIsUsed[i]), usedBy[i], result);
+                    }
+                }        
             }
             else
             {
@@ -181,6 +188,7 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         {
             await BindAllDropdown();
 
+            ViewBag.DetailOutIndicatior = await _archiveOutIndicatorService.GetByMediaStorageId(Id);
             return View(GlobalConst.Form, data);
         }
         else

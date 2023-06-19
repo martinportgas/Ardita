@@ -474,11 +474,11 @@
                 allowClear: true,
                 placeholder: '-- Select Sub Type Storage --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindGmdDetailByGmdId, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData })',
+                    url: '@Url.Action(GlobalConst.BindGmdDetailByGmdId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
-                            id: $('#txtGmdId').val(),
+                            Id: $('#txtGmdId').val(),
                             param: params.term
                         }
                         return query;
@@ -498,7 +498,7 @@
             });
 
             $('#txtGmdDetailId').on('change', function () {
-                var url = '@Url.Action(GlobalConst.BindGmdDetailById, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData })';
+                var url = '@Url.Action(GlobalConst.BindGmdDetailById, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })';
                 $.ajax({
                     url: url,
                     type: "@GlobalConst.GET",
