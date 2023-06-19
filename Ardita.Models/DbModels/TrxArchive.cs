@@ -41,6 +41,8 @@ public partial class TrxArchive
 
     public string? Description { get; set; }
 
+    public string? ArchiveDescription { get; set; }
+
     public long StatusId { get; set; }
 
     public bool? IsUsed { get; set; }

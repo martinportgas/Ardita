@@ -1168,6 +1168,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
+            entity.Property(e => e.ArchiveDescription)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("archive_description");
             entity.Property(e => e.ArchiveOwnerId).HasColumnName("archive_owner_id");
             entity.Property(e => e.ArchiveTypeId).HasColumnName("archive_type_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -1595,6 +1599,11 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_OUT_INDICATOR_TRX_ARCHIVE");
+
+            entity.HasOne(d => d.MediaStorage).WithMany(p => p.TrxArchiveOutIndicators)
+                .HasForeignKey(d => d.MediaStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_OUT_INDICATOR_TRX_MEDIA_STORAGE");
         });
 
         modelBuilder.Entity<TrxArchiveReceived>(entity =>

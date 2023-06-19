@@ -45,6 +45,8 @@ public partial class TrxMediaStorage
 
     public virtual TrxSubjectClassification SubjectClassification { get; set; } = null!;
 
+    public virtual ICollection<TrxArchiveOutIndicator> TrxArchiveOutIndicators { get; } = new List<TrxArchiveOutIndicator>();
+
     public virtual ICollection<TrxMediaStorageDetail> TrxMediaStorageDetails { get; } = new List<TrxMediaStorageDetail>();
 
     public virtual TrxTypeStorage TypeStorage { get; set; } = null!;

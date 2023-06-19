@@ -28,4 +28,6 @@ public partial class TrxArchiveOutIndicator
     public DateTime? UpdatedDate { get; set; }
 
     public virtual TrxArchive Archive { get; set; } = null!;
+
+    public virtual TrxMediaStorage MediaStorage { get; set; } = null!;
 }
