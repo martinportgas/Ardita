@@ -69,6 +69,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxSubSubjectClassifications
+                .Include(x => x.SubjectClassification)
                 .Where(x => x.IsActive == true && (x.SubSubjectClassificationCode + x.SubSubjectClassificationName).Contains(model.searchValue))
                 .OrderBy(x => EF.Property<TrxSubSubjectClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
@@ -77,6 +78,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxSubSubjectClassifications
+                .Include(x => x.SubjectClassification)
                 .Where(x => x.IsActive == true && (x.SubSubjectClassificationCode + x.SubSubjectClassificationName).Contains(model.searchValue))
                 .OrderByDescending(x => EF.Property<TrxSubSubjectClassification>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
