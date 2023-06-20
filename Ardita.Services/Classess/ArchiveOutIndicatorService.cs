@@ -64,6 +64,18 @@ public class ArchiveOutIndicatorService : IArchiveOutIndicatorService
                     await Insert(item);
                 }
             }
+            else
+            {
+                TrxArchiveOutIndicator item = new TrxArchiveOutIndicator();
+                item.MediaStorageId = mediaStorageId;
+                item.ArchiveId = archiveUsedId;
+                item.UsedBy = usedBy;
+                item.UsedDate = useDate;
+                item.IsActive = true;
+                item.CreatedBy = userId;
+                item.CreatedDate = DateTime.Now;
+                await Insert(item);
+            }
         }
         else
         {

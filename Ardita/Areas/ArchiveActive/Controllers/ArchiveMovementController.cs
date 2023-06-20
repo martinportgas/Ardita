@@ -342,6 +342,16 @@ namespace Ardita.Areas.ArchiveActive.Controllers
 
                                 await _mediaStorageService.UpdateDetail(mediaStorage);
                             }
+
+                            var archive = await _archiveService.GetById(item.ArchiveId);
+                            if (archive != null)
+                            {
+                                archive.IsActive = false;
+                                archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                                archive.UpdatedDate = DateTime.Now;
+
+                                await _archiveService.Update(archive, "", new string[] { });
+                            }
                         }
                     }
                 }

@@ -123,7 +123,7 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.TrxSubSubjectClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 if (data != null)
                 {
-                    var dataCreator = await _context.TrxSubjectClassifications.Include(x => x.Classification).AsNoTracking().FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubSubjectClassificationId);
+                    var dataCreator = await _context.TrxSubjectClassifications.Include(x => x.Classification).AsNoTracking().FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubjectClassificationId);
 
                     model.Creator = null;
                     model.SubjectClassification = null;

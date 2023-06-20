@@ -210,7 +210,7 @@
                 ]
             });
 
-            var defaultSearch = '1=1';
+            var defaultSearch = 'StatusId=@((int)GlobalConst.STATUS.Submit) && IsActive==True';
 
             table.column(2).search(`${defaultSearch}`).draw();
 

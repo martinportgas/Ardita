@@ -588,7 +588,6 @@
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                                     var available = row.trxArchiveOutIndicators.length > 0 ? row.trxArchiveOutIndicators[0].returnDate != null ? true : false : true;
-                                    console.log(row.trxArchiveOutIndicators[0].returnDate);
                                     var value = available ? '' : row.trxArchiveOutIndicators[0].usedBy;
                                     return `<input type="text" class="form-control" value='${value}' name="usedBy[]" ${available ? '' : 'readonly'} />`;
                                 }
