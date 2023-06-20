@@ -73,16 +73,12 @@
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
-                                            <label>Archive Code</label>
+                                            <label>Kode Arsip</label>
                                             <input type="text" asp-for="ArchiveCode" class="form-control readonly">
                                             <input type="hidden" asp-for="CreatedBy">
                                             <input type="hidden" asp-for="CreatedDate">
                                             <input type="hidden" asp-for="IsActive">
                                             <input type="hidden" asp-for="IsUsed">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Archive Descritpion</label>
-                                            <textarea type="number" placeholder="" id="txtArchiveDesc" class="form-control" asp-for="ArchiveDescription"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <label>GMD</label>
@@ -101,11 +97,11 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>GMD Unit</label>
+                                            <label>Satuan</label>
                                             <input type="text" placeholder="" id="txtGmdDetailUnit" class="form-control" asp-for="GmdDetail!.Unit" disabled>
                                         </div>
                                         <div class="form-group">
-                                            <label>Sender</label>
+                                            <label>Tipe Pengirim</label>
                                             <br />
                                             <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
                                             <label>Internal</label>
@@ -113,7 +109,7 @@
                                             <label>External</label>
                                         </div>
                                         <div class="form-group">
-                                            <label>Sub Subject Classifications</label>
+                                            <label>Sub Subjek Klasifikasi</label>
                                             <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Subject Classification --">
@@ -121,28 +117,34 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Keywords</label>
+                                            <label>Kata Kunci</label>
                                             <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
                                         </div>
                                         <div class="form-group">
-                                            <label>Document Number</label>
+                                            <label>Nomor Dokumen</label>
                                             <input asp-for="DocumentNo" type="text" placeholder="" id="txtDocumentNo" class="form-control">
                                         </div>
                                         <div class="form-group">
-                                            <label>Archive Title</label>
+                                            <label>Judul Arsip</label>
                                             <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
                                             <input type="text" placeholder="" id="txtTitleArchive" class="form-control" asp-for="TitleArchive">
                                         </div>
                                         <div class="form-group">
-                                            <label>Security Classifications</label>
+                                            <label>Deskripsi Arsip</label>
+                                            <textarea type="number" placeholder="" id="txtArchiveDesc" class="form-control" asp-for="ArchiveDescription"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Klasifikasi Keamanan</label>
                                             <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSecurityClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Security Classification --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>Archive Creator</label>
+                                            <label>Unit Pencipta</label>
                                             <input asp-for="Creator.CreatorName" type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
                                             <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
                                             <input type="hidden" asp-for="StatusId" id="txtStatusId" />
@@ -155,8 +157,6 @@
                                                 <option value=""></option>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Tipe Arsip</label>
                                             <select asp-for="ArchiveTypeId" asp-items="ViewBag.listArchiveType" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
@@ -220,19 +220,19 @@
                                         }
 
                                         <div class="form-group" id="created_date">
-                                            <label class="font-normal">Created Date</label>
+                                            <label class="font-normal">Tanggal Arsip</label>
                                             <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive" max="@DateTime.Now.ToString("yyyy-MM-dd")">
                                         </div>
                                         <div class="form-group">
-                                            <label>Active Retention</label>
+                                            <label>Retensi Aktif</label>
                                             <input type="number" placeholder="" id="txtActiveRetention" class="form-control" asp-for="ActiveRetention">
                                         </div>
                                         <div class="form-group">
-                                            <label>In Active Retention</label>
+                                            <label>Retensi In Aktif</label>
                                             <input type="number" placeholder="" id="txtInactiveRetention" class="form-control" asp-for="InactiveRetention">
                                         </div>
                                         <div class="form-group">
-                                            <label>Volume</label>
+                                            <label>Jumlah</label>
                                             <input type="number" placeholder="" id="txtVolume" class="form-control" asp-for="Volume">
                                         </div>
                                         <div class="form-group">
