@@ -39,9 +39,11 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Room Code</th>
-                                <th>Room Name</th>
-                                <th>Room Type</th>
+                                <th>Kode Ruangan</th>
+                                <th>Nama Ruangan</th>
+                                <th>Tipe Ruangan</th>
+                                <th>Lantai</th>
+                                <th>Unit Kearsipan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -128,6 +130,8 @@
                     { "data": "roomCode", "name": "roomCode", "autoWidth": true },
                     { "data": "roomName", "name": "roomName", "autoWidth": true },
                     { "data": "archiveRoomType", "name": "archiveRoomType", "autoWidth": true },
+                    { "data": "floor.floorName", "name": "floor.floorName", "autoWidth": true },
+                    { "data": "floor.archiveUnit.archiveUnitName", "name": "floor.archiveUnit.archiveUnitName", "autoWidth": true },
                 ]
             });
             $('#btnUpload').on('click', function () {

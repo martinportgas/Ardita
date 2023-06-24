@@ -64,9 +64,10 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxRooms
+                    .Include(x => x.Floor.ArchiveUnit)
                 .Where(
                     x => (x.RoomId + x.RoomName).Contains(model.searchValue) &&
-                    x.IsActive == true
+                    x.IsActive == true && x.Floor.IsActive == true
                     )
                 .OrderBy(x => EF.Property<TrxRoom>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
@@ -75,6 +76,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxRooms
+                    .Include(x => x.Floor.ArchiveUnit)
                 .Where(
                     x => (x.RoomId + x.RoomName).Contains(model.searchValue) &&
                     x.IsActive == true

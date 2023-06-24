@@ -21,6 +21,8 @@ public partial class MstUser
 
     public string? PasswordLast { get; set; }
 
+    public Guid? CreatorId { get; set; }
+
     public bool IsActive { get; set; }
 
     public Guid CreatedBy { get; set; }
@@ -31,11 +33,17 @@ public partial class MstUser
 
     public DateTime? UpdateDate { get; set; }
 
+    public virtual MstCreator? Creator { get; set; }
+
     public virtual MstEmployee Employee { get; set; } = null!;
 
     public virtual ICollection<IdxUserArchiveUnit> IdxUserArchiveUnits { get; } = new List<IdxUserArchiveUnit>();
 
     public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
+
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementCreatedByNavigations { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementReceivedByNavigations { get; } = new List<TrxArchiveMovement>();
 
     public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
 }

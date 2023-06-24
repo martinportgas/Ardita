@@ -27,6 +27,8 @@ public partial class MstCreator
 
     public virtual ICollection<MstCreatorLog> MstCreatorLogs { get; } = new List<MstCreatorLog>();
 
+    public virtual ICollection<MstUser> MstUsers { get; } = new List<MstUser>();
+
     public virtual ICollection<TrxArchive> TrxArchives { get; } = new List<TrxArchive>();
 
     public virtual ICollection<TrxClassification> TrxClassifications { get; } = new List<TrxClassification>();

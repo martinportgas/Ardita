@@ -58,7 +58,7 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="AcceptArchiveAction">
+                            <form id="frmReceived" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="AcceptArchiveAction">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
@@ -128,7 +128,7 @@
 
                                         <div class="form-group">
                                             <label>Deskripsi Penerimaan Arsip</label>
-                                            <textarea placeholder="Oke, pemindahan arsip diterima" id="txtDescRcvd" class="form-control required" asp-for="DescriptionReceived"></textarea>
+                                            <textarea id="txtDesc" id="txtDescRcvd" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DescriptionReceived"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +181,9 @@
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveReceived, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
 
-                                    <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btnApprove" name="submit" value="Approve">Accept Archive</button>
+                                    <input type="hidden" name="@GlobalConst.Approval" id="valueSubmit">
+                                    <button onclick="onApprove(this, event);" class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" id="btnReject" type="button" value="@GlobalConst.Reject">@Html.Raw(form.RejectText)</button>
+                                    <button onclick="onApprove(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="button" id="btnApprove" value="@GlobalConst.Approve">@Html.Raw(form.ApprovalText)</button>
                                 </div>
                             </form>
                         </div>
@@ -194,7 +196,32 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-
+        function onApprove(ctl, event) {
+            event.preventDefault();
+            var valSubmit = ctl.value;
+            if (valSubmit == '@GlobalConst.Reject' && $('#txtDesc').val() == '') {
+                swal("Failed", "Harap isi deskripsi penerimaan arsip!", "error");
+            }
+            swal({
+                title: "Apakah Anda Yakin?",
+                text: "Silahkan periksa kembali jika anda belum yakin!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Save",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $('#valueSubmit').val(ctl.value);
+                        $("#frmReceived").submit();
+                    } else {
+                        swal("Dibatalkan", "Anda telah membatalkan persetujuan penerimaaan!", "error");
+                    }
+                });
+        }
         function initSelect2(name, act) {
             $(`.${name}`).each(function () {
                 $(this).select2({
