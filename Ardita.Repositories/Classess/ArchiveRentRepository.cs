@@ -109,19 +109,20 @@ namespace Ardita.Repositories.Classess
                     x.RequestedReturnDate,
                     x.StatusId,
                     Status = x.Status.Name,
-                    Color = x.Status.Color
+                    Color = x.Status.Color,
+                    UserCreatedBy = GetUserNameCreatedById(x.UserId)
                 })
                 .ToListAsync();
 
             return result;
         }
 
-        public async Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
+        public async Task<TrxArchiveRent> GetById(Guid id)
         {
             var result = await _context.TrxArchiveRents
                 .Include(x => x.Archive.SubSubjectClassification)
-                .Where(x => x.TrxArchiveRentId == id && x.StatusId == 2).ToListAsync();
-            return result;
+                .Where(x => x.TrxArchiveRentId == id).ToListAsync();
+            return result.FirstOrDefault();
         }
         public async Task<int> Insert(TrxArchiveRent model)
         {
@@ -172,7 +173,8 @@ namespace Ardita.Repositories.Classess
                    x.RequestedReturnDate,
                    x.StatusId,
                    Status = x.Status.Name,
-                   Color = x.Status.Color
+                   Color = x.Status.Color,
+                   UserCreatedBy = GetUserNameCreatedById(x.UserId)
                })
                .ToListAsync();
 
@@ -307,7 +309,8 @@ namespace Ardita.Repositories.Classess
                    x.RequestedReturnDate,
                    x.StatusId,
                    Status = x.Status.Name,
-                   Color = x.Status.Color
+                   Color = x.Status.Color,
+                   UserCreatedBy = GetUserNameCreatedById(x.UserId)
                })
                .ToListAsync();
 
@@ -382,6 +385,15 @@ namespace Ardita.Repositories.Classess
             return result;
 
 
+        }
+
+        public static string GetUserNameCreatedById(Guid Id)
+        {
+            BksArditaDevContext ctx = new BksArditaDevContext();
+            var result = ctx.MstUsers.AsNoTracking()
+                .Include(x => x.Employee)
+                .FirstOrDefault(x => x.UserId == Id);
+            return result.Employee.Name;
         }
         #endregion
 

@@ -189,6 +189,7 @@ public static class GlobalConst
     public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
     public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
     public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
+    public const string BindSubSubjectClassificationByClassificationId = "BindSubSubjectClassificationByClassificationId";
     public const string BindArchivesInActiveBySubSubjectClassificationId = "BindArchivesInActiveBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
     public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";
