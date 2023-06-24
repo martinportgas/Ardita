@@ -39,8 +39,11 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Row Code</th>
-                                <th>Row Name</th>
+                                <th>Kode Baris</th>
+                                <th>Nama Baris</th>
+                                <th>Tingkat</th>
+                                <th>Rak</th>
+                                <th>Ruangan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -128,7 +131,10 @@
                         }
                     },
                     { "data": "rowCode", "name": "rowCode", "autoWidth": true },
-                    { "data": "rowName", "name": "rowName", "autoWidth": true }
+                    { "data": "rowName", "name": "rowName", "autoWidth": true },
+                    { "data": "level.levelName", "name": "level.levelName", "autoWidth": true },
+                    { "data": "level.rack.rackName", "name": "level.rack.rackName", "autoWidth": true },
+                    { "data": "level.rack.room.roomName", "name": "level.rack.room.roomName", "autoWidth": true },
                 ]
             });
 

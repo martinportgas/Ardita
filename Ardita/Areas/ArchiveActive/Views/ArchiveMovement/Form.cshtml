@@ -323,27 +323,6 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-        function onApprove(ctl, event) {
-            event.preventDefault();
-            swal({
-                title: "Do You Want To @form.CurrentAction It?",
-                text: "Please check Information before Submiting!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Save",
-                cancelButtonText: "Cancel",
-                closeOnConfirm: false,
-                closeOnCancel: false
-            },
-                function (isConfirm) {
-                    if (isConfirm) {
-                        $("#frmMovement").submit();
-                    } else {
-                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
-                    }
-                });
-        }
 
         function showReason(e) {
             if (e.toLowerCase() == 'btnreason') {

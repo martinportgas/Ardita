@@ -1082,6 +1082,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.LastLogin)
@@ -1109,6 +1110,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("username");
+
+            entity.HasOne(d => d.Creator).WithMany(p => p.MstUsers)
+                .HasForeignKey(d => d.CreatorId)
+                .HasConstraintName("FK_MST_USER_MST_CREATOR");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.MstUsers)
                 .HasForeignKey(d => d.EmployeeId)
@@ -1502,6 +1507,10 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("note");
             entity.Property(e => e.ReceivedBy).HasColumnName("received_by");
+            entity.Property(e => e.ReceivedNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("received_number");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.StatusReceived).HasColumnName("status_received");
             entity.Property(e => e.TotalVolume).HasColumnName("total_volume");
@@ -1521,10 +1530,19 @@ public partial class BksArditaDevContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_TRX_ARCHIVE_UNIT");
 
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TrxArchiveMovementCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_USER");
+
             entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxArchiveMovements)
                 .HasForeignKey(d => d.GmdDetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_GMD_DETAIL");
+
+            entity.HasOne(d => d.ReceivedByNavigation).WithMany(p => p.TrxArchiveMovementReceivedByNavigations)
+                .HasForeignKey(d => d.ReceivedBy)
+                .HasConstraintName("FK_TRX_ARCHIVE_MOVEMENT_MST_USER1");
 
             entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveMovementStatuses)
                 .HasForeignKey(d => d.StatusId)

@@ -38,9 +38,14 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Nomor registrasi</th>
-                                <th>Nama Pemindahan</th>
+                                <th>Nomor registrasi Pemindahan</th>
+                                <th>Tanggal Penerimaan</th>
+                                <th>Nomor Registrasi Penerimaan</th>
+                                <th>Unit Pengolah</th>
+                                <th>PIC Unit Pengolah</th>
+                                <th>PIC Penerima Dokumen</th>
                                 <th>Status Penerimaan</th>
+                                <th>Catatan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -68,13 +73,13 @@
                 },
                 columnDefs: [
                     { width: 50, targets: 0 },
-                    { width: 100, targets: 4 }
+                    { width: 100, targets: 1 }
                 ],
                 fixedColumns: true,
                 order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveMovementId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "dateReceived", "name": "dateReceived", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
@@ -82,24 +87,35 @@
                     {
                         "data": "archiveMovementId", "name": "archiveMovementId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = row.statusReceived == @((int)GlobalConst.STATUS.ArchiveNotReceived)  ? '' : `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveReceived, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var submit = row.statusReceived == @((int)GlobalConst.STATUS.ArchiveReceived)  ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.AcceptArchiveForm, GlobalConst.ArchiveReceived, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusReceived != @((int)GlobalConst.STATUS.ArchiveNotReceived)  ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.AcceptArchiveForm, GlobalConst.ArchiveReceived, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
+                            var download = row.statusReceived != @((int)GlobalConst.STATUS.ArchiveReceived) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveReceived, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            download = download.replace("-1", data);
 
-                            var JoinButton = detail.concat(" ", submit);
+                            var JoinButton = detail.concat(" ", submit).concat(" ", download);
                             return JoinButton;
                         }
                     },
                     { "data": "movementCode", "name": "movementCode", "autoWidth": true },
-                    { "data": "movementName", "name": "movementName", "autoWidth": true },
+                    { "data": "dateReceived", "name": "dateReceived", "autoWidth": true },
+                    { "data": "receivedNumber", "name": "receivedNumber", "autoWidth": true },
+                    { "data": "creatorName", "name": "createdByNavigation.creator.creatorName", "autoWidth": true },
+                    { "data": "createdBy", "name": "createdByNavigation.employee.name", "autoWidth": true },
+                    { "data": "receivedBy", "name": "receivedByNavigation.employee.name", "autoWidth": true },
                     {
                         "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
                         }
-                    },
+                    }, 
+                    {
+                        "data": "descriptionReceived", "name": "descriptionReceived", "autoWidth": true, "render": function (data, type, row, meta) {
+                            return `<span>${data.length > 20 ? data.substring(0, 19) + '...' : data}</span>`;
+                        }
+                    }
                 ]
             });
         });

@@ -515,6 +515,16 @@ public abstract class BaseController<T> : Controller
         list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
     }
+    public async Task<JsonResult> BindRoomInActiveByFloorId(string Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        List<TrxRoom> list = new();
+        Guid id = new(Id);
+
+        var data = await _roomService.GetAll();
+        list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitKearsipan && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
+        return Json(list);
+    }
     public async Task<JsonResult> BindRackByRoomId(string Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
