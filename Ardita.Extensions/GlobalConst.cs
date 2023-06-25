@@ -184,11 +184,13 @@ public static class GlobalConst
     public const string BindArchiveUnitsByParam = "BindArchiveUnitsByParam";
     public const string BindRooms = "BindRooms";
     public const string BindRoomActiveByFloorId = "BindRoomActiveByFloorId";
+    public const string BindRoomInActiveByFloorId = "BindRoomInActiveByFloorId";
     public const string BindRacks = "BindRacks";
     public const string BindCompanies = "BindCompanies";
     public const string BindClassificationSubjectIdByClassificationId = "BindClassificationSubjectIdByClassificationId";
     public const string BindClassificationIdByClassificationTypeId = "BindClassificationIdByClassificationTypeId";
     public const string BindArchivesBySubSubjectClassificationId = "BindArchivesBySubSubjectClassificationId";
+    public const string BindSubSubjectClassificationByClassificationId = "BindSubSubjectClassificationByClassificationId";
     public const string BindArchivesInActiveBySubSubjectClassificationId = "BindArchivesInActiveBySubSubjectClassificationId";
     public const string BindTypeStorageByArchiveUnitId = "BindTypeStorageByArchiveUnitId";
     public const string BindSubSubjectClassificationByArchiveUnitId = "BindSubSubjectClassificationByArchiveUnitId";

@@ -37,6 +37,7 @@ namespace Ardita.Repositories.Classess
         {
             var results = await _context.TrxSubSubjectClassifications
                 .Include(x => x.Creator)
+                .Include(x => x.SubjectClassification)
                 .AsNoTracking()
                 .Where(x => x.IsActive == true)
                 .Where(x => x.Creator!.IsActive == true)

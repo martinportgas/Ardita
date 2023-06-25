@@ -71,6 +71,7 @@ namespace Ardita.Repositories.Classess
             if (model.sortColumnDirection.ToLower() == "asc")
             {
                 result = await _context.TrxRows
+                .Include(x => x.Level.Rack.Room)
                 .Where(
                     x => (x.RowId + x.RowName).Contains(model.searchValue) &&
                     x.IsActive == true
@@ -82,6 +83,7 @@ namespace Ardita.Repositories.Classess
             else
             {
                 result = await _context.TrxRows
+                .Include(x => x.Level.Rack.Room)
                 .Where(
                     x => (x.RowId + x.RowName).Contains(model.searchValue) &&
                     x.IsActive == true

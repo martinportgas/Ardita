@@ -233,7 +233,7 @@
 @section Scripts {
     <script type="text/javascript">
         var totalDetail = 0;
-        var currentVolume;
+        var currentVolume = '@Model.TotalVolume';
         var url = '@Url.Action("BindArchiveById", form.CurrentController, new { Area = form.CurrentArea })';
         var listArchive = new Array();
 
@@ -319,8 +319,7 @@
                 }
             });
 
-            var arcId = archiveId != "" ? archiveId : $("#txtArchiveId_" + totalDetail).val();
-
+            var arcId = archiveId != "" && archiveId != null && archiveId != undefined ? archiveId : $("#txtArchiveId_" + totalDetail).val();
 
             if (!isDuplicated) {
                 $.ajax({
@@ -406,7 +405,7 @@
                 dataType: "@GlobalConst.JSON",
                 contentType: "@GlobalConst.APPLICATIONJSON",
                 success: function (data) {
-
+                    console.log(data);
                     currentVolume = currentVolume - data.volume;
                     if (currentVolume < 0) {
                         currentVolume = currentVolume + data.volume;
@@ -602,7 +601,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRoomActiveByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRoomInActiveByFloorId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {

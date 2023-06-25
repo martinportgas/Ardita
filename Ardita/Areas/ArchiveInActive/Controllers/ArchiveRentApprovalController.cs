@@ -51,7 +51,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             ViewBag.Phone = AppUsers.CurrentUser(User).EmployeePhone;
 
             var rent = await _archiveRentService.GetById(Id);
-            var archive = await _MediaStorageInActiveService.GetDetailArchive(rent.FirstOrDefault().ArchiveId);
+            var archive = await _MediaStorageInActiveService.GetDetailArchive(rent.ArchiveId);
 
 
 
@@ -64,7 +64,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 ViewBag.RequestedDate = DateTime.Now.ToString("dd/MM/yyyy");
                 ViewBag.ReturnDate = DateTime.Now.AddDays(7).ToString("dd/MM/yyyy");
                 ViewBag.ArchiveUnitName = items.Creator.ArchiveUnit.ArchiveUnitName;
-                ViewBag.DescriptionByUser = rent.FirstOrDefault().Description;
+                ViewBag.DescriptionByUser = rent.Description;
                 break;
             }
 

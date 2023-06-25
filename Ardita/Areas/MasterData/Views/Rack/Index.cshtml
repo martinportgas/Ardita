@@ -39,9 +39,11 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Rack Code</th>
-                                <th>Rack Name</th>
-                                <th>Length</th>
+                                <th>Kode Rak</th>
+                                <th>Nama Rak</th>
+                                <th>Panjang</th>
+                                <th>Ruangan</th>
+                                <th>Tipe Ruangan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -128,6 +130,8 @@
                     { "data": "rackCode", "name": "rackCode", "autoWidth": true },
                     { "data": "rackName", "name": "rackName", "autoWidth": true },
                     { "data": "length", "name": "length", "autoWidth": true },
+                    { "data": "room.roomName", "name": "room.roomName", "autoWidth": true },
+                    { "data": "room.archiveRoomType", "name": "room.archiveRoomType", "autoWidth": true },
                 ]
             });
             $('#btnUpload').on('click', function () {

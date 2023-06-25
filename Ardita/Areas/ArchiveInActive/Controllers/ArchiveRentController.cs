@@ -14,12 +14,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
     {
         public ArchiveRentController(
             IArchiveRentService archiveRentService,
+            IClassificationSubjectService classificationSubjectService,
             IClassificationSubSubjectService classificationSubSubjectService,
             IArchiveService archiveService,
             IMediaStorageInActiveService mediaStorageInActiveService
             )
         {
             _archiveRentService = archiveRentService;
+            _classificationSubjectService = classificationSubjectService;
             _classificationSubSubjectService = classificationSubSubjectService;
             _archiveService = archiveService;
             _MediaStorageInActiveService = mediaStorageInActiveService;
@@ -41,6 +43,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         public override async Task<IActionResult> Add()
         {
             var model = new TrxArchiveRent();
+            ViewBag.listSubjectClassification = await BindSubjectClasscifications();
             ViewBag.listSubSubject = await BindSubSubjectClasscifications();
             ViewBag.listArchive = await BindArchivesInActive();
 
@@ -108,10 +111,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveRentService.GetById(Id);
             if (model != null)
             {
-                ViewBag.ArchiveRentId = model.FirstOrDefault().TrxArchiveRentId;
-                ViewBag.ArchiveId = model.FirstOrDefault().ArchiveId;
-                ViewBag.TitleArchive = model.FirstOrDefault().Archive.TitleArchive;
-                ViewBag.SubSubJectClassificationId = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                ViewBag.ArchiveId = model.ArchiveId;
+                ViewBag.TitleArchive = model.Archive.TitleArchive;
+                ViewBag.SubSubJectClassificationId = model.Archive.SubSubjectClassification.SubjectClassificationId;
               //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }

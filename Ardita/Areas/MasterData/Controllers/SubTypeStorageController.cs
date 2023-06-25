@@ -68,37 +68,37 @@ namespace Ardita.Areas.MasterData.Controllers
             }
         }
 
-        //public override async Task<IActionResult> Remove(Guid Id)
-        //{
-        //    var data = await _typeStorageService.GetById(Id);
-        //    if (data is not null)
-        //    {
-        //        ViewBag.listArchiveUnit = await BindArchiveUnits();
-        //        ViewBag.listTypeStorage = await BindTypeStorage();
+        public override async Task<IActionResult> Remove(Guid Id)
+        {
+            var data = await _subTypeStorageService.GetById(Id);
+            if (data is not null)
+            {
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listTypeStorage = await BindTypeStorage();
+                ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+                return View(GlobalConst.Form, data.FirstOrDefault());
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
 
-        //        return View(GlobalConst.Form, data);
-        //    }
-        //    else
-        //    {
-        //        return RedirectToIndex();
-        //    }
-        //}
-
-        //public override async Task<IActionResult> Detail(Guid Id)
-        //{
-        //    var data = await _typeStorageService.GetById(Id);
-        //    if (data is not null)
-        //    {
-        //        ViewBag.listArchiveUnit = await BindArchiveUnits();
-        //        ViewBag.listTypeStorage = await BindTypeStorage();
-
-        //        return View(GlobalConst.Form, data);
-        //    }
-        //    else
-        //    {
-        //        return RedirectToIndex();
-        //    }
-        //}
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var data = await _subTypeStorageService.GetById(Id);
+            if (data is not null)
+            {
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listTypeStorage = await BindTypeStorage();
+                ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+                return View(GlobalConst.Form, data.FirstOrDefault());
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

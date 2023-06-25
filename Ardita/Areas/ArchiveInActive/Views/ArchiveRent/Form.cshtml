@@ -87,10 +87,21 @@
                                 
                                     <div class="col-sm-6 border-top mt-2 mb-1 b-r">
                                         <div class="form-group">
+                                        <input type="hidden" id="txtArchiveRentId" readonly />
+
+                                        <label>Subject Classifications</label>
+                                            <select
+                                                    id="txtSubjectClassificationId" 
+                                                    class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    asp-items="ViewBag.listSubjectClassification"
+                                                    data-placeholder="-- Pilih Subjek Klasifikasi --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Sub Subject Classifications</label>
 
-                                            <input type="hidden" id="txtArchiveRentId" readonly/>
-
+                                           
                                             <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                     id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Select Sub Subject Classification --">
@@ -278,8 +289,37 @@
         });
 
         function initDropdown(){
-            $('#txtSubSubjectClassificationId').on('change', function () {
-                $('#txtArchiveId').val('').trigger('change');
+            $('#txtSubjectClassificationId').on('change', function () {
+                $('#txtSubSubjectClassificationId').val('').trigger('change');
+                console.log($("#txtSubjectClassificationId").val());
+            });
+
+            $('#txtSubSubjectClassificationId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Pilih Sub Subjek Klasifikasi --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtSubjectClassificationId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
             });
           
             $('#txtArchiveId').select2({

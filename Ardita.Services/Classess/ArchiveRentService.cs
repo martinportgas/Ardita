@@ -58,7 +58,7 @@ namespace Ardita.Services.Classess
             }
         }
 
-        public async Task<IEnumerable<TrxArchiveRent>> GetById(Guid id)
+        public async Task<TrxArchiveRent> GetById(Guid id)
         {
             return await _archiveRentRepository.GetById(id);
         }
