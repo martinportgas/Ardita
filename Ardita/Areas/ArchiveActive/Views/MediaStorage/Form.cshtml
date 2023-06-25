@@ -462,7 +462,7 @@
         });
 
         function getGMDDetail(e) {
-            var url = '@Url.Action("BindGMDDetailVolumeByTypeStorageId", GlobalConst.ArchiveMovement, new { Area = GlobalConst.ArchiveActive })';
+            var url = '@Url.Action("BindGMDDetailVolumeByTypeStorageId", GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })';
             var param = new Object();
             param.TypeStorageId = $('#txtTypeStorageId').val();
             param.GMDDetailId = e.val();

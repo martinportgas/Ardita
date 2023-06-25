@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using Castle.Components.DictionaryAdapter.Xml;
@@ -24,6 +25,8 @@ public class SubTypeStorageService : ISubTypeStorageService
         return await _subTypeStorageRepository.GetAll();
     }
     public async Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageId(Guid ID) => await _subTypeStorageRepository.GetAllByTypeStorageId(ID);
+    public async Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageandGMDDetailId(Guid ID, Guid GMDDetailID) => await _subTypeStorageRepository.GetAllByTypeStorageAndGMDDetailId(ID, GMDDetailID);
+    public async Task<IEnumerable<MstSubTypeStorageDetail>> GetAllDetailBySubTypeStorageId(Guid ID) => await _subTypeStorageRepository.GetAllDetailBySubTypeStorageId(ID);
 
     public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {

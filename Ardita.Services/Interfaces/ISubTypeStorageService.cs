@@ -6,7 +6,9 @@ namespace Ardita.Services.Interfaces;
 public interface ISubTypeStorageService
 {
     Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageId(Guid ID);
+    Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageandGMDDetailId(Guid ID, Guid GMDDetailID);
     Task<IEnumerable<IdxSubTypeStorage>> GetAllBySubTypeStorageId(Guid ID);
+    Task<IEnumerable<MstSubTypeStorageDetail>> GetAllDetailBySubTypeStorageId(Guid ID);
     Task<IEnumerable<MstSubTypeStorage>> GetById(Guid id);
     Task<IEnumerable<MstSubTypeStorage>> GetAll();
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);

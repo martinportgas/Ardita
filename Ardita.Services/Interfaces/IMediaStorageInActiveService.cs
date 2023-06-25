@@ -10,5 +10,7 @@ public interface IMediaStorageInActiveService
     Task<IEnumerable<object>> GetDetails(Guid id);
     Task<IEnumerable<object>> GetDetailArchive(Guid id);
     Task<int> Insert(TrxMediaStorageInActive model, string[] listSts, string[] listArchive);
+    Task<int> Update(TrxMediaStorageInActive model, string[] listSts, string[] listArchive);
     Task<TrxMediaStorageInActive> GetById(Guid id);
+    Task<int> Delete(Guid ID);
 }

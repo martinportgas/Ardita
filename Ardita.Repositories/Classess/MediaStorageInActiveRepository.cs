@@ -18,7 +18,8 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
         return await _context.TrxMediaStorageInActives
-            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SubSubjectClassification.Creator)
+            .Include(x => x.TypeStorage.ArchiveUnit)
             .Include(x => x.Status)
             .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
@@ -27,6 +28,10 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                     x.MediaStorageInActiveId,
                     x.MediaStorageInActiveCode,
                     x.SubSubjectClassification.SubSubjectClassificationName,
+                    x.SubSubjectClassification.Creator.CreatorName,
+                    x.TypeStorage.TypeStorageName,
+                    x.TypeStorage.ArchiveUnit.ArchiveUnitName,
+                    x.ArchiveYear,
                     x.StatusId,
                     x.Status.Color,
                     Status = x.Status.Name
@@ -37,6 +42,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
     public async Task<TrxMediaStorageInActive> GetById(Guid id)
     {
         var data = await _context.TrxMediaStorageInActives
+            .Include(g => g.GmdDetail)
             .Include(d => d.TrxMediaStorageInActiveDetails)
                 .ThenInclude(a => a.Archive)
                 .ThenInclude(c => c.Creator)
@@ -103,6 +109,57 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
 
             _context.Entry(model).State = EntityState.Added;
             await _context.SaveChangesAsync();
+
+            if (detail.Any())
+            {
+                foreach (var item in detail)
+                {
+                    item.MediaStorageInActiveId = model.MediaStorageInActiveId;
+                    _context.TrxMediaStorageInActiveDetails.Add(item);
+                    result += await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        return result;
+    }
+    public async Task<int> Delete(Guid ID)
+    {
+        int result = 0;
+        var detail = await _context.TrxMediaStorageInActiveDetails.Where(x => x.MediaStorageInActiveId == ID).ToListAsync();
+        if (detail.Any())
+        {
+            _context.TrxMediaStorageInActiveDetails.RemoveRange(detail);
+            await _context.SaveChangesAsync();
+        }
+        var main = await _context.TrxMediaStorageInActives.FirstOrDefaultAsync(x => x.MediaStorageInActiveId == ID);
+        if(main != null)
+        {
+            _context.TrxMediaStorageInActives.Remove(main);
+            result = await _context.SaveChangesAsync();
+        }
+        return result;
+    }
+    public async Task<int> Update(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail)
+    {
+        int result = 0;
+
+        if (model is not null)
+        {
+            foreach (var e in _context.ChangeTracker.Entries())
+            {
+                e.State = EntityState.Detached;
+            }
+
+            _context.Entry(model).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            var oldDetail = await _context.TrxMediaStorageInActiveDetails.Where(x => x.MediaStorageInActiveId == model.MediaStorageInActiveId).ToListAsync();
+            if(oldDetail.Any())
+            {
+                _context.TrxMediaStorageInActiveDetails.RemoveRange(oldDetail);
+                await _context.SaveChangesAsync();
+            }
 
             if (detail.Any())
             {
