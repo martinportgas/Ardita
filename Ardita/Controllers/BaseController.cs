@@ -267,6 +267,16 @@ public abstract class BaseController<T> : Controller
             Text = x.SubSubjectClassificationName
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindAllSubjectClasscifications()
+    {
+        var data = await _classificationSubjectService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubjectClassificationId.ToString(),
+            Text = x.SubjectClassificationName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindAllSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetAll();
@@ -631,6 +641,14 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
+    public async Task<JsonResult> BindSubSubjectClassificationBySubjectId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _classificationSubSubjectService.GetAll();
+        var result = data.Where(x => x.SubjectClassificationId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower()))
+            .Select(x => new { id = x.SubSubjectClassificationId, text = x.SubSubjectClassificationName }).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindSubjectClassificationByArchiveUnitId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
@@ -796,6 +814,13 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
         return Json(result);
     }
+    public async Task<JsonResult> BindArchiveActiveBySubjectandGmdDetailId(Guid Id, Guid gmdDetailId, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        var result = data.Where(x => x.GmdDetailId == gmdDetailId && x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindSubTypeStorageById(Guid Id)
     {
         var data = await _subTypeStorageService.GetById(Id);
@@ -824,6 +849,31 @@ public abstract class BaseController<T> : Controller
                 volume = x.Size,
                 unit = x.GmdDetail.Unit
             });
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubTypeStorageIdByGMDDetailID(string param, Guid Id, Guid GMDDetailId)
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _subTypeStorageService.GetAllByTypeStorageandGMDDetailId(Id, GMDDetailId);
+        var result = data.Where(x => x.SubTypeStorageName.ToLower().Contains(param.ToLower()))
+            .Select(x => new {
+                id = x.SubTypeStorageId.ToString(),
+                text = $"Kode : {x.SubTypeStorageCode}, Nama : {x.SubTypeStorageName}, Jumlah : {x.Volume}"
+            });
+        return Json(result);
+    }
+    public async Task<JsonResult> BindGMDDetailVolumeBySubTypeStorageId(Guid SubTypeStorageId, Guid GMDDetailId)
+    {
+        var data = await _subTypeStorageService.GetAllDetailBySubTypeStorageId(SubTypeStorageId);
+        var result = data
+            .Where(x => x.GmdDetailId == GMDDetailId)
+            .Select(x => new {
+                code = x.SubTypeStorage.SubTypeStorageCode,
+                name = x.SubTypeStorage.SubTypeStorageName,
+                volume = x.Size,
+                unit = x.GmdDetail.Unit
+            }).FirstOrDefault();
         return Json(result);
     }
     #endregion

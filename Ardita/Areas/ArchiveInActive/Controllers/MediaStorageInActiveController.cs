@@ -13,6 +13,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
 {
     public MediaStorageInActiveController(
         IMediaStorageInActiveService mediaStorageInActiveService,
+        IClassificationSubjectService classificationSubjectService,
         IClassificationSubSubjectService classificationSubSubjectService,
         IArchiveService archiveService,
         IArchiveUnitService archiveUnitService,
@@ -22,10 +23,12 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         IRackService rackService,
         ILevelService levelService,
         IRowService rowService,
+        IGmdService gmdService,
         ISubTypeStorageService subTypeStorageService
         )
     {
         _MediaStorageInActiveService = mediaStorageInActiveService;
+        _classificationSubjectService = classificationSubjectService;
         _classificationSubSubjectService = classificationSubSubjectService;
         _archiveService = archiveService;
         _archiveUnitService = archiveUnitService;
@@ -35,6 +38,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _rackService = rackService;
         _levelService = levelService;
         _rowService = rowService;
+        _gmdService = gmdService;
         _subTypeStorageService = subTypeStorageService;
     }
     public override async Task<ActionResult> Index() => await base.Index();
@@ -77,7 +81,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                //await _MediaStorageInActiveService.Update(model, listSts!, listArchive!);
+                await _MediaStorageInActiveService.Update(model, listSts!, listArchive!);
             }
             else
             {
@@ -112,7 +116,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         {
             model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
             model.UpdatedDate = DateTime.Now;
-            //await _MediaStorageInActiveService.Delete(model);
+            await _MediaStorageInActiveService.Delete(model.MediaStorageInActiveId);
         }
         return RedirectToIndex();
     }
@@ -129,6 +133,8 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listLevel = await BindLevels();
         ViewBag.listRow = await BindRows();
         ViewBag.listSubTypeStorage = await BindSubTypeStorage();
+        ViewBag.listGMDDetail = await BindGmdDetail();
+        ViewBag.listSubject = await BindAllSubjectClasscifications();
     }
 
     private async Task<IActionResult> InitFormView(Guid Id)

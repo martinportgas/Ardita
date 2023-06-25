@@ -2027,6 +2027,7 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("description");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.MediaStorageInActiveCode)
                 .HasMaxLength(50)
@@ -2041,6 +2042,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxMediaStorageInActives)
+                .HasForeignKey(d => d.GmdDetailId)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_MST_GMD_DETAIL");
 
             entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorageInActives)
                 .HasForeignKey(d => d.RowId)

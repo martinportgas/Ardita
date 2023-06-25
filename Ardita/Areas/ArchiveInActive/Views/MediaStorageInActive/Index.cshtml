@@ -36,7 +36,12 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Code</th>
+                                <th>Kode Media Penyimpanan</th>
+                                <th>Lokasi</th>
+                                <th>Jenis Penyimpanan</th>
+                                <th>Sub Subjek Klasifikasi</th>
+                                <th>Unit Pencipta</th>
+                                <th>Tahun</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -63,8 +68,8 @@
                     "datatype": "json"
                 },
                 columnDefs: [
-                    { width: [50], targets: [0] },
-                    { width: [100], targets: [1] }
+                    { width: 50, targets: 0 },
+                    { width: 100, targets: 1 }
                 ],
                 fixedColumns: true,
                 order: [[0, 'desc']],
@@ -86,15 +91,19 @@
                             var remove = row.status === 'Draft' ? `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-trash"></i> </a>` : "";
                             remove = remove.replace("-1", row.mediaStorageInActiveId);
 
-
                             var JoinButton = edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
                     { "data": "mediaStorageInActiveCode", "Code": "mediaStorageInActiveCode", "autoWidth": true },
+                    { "data": "archiveUnitName", "Code": "typeStorage.archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "typeStorageName", "Code": "typeStorage.typeStorageName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "Code": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                    { "data": "creatorName", "Code": "subSubjectClassification.creator.creatorName", "autoWidth": true },
+                    { "data": "archiveYear", "Code": "archiveYear", "autoWidth": true },
                     {
                         "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
-                            return `<span class="badge ${row.color}" style="width:100%">${row.status}</span>`;
+                            return `<span class="badge badge-pill ${row.color}" style="width:100%">${row.status}</span>`;
                         }
                     },
                 ]
