@@ -419,8 +419,9 @@
                     $("#sts-name-" + sort).html('<b>' + data.subTypeStorageName + '</b>');
                     $("#sts-volume-" + sort).html('<b>' + data.volume + '</b>');
 
-
-                    $("#txtDifferenceVolume").val(currentVolume);
+                    if (@form.CurrentAction != "Add") {
+                        $("#txtDifferenceVolume").val(currentVolume);
+                    }
                 },
                 error: function () {
                     alert("Type Storage Not Found");

@@ -1,9 +1,7 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -85,6 +83,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         public override async Task<IActionResult> Update(Guid Id)
         {
             var model = await _archiveExtendService.GetById(Id);
+
             if (model != null)
             {
                 await BindAllDropdown(false);
@@ -117,7 +116,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         public override async Task<IActionResult> Detail(Guid Id)
         {
             var model = await _archiveExtendService.GetById(Id);
-            if (model  != null)
+            if (model != null)
             {
                 await BindAllDropdown();
 
@@ -176,6 +175,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 {
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdatedDate = DateTime.Now;
+
+                    var old = await _archiveExtendService.GetById(model.ArchiveExtendId);
+                    model.ExtendCode = old.ExtendCode;
+
                     result = await _archiveExtendService.Update(model);
                 }
                 else
@@ -222,7 +225,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 var listArchive = Request.Form["archive[]"].ToArray();
                 var listRetentionBefore = Request.Form["retentionBefore[]"].ToArray();
                 var listRetentionAfter = Request.Form["retentionAfter[]"].ToArray();
-                var listReason = Request.Form["reason[]"].ToArray();
+                var listReason = Request.Form["reasonExtend[]"].ToArray();
                 if (listArchive.Length > 0)
                 {
                     result = await _archiveExtendService.DeleteDetailByMainId(model.ArchiveExtendId);

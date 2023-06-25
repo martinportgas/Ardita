@@ -164,6 +164,65 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             }
         }
 
+
+        public async Task<IActionResult> Destroy(Guid Id)
+        {
+            var model = await _archiveDestroyService.GetById(Id);
+            if (model != null)
+            {
+                await BindAllDropdown();
+
+                ViewBag.subDetail = await _archiveDestroyService.GetDetailByMainId(Id);
+                ViewBag.approval = await _archiveApprovalService.GetByTransIdandApprovalCode(Id, GlobalConst.ArchiveDestroy);
+                return View(GlobalConst.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitDestroy(TrxArchiveDestroy model)
+        {
+            if (model != null && model.ArchiveDestroyId != Guid.Empty)
+            {
+                model.StatusId = (int)GlobalConst.STATUS.Musnah;
+                model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                model.UpdatedDate = DateTime.Now;
+                await _archiveDestroyService.Submit(model);
+
+                var modelDetail = await _archiveDestroyService.GetDetailByMainId(model.ArchiveDestroyId);
+                if (modelDetail.Any())
+                {
+                    foreach (var item in modelDetail)
+                    {
+                        var mediaStorage = await _mediaStorageService.GetDetailByArchiveId(item.ArchiveId);
+                        if (mediaStorage != null)
+                        {
+                            mediaStorage.IsActive = false;
+                            mediaStorage.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                            mediaStorage.UpdatedDate = DateTime.Now;
+
+                            await _mediaStorageService.UpdateDetail(mediaStorage);
+                        }
+
+                        var archive = await _archiveService.GetById(item.ArchiveId);
+                        if (archive != null)
+                        {
+                            archive.IsActive = false;
+                            archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                            archive.UpdatedDate = DateTime.Now;
+
+                            await _archiveService.Update(archive, "", new string[] { });
+                        }
+                    }
+                }
+            }
+            return RedirectToIndex();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Save(TrxArchiveDestroy model)
@@ -177,6 +236,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 {
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     model.UpdatedDate = DateTime.Now;
+
+                    var old = await _archiveDestroyService.GetById(model.ArchiveDestroyId);
+                    model.DestroyCode = old.DestroyCode;
+
                     result = await _archiveDestroyService.Update(model);
                 }
                 else
@@ -291,7 +354,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 if (ApprovalAction == GlobalConst.Approve)
                 {
                     if (model.ApproveLevel == model.ApproveMax)
-                        model.StatusId = (int)GlobalConst.STATUS.Approved;
+                        model.StatusId = (int)GlobalConst.STATUS.UsulMusnah;
                     else
                         model.ApproveLevel += 1;
                 }

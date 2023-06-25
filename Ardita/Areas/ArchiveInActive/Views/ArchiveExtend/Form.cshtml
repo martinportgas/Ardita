@@ -164,6 +164,30 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6 archive-div">
+                                        <div class="form-group">
+                                            <label>Arsip</label>
+                                            <select onchange="bindingRetention($(this))" id="txtArchive" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" data-placeholder="-- Pilih Arsip --"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 archive-div">
+                                        <div class="form-group">
+                                            <label>Retensi Sebelumnya</label>
+                                            <input readonly type="number" id="txtRetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 archive-div">
+                                        <div class="form-group">
+                                            <label>Retensi Selanjutnya</label>
+                                            <input type="number" onchange="checkBefore($(this))" id="txtRetentionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 archive-div">
+                                        <div class="form-group">
+                                            <label>Alasan Perpanjangan</label>
+                                            <textarea id="txtReason" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -184,39 +208,28 @@
                                                     foreach (Ardita.Models.DbModels.TrxArchiveExtendDetail item in ViewBag.subDetail)
                                                     {
                                                         <tr>
-                                                            <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) @Html.Raw(ViewBag.subDetail.Count > 1 ? string.Empty : "style='display:none'") type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                            <td style="width:50%">
-                                                                <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value="@item.ArchiveId" selected>@item.Archive.TitleArchive</option></select>
+                                                            <td class="text-center"></td>
+                                                            <td class="text-left">
+                                                                <input type="text" class="form-control" style="border: none !important;" value="@item.Archive.TitleArchive" readonly />
+                                                                <input type="hidden" class="" style="border: none !important;" name="archive[]" value="@item.ArchiveId" />
                                                             </td>
-                                                            <td style="width:10%">
-                                                                <input readonly type="number" name="retentionBefore[]" value="@item.RetentionBefore" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                            <td class="text-left">
+                                                                <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="@item.RetentionBefore" readonly />
                                                             </td>
-                                                            <td style="width:10%">
-                                                                <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" value="@item.RetensionAfter" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                            <td class="text-left">
+                                                                <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="@item.RetensionAfter" readonly />
                                                             </td>
-                                                            <td style="width:25%">
-                                                                <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)">@item.Reason</textarea>
+                                                            <td class="text-left">
+                                                                <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="@item.Reason" readonly />
+                                                            </td>
+                                                            <td>
+                                                                @if (form.isInput)
+                                                                {
+                                                                    <button class="btn btn-danger remove" type="button">Remove</button>
+                                                                }
                                                             </td>
                                                         </tr>
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <tr>
-                                                        <td><button class="btn btn-default btn-sm minArs" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden) style="display:none" type="button" onclick="removeRow($(this), 'Ars')"><i class="fa fa-trash"></i></button></td>
-                                                        <td style="width:50%">
-                                                            <select onchange="checkDuplicate($(this), 'ars')" class="select2_demo_1 form-control ars @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="archive[]" data-placeholder="-- Pilih Arsip --"><option value=""></option></select>
-                                                        </td>
-                                                        <td style="width:10%">
-                                                            <input readonly type="number" name="retentionBefore[]" class="form-control before @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                        </td>
-                                                        <td style="width:10%">
-                                                            <input type="number" onchange="checkBefore($(this))" name="retentionAfter[]" class="form-control after @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
-                                                        </td>
-                                                        <td style="width:25%">
-                                                            <textarea name="reason[]" class="form-control reason @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"></textarea>
-                                                        </td>
-                                                    </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -282,19 +295,53 @@
         }
 
         function addRow(e, name) {
-            var nameCapital = toCapitalCase(name);
-            $(`.${name}`).select2('destroy');
-            var elClone = $(`#listdtl${nameCapital}`).children("tr:first-child").clone();
-            elClone.find(`.${name}`).val('');
-            if (name == 'ars') {
-                elClone.find('.before').val('');
-                elClone.find('.after').val('');
-                elClone.find('.reason').val('');
+            var duplicate = false;
+
+            $('.arc-row').each(function () {
+                if ($(this).val() == $('#txtArchive').val()) {
+                    swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                        $('#txtArchive').val('').trigger('change');
+                        $('#txtRetentionBefore').val('');
+                        $('#txtRetentionAfter').val('');
+                        $('#txtReason').val('');
+                    });
+                    duplicate = true;
+                    return;
+                }
+            });
+
+            if (!duplicate) {
+                var arsipId = $('#txtArchive').val();
+                var arsipDesc = $('#txtArchive').select2('data')[0].text;
+                var retentionBefore = $('#txtRetentionBefore').val();
+                var retentionAfter = $('#txtRetentionAfter').val();
+                var reason = $('#txtReason').val();
+
+                $('#listdtlArs').append(`<tr name="detailRow[]">
+                                                     <td class="text-center"></td>
+                                                     <td class="text-left">
+                                                         <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                                 <input type="hidden" class="form-control arc-row" style="border: none !important;" name="archive[]" value="${arsipId}" />
+                                                     </td>
+                                                      <td class="text-left">
+                                                            <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="${retentionBefore}" readonly />
+                                                      </td>
+                                                      <td class="text-left">
+                                                         <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="${retentionAfter}" readonly />
+                                                      </td>
+                                                      <td class="text-left">
+                                                         <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="${reason}" readonly />
+                                                      </td>
+                                                      <td>
+                                                                 <button class="btn btn-danger remove" type="button">Remove</button>
+                                                      </td>
+                                    </tr>`);
             }
-            elClone.appendTo(`#listdtl${nameCapital}`);
-            $(`.min${nameCapital}`).show();
-            var bindName = name == 'ars' ? '@GlobalConst.BindArchiveRetentionInActiveByParam' : '@GlobalConst.BindApprovalByParam';
-            initSelect2(name, bindName);
+
+
+
+
+
         }
 
         function removeRow(e, name) {
@@ -344,12 +391,22 @@
                     param.Id = data;
 
                     ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                        e.parent().next().children('.before').val(result.inactiveRetention);
+                        $('#txtRetentionBefore').val(result.activeRetention)
                     });
                 }
 
             }
             e.removeClass('current');
+        }
+
+        function bindingRetention(e) {
+            var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })';
+            var param = new Object();
+            param.Id = e.val();
+
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                $('#txtRetentionBefore').val(result.activeRetention)
+            });
         }
 
         function initSelect2(name, act) {
@@ -377,11 +434,42 @@
             });
         }
 
+        function onApprove(ctl, event) {
+            event.preventDefault();
+            var valSubmit = ctl.value;
+            if (valSubmit == '@GlobalConst.Reject' && $('#txtNote').val() == '') {
+                swal("Failed", "Harap isi alasan reject!", "error");
+            } else {
+                swal({
+                    title: "Do You Want To Approve It?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Approve",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#valueSubmit').val(valSubmit);
+                            $("#frmExtend").submit();
+                        } else {
+                            swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        }
+                    });
+            }
+        }
         $(document).ready(function () {
             $('#txtNote').hide().next().hide();
 
             if ('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel') {
                 swal({ title: "Attention!", text: 'Approval Sudah Ditindaklanjuti!', type: "info" });
+            }
+
+            if ('@form.CurrentAction' == '@GlobalConst.Detail' || '@form.CurrentAction' == '@GlobalConst.Preview' || '@form.CurrentAction' == '@GlobalConst.Remove') {
+                $('.archive-div').hide();
             }
 
             initSelect2('ars', '@GlobalConst.BindArchiveRetentionInActiveByParam');
@@ -414,6 +502,11 @@
                         };
                     }
                 }
+            });
+
+            $('#listdtlArs').on('click', '.remove', function () {
+                var child = $(this).closest('tr').nextAll();
+                $(this).closest('tr').remove();
             });
         });
     </script>
