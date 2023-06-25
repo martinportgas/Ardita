@@ -40,12 +40,26 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 throw;
             }
         }
+        public async Task<JsonResult> GetDataHistory(Guid Id)
+        {
+            try
+            {
+                var result = await _archiveRentService.GetByBorrowerId(Id);
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public override async Task<IActionResult> Add()
         {
             var model = new TrxArchiveRent();
             ViewBag.listSubjectClassification = await BindSubjectClasscifications();
             ViewBag.listSubSubject = await BindSubSubjectClasscifications();
             ViewBag.listArchive = await BindArchivesInActive();
+            ViewBag.listBorrower = await BindBorrower();
 
             ViewBag.Name = AppUsers.CurrentUser(User).EmployeeName;
             ViewBag.RoleName = AppUsers.CurrentUser(User).RoleName;
@@ -86,23 +100,52 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         }
         public override async Task<IActionResult> Save(TrxArchiveRent model)
         {
-            var ArchiveId = new Guid(Request.Form["txtMdlArchiveId"]);
-            var UserId = AppUsers.CurrentUser(User).UserId;
-            var CreatedDate = DateTime.Now;
-            var CreatedBy = AppUsers.CurrentUser(User).UserId;
-            var Description = Request.Form["txtMdlDescription"];
-            var requestedDate = Request.Form["txtMdlRequestedDate"];
-            var requestedReturnDate = Request.Form["txtMdlRequestedReturnDate"];
+            if (model != null)
+            {
+                
+                var ArchiveId = new Guid(Request.Form["txtMdlArchiveId"]);
+                var UserId = AppUsers.CurrentUser(User).UserId;
+                var CreatedDate = DateTime.Now;
+                var CreatedBy = AppUsers.CurrentUser(User).UserId;
+                var Description = Request.Form["txtMdlDescription"];
+                var requestedDate = Request.Form["txtMdlRequestedDate"];
+                var requestedReturnDate = Request.Form["txtMdlRequestedReturnDate"];
 
-            model.ArchiveId = ArchiveId;
-            model.UserId = UserId;
-            model.Description = Description;
-            model.RequestedDate = Convert.ToDateTime(requestedDate);
-            model.RequestedReturnDate = Convert.ToDateTime(requestedReturnDate);
-            model.CreatedDate = CreatedDate;
-            model.CreatedBy = CreatedBy;
+                model.ArchiveId = ArchiveId;
+                model.Description = Description;
+                model.RequestedDate = Convert.ToDateTime(requestedDate);
+                model.RequestedReturnDate = Convert.ToDateTime(requestedReturnDate);
+                model.CreatedDate = CreatedDate;
+                model.CreatedBy = CreatedBy;
 
-            await _archiveRentService.Insert(model);
+                var borrower = new MstBorrower();
+               
+                borrower.BorrowerName = Request.Form["BorrowerName"].ToString();
+                borrower.BorrowerCompany = Request.Form["BorrowerCompany"].ToString();
+                borrower.BorrowerArchiveUnit = Request.Form["BorrowerArchiveUnit"].ToString();
+                borrower.BorrowerPosition = Request.Form["BorrowerPosition"].ToString();
+                borrower.BorrowerIdentityNumber = Request.Form["borrowerIdentityId"].ToString();
+                borrower.BorrowerPhone = Request.Form["BorrowerPhone"].ToString();
+                borrower.BorrowerEmail = Request.Form["BorrowerEmail"].ToString();
+               
+
+                if (Request.Form["borrowerType[]"].ToString() == "Baru")
+                {
+                    borrower.BorrowerId = new Guid();
+                    borrower.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                    borrower.CreatedDate = DateTime.Now;
+                    await _archiveRentService.Insert(model, borrower);
+                }
+                else
+                {
+                    borrower.BorrowerId = new Guid(Request.Form["borrowerNameSelect"].ToString());
+                    borrower.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                    borrower.UpdatedDate = DateTime.Now;
+                    await _archiveRentService.Update(model, borrower);
+                }
+
+                
+            }
 
             return RedirectToIndex();
         }

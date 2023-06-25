@@ -7,8 +7,6 @@ public partial class TrxArchiveRent
 {
     public Guid TrxArchiveRentId { get; set; }
 
-    public Guid UserId { get; set; }
-
     public Guid ArchiveId { get; set; }
 
     public DateTime? RequestedDate { get; set; }
@@ -45,5 +43,5 @@ public partial class TrxArchiveRent
 
     public virtual MstStatus? Status { get; set; }
 
-    public virtual MstUser User { get; set; } = null!;
+    public virtual ICollection<TrxRentHistory> TrxRentHistories { get; } = new List<TrxRentHistory>();
 }

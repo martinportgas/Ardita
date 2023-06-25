@@ -24,13 +24,14 @@ namespace Ardita.Repositories.Interfaces
         Task<int> GetApprovalCountByFilterModel(DataTableModel model);
         Task<int> GetRetrievalCountByFilterModel(DataTableModel model);
         Task<int> GetReturnCountByFilterModel(DataTableModel model);
-        Task<int> Insert(TrxArchiveRent model);
+        Task<int> Insert(TrxArchiveRent model, MstBorrower borrower);
         Task<int> Delete(TrxArchiveRent model);
-        Task<int> Update(TrxArchiveRent model);
+        Task<int> Update(TrxArchiveRent model, MstBorrower borrower);
         Task<int> Approval(Guid id, string description, int status, Guid User);
         Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode);
         Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId);
 
-        
+        Task<IEnumerable<MstBorrower>> GetBorrower();
+        Task<IEnumerable<object>> GetByBorrowerId(Guid Id);
     }
 }

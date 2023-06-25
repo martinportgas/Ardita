@@ -13,6 +13,8 @@ public partial class TrxMediaStorageInActive
 
     public Guid TypeStorageId { get; set; }
 
+    public Guid? GmdDetailId { get; set; }
+
     public string MediaStorageInActiveCode { get; set; } = null!;
 
     public string ArchiveYear { get; set; } = null!;
@@ -34,6 +36,8 @@ public partial class TrxMediaStorageInActive
     public DateTime? UpdatedDate { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public virtual MstGmdDetail? GmdDetail { get; set; }
 
     public virtual TrxRow Row { get; set; } = null!;
 

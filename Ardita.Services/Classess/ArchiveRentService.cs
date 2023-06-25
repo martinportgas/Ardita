@@ -63,14 +63,14 @@ namespace Ardita.Services.Classess
             return await _archiveRentRepository.GetById(id);
         }
 
-        public async Task<int> Insert(TrxArchiveRent model)
+        public async Task<int> Insert(TrxArchiveRent model, MstBorrower borrower)
         {
-            return await _archiveRentRepository.Insert(model);
+            return await _archiveRentRepository.Insert(model, borrower);
         }
 
-        public Task<int> Update(TrxArchiveRent model)
+        public async Task<int> Update(TrxArchiveRent model, MstBorrower borrower)
         {
-            throw new NotImplementedException();
+            return await _archiveRentRepository.Update(model, borrower);
         }
 
         public async Task<DataTableResponseModel<object>> GetApprovalList(DataTablePostModel model)
@@ -197,6 +197,16 @@ namespace Ardita.Services.Classess
         public async Task<IEnumerable<object>> GetReturnDetailByArchiveRentId(Guid ArchiveId, int sort)
         {
             return await _archiveRentRepository.GetReturnDetailByArchiveRentId(ArchiveId, sort);
+        }
+
+        public async Task<IEnumerable<MstBorrower>> GetBorrower()
+        {
+            return await _archiveRentRepository.GetBorrower();
+        }
+
+        public async Task<IEnumerable<object>> GetByBorrowerId(Guid Id)
+        {
+            return await _archiveRentRepository.GetByBorrowerId(Id);
         }
     }
 }

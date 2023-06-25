@@ -267,6 +267,16 @@ public abstract class BaseController<T> : Controller
             Text = x.SubjectClassificationName
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindBorrower()
+    {
+        var data = await _archiveRentService.GetBorrower();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.BorrowerId.ToString(),
+            Text = x.BorrowerName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);

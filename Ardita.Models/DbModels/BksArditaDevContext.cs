@@ -27,6 +27,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstArchiveType> MstArchiveTypes { get; set; }
 
+    public virtual DbSet<MstBorrower> MstBorrowers { get; set; }
+
     public virtual DbSet<MstCompany> MstCompanies { get; set; }
 
     public virtual DbSet<MstCompanyLog> MstCompanyLogs { get; set; }
@@ -114,6 +116,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<TrxPermissionClassification> TrxPermissionClassifications { get; set; }
 
     public virtual DbSet<TrxRack> TrxRacks { get; set; }
+
+    public virtual DbSet<TrxRentHistory> TrxRentHistories { get; set; }
 
     public virtual DbSet<TrxRoom> TrxRooms { get; set; }
 
@@ -310,6 +314,55 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
+        });
+
+        modelBuilder.Entity<MstBorrower>(entity =>
+        {
+            entity.HasKey(e => e.BorrowerId);
+
+            entity.ToTable("MST_BORROWER");
+
+            entity.Property(e => e.BorrowerId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("borrower_id");
+            entity.Property(e => e.BorrowerArchiveUnit)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_archive_unit");
+            entity.Property(e => e.BorrowerCompany)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_company");
+            entity.Property(e => e.BorrowerEmail)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_email");
+            entity.Property(e => e.BorrowerIdentityNumber)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_identity_number");
+            entity.Property(e => e.BorrowerName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_name");
+            entity.Property(e => e.BorrowerPhone)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_phone");
+            entity.Property(e => e.BorrowerPosition)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("borrower_position");
+            entity.Property(e => e.CreatedBy)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
@@ -1699,7 +1752,6 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.ArchiveId)
@@ -1709,11 +1761,6 @@ public partial class BksArditaDevContext : DbContext
             entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.StatusId)
                 .HasConstraintName("FK_TRX_ARCHIVE_RENT_MST_STATUS");
-
-            entity.HasOne(d => d.User).WithMany(p => p.TrxArchiveRents)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TRX_ARCHIVE_RENT_MST_USER");
         });
 
         modelBuilder.Entity<TrxArchiveUnit>(entity =>
@@ -2027,6 +2074,7 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("description");
             entity.Property(e => e.DifferenceVolume).HasColumnName("difference_volume");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.MediaStorageInActiveCode)
                 .HasMaxLength(50)
@@ -2041,6 +2089,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+
+            entity.HasOne(d => d.GmdDetail).WithMany(p => p.TrxMediaStorageInActives)
+                .HasForeignKey(d => d.GmdDetailId)
+                .HasConstraintName("FK_TRX_MEDIA_STORAGE_IN_ACTIVE_MST_GMD_DETAIL");
 
             entity.HasOne(d => d.Row).WithMany(p => p.TrxMediaStorageInActives)
                 .HasForeignKey(d => d.RowId)
@@ -2163,6 +2215,35 @@ public partial class BksArditaDevContext : DbContext
             entity.HasOne(d => d.Room).WithMany(p => p.TrxRacks)
                 .HasForeignKey(d => d.RoomId)
                 .HasConstraintName("FK_TRX_RACK_ID_ROOM");
+        });
+
+        modelBuilder.Entity<TrxRentHistory>(entity =>
+        {
+            entity.HasKey(e => e.RentHistoryId);
+
+            entity.ToTable("TRX_RENT_HISTORY");
+
+            entity.Property(e => e.RentHistoryId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("rent_history_id");
+            entity.Property(e => e.BorrowerId).HasColumnName("borrower_id");
+            entity.Property(e => e.CreatedBy)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.TrxArchiveRentId).HasColumnName("trx_archive_rent_id");
+
+            entity.HasOne(d => d.Borrower).WithMany(p => p.TrxRentHistories)
+                .HasForeignKey(d => d.BorrowerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_RENT_HISTORY_MST_BORROWER");
+
+            entity.HasOne(d => d.TrxArchiveRent).WithMany(p => p.TrxRentHistories)
+                .HasForeignKey(d => d.TrxArchiveRentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_RENT_HISTORY_TRX_ARCHIVE_RENT");
         });
 
         modelBuilder.Entity<TrxRoom>(entity =>

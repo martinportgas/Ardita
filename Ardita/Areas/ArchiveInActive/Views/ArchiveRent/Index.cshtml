@@ -85,12 +85,12 @@
                             return detail;
                         }
                     },
-                    { "data": "name", "name": "user.employee.name", "autoWidth": true },
-                    { "data": "requestedDate", "name": "requestedDate", "autoWidth": true },
-                    { "data": "requestedReturnDate", "name": "requestedReturnDate", "autoWidth": true },
+                    { "data": "name", "name": "borrower.borrowerName", "autoWidth": true },
+                    { "data": "requestedDate", "name": "trxArchiveRent.requestedDate", "autoWidth": true },
+                    { "data": "requestedReturnDate", "name": "trxArchiveRent.requestedReturnDate", "autoWidth": true },
                     { "data": "userCreatedBy", "name": "userCreatedBy", "autoWidth": true },
                     {
-                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                        "data": "status", "name": "trxArchiveRent.archive.status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
                         }
                     },

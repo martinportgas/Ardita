@@ -130,6 +130,7 @@ public static class GlobalConst
     public const string ValidateQRBox = "ValidateQRBox";
     public const string UpdateRetrieval = "UpdateRetrieval";
     public const string UpdateReturn = "UpdateReturn";
+    public const string GetDataHistory = "GetDataHistory";
 
     //Html helper
     public const string Required = "required";
