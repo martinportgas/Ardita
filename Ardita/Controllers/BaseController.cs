@@ -257,6 +257,16 @@ public abstract class BaseController<T> : Controller
             Text = x.Name
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindSubjectClasscifications()
+    {
+        var data = await _classificationSubjectService.GetAll();
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubjectClassificationId.ToString(),
+            Text = x.SubjectClassificationName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
@@ -654,6 +664,13 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubjectService.GetAll();
         var result = data.Where(x => x.Classification.Creator!.ArchiveUnitId == Id && x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindSubSubjectClassificationByClassificationId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = await _classificationSubSubjectService.GetAll();
+        var result = data.Where(x => x.SubjectClassificationId == Id).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindTypeStorageByParam(string param = "")

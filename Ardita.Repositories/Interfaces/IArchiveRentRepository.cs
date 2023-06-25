@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IArchiveRentRepository
     {
-        Task<IEnumerable<TrxArchiveRent>> GetById(Guid id);
+        Task<TrxArchiveRent> GetById(Guid id);
         Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid id, string form);
         Task<IEnumerable<object>> GetRetrievalDetailByArchiveRentId(Guid ArchiveId, int sort);
         Task<IEnumerable<object>> GetReturnByArchiveRentId(Guid id, string form);
@@ -30,5 +30,7 @@ namespace Ardita.Repositories.Interfaces
         Task<int> Approval(Guid id, string description, int status, Guid User);
         Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode);
         Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId);
+
+        
     }
 }

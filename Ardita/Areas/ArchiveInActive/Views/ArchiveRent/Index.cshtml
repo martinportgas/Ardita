@@ -39,7 +39,9 @@
                                 <th>Nama Peminjam</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
+                                <th>PIC</th>
                                 <th>Status</th>
+                                
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -86,11 +88,13 @@
                     { "data": "name", "name": "user.employee.name", "autoWidth": true },
                     { "data": "requestedDate", "name": "requestedDate", "autoWidth": true },
                     { "data": "requestedReturnDate", "name": "requestedReturnDate", "autoWidth": true },
+                    { "data": "userCreatedBy", "name": "userCreatedBy", "autoWidth": true },
                     {
                         "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
                         }
                     },
+                    
                 ]
             });
         });
