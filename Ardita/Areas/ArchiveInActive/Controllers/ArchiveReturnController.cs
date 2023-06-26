@@ -92,6 +92,21 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        public async Task<JsonResult> ValidateQRBox(Guid ArchiveRentId, string MediaStorageInActiveCode)
+        {
+            try
+            {
+                var result = await _archiveRentService.ValidateQRBoxWithArchiveRentId(ArchiveRentId, MediaStorageInActiveCode);
+
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive });
     }
 }
