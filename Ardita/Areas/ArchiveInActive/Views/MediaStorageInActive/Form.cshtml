@@ -324,6 +324,8 @@
                 $('#txtDifferenceVolume').val(result[0].volume);
                 $('#txtUnit').val(result[0].unit);
 
+                currentVolume = $('#txtDifferenceVolume').val();
+
                 $('.detail').empty();
             });
         }
@@ -481,6 +483,7 @@
                 dataType: "@GlobalConst.JSON",
                 contentType: "@GlobalConst.APPLICATIONJSON",
                 success: function (data) {
+                    console.log(currentVolume)
                     currentVolume = currentVolume - data.volume;
                     if (currentVolume < 0) {
                         currentVolume = currentVolume + data.volume;
@@ -493,7 +496,7 @@
                     $("#sts-name-" + sort).html('<b>' + data.name + '</b>');
                     $("#sts-volume-" + sort).html('<b class="subVolume">' + data.volume + '</b>');
 
-                    if (@form.CurrentAction != "Add") {
+                    if ('@form.CurrentAction' != "Add") {
                         $("#txtDifferenceVolume").val(currentVolume);
                     }
                 },
@@ -505,26 +508,6 @@
 
         function initDropdown() {
 
-            $('#txtSubSubjectClassificationId').select2({
-                minimumInputLength: 0,
-                theme: 'bootstrap4',
-                allowClear: true,
-                ajax: {
-                    url: '@Url.Action("BindSubSubjectClassificationBySubjectId", GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
-                    type: "POST",
-                    data: function (params) {
-                        var query = {
-                            param: params.term, id: $('#txtSubjectClassificationId').val()
-                        }
-                        return query;
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
 
             $('#txtGMDDetail').select2({
                 minimumInputLength: 0,
@@ -560,25 +543,19 @@
                 allowClear: true,
                 placeholder: '-- Select Sub-Subject Classification --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action("BindSubSubjectClassificationBySubjectId", GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
                             id: $('#txtArchiveUnitId').val(),
+                            SubjectId: $('#txtSubjectClassificationId').val(),
                             param: params.term
                         }
                         return query;
                     },
                     processResults: function (data) {
-                        var dataResult = $.map(data, function (item) {
-
-                            return {
-                                text: item.subSubjectClassificationName,
-                                id: item.subSubjectClassificationId
-                            }
-                        });
                         return {
-                            results: dataResult
+                            results: data
                         };
                     }
                 }

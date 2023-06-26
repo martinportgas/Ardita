@@ -113,6 +113,7 @@
                     }, 
                     {
                         "data": "descriptionReceived", "name": "descriptionReceived", "autoWidth": true, "render": function (data, type, row, meta) {
+                            data = data == null ? '' : data;
                             return `<span>${data.length > 20 ? data.substring(0, 19) + '...' : data}</span>`;
                         }
                     }

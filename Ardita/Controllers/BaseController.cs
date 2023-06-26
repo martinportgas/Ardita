@@ -294,7 +294,7 @@ public abstract class BaseController<T> : Controller
         return data.Select(x => new SelectListItem
         {
             Value = x.SubjectClassificationId.ToString(),
-            Text = x.SubjectClassificationName
+            Text = x.SubjectClassificationCode + " - " + x.SubjectClassificationName
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindAllSubSubjectClasscifications()
@@ -661,11 +661,11 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindSubSubjectClassificationBySubjectId(Guid Id, string param = "")
+    public async Task<JsonResult> BindSubSubjectClassificationBySubjectId(Guid Id, Guid SubjectId, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubSubjectService.GetAll();
-        var result = data.Where(x => x.SubjectClassificationId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower()))
+        var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubjectClassificationId == SubjectId && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower()))
             .Select(x => new { id = x.SubSubjectClassificationId, text = x.SubSubjectClassificationName }).ToList();
         return Json(result);
     }

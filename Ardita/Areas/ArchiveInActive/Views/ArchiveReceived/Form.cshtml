@@ -128,7 +128,7 @@
 
                                         <div class="form-group">
                                             <label>Deskripsi Penerimaan Arsip</label>
-                                            <textarea id="txtDesc" id="txtDescRcvd" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DescriptionReceived"></textarea>
+                                            <textarea id="txtDesc" id="txtDescRcvd" class="form-control @Html.Raw(form.isInput || form.CurrentAction == GlobalConst.AcceptArchiveForm ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DescriptionReceived"></textarea>
                                         </div>
                                     </div>
                                 </div>
