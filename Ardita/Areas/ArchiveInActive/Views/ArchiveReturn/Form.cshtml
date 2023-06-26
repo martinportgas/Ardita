@@ -68,7 +68,6 @@
                                         <div class="">
                                             <div>
                                                 <h2 class="no-margins" id="txtUserName"></h2>
-                                                <h5 id="txtUserRole"></h5>
                                                 <h5 id="txtUserNik"></h5>
                                                 <h5 id="txtUserEmail"></h5>
                                                 <h5 id="txtUserCompany"></h5>
@@ -111,7 +110,19 @@
                                         <label>Tanggal Pinjam</label>
                                         <input type="text" class="form-control" id="txtRequestedDate" readonly />
                                     </div>
-
+                                    <div class="form-group" id="divValidateQRBox">
+                                        <label>Validasi QR Box</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="txtValidateQRBox" />
+                                            <input type="hidden" id="txtValidateQRBoxhdn" value="false" />
+                                            <div class="input-group-append p-2" id="checkValidateTrue" style="display: none">
+                                                <i class="fa fa-check-circle" style="color: green; font-size: 16px"></i>
+                                            </div>
+                                            <div class="input-group-append p-2" id="checkValidateFalse" style="display: none">
+                                                <i class="fa fa-minus-circle" style="color: red; font-size: 16px"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -188,6 +199,39 @@
                 }
             });
 
+            $('#txtValidateQRBox').keypress(function (e) {
+                var key = e.which;
+                if (key == 13) {
+                    $('body').toggleClass('sk-loading');
+                    $('#checkValidateTrue').hide();
+                    $('#checkValidateFalse').hide();
+                    $.ajax({
+                        'url': '@Url.Action(GlobalConst.ValidateQRBox, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive })',
+                        'method': "GET",
+                        'contentType': 'application/json',
+                        'data': {
+                            "archiveRentId": $('#txtQRBox').val(),
+                            "mediaStorageInActiveCode": $(this).val()
+                        }
+                    }).done(function (data) {
+
+                        if (data) {
+                            $('#txtValidateQRBoxhdn').val('true');
+                            $('#checkValidateTrue').show();
+                        } else {
+                            $('#txtValidateQRBoxhdn').val('false');
+                            $('#checkValidateFalse').show();
+                        }
+
+                        if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
+                            $('#btnSubmit').prop('disabled', false);
+                        else
+                            $('#btnSubmit').prop('disabled', true);
+
+                        $('body').toggleClass('sk-loading');
+                    });
+                }
+            });
 
             $('#btnSubmit').click(function (e) {
                 e.preventDefault();
@@ -259,7 +303,7 @@
                 }
             });
 
-            if (allChecked)
+            if (allChecked && $('#txtValidateQRBoxhdn').val() == 'true')
                 $('#btnSubmit').prop('disabled', false);
             else
                 $('#btnSubmit').prop('disabled', true);
@@ -298,7 +342,6 @@
             }).done(function (data) {
                 if (data.length > 0) {
                     $('#txtUserName').text(data[0].userName);
-                    $('#txtUserRole').text(data[0].userRoleName);
                     $('#txtUserNik').text(data[0].userNik);
                     $('#txtUserEmail').text(data[0].userEmail);
                     $('#txtUserCompany').text(data[0].userCompany);
