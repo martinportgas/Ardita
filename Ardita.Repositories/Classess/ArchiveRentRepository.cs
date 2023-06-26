@@ -88,20 +88,21 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<object>> GetApprovalByFilterModel(DataTableModel model)
         {
-            var result = await _context.TrxArchiveRents
-                 .Include(x => x.TrxRentHistories).ThenInclude(x => x.FirstOrDefault().Borrower)
-                 .Include(x => x.Archive.Creator)
-                 .Include(x => x.Status)
-                 .Where(x => x.StatusId == 2)
-                 .Where($"(User.Employee.Nik+User.Employee.Name).Contains(@0)", model.searchValue)
+            var result = await _context.TrxRentHistories
+                 .Include(x => x.Borrower)
+                 .Include(x => x.TrxArchiveRent.Archive.Creator)
+                 .Include(x => x.TrxArchiveRent.Archive.Status)
+                 .Where(x => x.TrxArchiveRent.StatusId == 2)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
                  .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                  .Skip(model.skip).Take(model.pageSize)
                  .Select(x => new
                  {
                      x.TrxArchiveRentId,
-                     
-                     ArchiveTitle = x.Archive.TitleArchive,
-                     CreatorName = x.Archive.Creator.CreatorName
+                     Name = x.Borrower.BorrowerName,
+                     Company = x.Borrower.BorrowerCompany,
+                     ArchiveTitle = x.TrxArchiveRent.Archive.TitleArchive,
+                     CreatorName = x.TrxArchiveRent.Archive.Creator.CreatorName
                  })
                  .ToListAsync();
 
@@ -110,11 +111,12 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetApprovalCountByFilterModel(DataTableModel model)
         {
-            var result = await _context.TrxArchiveRents
-               .Include(x => x.TrxRentHistories.FirstOrDefault().Borrower)
-               .Include(x => x.Archive.Creator)
-               .Where(x => x.StatusId == 2)
-               .Where($"(User.Employee.Nik+User.Employee.Name).Contains(@0)", model.searchValue)
+            var result = await _context.TrxRentHistories
+               .Include(x => x.Borrower)
+               .Include(x => x.TrxArchiveRent.Archive.Creator)
+               .Include(x => x.TrxArchiveRent.Archive.Status)
+               .Where(x => x.TrxArchiveRent.StatusId == 2)
+               .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
                .CountAsync();
 
             return result;
@@ -232,23 +234,22 @@ namespace Ardita.Repositories.Classess
         #region Retrieval
         public async Task<IEnumerable<object>> GetRetrievalByFilterModel(DataTableModel model)
         {
-            var result = await _context.TrxArchiveRents
-               .Include(x => x.TrxRentHistories.FirstOrDefault().Borrower)
-               .Include(x => x.Archive)
-               .Include(x => x.Status)
-               .Where(x => x.StatusId == (int)GlobalConst.STATUS.Retrieved)
-               .Where($"(User.Employee.Name+RequestedDate.ToString()+RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+            var result = await _context.TrxRentHistories
+               .Include(x => x.Borrower)
+               .Include(x => x.TrxArchiveRent.Archive.Status)
+               .Where(x => x.TrxArchiveRent.Archive.Status.StatusId == (int)GlobalConst.STATUS.Retrieved)
+               .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                .Skip(model.skip).Take(model.pageSize)
                .Select(x => new
                {
-                   x.TrxArchiveRentId,
+                   x.TrxArchiveRent.TrxArchiveRentId,
                   
-                   x.RequestedDate,
-                   x.RequestedReturnDate,
-                   x.StatusId,
-                   Status = x.Status.Name,
-                   Color = x.Status.Color,
+                   x.TrxArchiveRent.RequestedDate,
+                   x.TrxArchiveRent.RequestedReturnDate,
+                   x.TrxArchiveRent.Archive.Status.StatusId,
+                   Status = x.TrxArchiveRent.Archive.Status.Name,
+                   Color = x.TrxArchiveRent.Archive.Status.Color,
                    UserCreatedBy = GetUserNameCreatedById(x.CreatedBy)
                })
                .ToListAsync();
@@ -258,12 +259,11 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetRetrievalCountByFilterModel(DataTableModel model)
         {
-            var result = await _context.TrxArchiveRents
-             .Include(x => x.TrxRentHistories.FirstOrDefault().Borrower)
-             .Include(x => x.Archive)
-             .Include(x => x.Status)
-             .Where(x => x.StatusId == (int)GlobalConst.STATUS.Retrieved)
-             .Where($"(User.Employee.Name+RequestedDate.ToString()+ReturnDate.ToString()).Contains(@0)", model.searchValue)
+            var result = await _context.TrxRentHistories
+             .Include(x => x.Borrower)
+             .Include(x => x.TrxArchiveRent.Archive.Status)
+             .Where(x => x.TrxArchiveRent.Archive.Status.StatusId == (int)GlobalConst.STATUS.Retrieved)
+             .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
              .CountAsync();
 
             return result;
