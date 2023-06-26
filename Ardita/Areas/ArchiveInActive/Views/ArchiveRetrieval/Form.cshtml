@@ -68,7 +68,6 @@
                                         <div class="">
                                             <div>
                                                 <h2 class="no-margins" id="txtUserName"></h2>
-                                                <h5 id="txtUserRole"></h5>
                                                 <h5 id="txtUserNik"></h5>
                                                 <h5 id="txtUserEmail"></h5>
                                                 <h5 id="txtUserCompany"></h5>
@@ -218,6 +217,7 @@
                             "mediaStorageInActiveCode": $(this).val()
                         }
                     }).done(function (data) {
+                        
                         if(data){
                             $('#txtValidateQRBoxhdn').val('true');
                             $('#checkValidateTrue').show();
@@ -347,7 +347,6 @@
             }).done(function (data) {
                 if (data.length > 0) {
                     $('#txtUserName').text(data[0].userName);
-                    $('#txtUserRole').text(data[0].userRoleName);
                     $('#txtUserNik').text(data[0].userNik);
                     $('#txtUserEmail').text(data[0].userEmail);
                     $('#txtUserCompany').text(data[0].userCompany);
