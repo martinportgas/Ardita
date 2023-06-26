@@ -188,21 +188,32 @@ namespace Ardita.Repositories.Classess
                 model.TrxArchiveRentId = new Guid();
                 model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
 
-                _context.TrxArchiveRents.Add(model);
-                await _context.SaveChangesAsync();
+            
 
-                _context.MstBorrowers.Update(borrower);
-                await _context.SaveChangesAsync();
+                var borrowerResult = await _context.MstBorrowers.AsNoTracking().FirstOrDefaultAsync(x => x.BorrowerId == borrower.BorrowerId);
 
-                var history = new TrxRentHistory();
-                history.RentHistoryId = new Guid();
-                history.TrxArchiveRentId = model.TrxArchiveRentId;
-                history.BorrowerId = borrower.BorrowerId;
-                history.CreatedBy = model.CreatedBy;
-                history.CreatedDate = DateTime.Now;
+                if (borrowerResult != null) {
+                    _context.TrxArchiveRents.Add(model);
+                    await _context.SaveChangesAsync();
 
-                _context.TrxRentHistories.Add(history);
-                await _context.SaveChangesAsync();
+                    borrower.BorrowerName = borrowerResult.BorrowerName;
+                    borrower.CreatedDate = borrowerResult.CreatedDate;
+                    borrower.CreatedBy = borrowerResult.CreatedBy;
+
+                    _context.MstBorrowers.Update(borrower);
+                    await _context.SaveChangesAsync();
+
+                    var history = new TrxRentHistory();
+                    history.RentHistoryId = new Guid();
+                    history.TrxArchiveRentId = model.TrxArchiveRentId;
+                    history.BorrowerId = borrower.BorrowerId;
+                    history.CreatedBy = model.CreatedBy;
+                    history.CreatedDate = DateTime.Now;
+
+                    _context.TrxRentHistories.Add(history);
+                    await _context.SaveChangesAsync();
+                }
+            
             }
             return result;
         }
