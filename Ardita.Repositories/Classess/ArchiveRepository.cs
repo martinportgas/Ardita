@@ -227,6 +227,7 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<int> GetCountByFilterData(DataTableModel model)
     {
+        model.IsArchiveActive = model.IsArchiveActive == null ? true : model.IsArchiveActive;
         var result = (bool)model.IsArchiveActive! ? await _context.TrxArchives
                 .Include(x => x.Gmd)
                 .Include(x => x.GmdDetail)

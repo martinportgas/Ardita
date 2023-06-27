@@ -712,7 +712,6 @@ public abstract class BaseController<T> : Controller
         int year = DateTime.Now.Year;
         int.TryParse(arrParam[4], out year);
         Guid GmdDetailId = Guid.Empty;
-        Guid.TryParse(arrParam[5], out GmdDetailId);
 
         var data = await _archiveRetentionService.GetAll();
 
@@ -720,9 +719,16 @@ public abstract class BaseController<T> : Controller
         var dataDst = await _archiveDestroyService.GetDetailAll();
         var dataMove = await _archiveMovementService.GetDetailAll();
 
-        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
-        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
-        var detailMove = type == GlobalConst.ArchiveMovement ? dataMove.Where(x => x.ArchiveMovementId != DetailId) : dataMove;
+        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId).ToList() : dataExt;
+        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId).ToList() : dataDst;
+        var detailMove = type == GlobalConst.ArchiveMovement ? dataMove.Where(x => x.ArchiveMovementId != DetailId).ToList() : dataMove;
+
+
+        if (type == GlobalConst.ArchiveMovement)
+        {
+            Guid.TryParse(arrParam[5], out GmdDetailId);
+            data = data.Where(x => x.GmdDetailId == GmdDetailId).ToList();
+        }
 
         var result =
             (from dataALl in data
@@ -732,7 +738,7 @@ public abstract class BaseController<T> : Controller
              from dataDetailDst in b.DefaultIfEmpty()
              join dataDetailMove in detailMove on dataALl.ArchiveId equals dataDetailMove.ArchiveId into c
              from dataDetailMove in c.DefaultIfEmpty()
-             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString()) && dataALl.GmdDetailId == GmdDetailId
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString())
              && dataDetailExt == null && dataDetailDst == null && dataDetailMove == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {
@@ -763,8 +769,8 @@ public abstract class BaseController<T> : Controller
         var dataExt = await _archiveExtendService.GetDetailAll();
         var dataDst = await _archiveDestroyService.GetDetailAll();
 
-        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId) : dataExt;
-        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId) : dataDst;
+        var detailExt = type == GlobalConst.ArchiveExtend ? dataExt.Where(x => x.ArchiveExtendId != DetailId).ToList() : dataExt;
+        var detailDst = type == GlobalConst.ArchiveDestroy ? dataDst.Where(x => x.ArchiveDestroyId != DetailId).ToList() : dataDst;
 
         var result =
             (from dataALl in data
@@ -772,7 +778,7 @@ public abstract class BaseController<T> : Controller
              from dataDetailExt in a.DefaultIfEmpty()
              join dataDetailDst in detailDst on dataALl.ArchiveId equals dataDetailDst.ArchiveId into b
              from dataDetailDst in b.DefaultIfEmpty()
-             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.DateReceived.Year == year 
+             where dataALl.SubSubjectClassificationId == SubSubjectClassificationId && dataALl.RetentionDateArchive.ToString().Contains(year.ToString())
              && dataDetailExt == null && dataDetailDst == null && (dataALl.ArchiveCode + dataALl.TitleArchive).ToLower().Contains(keyword.ToLower())
              select new
              {
