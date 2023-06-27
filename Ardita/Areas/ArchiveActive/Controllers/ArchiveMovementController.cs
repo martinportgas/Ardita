@@ -325,36 +325,6 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
                 await _archiveMovementService.Submit(model);
-
-                if (model.StatusId == (int)GlobalConst.STATUS.Approved)
-                {
-                    var modelDetail = await _archiveMovementService.GetDetailByMainId(model.ArchiveMovementId);
-                    if (modelDetail.Any())
-                    {
-                        foreach (var item in modelDetail)
-                        {
-                            var mediaStorage = await _mediaStorageService.GetDetailByArchiveId(item.ArchiveId);
-                            if (mediaStorage != null)
-                            {
-                                mediaStorage.IsActive = false;
-                                mediaStorage.UpdatedBy = AppUsers.CurrentUser(User).UserId;
-                                mediaStorage.UpdatedDate = DateTime.Now;
-
-                                await _mediaStorageService.UpdateDetail(mediaStorage);
-                            }
-
-                            var archive = await _archiveService.GetById(item.ArchiveId);
-                            if (archive != null)
-                            {
-                                archive.IsActive = false;
-                                archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
-                                archive.UpdatedDate = DateTime.Now;
-
-                                await _archiveService.Update(archive, "", new string[] { });
-                            }
-                        }
-                    }
-                }
             }
             return RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveApproval, new { Area = GlobalConst.ArchiveActive });
         }

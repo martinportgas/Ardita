@@ -53,6 +53,8 @@ public partial class TrxArchive
 
     public bool IsActive { get; set; }
 
+    public bool? IsArchiveActive { get; set; }
+
     public DateTime CreatedDate { get; set; }
 
     public Guid CreatedBy { get; set; }
