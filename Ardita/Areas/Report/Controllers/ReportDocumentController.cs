@@ -5,10 +5,10 @@ namespace Ardita.Areas.Report.Controllers
 {
     [CustomAuthorize]
     [Area("Report")]
-    public class ReportArchiveActiveController : Controller
+    public class ReportDocumentController : Controller
     {
         private IReportService _reportService;
-        public ReportArchiveActiveController(IReportService reportService)
+        public ReportDocumentController(IReportService reportService)
         {
             _reportService = reportService;
         }
@@ -16,10 +16,11 @@ namespace Ardita.Areas.Report.Controllers
         {
             return View();
         }
+
         public async Task<IActionResult> GenerateReport()
         {
-            var reportName = "RptArchiveActive";
-            var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName);
+            var reportName = "RptReportDocument";
+            var returnString = await _reportService.GenerateReportDocumentAsync(reportName);
             return File(returnString, "application/pdf");
         }
     }
