@@ -52,6 +52,7 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.Creator)
             .Include(x => x.ArchiveOwner)
             .Include(x => x.ArchiveType)
+            .Include(x => x.TrxMediaStorageDetails)
             .AsNoTracking()
             .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
             .Where(x => x.IsActive == true)

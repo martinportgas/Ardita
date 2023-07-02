@@ -26,6 +26,33 @@ $(document).ready(function () {
     $('.ibox-title').children('h5').html(subMenuActive);
 });
 
+function geocodeAddress(data, bounds, map) {
+    var title = data.name;
+    var address = data.address;
+    var myLatLng = { lat: data.lat, lng: data.lng };
+    var marker = new google.maps.Marker({
+        //icon: 'http://maps.google.com/mapfiles/ms/icons/red.png',
+        map: map,
+        position: myLatLng,
+        title: title,
+        //animation: google.maps.Animation.DROP
+    })
+    infoWindow(marker, map, title, address);
+    bounds.extend(marker.getPosition());
+    map.fitBounds(bounds);
+}
+
+function infoWindow(marker, map, title, address) {
+    google.maps.event.addListener(marker, 'click', function () {
+        var html = "<div><h3><strong>" + title + "</strong></h3><p>" + address + "<br></div></p></div>";
+        iw = new google.maps.InfoWindow({
+            content: html,
+            maxWidth: 350
+        });
+        iw.open(map, marker);
+    });
+}
+
 function toCapitalCase(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
