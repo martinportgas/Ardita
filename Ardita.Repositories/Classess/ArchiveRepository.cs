@@ -52,7 +52,8 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.Creator)
             .Include(x => x.ArchiveOwner)
             .Include(x => x.ArchiveType)
-            .Include(x => x.TrxMediaStorageDetails)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
             .AsNoTracking()
             .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
             .Where(x => x.IsActive == true)
@@ -589,4 +590,22 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
+
+    public async Task<IEnumerable<TrxArchive>> GetReportArchiveActive() 
+    {
+        return await _context.TrxArchives
+          .Include(x => x.Gmd)
+          .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
+          .Include(x => x.SecurityClassification)
+          .Include(x => x.Creator)
+          .Include(x => x.ArchiveOwner)
+          .Include(x => x.ArchiveType)
+          .Include(x => x.TrxMediaStorageDetails)
+          .ThenInclude(x => x.MediaStorage)
+          .AsNoTracking()
+          .Where(x => x.IsArchiveActive == true && x.IsActive == true)
+          .OrderByDescending(x => x.CreatedDate).ToListAsync();
+    }
+
+
 }

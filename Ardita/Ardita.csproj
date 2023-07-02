@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\Report\RptArchive.rdlc" />
+    <Content Remove="wwwroot\Report\RptArchiveActive.rdlc" />
   </ItemGroup>
 
   <!--<ItemGroup>
@@ -161,6 +162,9 @@
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="wwwroot\Report\RptArchive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptArchiveActive.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

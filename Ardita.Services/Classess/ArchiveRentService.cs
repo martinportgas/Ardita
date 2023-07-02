@@ -22,9 +22,9 @@ namespace Ardita.Services.Classess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TrxArchiveRent>> GetAll()
+        public async Task<IEnumerable<TrxArchiveRent>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _archiveRentRepository.GetAll();
         }
 
         public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
