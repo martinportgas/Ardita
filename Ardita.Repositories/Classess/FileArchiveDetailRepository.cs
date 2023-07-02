@@ -17,7 +17,10 @@ namespace Ardita.Repositories.Classess
         {
             _context = context;
         }
-
+        public async Task<IEnumerable<TrxFileArchiveDetail>> GetAll()
+        {
+            return await _context.TrxFileArchiveDetails.Include(x => x.Archive.Creator.ArchiveUnit).AsNoTracking().ToListAsync();
+        }
         public Task<TrxFileArchiveDetail> GetById(Guid id)
         {
             return _context.TrxFileArchiveDetails.AsNoTracking().Where(x => x.FileArchiveDetailId == id).FirstAsync();

@@ -9,6 +9,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IFileArchiveDetailRepository
     {
+        Task<IEnumerable<TrxFileArchiveDetail>> GetAll();
         Task<TrxFileArchiveDetail> GetById(Guid id);
         Task<IEnumerable<TrxFileArchiveDetail>> GetByArchiveId(Guid id);
     }

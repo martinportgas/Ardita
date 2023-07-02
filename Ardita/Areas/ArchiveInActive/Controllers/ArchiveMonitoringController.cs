@@ -7,10 +7,10 @@ using Ardita.Services.Interfaces;
 using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ardita.Areas.ArchiveActive.Controllers
+namespace Ardita.Areas.ArchiveInActive.Controllers
 {
     [CustomAuthorize]
-    [Area(GlobalConst.ArchiveActive)]
+    [Area(GlobalConst.ArchiveInActive)]
     public class ArchiveMonitoringController : BaseController<TrxArchive>
     {
         public ArchiveMonitoringController(
@@ -35,7 +35,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             try
             {
                 model.whereClause = GlobalConst.WhereClauseArchiveMonitoring;
-                model.IsArchiveActive = true;
+                model.IsArchiveActive = false;
                 if (AppUsers.CurrentUser(User).RoleCode == GlobalConst.ROLE.USV.ToString())
                     model.PositionId = AppUsers.CurrentUser(User).PositionId;
                 var result = await _archiveService.GetList(model);

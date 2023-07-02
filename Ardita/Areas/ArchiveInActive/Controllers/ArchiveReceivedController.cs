@@ -90,7 +90,37 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
             model.ReceivedBy = AppUsers.CurrentUser(User).UserId;
             model.DateReceived = DateTime.Now;
             await ArchiveReceivedService.Update(model);
-           
+
+            if (ApprovalAction == GlobalConst.Approve)
+            {
+                var modelDetail = await _archiveMovementService.GetDetailByMainId(model.ArchiveMovementId);
+                if (modelDetail.Any())
+                {
+                    foreach (var item in modelDetail)
+                    {
+                        var mediaStorage = await _mediaStorageService.GetDetailByArchiveId(item.ArchiveId);
+                        if (mediaStorage != null)
+                        {
+                            mediaStorage.IsActive = false;
+                            mediaStorage.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                            mediaStorage.UpdatedDate = DateTime.Now;
+
+                            await _mediaStorageService.UpdateDetail(mediaStorage);
+                        }
+
+                        var archive = await _archiveService.GetById(item.ArchiveId);
+                        if (archive != null)
+                        {
+                            archive.IsArchiveActive = false;
+                            archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
+                            archive.UpdatedDate = DateTime.Now;
+
+                            await _archiveService.Update(archive, "", new string[] { });
+                        }
+                    }
+                }
+            }
+
         }
         return RedirectToIndex();
     }

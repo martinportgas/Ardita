@@ -43,7 +43,26 @@ namespace Ardita.Repositories.Classess
 
                 _context.TrxArchiveRents.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                if (status == (int)GlobalConst.STATUS.Approved)
+                {
+                    var dataStorage = await _context.TrxMediaStorageInActiveDetails.FirstOrDefaultAsync(x => x.ArchiveId == data.ArchiveId);
+                    if (dataStorage != null)
+                    {
+                        var dataSubStorage = await _context.TrxMediaStorageInActiveDetails.Where(x => x.Sort == dataStorage.Sort && x.MediaStorageInActiveId == dataStorage.MediaStorageInActiveId).ToListAsync();
+                        if (dataSubStorage.Any())
+                        {
+                            foreach (TrxMediaStorageInActiveDetail item in dataSubStorage)
+                            {
+                                item.IsRent = true;
+                                _context.TrxMediaStorageInActiveDetails.Update(item);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                    }
+                }
             }
+
             return result;
         }
 
@@ -356,6 +375,21 @@ namespace Ardita.Repositories.Classess
                 {
                     status = (int)GlobalConst.STATUS.Return;
                     await _context.Database.ExecuteSqlAsync($"UPDATE TRX_ARCHIVE_RENT SET return_date = {DateTime.Now}, status_id = {status}, updated_by ={UserId} WHERE trx_archive_rent_id = {ArchiveRentId}");
+
+                    var dataStorage = await _context.TrxMediaStorageInActiveDetails.FirstOrDefaultAsync(x => x.ArchiveId == result.ArchiveId);
+                    if (dataStorage != null)
+                    {
+                        var dataSubStorage = await _context.TrxMediaStorageInActiveDetails.Where(x => x.Sort == dataStorage.Sort && x.MediaStorageInActiveId == dataStorage.MediaStorageInActiveId).ToListAsync();
+                        if (dataSubStorage.Any())
+                        {
+                            foreach (TrxMediaStorageInActiveDetail item in dataSubStorage)
+                            {
+                                item.IsRent = true;
+                                _context.TrxMediaStorageInActiveDetails.Update(item);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                    }
                 }
             }
             

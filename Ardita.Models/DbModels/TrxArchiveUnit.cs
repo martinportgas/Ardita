@@ -19,6 +19,10 @@ public partial class TrxArchiveUnit
 
     public string? ArchiveUnitEmail { get; set; }
 
+    public decimal? Latitude { get; set; }
+
+    public decimal? Longitude { get; set; }
+
     public bool IsActive { get; set; }
 
     public DateTime CreatedDate { get; set; }

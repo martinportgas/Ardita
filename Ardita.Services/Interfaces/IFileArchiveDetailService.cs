@@ -9,6 +9,7 @@ namespace Ardita.Services.Interfaces
 {
     public interface IFileArchiveDetailService
     {
+        Task<IEnumerable<TrxFileArchiveDetail>> GetAll();
         Task<TrxFileArchiveDetail> GetById(Guid id);
     }
 }

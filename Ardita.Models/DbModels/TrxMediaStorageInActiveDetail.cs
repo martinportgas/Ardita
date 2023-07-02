@@ -15,6 +15,8 @@ public partial class TrxMediaStorageInActiveDetail
 
     public Guid ArchiveId { get; set; }
 
+    public bool? IsRent { get; set; }
+
     public DateTime CreatedDate { get; set; }
 
     public Guid CreatedBy { get; set; }

@@ -1252,6 +1252,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.GmdId).HasColumnName("gmd_id");
             entity.Property(e => e.InactiveRetention).HasColumnName("inactive_retention");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsArchiveActive).HasColumnName("is_archive_active");
             entity.Property(e => e.IsUsed).HasColumnName("is_used");
             entity.Property(e => e.IsUsedBy)
                 .HasMaxLength(200)
@@ -1798,6 +1799,12 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Latitude)
+                .HasColumnType("decimal(20, 4)")
+                .HasColumnName("latitude");
+            entity.Property(e => e.Longitude)
+                .HasColumnType("decimal(10, 4)")
+                .HasColumnName("longitude");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
@@ -2131,6 +2138,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.IsRent).HasColumnName("is_rent");
             entity.Property(e => e.MediaStorageInActiveId).HasColumnName("media_storage_in_active_id");
             entity.Property(e => e.Sort).HasColumnName("sort");
             entity.Property(e => e.SubTypeStorageId).HasColumnName("sub_type_storage_id");
