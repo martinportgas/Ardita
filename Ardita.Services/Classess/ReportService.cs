@@ -46,6 +46,7 @@ namespace Ardita.Services.Classess
 
             foreach (var item in data)
             {
+                model = new ArchiveActive();
                 model.DocumentNo = item.DocumentNo;
                 model.ArchiveCode = item.ArchiveCode;
                 model.ClassificationCode = item.SubSubjectClassification.SubjectClassification.Classification.ClassificationCode;

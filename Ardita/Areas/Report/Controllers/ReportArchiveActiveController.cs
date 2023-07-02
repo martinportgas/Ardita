@@ -20,7 +20,9 @@ namespace Ardita.Areas.Report.Controllers
         {
             var reportName = "RptArchiveActive";
             var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName);
-            return File(returnString, System.Net.Mime.MediaTypeNames.Application.Octet, reportName + ".pdf");
+           //return File(returnString, System.Net.Mime.MediaTypeNames.Application.Octet, reportName + ".pdf");
+         
+            return File(returnString, "application/pdf");
         }
     }
 }
