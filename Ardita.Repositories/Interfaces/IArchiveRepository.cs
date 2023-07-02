@@ -21,4 +21,6 @@ public interface IArchiveRepository
     Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
     Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive);
     Task<int> Submit(TrxArchive model);
+
+    Task<IEnumerable<TrxArchive>> GetReportArchiveActive();
 }

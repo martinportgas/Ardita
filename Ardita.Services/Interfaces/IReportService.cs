@@ -9,6 +9,6 @@ namespace Ardita.Services.Interfaces
     public interface IReportService
     {
         byte[] GenerateReportAsync(string reportName);
-
+        Task<byte[]> GenerateReportArchiveActiveAsync(string reportName);
     }
 }

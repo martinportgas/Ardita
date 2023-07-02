@@ -589,4 +589,22 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
+
+    public async Task<IEnumerable<TrxArchive>> GetReportArchiveActive() 
+    {
+        return await _context.TrxArchives
+          .Include(x => x.Gmd)
+          .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
+          .Include(x => x.SecurityClassification)
+          .Include(x => x.Creator)
+          .Include(x => x.ArchiveOwner)
+          .Include(x => x.ArchiveType)
+          .Include(x => x.TrxMediaStorageDetails)
+          .ThenInclude(x => x.MediaStorage)
+          .AsNoTracking()
+          .Where(x => x.IsArchiveActive == true && x.IsActive == true)
+          .OrderByDescending(x => x.CreatedDate).ToListAsync();
+    }
+
+
 }
