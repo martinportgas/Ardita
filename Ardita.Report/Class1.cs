@@ -7,4 +7,10 @@ namespace Ardita.Report
         public string ArchiveId { get; set; }
         public string ArchiveTitle { get; set; }
     }
+
+    public class MediaExpert
+    {
+        public string ArchiveOwner { get; set; }
+        public string ArchiveTitle { get; set; }
+    }
 }
