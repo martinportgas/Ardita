@@ -1,0 +1,284 @@
+﻿@using Ardita.Extensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Dashboard</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Dashboard</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>User Pengolah</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.userPengolah</span>
+                        <span style="font-size:9px">Total User</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Ruangan</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.totalRoom</span>
+                        <span style="font-size:9px">Total Ruangan</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Pencipta Arsip</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.totalCreator</span>
+                        <span style="font-size:9px">Total Pencipta Arsip</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Media Penyimpanan</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.totalStorage</span>
+                        <span style="font-size:9px">Total Media Penyimpanan</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Lokasi Penyimpanan</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td>No.</td>
+                                        <td>Ruangan</td>
+                                        <td>Jumlah Media Arsip</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="totalRoom">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-center">
+                                <canvas id="polarChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Jumlah Arsip</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>No.</td>
+                                <td>Ruangan</td>
+                                <td>Internal</td>
+                                <td>Eksternal</td>
+                                <td>Total</td>
+                            </tr>
+                        </thead>
+                        <tbody id="totalArchive">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Jumlah Arsip Berdasarkan Bentuk</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>No.</td>
+                                <td>Bentuk</td>
+                                <td>Value</td>
+                            </tr>
+                        </thead>
+                        <tbody id="totalGMD">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Jumlah Retensi</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <div>
+                        <canvas id="doughnutChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/chartJs/Chart.min.js"></script>
+
+    <script>
+        $(function () {
+            initTotalRowUse();
+            initTotalRoomUse();
+            initTotalArhive();
+            initTotalGMD();
+            initTotalRetensi();
+        });
+
+        function initTotalRowUse() {
+            var url = '@Url.Action("BindTotalStorageUse", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var polarData = {
+                    datasets: [{
+                        data: [
+                            result.totalUse, result.totalAvailable
+                        ],
+                        backgroundColor: [
+                            "#a3e1d4", "#dedede"
+                        ],
+                        label: [
+                            "Statistik Penyimpanan"
+                        ]
+                    }],
+                    labels: [
+                        "Digunakan", "Tersedia"
+                    ]
+                };
+
+                var polarOptions = {
+                    segmentStrokeWidth: 2,
+                    responsive: true
+
+                };
+
+                var ctx3 = document.getElementById("polarChart").getContext("2d");
+                new Chart(ctx3, { type: 'polarArea', data: polarData, options: polarOptions });
+            });
+        }
+
+        function initTotalRoomUse() {
+            var url = '@Url.Action("BindTotalRoomUseDetail", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalRoom').append(`<tr><td>${++no}</td><td>${value.name}</td><td><span class="badge badge-primary" style="width:30%;">${value.totalUse}</span></td></tr>`)
+                });
+            });
+        }
+
+        function initTotalArhive() {
+            var url = '@Url.Action("BindTotalArchiveType", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalArchive').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.totalInternal}</td><td>${value.totalEksternal}</td><td><span class="badge badge-primary" style="width:100%;">${value.total}</span></td></tr>`)
+                });
+            });
+        }
+
+        function initTotalGMD() {
+            var url = '@Url.Action("BindTotalGMDActive", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalGMD').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.totalArchive}</td></tr>`)
+                });
+            });
+        }
+
+        function initTotalRetensi() {
+            var url = '@Url.Action("BindTotalRetensi", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+
+                var doughnutData = {
+                    labels: ["Active", "Retensi"],
+                    datasets: [{
+                        data: [result.active, result.retensi],
+                        backgroundColor: ["#a3e1d4", "#dedede"]
+                    }]
+                };
+
+
+                var doughnutOptions = {
+                    responsive: true
+                };
+
+
+                var ctx4 = document.getElementById("doughnutChart").getContext("2d");
+                new Chart(ctx4, { type: 'doughnut', data: doughnutData, options: doughnutOptions });
+
+            });
+        }
+
+    </script>
+}
