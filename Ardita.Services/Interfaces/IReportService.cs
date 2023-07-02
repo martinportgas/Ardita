@@ -10,5 +10,6 @@ namespace Ardita.Services.Interfaces
     {
         byte[] GenerateReportAsync(string reportName);
         Task<byte[]> GenerateReportArchiveActiveAsync(string reportName);
+        Task<byte[]> GenerateReportDocumentAsync(string reportName);
     }
 }

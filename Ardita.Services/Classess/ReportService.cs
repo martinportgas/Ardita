@@ -11,13 +11,16 @@ namespace Ardita.Services.Classess
     {
         private IHostingEnvironment Environment;
         private IArchiveRepository _archiveRepository;
+        private IReportRepository _reportRepository;
         public ReportService(
             IHostingEnvironment _environment,
-            IArchiveRepository archiveRepository
+            IArchiveRepository archiveRepository,
+            IReportRepository reportRepository
             ) 
         {
             Environment = _environment;
             _archiveRepository = archiveRepository;
+            _reportRepository = reportRepository;
         }
         public byte[] GenerateReportAsync(string reportName)
         {
@@ -60,6 +63,18 @@ namespace Ardita.Services.Classess
             }
 
             report.AddDataSource("dsArchiveActive", obj);
+            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            return result.MainStream;
+        }
+
+        public async Task<byte[]> GenerateReportDocumentAsync(string reportName)
+        {
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            var report = new LocalReport(rdlcFilePath);
+            var parameters = new Dictionary<string, string>();
+            var data = await _reportRepository.GetReportDocument();
+
+            report.AddDataSource("dsReportDocument", data.ToList());
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }
