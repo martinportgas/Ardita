@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardita.Report;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,8 @@ namespace Ardita.Services.Interfaces
         byte[] GenerateReportAsync(string reportName);
         Task<byte[]> GenerateReportArchiveActiveAsync(string reportName);
         Task<byte[]> GenerateReportDocumentAsync(string reportName);
+        Task<byte[]> GenerateReportTransferMediaAsync(string reportName);
+        Task<byte[]> GenerateReportArchiveMovementAsync(string reportName);
+        Task<byte[]> GenerateReportArchiveDestroyAsync(string reportName);
     }
 }

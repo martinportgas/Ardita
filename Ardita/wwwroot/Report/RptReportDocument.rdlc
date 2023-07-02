@@ -6,25 +6,25 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.04903cm</Width>
+              <Width>0.66803cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.88099cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.5cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>2.20367cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>2.52117cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>2.26717cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>5.82316cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.5cm</Width>
@@ -407,7 +407,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -607,6 +607,7 @@
                               <Value>=Fields!PeriodPenciptaan.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -641,6 +642,7 @@
                               <Value>=Fields!PeriodInput.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -694,7 +696,7 @@
         <Top>0.61241cm</Top>
         <Left>0.36786cm</Left>
         <Height>1.2cm</Height>
-        <Width>21.04903cm</Width>
+        <Width>23.86419cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -745,7 +747,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
-          <Top>0.27167in</Top>
+          <Top>0.42111in</Top>
           <Left>2.67167in</Left>
           <Height>0.45in</Height>
           <Width>3.79167in</Width>

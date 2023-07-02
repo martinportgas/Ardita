@@ -42,27 +42,10 @@ namespace Ardita.Services.Classess
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = new Dictionary<string, string>();
-            var obj = new List<ArchiveActive>();
-            var model = new ArchiveActive();
             
-            var data = await _archiveRepository.GetReportArchiveActive();
+            var data = await _reportRepository.GetArchiveActives();
 
-            foreach (var item in data)
-            {
-                model = new ArchiveActive();
-                model.DocumentNo = item.DocumentNo;
-                model.ArchiveCode = item.ArchiveCode;
-                model.ClassificationCode = item.SubSubjectClassification.SubjectClassification.Classification.ClassificationCode;
-
-                model.ArchiveTitle = item.TitleArchive;
-                model.ArchiveDescription = item.ArchiveDescription;
-                model.ArchiveDate = item.CreatedDate;
-                model.ArchiveTotal = 1;
-                model.MediaStorageCode = "";
-                obj.Add(model);
-            }
-
-            report.AddDataSource("dsArchiveActive", obj);
+            report.AddDataSource("dsArchiveActive", data);
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }
@@ -75,6 +58,42 @@ namespace Ardita.Services.Classess
             var data = await _reportRepository.GetReportDocument();
 
             report.AddDataSource("dsReportDocument", data.ToList());
+            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            return result.MainStream;
+        }
+
+        public async Task<byte[]> GenerateReportTransferMediaAsync(string reportName)
+        {
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            var report = new LocalReport(rdlcFilePath);
+            var parameters = new Dictionary<string, string>();
+            var data = await _reportRepository.GetTransferMedias();
+
+            report.AddDataSource("dsTransferMedia", data.ToList());
+            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            return result.MainStream;
+        }
+
+        public async Task<byte[]> GenerateReportArchiveMovementAsync(string reportName)
+        {
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            var report = new LocalReport(rdlcFilePath);
+            var parameters = new Dictionary<string, string>();
+            var data = await _reportRepository.GetArchiveMovements();
+
+            report.AddDataSource("dsArchiveMovement", data.ToList());
+            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            return result.MainStream;
+        }
+
+        public async Task<byte[]> GenerateReportArchiveDestroyAsync(string reportName)
+        {
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            var report = new LocalReport(rdlcFilePath);
+            var parameters = new Dictionary<string, string>();
+            var data = await _reportRepository.GetArchiveDestroys();
+
+            report.AddDataSource("dsArchiveDestroy", data.ToList());
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }
