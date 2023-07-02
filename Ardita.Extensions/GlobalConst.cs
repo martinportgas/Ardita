@@ -131,6 +131,9 @@ public static class GlobalConst
     public const string UpdateRetrieval = "UpdateRetrieval";
     public const string UpdateReturn = "UpdateReturn";
     public const string GetDataHistory = "GetDataHistory";
+    public const string Admin = "Admin";
+    public const string Active = "Active";
+    public const string InActive = "InActive";
 
     //Html helper
     public const string Required = "required";

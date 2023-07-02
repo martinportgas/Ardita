@@ -56,45 +56,61 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-6 b-r">
+                        <div class="col-sm-12">
                             <form id="formInput" method="post" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
-                                <div class="form-group">
-                                    <div class="form-group">
-                                        <label>Company</label>
-                                        <select asp-for="CompanyId" asp-items="ViewBag.listCompany" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                id="txtCompany" class="select2_demo_1 form-control"
-                                                data-placeholder="-- Select Company --">
-                                            <option value=""></option>
-                                        </select>
+                                <div class ="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <label>Company</label>
+                                            <select asp-for="CompanyId" asp-items="ViewBag.listCompany" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtCompany" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Company --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Unit Code</label>
+                                            <input type="hidden" asp-for="ArchiveUnitId" value="@Model.ArchiveUnitId">
+                                            <input type="text" placeholder="" id="txtArchiveUnitCode" class="form-control" asp-for="ArchiveUnitCode">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Unit Name</label>
+                                            <input type="text" placeholder="" id="txtArchiveUnitName" class="form-control" asp-for="ArchiveUnitName">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Unit Address</label>
+                                            <textarea type="text" placeholder="" id="txtArchiveUnitAddress" class="form-control" asp-for="ArchiveUnitAddress"></textarea>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Archive Unit Code</label>
-                                        <input type="hidden" asp-for="ArchiveUnitId" value="@Model.ArchiveUnitId">
-                                        <input type="text" placeholder="" id="txtArchiveUnitCode" class="form-control" asp-for="ArchiveUnitCode">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Archive Unit Name</label>
-                                        <input type="text" placeholder="" id="txtArchiveUnitName" class="form-control" asp-for="ArchiveUnitName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Archive Unit Address</label>
-                                        <textarea type="text" placeholder="" id="txtArchiveUnitAddress" class="form-control" asp-for="ArchiveUnitAddress"></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Archive Unit Telephone</label>
-                                        <input type="text" placeholder="" id="txtArchiveUnitPhone" class="form-control" asp-for="ArchiveUnitPhone">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Archive Unit Email</label>
-                                        <input type="email" placeholder="" id="txtArchiveUnitEmail" class="form-control" asp-for="ArchiveUnitEmail">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Archive Unit Telephone</label>
+                                            <input type="text" placeholder="" id="txtArchiveUnitPhone" class="form-control" asp-for="ArchiveUnitPhone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Archive Unit Email</label>
+                                            <input type="email" placeholder="" id="txtArchiveUnitEmail" class="form-control" asp-for="ArchiveUnitEmail">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Latitude</label>
+                                            <input type="number" placeholder="" id="txtLat" class="form-control" asp-for="Latitude">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Longitude</label>
+                                            <input type="number" placeholder="" id="txtLong" class="form-control" asp-for="Longitude">
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveUnit, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
-                                    @if (form.isSubmitForm)
-                                    {
-                                        <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
-                                    }
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div>
+                                            <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveUnit, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                            @if (form.isSubmitForm)
+                                            {
+                                                <button onclick="onSubmit(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>

@@ -71,9 +71,9 @@ namespace Ardita.Repositories.Classess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TrxArchiveRent>> GetAll()
+        public async Task<IEnumerable<TrxArchiveRent>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _context.TrxArchiveRents.AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<object>> GetByBorrowerId(Guid Id)

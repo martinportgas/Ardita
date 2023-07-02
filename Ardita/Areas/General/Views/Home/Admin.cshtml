@@ -1,0 +1,219 @@
+﻿@using Ardita.Extensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIKL4_UhAFEs4fxihEqrOdj22JC3GfEgo&callback=Function.prototype"></script>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Dashboard</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Dashboard</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Companies</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.totalCompanies</span>
+                        <span style="font-size:9px">Total Companies</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Lokasi</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.totalLokasi</span>
+                        <span style="font-size:9px">Total Lokasi</span>
+                    </div>
+                    <div style="padding-top: 43px;padding-left: 10px;">
+                        <a style="font-size:9px" href="">View Detail >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Users</h5>
+                </div>
+                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.userPengolah</span>
+                        <span style="font-size:9px;color:green;">User Pengolah</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.userKearsipan</span>
+                        <span style="font-size:9px;color:green;">User Kearsipan</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-size:30px">@ViewBag.userView</span>
+                        <span style="font-size:9px;color:green;">User View</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Lokasi Penyimpanan</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td>No.</td>
+                                        <td>Lokasi</td>
+                                        <td>Jumlah Ruangan</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="totalRoom">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="map_canvas" style="border: 2px solid #3872ac;height: 200px;width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Jumlah Arsip</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>No.</td>
+                                <td>Lokasi</td>
+                                <td>Fisik</td>
+                                <td>Digital</td>
+                                <td>Total</td>
+                            </tr>
+                        </thead>
+                        <tbody id="totalArchive">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Jumlah Arsip Berdasarkan Bentuk</h5>
+                </div>
+                <div class="ibox-content text-center p-md" style="min-height:200px">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>No.</td>
+                                <td>Bentuk</td>
+                                <td>Value</td>
+                            </tr>
+                        </thead>
+                        <tbody id="totalGMD">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(function () {
+            initTotalRoom();
+            initTotalArhive();
+            initTotalGMD();
+        });
+
+        var map;
+        var bounds = new google.maps.LatLngBounds();
+
+        function initialize() {
+            map = new google.maps.Map(
+                document.getElementById("map_canvas"), {
+                center: new google.maps.LatLng(-6.2924, 106.7596),
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            var url = '@Url.Action("BindMaps", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                $.each(result, function (key, value) {
+                    geocodeAddress(value, bounds, map);
+                });
+            });
+        }
+        window.addEventListener("load", initialize);
+
+        function initTotalRoom() {
+            var url = '@Url.Action("BindTotalRoom", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalRoom').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.totalRoom} Ruangan</td></tr>`)
+                });
+            });
+        }
+
+        function initTotalArhive() {
+            var url = '@Url.Action("BindTotalArhive", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalArchive').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.totalArchive}</td><td>${value.totalArchiveDigital}</td><td><span class="badge badge-primary" style="width:100%;">${value.totalArchiveDigital + value.totalArchive}</span></td></tr>`)
+                });
+            });
+        }
+
+        function initTotalGMD() {
+            var url = '@Url.Action("BindTotalGMD", GlobalConst.Home, new { Area = GlobalConst.General })';
+
+            ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+                var no = 0;
+                $.each(result, function (key, value) {
+                    $('#totalGMD').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.totalArchive}</td></tr>`)
+                });
+            });
+        }
+
+    </script>
+}
