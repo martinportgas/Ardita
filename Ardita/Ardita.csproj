@@ -8,6 +8,10 @@
 	<RazorCompileOnPublish>false</RazorCompileOnPublish>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\Report\RptArchive.rdlc" />
+  </ItemGroup>
+
   <!--<ItemGroup>
     <Compile Remove="Areas\ArchiveInActive\**" />
     <Compile Remove="Areas\Page\**" />
@@ -87,13 +91,17 @@
   </ItemGroup>-->
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,6 +110,8 @@
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />
+    <Folder Include="Areas\Report\Data\" />
+    <Folder Include="Areas\Report\Models\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -150,11 +160,15 @@
     <None Include="wwwroot\fonts\font-awesome\scss\_variables.scss" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\Report\RptArchive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ardita.Extensions\Ardita.Extensions.csproj" />
     <ProjectReference Include="..\Ardita.Models\Ardita.Models.csproj" />
+    <ProjectReference Include="..\Ardita.Report\Ardita.Report.csproj" />
     <ProjectReference Include="..\Ardita.Repositories\Ardita.Repositories.csproj" />
     <ProjectReference Include="..\Ardita.Services\Ardita.Services.csproj" />
   </ItemGroup>
