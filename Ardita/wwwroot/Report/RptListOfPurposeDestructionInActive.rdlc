@@ -143,7 +143,81 @@
       </ConnectionProperties>
       <rd:DataSourceID>6cd96059-bec9-4b18-a4d8-bf7c0edb04d7</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="ArditaReport8">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>15684962-444d-4612-ae70-821d76508cee</rd:DataSourceID>
+    </DataSource>
   </DataSources>
+  <DataSets>
+    <DataSet Name="dsListOfPurposeDestruction">
+      <Query>
+        <DataSourceName>ArditaReport8</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AsalArsip">
+          <DataField>AsalArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DeskripsiArsip">
+          <DataField>DeskripsiArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="JenisArsip">
+          <DataField>JenisArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Jumlah">
+          <DataField>Jumlah</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="KodeKlasifikasi">
+          <DataField>KodeKlasifikasi</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="KodeMediaSimpan">
+          <DataField>KodeMediaSimpan</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lokasi">
+          <DataField>Lokasi</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NoArsip">
+          <DataField>NoArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PemilikArsip">
+          <DataField>PemilikArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Retensi">
+          <DataField>Retensi</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="SubjectArsip">
+          <DataField>SubjectArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TahunArsip">
+          <DataField>TahunArsip</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="UnitPencipta">
+          <DataField>UnitPencipta</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Ardita.Report</rd:DataSetName>
+        <rd:TableName>ReportListOfPurposeDestructionInActive</rd:TableName>
+        <rd:ObjectDataSourceType>Ardita.Report.ReportListOfPurposeDestructionInActive, Ardita.Report, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
   <EmbeddedImages>
     <EmbeddedImage Name="bks">
       <MIMEType>image/png</MIMEType>
