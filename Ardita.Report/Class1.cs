@@ -11,7 +11,7 @@ namespace Ardita.Report
     public class ArchiveActive 
     { 
         public string DocumentNo { get; set; }
-        public string ArchiveCode { get; set; }
+        public string ItemArchiveNo { get; set; }
         public string ClassificationCode { get; set; }
         public string ArchiveTitle { get; set; }
         public string ArchiveDescription { get; set; }
@@ -121,5 +121,58 @@ namespace Ardita.Report
         public string NamaPeminjam { get; set; }
         public string Perusahaan { get; set; }
         public string UnitKerja { get; set; }
+    }
+    public class TransferMedia
+    {
+        public string Perusahaan { get; set; }
+        public string AsalArsip { get; set; }
+        public string PenciptaArsip { get; set; }
+        public DateTime Period { get; set; }
+        public string Jumlah { get; set; }
+        public DateTime PeriodPindai { get; set; }
+        public string KodeKlasifikasi { get; set; }
+        public string NomorArsip { get; set; }
+        public string TipeArsip { get; set; }
+    }
+    public class ArchiveMovement
+    {
+        public string Perusahaan { get; set; }
+        public string AsalArsip { get; set; }
+        public string PenciptaArsip { get; set; }
+        public DateTime Period { get; set; }
+        public string Jumlah { get; set; }
+        public DateTime TanggalPindah { get; set; }
+        public string KodeKlasifikasi { get; set; }
+        public string NomorArsip { get; set; }
+        public string TipeArsip { get; set; }
+        public string RetensiInAktif { get; set; }
+        public string KodeMediaSimpan { get; set; }
+    }
+
+    public class ArchiveDestroy
+    {
+        public string Perusahaan { get; set; }
+        public string AsalArsip { get; set; }
+        public string PenciptaArsip { get; set; }
+        public DateTime Period { get; set; }
+        public string Jumlah { get; set; }
+        public string SifatArsip { get; set; }
+        public string KodeKlasifikasi { get; set; }
+        public string NomorArsip { get; set; }
+        public string TipeArsip { get; set; }
+        public string RetensiInAktif { get; set; }
+        public string KodeMediaSimpan { get; set; }
+    }
+
+    public class ArchiveUsed
+    {
+        public string NoDocumen { get; set; }
+        public string NoItemArsip { get; set; }
+        public string KodeKlasifikasi { get; set; }
+        public string JudulArsip { get; set; }
+        public string UraianInformasiArsip { get; set; }
+        public DateTime Tanggal { get; set; }
+        public string Jumlah { get; set; }
+        public string KodeMediaSimpan { get; set; }
     }
 }

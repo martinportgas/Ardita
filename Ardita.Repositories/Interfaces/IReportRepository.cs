@@ -10,6 +10,11 @@ namespace Ardita.Repositories.Interfaces
     public interface IReportRepository
     {
         Task<IEnumerable<ReportDocument>> GetReportDocument();
+        Task<IEnumerable<ArchiveActive>> GetArchiveActives();
+        Task<IEnumerable<TransferMedia>> GetTransferMedias();
+        Task<IEnumerable<ArchiveMovement>> GetArchiveMovements();
+        Task<IEnumerable<ArchiveDestroy>> GetArchiveDestroys();
+        Task<IEnumerable<ArchiveUsed>> GetArchiveUseds();
         Task<IEnumerable<ReportArchiveReceivedInActive>> GetReportArchiveReceivedInActive();
         Task<IEnumerable<ReportArchiveLoansInActive>> GetReportArchiveLoansInActive();
         Task<IEnumerable<ReportArchiveProcessingInActive>> GetReportArchiveProcessingInActive();
