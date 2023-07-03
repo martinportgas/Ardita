@@ -99,7 +99,7 @@ namespace Ardita.Report
         public string JenisArsip { get; set; }
         public string SubjectArsip { get; set; }
         public string DeskripsiArsip { get; set; }
-        public DateTime TahunArsip { get; set; }
+        public DateTime? TahunArsip { get; set; }
         public int Jumlah { get; set; }
         public int Retensi { get; set; }
         public string Lokasi { get; set; }
@@ -114,10 +114,10 @@ namespace Ardita.Report
         public string KodeKlasifikasi { get; set; }
         public string NoArsip { get; set; }
         public string JenisArsip { get; set; }
-        public DateTime Period { get; set; }
+        public DateTime? Period { get; set; }
         public int Jumlah { get; set; }
-        public DateTime TanggalPinjam { get; set; }
-        public DateTime TanggalKembali { get; set; }
+        public DateTime? TanggalPinjam { get; set; }
+        public DateTime? TanggalKembali { get; set; }
         public string NamaPeminjam { get; set; }
         public string Perusahaan { get; set; }
         public string UnitKerja { get; set; }

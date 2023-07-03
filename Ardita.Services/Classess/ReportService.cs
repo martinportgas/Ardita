@@ -134,7 +134,7 @@ namespace Ardita.Services.Classess
             var parameters = new Dictionary<string, string>();
             var data = await _reportRepository.GetReportListOfPurposeDestructionInActive();
 
-            report.AddDataSource("dsReportListOfPurposeDestructionInActive", data.ToList());
+            report.AddDataSource("dsListOfPurposeDestruction", data.ToList());
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }

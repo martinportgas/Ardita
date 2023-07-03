@@ -19,9 +19,38 @@ namespace Ardita.Repositories.Classess
 
         public ReportRepository(BksArditaDevContext context) => _context = context;
 
-        public Task<IEnumerable<ReportArchiveLoansInActive>> GetReportArchiveLoansInActive()
+        public async Task<IEnumerable<ReportArchiveLoansInActive>> GetReportArchiveLoansInActive()
         {
-            throw new NotImplementedException();
+            var query = await _context.TrxArchives
+                .Include(x => x.Creator)
+                .Include(x => x.ArchiveOwner)
+                .Include(x => x.TrxFileArchiveDetails)
+                .Include(x => x.SubSubjectClassification)
+                    .ThenInclude(x => x.SubjectClassification)
+                .Include(x => x.ArchiveType)
+                .Include(x => x.TrxArchiveRents)
+                    .ThenInclude(x => x.TrxRentHistories)
+                    .ThenInclude(x => x.Borrower)
+                .AsNoTracking()
+                .Where(x => x.IsActive == true && x.IsArchiveActive == true && x.TrxArchiveRents.FirstOrDefault().TrxArchiveRentId != null && x.TrxArchiveRents.FirstOrDefault().ReturnDate != null)
+                .Select(x => new ReportArchiveLoansInActive
+                {
+                    PemilikArsip = x.ArchiveOwner.ArchiveOwnerName,
+                    AsalArsip = x.TypeSender,
+                    UnitPencipta = x.Creator.CreatorName,
+                    Jumlah = x.Volume,
+                    KodeKlasifikasi = x.SubSubjectClassification.SubjectClassification.SubjectClassificationCode ?? string.Empty,
+                    NoArsip = x.DocumentNo,
+                    JenisArsip = x.ArchiveType.ArchiveTypeName,
+                    NamaPeminjam = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerName,
+                    Perusahaan = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany,
+                    UnitKerja = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerArchiveUnit,
+                    TanggalPinjam = x.TrxArchiveRents.FirstOrDefault().ApprovalDate,
+                    TanggalKembali = x.TrxArchiveRents.FirstOrDefault().ReturnDate,
+                    Period = x.CreatedDateArchive
+                }).ToListAsync();
+
+            return query;
         }
 
         public async Task<IEnumerable<ReportArchiveProcessingInActive>> GetReportArchiveProcessingInActive()
@@ -193,9 +222,7 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<ReportTransferMediaArchiveInActive>> GetReportTransferMediaArchiveInActive()
         {
-            await Task.Delay(0);
-
-            var query = _context.TrxArchives
+            var query = await _context.TrxArchives
                 .Include(x => x.Creator)
                     .ThenInclude(x => x.ArchiveUnit.Company)
                 .Include(x => x.ArchiveOwner)
@@ -216,20 +243,10 @@ namespace Ardita.Repositories.Classess
                     KodeKlasifikasi = x.SubSubjectClassification.SubSubjectClassificationCode,
                     NoArsip = x.DocumentNo,
                     TipeArsip = x.ArchiveType.ArchiveTypeName
-                }).ToList()
-                .GroupBy( x => new {
-                    x.Perusahaan, 
-                    x.AsalArsip,
-                    x.UnitPencipta,
-                    x.Periode,
-                    x.Jumlah,
-                    x.TanggalPindai,
-                    x.KodeKlasifikasi,
-                    x.NoArsip,
-                    x.TipeArsip
-                });
+                }).ToListAsync();
+                
 
-            return (IEnumerable<ReportTransferMediaArchiveInActive>)query;
+            return query;
         }
     }
 }
