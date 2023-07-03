@@ -71,4 +71,16 @@ namespace Ardita.Report
         public string RetensiInAktif { get; set; }
         public string KodeMediaSimpan { get; set; }
     }
+
+    public class ArchiveUsed
+    {
+        public string NoDocumen { get; set; }
+        public string NoItemArsip { get; set; }
+        public string KodeKlasifikasi { get; set; }
+        public string JudulArsip { get; set; }
+        public string UraianInformasiArsip { get; set; }
+        public DateTime Tanggal { get; set; }
+        public string Jumlah { get; set; }
+        public string KodeMediaSimpan { get; set; }
+    }
 }

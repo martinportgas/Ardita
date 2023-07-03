@@ -13,6 +13,7 @@
     <Content Remove="wwwroot\Report\RptArchiveActive.rdlc" />
     <Content Remove="wwwroot\Report\RptReportArchiveDestroy.rdlc" />
     <Content Remove="wwwroot\Report\RptReportArchiveMovement.rdlc" />
+    <Content Remove="wwwroot\Report\RptReportArchiveUsed.rdlc" />
     <Content Remove="wwwroot\Report\RptReportDocument.rdlc" />
     <Content Remove="wwwroot\Report\RptReportTransferMedia.rdlc" />
   </ItemGroup>
@@ -172,6 +173,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\Report\RptReportArchiveMovement.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptReportArchiveUsed.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\Report\RptReportTransferMedia.rdlc">

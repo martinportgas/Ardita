@@ -14,5 +14,6 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<TransferMedia>> GetTransferMedias();
         Task<IEnumerable<ArchiveMovement>> GetArchiveMovements();
         Task<IEnumerable<ArchiveDestroy>> GetArchiveDestroys();
+        Task<IEnumerable<ArchiveUsed>> GetArchiveUseds();
     }
 }

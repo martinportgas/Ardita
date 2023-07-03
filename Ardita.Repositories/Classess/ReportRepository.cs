@@ -100,6 +100,28 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
+        public async Task<IEnumerable<ArchiveUsed>> GetArchiveUseds()
+        {
+            var result = await _context.TrxArchives
+            .Include(x => x.TrxArchiveOutIndicators)
+            .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage)
+            .Where(x => x.IsActive == true && x.IsArchiveActive == true)
+            .Select(x => new ArchiveUsed
+            {
+                NoDocumen = x.DocumentNo,
+                NoItemArsip = x.ArchiveCode,
+                KodeKlasifikasi = x.SubSubjectClassification.SubjectClassification.Classification.ClassificationCode,
+                JudulArsip = x.TitleArchive,
+                UraianInformasiArsip = x.ArchiveDescription,
+                Tanggal = x.CreatedDateArchive,
+                Jumlah = x.Volume.ToString(),
+                KodeMediaSimpan = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.MediaStorageCode
+            })
+            .ToListAsync();
+            return result;
+        }
+
         public async Task<IEnumerable<ReportDocument>> GetReportDocument()
         {
             var result = await _context.TrxArchives

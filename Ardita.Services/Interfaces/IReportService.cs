@@ -15,5 +15,6 @@ namespace Ardita.Services.Interfaces
         Task<byte[]> GenerateReportTransferMediaAsync(string reportName);
         Task<byte[]> GenerateReportArchiveMovementAsync(string reportName);
         Task<byte[]> GenerateReportArchiveDestroyAsync(string reportName);
+        Task<byte[]> GenerateReportArchiveUsedAsync(string reportName);
     }
 }

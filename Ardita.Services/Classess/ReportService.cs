@@ -97,5 +97,17 @@ namespace Ardita.Services.Classess
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }
+
+        public async Task<byte[]> GenerateReportArchiveUsedAsync(string reportName)
+        {
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            var report = new LocalReport(rdlcFilePath);
+            var parameters = new Dictionary<string, string>();
+            var data = await _reportRepository.GetArchiveUseds();
+
+            report.AddDataSource("dsArchiveUsed", data.ToList());
+            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            return result.MainStream;
+        }
     }
 }
