@@ -11,7 +11,13 @@
   <ItemGroup>
     <Content Remove="wwwroot\Report\RptArchive.rdlc" />
     <Content Remove="wwwroot\Report\RptArchiveActive.rdlc" />
+    <Content Remove="wwwroot\Report\RptArchiveLoansInActive.rdlc" />
+    <Content Remove="wwwroot\Report\RptListArchiveInActive.rdlc" />
+    <Content Remove="wwwroot\Report\RptListOfPurposeDestructionInActive.rdlc" />
+    <Content Remove="wwwroot\Report\RptReportArchiveProcessingInActive.rdlc" />
+    <Content Remove="wwwroot\Report\RptReportArchiveReceivedInActive.rdlc" />
     <Content Remove="wwwroot\Report\RptReportDocument.rdlc" />
+    <Content Remove="wwwroot\Report\RptTransferMediaArchiveInActive.rdlc" />
   </ItemGroup>
 
   <!--<ItemGroup>
@@ -163,6 +169,24 @@
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="wwwroot\Report\RptArchive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptListOfPurposeDestructionInActive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptListArchiveInActive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptArchiveLoansInActive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptTransferMediaArchiveInActive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptReportArchiveProcessingInActive.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Report\RptReportArchiveReceivedInActive.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\Report\RptReportDocument.rdlc">
