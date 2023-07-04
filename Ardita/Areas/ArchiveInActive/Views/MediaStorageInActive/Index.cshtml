@@ -91,7 +91,10 @@
                             var remove = row.status === 'Draft' ? `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-trash"></i> </a>` : "";
                             remove = remove.replace("-1", row.mediaStorageInActiveId);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+                            var download = row.statusId == @((int)GlobalConst.STATUS.Draft) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            download = download.replace("-1", data);
+
+                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", download);
                             return JoinButton;
                         }
                     },

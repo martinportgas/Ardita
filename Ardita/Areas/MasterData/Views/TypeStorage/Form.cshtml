@@ -149,7 +149,16 @@
             initDropdown();
 
             $("#btn-add-detail").click(function () {
-                initDetail($("#GmdDetailId").val(), $("#GmdDetailName").val(), $("#txtSize").val(), $("#GmdUnit").val());
+                var valid = true;
+                $('.gmdDetail').each(function () {
+                    if ($(this).val().split('#')[0] == $("#GmdDetailId").val()) {
+                        alert("GMD Detail sudah terpilih. Silahkan tambahkan GMD Detail Lain");
+                        valid = false;
+                    }
+                });
+                if (valid) {
+                    initDetail($("#GmdDetailId").val(), $("#GmdDetailName").val(), $("#txtSize").val(), $("#GmdUnit").val());
+                }
             });
 
             if ("@form.CurrentAction" != "@GlobalConst.Add") 
@@ -162,12 +171,16 @@
 
         });
 
+        function remove(e) {
+            e.parent().parent().remove();
+        }
+
         function initDetail(gmdDetailId, name, size, unit) {
             if (name === "" || unit === "" || size === "") {
                 alert("Please Input Gmd Header, Detail and Size");
                 return false;
             }
-            $(".detail").append(`<tr><td><i class="fa fa-trash"></i></td><td>${name}</td><td>${size}</td><td>${unit}</td></tr><input type="hidden" name="detail[]" value="${gmdDetailId}#${size}">`);
+            $(".detail").append(`<tr><td><i class="fa fa-trash" onclick="remove($(this))"></i></td><td>${name}<input class="gmdDetail" type="hidden" name="detail[]" value="${gmdDetailId}#${size}"></td><td>${size}</td><td>${unit}</td></tr>`);
         }
 
         function initDropdown() {
@@ -176,6 +189,12 @@
             });
 
             $('#txtGmdDetail').on('change', function () {
+                if ($(this).val() == '') {
+                    $("#GmdDetailId").val('');
+                    $("#GmdDetailName").val('');
+                    $("#GmdUnit").val('');
+                    return false;
+                }
                 var url = '@Url.Action(GlobalConst.BindGmdDetailById, GlobalConst.TypeStorage, new { Area = GlobalConst.MasterData })';
 
                 $.ajax({

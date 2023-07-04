@@ -5,6 +5,8 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+
 
 namespace Ardita.Areas.ArchiveInActive.Controllers
 {
@@ -17,7 +19,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             IClassificationSubjectService classificationSubjectService,
             IClassificationSubSubjectService classificationSubSubjectService,
             IArchiveService archiveService,
-            IMediaStorageInActiveService mediaStorageInActiveService
+            IMediaStorageInActiveService mediaStorageInActiveService,
+            IHostingEnvironment hostingEnvironment
             )
         {
             _archiveRentService = archiveRentService;
@@ -25,6 +28,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _classificationSubSubjectService = classificationSubSubjectService;
             _archiveService = archiveService;
             _MediaStorageInActiveService = mediaStorageInActiveService;
+            _hostingEnvironment = hostingEnvironment;
+
         }
         public override async Task<ActionResult> Index() => await base.Index();
         public override async Task<JsonResult> GetData(DataTablePostModel model)
@@ -165,6 +170,18 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             {
                 return RedirectToIndex();
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(Guid Id)
+        {
+            TrxArchiveRent data = await _archiveRentService.GetById(Id);
+
+            var result = await _MediaStorageInActiveService.GetDetails(data.ArchiveId);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Peminjaman_Arsip.docx");
+            var file = Label.GenerateBARent(FilePath, data, result);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.RentCode}.pdf");
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive });
     }

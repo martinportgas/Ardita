@@ -20,6 +20,10 @@ public class SubTypeStorageService : ISubTypeStorageService
     {
         return await _subTypeStorageRepository.DeleteIDXSubTypeStorage(id);
     }
+    public async Task<int> DeleteGMDSubTypeStorage(Guid id)
+    {
+        return await _subTypeStorageRepository.DeleteGMDSubTypeStorage(id);
+    }
     public async Task<IEnumerable<MstSubTypeStorage>> GetAll()
     {
         return await _subTypeStorageRepository.GetAll();
@@ -76,9 +80,17 @@ public class SubTypeStorageService : ISubTypeStorageService
     {
         return await _subTypeStorageRepository.InsertBulkIDXTypeStorage(idxSubTypeStorages);
     }
+    public async Task<bool> InsertBulkGMDTypeStorage(List<MstSubTypeStorageDetail> MstSubTypeStorageDetail)
+    {
+        return await _subTypeStorageRepository.InsertBulkGMDTypeStorage(MstSubTypeStorageDetail);
+    }
     public async Task<int> InsertIDXSubTypeStorage(IdxSubTypeStorage model)
     {
         return await _subTypeStorageRepository.InsertIDXSubTypeStorage(model);
+    }
+    public async Task<int> InsertGMDSubTypeStorage(MstSubTypeStorageDetail model)
+    {
+        return await _subTypeStorageRepository.InsertGMDSubTypeStorage(model);
     }
     public async Task<int> Update(MstSubTypeStorage model)
     {

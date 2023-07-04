@@ -48,7 +48,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                 .ThenInclude(c => c.Creator)
             .Include(x => x.TrxMediaStorageInActiveDetails)
                 .ThenInclude(x => x.SubTypeStorage)
-            .Include(s => s.SubSubjectClassification)
+            .Include(s => s.SubSubjectClassification.Creator)
             .Include(t => t.TypeStorage)
                 .ThenInclude(a => a.ArchiveUnit)
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor)
@@ -85,10 +85,10 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<object>> GetDetailByArchiveIdAndSort(Guid id, int sort)
+    public async Task<IEnumerable<VwArchiveRent>> GetDetailByArchiveIdAndSort(Guid id, int sort)
     {
         var results = await _context.VwArchiveRents
-            .Where(x => x.ArchiveId == id || x.Sort == sort)
+            .Where(x => x.MediaStorageInActiveId == id && x.Sort == sort)
             .ToListAsync();
             
         return results;

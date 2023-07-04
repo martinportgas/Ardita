@@ -264,7 +264,7 @@ public abstract class BaseController<T> : Controller
         return data.Select(x => new SelectListItem
         {
             Value = x.SubjectClassificationId.ToString(),
-            Text = x.SubjectClassificationName
+            Text = x.SubjectClassificationCode + " - " + x.SubjectClassificationName
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindBorrower()

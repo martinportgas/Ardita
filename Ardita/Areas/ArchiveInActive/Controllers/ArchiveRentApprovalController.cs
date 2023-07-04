@@ -84,6 +84,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
 
             return RedirectToIndex();
         }
+        
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive });
     }
 }

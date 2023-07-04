@@ -7,7 +7,13 @@ public partial class TrxArchiveRent
 {
     public Guid TrxArchiveRentId { get; set; }
 
+    public string? RentCode { get; set; }
+
     public Guid ArchiveId { get; set; }
+
+    public Guid? MediaStorageInActiveId { get; set; }
+
+    public int? Sort { get; set; }
 
     public DateTime? RequestedDate { get; set; }
 
@@ -39,7 +45,11 @@ public partial class TrxArchiveRent
 
     public Guid? UpdatedBy { get; set; }
 
+    public virtual MstUser? ApprovedByNavigation { get; set; }
+
     public virtual TrxArchive Archive { get; set; } = null!;
+
+    public virtual TrxMediaStorageInActive? MediaStorageInActive { get; set; }
 
     public virtual MstStatus? Status { get; set; }
 

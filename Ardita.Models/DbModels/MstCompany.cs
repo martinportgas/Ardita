@@ -13,6 +13,8 @@ public partial class MstCompany
 
     public string? Address { get; set; }
 
+    public string? City { get; set; }
+
     public string? Telepone { get; set; }
 
     public string? Email { get; set; }

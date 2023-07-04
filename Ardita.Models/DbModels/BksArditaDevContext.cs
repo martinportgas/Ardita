@@ -143,7 +143,7 @@ public partial class BksArditaDevContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.STAGGING;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -382,6 +382,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("address");
+            entity.Property(e => e.City)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("city");
             entity.Property(e => e.CompanyCode)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -1735,7 +1739,12 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("description");
+            entity.Property(e => e.MediaStorageInActiveId).HasColumnName("media_storage_in_active_id");
             entity.Property(e => e.RejectedBy).HasColumnName("rejected_by");
+            entity.Property(e => e.RentCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("rent_code");
             entity.Property(e => e.RequestedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("requested_date");
@@ -1748,16 +1757,25 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.ReturnDate)
                 .HasColumnType("datetime")
                 .HasColumnName("return_date");
+            entity.Property(e => e.Sort).HasColumnName("sort");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
 
+            entity.HasOne(d => d.ApprovedByNavigation).WithMany(p => p.TrxArchiveRents)
+                .HasForeignKey(d => d.ApprovedBy)
+                .HasConstraintName("FK_TRX_ARCHIVE_RENT_MST_USER");
+
             entity.HasOne(d => d.Archive).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.ArchiveId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_RENT_TRX_ARCHIVE");
+
+            entity.HasOne(d => d.MediaStorageInActive).WithMany(p => p.TrxArchiveRents)
+                .HasForeignKey(d => d.MediaStorageInActiveId)
+                .HasConstraintName("FK_TRX_ARCHIVE_RENT_TRX_MEDIA_STORAGE_IN_ACTIVE");
 
             entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.StatusId)
@@ -2556,9 +2574,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasNoKey()
                 .ToView("VW_ARCHIVE_RENT");
 
+            entity.Property(e => e.ArchiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("archive_code");
             entity.Property(e => e.ArchiveUnit)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+            entity.Property(e => e.ArchiveYear).HasColumnName("Archive_Year");
             entity.Property(e => e.ClassificationName)
                 .HasMaxLength(200)
                 .IsUnicode(false);
@@ -2568,6 +2591,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.MediaStorageInActiveCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.MediaStorageInActiveId).HasColumnName("media_storage_in_active_id");
             entity.Property(e => e.RequestedDate).HasColumnType("datetime");
             entity.Property(e => e.RequestedReturnDate).HasColumnType("datetime");
             entity.Property(e => e.StatusName)
@@ -2585,6 +2609,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.TitleArchive)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+            entity.Property(e => e.Volume).HasColumnName("volume");
         });
 
         modelBuilder.Entity<VwArchiveRetention>(entity =>

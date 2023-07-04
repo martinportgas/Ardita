@@ -14,9 +14,12 @@ public interface ISubTypeStorageService
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstSubTypeStorage model);
     Task<int> InsertIDXSubTypeStorage(IdxSubTypeStorage model);
+    Task<int> InsertGMDSubTypeStorage(MstSubTypeStorageDetail model);
     Task<bool> InsertBulk(List<MstSubTypeStorage> mstSubTypeStorages);
     Task<bool> InsertBulkIDXTypeStorage(List<IdxSubTypeStorage> idxSubTypeStorages);
+    Task<bool> InsertBulkGMDTypeStorage(List<MstSubTypeStorageDetail> MstSubTypeStorageDetail);
     Task<int> Delete(MstSubTypeStorage model);
     Task<int> DeleteIDXSubTypeStorage(Guid id);
+    Task<int> DeleteGMDSubTypeStorage(Guid id);
     Task<int> Update(MstSubTypeStorage model);
 }

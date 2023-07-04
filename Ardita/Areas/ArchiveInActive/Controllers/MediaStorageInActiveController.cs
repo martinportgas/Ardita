@@ -4,6 +4,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.ArchiveInActive.Controllers;
 
@@ -24,7 +25,8 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ILevelService levelService,
         IRowService rowService,
         IGmdService gmdService,
-        ISubTypeStorageService subTypeStorageService
+        ISubTypeStorageService subTypeStorageService,
+        IHostingEnvironment hostingEnvironment
         )
     {
         _MediaStorageInActiveService = mediaStorageInActiveService;
@@ -40,6 +42,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _rowService = rowService;
         _gmdService = gmdService;
         _subTypeStorageService = subTypeStorageService;
+        _hostingEnvironment = hostingEnvironment;
     }
     public override async Task<ActionResult> Index() => await base.Index();
 
@@ -151,6 +154,15 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
             return RedirectToIndex();
         }
     }
+    [HttpGet]
+    public async Task<IActionResult> DownloadFile(Guid Id)
+    {
+        TrxMediaStorageInActive data = await _MediaStorageInActiveService.GetById(Id);
 
+        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchiveInActive.docx");
+        var file = Label.GenerateLabelInActive(FilePath, data, data.TrxMediaStorageInActiveDetails);
+
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.MediaStorageInActiveCode}.pdf");
+    }
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive });
 }

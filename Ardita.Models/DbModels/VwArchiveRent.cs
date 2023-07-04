@@ -5,6 +5,14 @@ namespace Ardita.Models.DbModels;
 
 public partial class VwArchiveRent
 {
+    public int Volume { get; set; }
+
+    public int? ArchiveYear { get; set; }
+
+    public string? ArchiveCode { get; set; }
+
+    public Guid MediaStorageInActiveId { get; set; }
+
     public Guid SubSubjectClassificationId { get; set; }
 
     public string? SubSubjectClassificationName { get; set; }
@@ -13,7 +21,7 @@ public partial class VwArchiveRent
 
     public string? SubjectClassificationName { get; set; }
 
-    public string? ClassificationName { get; set; }
+    public string ClassificationName { get; set; } = null!;
 
     public string MediaStorageInActiveCode { get; set; } = null!;
 

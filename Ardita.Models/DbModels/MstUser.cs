@@ -44,4 +44,6 @@ public partial class MstUser
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementCreatedByNavigations { get; } = new List<TrxArchiveMovement>();
 
     public virtual ICollection<TrxArchiveMovement> TrxArchiveMovementReceivedByNavigations { get; } = new List<TrxArchiveMovement>();
+
+    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
 }

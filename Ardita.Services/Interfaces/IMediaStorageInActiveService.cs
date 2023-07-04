@@ -7,7 +7,7 @@ namespace Ardita.Services.Interfaces;
 public interface IMediaStorageInActiveService
 {
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
-    Task<IEnumerable<object>> GetDetails(Guid id);
+    Task<IEnumerable<VwArchiveRent>> GetDetails(Guid id);
     Task<IEnumerable<object>> GetDetailArchive(Guid id);
     Task<int> Insert(TrxMediaStorageInActive model, string[] listSts, string[] listArchive);
     Task<int> Update(TrxMediaStorageInActive model, string[] listSts, string[] listArchive);

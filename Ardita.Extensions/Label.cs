@@ -102,6 +102,11 @@ public static class Label
             }
         }
 
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+
         Section section = document.Sections[0];
         TextSelection selection2 = document.FindString("[ListArchive]", true, true);
         range = selection2.GetAsOneRange();
@@ -158,11 +163,6 @@ public static class Label
             toArray = memoryStream.ToArray();
         }
 
-        if (File.Exists(file))
-        {
-            File.Delete(file);
-        }
-
         return toArray;
     }
     public static byte[] GenerateBAMovement(string template, TrxArchiveMovement data, IEnumerable<TrxArchiveMovementDetail> detail, dynamic FromData, dynamic ReceivedData)
@@ -210,6 +210,11 @@ public static class Label
             }
         }
 
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+
         file = QRCodeExtension.Generate(ReceivedData.Nik + " - " + ReceivedData.Name, 2);
         index = 0;
         range = null;
@@ -231,6 +236,11 @@ public static class Label
                 range.OwnerParagraph.ChildObjects.Remove(range);
 
             }
+        }
+
+        if (File.Exists(file))
+        {
+            File.Delete(file);
         }
 
         Section section = document.Sections[0];
@@ -289,9 +299,330 @@ public static class Label
             toArray = memoryStream.ToArray();
         }
 
+        return toArray;
+    }
+    public static byte[] GenerateBARent(string template, TrxArchiveRent data, IEnumerable<VwArchiveRent> detail)
+    {
+        System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("id-ID");
+        byte[] toArray;
+        Document document = new();
+        document.LoadFromFile(template);
+        document.Replace("[no_ba]", data.RentCode, false, true);
+        document.Replace("[dd]", ((DateTime)data.ApprovalDate).ToString("dd"), false, true);
+        document.Replace("[dddd]", ((DateTime)data.ApprovalDate).ToString("dddd", culture), false, true);
+        document.Replace("[ddString]", Global.Terbilang(((DateTime)data.ApprovalDate).Day), false, true);
+        document.Replace("[MMString]", Global.Terbilang(((DateTime)data.ApprovalDate).Month), false, true);
+        document.Replace("[dd-MM-yyyy]", ((DateTime)data.ApprovalDate).ToString("dd-MM-yyyy"), false, true);
+        document.Replace("[archive_unit]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
+        document.Replace("[company]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.CompanyName, false, true);
+        document.Replace("[company_address]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.Address, false, true);
+        document.Replace("[bor_name]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName, false, true);
+        document.Replace("[bor_nip]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber, false, true);
+        document.Replace("[bor_pos]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPosition, false, true);
+        document.Replace("[bor_uker]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerArchiveUnit, false, true);
+        document.Replace("[bor_company]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany, false, true);
+        document.Replace("[apr_name]", data.ApprovedByNavigation.Employee.Name, false, true);
+        document.Replace("[apr_nip]", data.ApprovedByNavigation.Employee.Nik, false, true);
+        document.Replace("[apr_pos]", data.ApprovedByNavigation.Employee.Position.Name, false, true);
+        document.Replace("[apr_uker]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
+        document.Replace("[apr_company]", data.ApprovedByNavigation.Employee.Company.CompanyName, false, true);
+        document.Replace("[company_city]", data.ApprovedByNavigation.Employee.Company.City, false, true);
+        document.Replace("[description]", data.Description, false, true);
+        document.Replace("[dd MMMM yyyy]", ((DateTime)data.ApprovalDate).ToString("dd MMMM yyyy", culture), false, true);
+
+        var file = QRCodeExtension.Generate(data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber + " - " + data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName, 2);
+        int index = 0;
+        TextRange range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString("QR1", true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
+        }
+
         if (File.Exists(file))
         {
             File.Delete(file);
+        }
+
+        file = QRCodeExtension.Generate(data.ApprovedByNavigation.Employee.Nik + " - " + data.ApprovedByNavigation.Employee.Name, 2);
+        index = 0;
+        range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString("QR2", true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+
+            }
+        }
+
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+
+        file = QRCodeExtension.Generate(data.TrxArchiveRentId.ToString(), 2);
+        index = 0;
+        range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString("QRRent", true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+
+            }
+        }
+
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+
+        Section section = document.Sections[0];
+        TextSelection selection2 = document.FindString("[list_archive]", true, true);
+        range = selection2.GetAsOneRange();
+        Paragraph paragraph = range.OwnerParagraph;
+        Body body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        string[] Header = { "No", "Subjek", "Kode Arsip", "Judul Arsip", "Tahun", "Jumlah" };
+
+        Table table = section.AddTable(true);
+        table.ResetCells(detail.Count() + 1, Header.Length);
+
+        TableRow FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 23;
+        FRow.RowFormat.BackColor = Color.LightGray;
+        for (int i = 0; i < Header.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Header[i]);
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 10;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        int x = 1;
+        foreach (VwArchiveRent item in detail)
+        {
+            TableRow DataRow = table.Rows[x];
+            DataRow.Height = 20;
+
+            SetRowData(0, DataRow, x.ToString());
+            SetRowData(1, DataRow, item.SubjectClassificationName!);
+            SetRowData(2, DataRow, item.ArchiveCode);
+            SetRowData(3, DataRow, item.TitleArchive);
+            SetRowData(4, DataRow, item.ArchiveYear.ToString());
+            SetRowData(5, DataRow, item.Volume.ToString());
+
+            x++;
+        }
+
+        table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        using (MemoryStream memoryStream = new())
+        {
+            document.SaveToStream(memoryStream, FileFormat.PDF);
+            toArray = memoryStream.ToArray();
+        }
+
+        return toArray;
+    }
+    public static byte[] GenerateLabelInActive(string template, TrxMediaStorageInActive data, IEnumerable<TrxMediaStorageInActiveDetail> detail)
+    {
+        System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("id-ID");
+        byte[] toArray;
+        Document document = new();
+        document.LoadFromFile(template);
+
+        int index = 0;
+        TextRange range = null;
+
+        Section section = document.Sections[0];
+        TextSelection selection2 = document.FindString("LokasiSimpan", true, true);
+        range = selection2.GetAsOneRange();
+        Paragraph paragraph = range.OwnerParagraph;
+        Body body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        string storageLoc = data.Row.Level.Rack.RackCode + "-" + data.Row.Level.LevelCode + data.Row.RowCode;
+        char[] Header = storageLoc.ToCharArray();
+
+        Table table = section.AddTable(true);
+        table.ResetCells(1, Header.Length);
+
+        TableRow FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 50;
+        for (int i = 0; i < Header.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            FRow.Cells[i].Width = 50;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Header[i].ToString());
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 40;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        //table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+        table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        selection2 = document.FindString("KodeUker", true, true);
+        range = selection2.GetAsOneRange();
+        paragraph = range.OwnerParagraph;
+        body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        string creator = data.SubSubjectClassification.Creator.CreatorCode;
+        Header = creator.ToCharArray();
+
+        table = section.AddTable(true);
+        table.ResetCells(1, Header.Length);
+
+        FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 50;
+        for (int i = 0; i < Header.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            FRow.Cells[i].Width = 50;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Header[i].ToString());
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 40;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        //table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+        table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        selection2 = document.FindString("NomerBerkas", true, true);
+        range = selection2.GetAsOneRange();
+        paragraph = range.OwnerParagraph;
+        body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        var start = detail.OrderBy(x => x.Sort).FirstOrDefault();
+        var end = detail.OrderByDescending(x => x.Sort).FirstOrDefault();
+        string nomorberkas = start.Sort.ToString("D2") + (start == end ? start.Sort.ToString("D2") : end.Sort.ToString("D2")) + data.ArchiveYear.Substring(2, 2);
+        Header = nomorberkas.ToCharArray();
+
+        table = section.AddTable(true);
+        table.ResetCells(1, Header.Length);
+
+        FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 50;
+        for (int i = 0; i < Header.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            FRow.Cells[i].Width = 50;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Header[i].ToString());
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 40;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        //table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+        table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        selection2 = document.FindString("KodeBOX", true, true);
+        range = selection2.GetAsOneRange();
+        paragraph = range.OwnerParagraph;
+        body = paragraph.OwnerTextBody;
+        index = body.ChildObjects.IndexOf(paragraph);
+
+        string kode = data.MediaStorageInActiveCode;
+        string[] Headers = new string[] { kode };
+
+        table = section.AddTable(true);
+        table.ResetCells(1, Headers.Length);
+
+        FRow = table.Rows[0];
+        FRow.IsHeader = true;
+
+        FRow.Height = 120;
+        for (int i = 0; i < Headers.Length; i++)
+        {
+            Paragraph p = FRow.Cells[i].AddParagraph();
+            FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            FRow.Cells[i].Width = 120;
+            p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextRange TR = p.AppendText(Headers[i].ToString());
+            TR.CharacterFormat.FontName = "Calibri";
+            TR.CharacterFormat.FontSize = 60;
+            TR.CharacterFormat.Bold = true;
+        }
+
+        table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+        body.ChildObjects.Remove(paragraph);
+        body.ChildObjects.Insert(index, table);
+
+        using (MemoryStream memoryStream = new())
+        {
+            document.SaveToStream(memoryStream, FileFormat.PDF);
+            toArray = memoryStream.ToArray();
         }
 
         return toArray;

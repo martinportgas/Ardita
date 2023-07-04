@@ -51,6 +51,21 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         return result;
     }
 
+    public async Task<int> DeleteGMDSubTypeStorage(Guid id)
+    {
+        int result = 0;
+
+        var data = await _context.MstSubTypeStorageDetails
+            .AsNoTracking()
+            .Where(x => x.SubTypeStorageId == id).ToListAsync();
+
+        if (data != null)
+        {
+            _context.MstSubTypeStorageDetails.RemoveRange(data);
+            result = await _context.SaveChangesAsync();
+        }
+        return result;
+    }
     public async Task<IEnumerable<MstSubTypeStorage>> GetAll()
     {
         return await _context.MstSubTypeStorages
@@ -138,6 +153,7 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
     public async Task<IEnumerable<MstSubTypeStorage>> GetById(Guid id)
     {
         var data = await _context.MstSubTypeStorages
+            .Include(x => x.MstSubTypeStorageDetails).ThenInclude(x => x.GmdDetail)
             .Include(x => x.IdxSubTypeStorages)
             .ThenInclude(x => x.TypeStorage)
            .AsNoTracking()
@@ -206,6 +222,17 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         }
         return result;
     }
+    public async Task<bool> InsertBulkGMDTypeStorage(List<MstSubTypeStorageDetail> MstSubTypeStorageDetail)
+    {
+        bool result = false;
+        if (MstSubTypeStorageDetail.Count() > 0)
+        {
+            await _context.AddRangeAsync(MstSubTypeStorageDetail);
+            await _context.SaveChangesAsync();
+            result = true;
+        }
+        return result;
+    }
 
     public async Task<int> InsertIDXSubTypeStorage(IdxSubTypeStorage model)
     {
@@ -214,6 +241,17 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         if (model != null)
         {
             _context.IdxSubTypeStorages.Add(model);
+            result = await _context.SaveChangesAsync();
+        }
+        return result;
+    }
+    public async Task<int> InsertGMDSubTypeStorage(MstSubTypeStorageDetail model)
+    {
+        int result = 0;
+
+        if (model != null)
+        {
+            _context.MstSubTypeStorageDetails.Add(model);
             result = await _context.SaveChangesAsync();
         }
         return result;

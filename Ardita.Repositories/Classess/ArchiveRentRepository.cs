@@ -158,7 +158,7 @@ namespace Ardita.Repositories.Classess
                     x.TrxArchiveRent.StatusId,
                     Status = x.TrxArchiveRent.Status.Name,
                     Color = x.TrxArchiveRent.Status.Color,
-                    UserCreatedBy = GetUserNameCreatedById(x.CreatedBy)
+                    UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
                 })
                 .ToListAsync();
 
@@ -168,6 +168,10 @@ namespace Ardita.Repositories.Classess
         public async Task<TrxArchiveRent> GetById(Guid id)
         {
             var result = await _context.TrxArchiveRents
+                .Include(x => x.TrxRentHistories).ThenInclude(x => x.Borrower)
+                .Include(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit.Company)
+                .Include(x => x.ApprovedByNavigation.Employee.Position)
+                .Include(x => x.ApprovedByNavigation.Creator)
                 .Include(x => x.Archive.SubSubjectClassification)
                 .Where(x => x.TrxArchiveRentId == id).ToListAsync();
             return result.FirstOrDefault();
@@ -178,6 +182,27 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
+                var detail = await _context.TrxMediaStorageInActiveDetails
+                .Include(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit)
+                .FirstOrDefaultAsync(x => x.ArchiveId == model.ArchiveId);
+
+                var countData = await _context.TrxArchiveRents.CountAsync();
+                int i = 1;
+                var validRentCode = string.Empty;
+                bool inValid = true;
+                while (inValid)
+                {
+                    validRentCode = $"BA.{(countData + i).ToString("D3")}/{detail.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                    int count = await _context.TrxArchiveRents.Where(x => x.RentCode == validRentCode).CountAsync();
+                    if (count > 0)
+                        i++;
+                    else
+                        inValid = false;
+                }
+
+                model.MediaStorageInActiveId = detail.MediaStorageInActiveId;
+                model.Sort = detail.Sort;
+                model.RentCode = validRentCode;
                 model.TrxArchiveRentId = new Guid();
                 model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
 
@@ -225,6 +250,29 @@ namespace Ardita.Repositories.Classess
                     await _context.SaveChangesAsync();
 
                     var history = new TrxRentHistory();
+
+                    var detail = await _context.TrxMediaStorageInActiveDetails
+                    .Include(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit)
+                    .FirstOrDefaultAsync(x => x.ArchiveId == model.ArchiveId);
+
+                    var countData = await _context.TrxArchiveRents.CountAsync();
+                    int i = 1;
+                    var validRentCode = string.Empty;
+                    bool inValid = true;
+                    while (inValid)
+                    {
+                        validRentCode = $"BA.{(countData + i).ToString("D3")}/{detail.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                        int count = await _context.TrxArchiveRents.Where(x => x.RentCode == validRentCode).CountAsync();
+                        if (count > 0)
+                            i++;
+                        else
+                            inValid = false;
+                    }
+
+                    model.MediaStorageInActiveId = detail.MediaStorageInActiveId;
+                    model.Sort = detail.Sort;
+                    model.RentCode = validRentCode;
+
                     history.RentHistoryId = new Guid();
                     history.TrxArchiveRentId = model.TrxArchiveRentId;
                     history.BorrowerId = borrower.BorrowerId;

@@ -19,12 +19,14 @@ namespace Ardita.Areas.MasterData.Controllers
     {
         public SubTypeStorageController(ISubTypeStorageService subTypeStorageService, 
             IArchiveUnitService archiveUnitService,
-            ITypeStorageService typeStorageService
+            ITypeStorageService typeStorageService, 
+            IGmdService gmdService
             )
         {
             _subTypeStorageService = subTypeStorageService;
             _archiveUnitService = archiveUnitService;
             _typeStorageService = typeStorageService;
+            _gmdService = gmdService;
         }
 
         #region MAIN ACTION
@@ -45,10 +47,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
         public override async Task<IActionResult> Add()
         {
-            ViewBag.listArchiveUnit = await BindArchiveUnits();
-            ViewBag.listTypeStorage = await BindTypeStorage();
-            Guid Id = Guid.Empty;
-            ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+            await BindAllDropdown(Guid.Empty);
             return View(GlobalConst.Form, new MstSubTypeStorage());
         }
 
@@ -57,9 +56,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _subTypeStorageService.GetById(Id);
             if (data is not null)
             {
-                ViewBag.listArchiveUnit = await BindArchiveUnits();
-                ViewBag.listTypeStorage = await BindTypeStorage();
-                ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+                await BindAllDropdown(Id);
                 return View(GlobalConst.Form, data.FirstOrDefault());
             }
             else
@@ -73,9 +70,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _subTypeStorageService.GetById(Id);
             if (data is not null)
             {
-                ViewBag.listArchiveUnit = await BindArchiveUnits();
-                ViewBag.listTypeStorage = await BindTypeStorage();
-                ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+                await BindAllDropdown(Id);
                 return View(GlobalConst.Form, data.FirstOrDefault());
             }
             else
@@ -89,9 +84,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _subTypeStorageService.GetById(Id);
             if (data is not null)
             {
-                ViewBag.listArchiveUnit = await BindArchiveUnits();
-                ViewBag.listTypeStorage = await BindTypeStorage();
-                ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+                await BindAllDropdown(Id);
                 return View(GlobalConst.Form, data.FirstOrDefault());
             }
             else
@@ -99,12 +92,19 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToIndex();
             }
         }
+        protected async Task BindAllDropdown(Guid Id)
+        {
+            ViewBag.listArchiveUnit = await BindArchiveUnits();
+            ViewBag.listTypeStorage = await BindTypeStorage();
+            ViewBag.subDetail = await _subTypeStorageService.GetAllBySubTypeStorageId(Id);
+            ViewBag.listGmd = await BindGmds();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Save(IdxSubTypeStorage model)
         {
-            if (model != null) 
+            if (model != null)
             {
                 //Insert Header
                 MstSubTypeStorage header = new();
@@ -142,6 +142,33 @@ namespace Ardita.Areas.MasterData.Controllers
                         idxSubTypeStorage.CreatedDate = DateTime.Now;
 
                         await _subTypeStorageService.InsertIDXSubTypeStorage(idxSubTypeStorage);
+                    }
+                }
+
+                var listDetail = Request.Form[GlobalConst.DetailArray].ToArray();
+
+                MstSubTypeStorageDetail MstSubTypeStorageDetail;
+
+
+                await _subTypeStorageService.DeleteGMDSubTypeStorage(header.SubTypeStorageId);
+
+                for (int i = 0; i < listDetail.Length; i++)
+                {
+                    var idxSubTypeStorages = listDetail[i].Split('#');
+
+                    Guid typeStorageId = Guid.Empty;
+                    Guid.TryParse(idxSubTypeStorages[0], out typeStorageId);
+
+                    if (!string.IsNullOrEmpty(idxSubTypeStorages[0]))
+                    {
+                        MstSubTypeStorageDetail = new();
+                        MstSubTypeStorageDetail.GmdDetailId = typeStorageId;
+                        MstSubTypeStorageDetail.Size = int.Parse(idxSubTypeStorages[1]);
+                        MstSubTypeStorageDetail.SubTypeStorageId = header.SubTypeStorageId;
+                        MstSubTypeStorageDetail.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                        MstSubTypeStorageDetail.CreatedDate = DateTime.Now;
+
+                        await _subTypeStorageService.InsertGMDSubTypeStorage(MstSubTypeStorageDetail);
                     }
                 }
             }
