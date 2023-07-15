@@ -75,7 +75,7 @@
                 order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "mediaStorageInActiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "mediaStorageInActiveId", "name": "mediaStorageInActiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
@@ -98,12 +98,12 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "mediaStorageInActiveCode", "Code": "mediaStorageInActiveCode", "autoWidth": true },
-                    { "data": "archiveUnitName", "Code": "typeStorage.archiveUnit.archiveUnitName", "autoWidth": true },
-                    { "data": "typeStorageName", "Code": "typeStorage.typeStorageName", "autoWidth": true },
-                    { "data": "subSubjectClassificationName", "Code": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
-                    { "data": "creatorName", "Code": "subSubjectClassification.creator.creatorName", "autoWidth": true },
-                    { "data": "archiveYear", "Code": "archiveYear", "autoWidth": true },
+                    { "data": "mediaStorageInActiveCode", "name": "mediaStorageInActiveCode", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "typeStorage.archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "typeStorageName", "name": "typeStorage.typeStorageName", "autoWidth": true },
+                    { "data": "subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                    { "data": "creatorName", "name": "subSubjectClassification.creator.creatorName", "autoWidth": true },
+                    { "data": "archiveYear", "name": "archiveYear", "autoWidth": true },
                     {
                         "data": "status.name", "name": "extendName", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill ${row.color}" style="width:100%">${row.status}</span>`;

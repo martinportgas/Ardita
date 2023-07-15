@@ -100,6 +100,10 @@
                                                             <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DestroySchedule" id="txtDestroySchedule">
                                                         </div>
                                                         <div class="form-group">
+                                                            <label>Penanggung Jawab</label>
+                                                            <input type="text" placeholder="" id="txtResponsible" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Responsible">
+                                                        </div>
+                                                        <div class="form-group">
                                                             <label>Deskripsi</label>
                                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                                         </div>
