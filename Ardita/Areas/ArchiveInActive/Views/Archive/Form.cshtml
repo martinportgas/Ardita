@@ -1,0 +1,519 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.TrxArchive;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+
+    bool isEditable = false;
+    if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
+    {
+        isEditable = true;
+    }
+}
+
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet" />
+<link href="https://ernestbrandi.github.io/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css" rel="stylesheet" />
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Archive</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Archive Active
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveInActive})">Archive</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Archive</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <label>Kode Arsip</label>
+                                            <input type="text" asp-for="ArchiveCode" class="form-control readonly">
+                                            <input type="hidden" asp-for="CreatedBy">
+                                            <input type="hidden" asp-for="CreatedDate">
+                                            <input type="hidden" asp-for="IsActive">
+                                            <input type="hidden" asp-for="IsUsed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>GMD</label>
+                                            <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtGmdId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select GMD --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>GMD Detail</label>
+                                            <select asp-for="GmdDetailId" asp-items="ViewBag.listGmdDetail" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtGmdDetailId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select GMD Detail--">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Satuan</label>
+                                            <input type="text" placeholder="" id="txtGmdDetailUnit" class="form-control" asp-for="GmdDetail!.Unit" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tipe Pengirim</label>
+                                            <br />
+                                            <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
+                                            <label>Internal</label>
+                                            <input type="radio" placeholder="" id="txtExternal" value="External" asp-for="TypeSender">
+                                            <label>External</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Sub Subjek Klasifikasi</label>
+                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Kata Kunci</label>
+                                            <input type="text" placeholder="penawaran, bri, bks" id="txtKeyword" class="form-control" asp-for="Keyword">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nomor Dokumen</label>
+                                            <input asp-for="DocumentNo" type="text" placeholder="" id="txtDocumentNo" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Judul Arsip</label>
+                                            <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
+                                            <input type="text" placeholder="" id="txtTitleArchive" class="form-control" asp-for="TitleArchive">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Deskripsi Arsip</label>
+                                            <textarea type="number" placeholder="" id="txtArchiveDesc" class="form-control" asp-for="ArchiveDescription"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Klasifikasi Keamanan</label>
+                                            <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSecurityClassificationId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Select Security Classification --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Unit Pencipta</label>
+                                            <input asp-for="Creator.CreatorName" type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
+                                            <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
+                                            <input type="hidden" asp-for="StatusId" id="txtStatusId" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Asal Arsip</label>
+                                            <select asp-for="ArchiveOwnerId" asp-items="ViewBag.listArchiveOwner" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtSArchiveOwnerId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Pilih Asal Arsip --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tipe Arsip</label>
+                                            <select asp-for="ArchiveTypeId" asp-items="ViewBag.listArchiveType" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                    id="txtArchiveTypeId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- -- Pilih Tipe Arsip --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        @if (form.CurrentAction == GlobalConst.Add || form.CurrentAction == GlobalConst.Update)
+                                        {
+                                            <div class="form-group">
+                                                <label>File</label>
+                                                <input type="file" class="filepond" id="filepond" name="files" multiple data-allow-reorder="true"
+                                                       data-max-files="10">
+                                            </div>
+                                        }
+                                        @if (form.CurrentAction != GlobalConst.Add)
+                                        {
+                                            <div class="form-group">
+                                                <label>File Existing</label>
+
+                                                @if (Model.TrxFileArchiveDetails.Any())
+                                                {
+                                                    <ul>
+                                                        @foreach (var item in Model.TrxFileArchiveDetails)
+                                                        {
+                                                            <li id="@item.FileArchiveDetailId.ToString()">
+                                                                <a data-toggle="modal" href="#myModal@(item.FileArchiveDetailId)" data-target="#myModal@(item.FileArchiveDetailId)">
+                                                                    @item.FileName
+                                                                </a>
+                                                                <div id="myModal@(item.FileArchiveDetailId)" class="modal fade" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-lg">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h2 class="modal-title">Preview</h2>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-12">
+                                                                                        <object data="@Url.Action(GlobalConst.GetFileArchive, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive, Id = item.FileArchiveDetailId, IsDownload = false })" style="width:100%; height:500px">
+                                                                                            <embed src="@Url.Action(GlobalConst.GetFileArchive, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive, Id = item.FileArchiveDetailId, IsDownload = false })" style="width:100%;height:500px" />
+                                                                                        </object>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <hr />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (form.CurrentAction == GlobalConst.Update)
+                                                                {
+                                                                    <a onclick="deleteFile('@item.FileArchiveDetailId.ToString()')"><i class="fa fa-trash"></i></a>
+                                                                }
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </div>
+
+                                            <div id="temp-file-deleted"></div>
+                                        }
+
+                                        <div class="form-group" id="created_date">
+                                            <label class="font-normal">Tanggal Arsip</label>
+                                            <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive" max="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Retensi Aktif</label>
+                                            <input type="number" placeholder="" id="txtActiveRetention" class="form-control" asp-for="ActiveRetention">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Retensi In Aktif</label>
+                                            <input type="number" placeholder="" id="txtInactiveRetention" class="form-control" asp-for="InactiveRetention">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Jumlah</label>
+                                            <input type="number" placeholder="" id="txtVolume" class="form-control" asp-for="Volume">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Keterangan</label>
+                                            <textarea type="number" placeholder="" id="txtDesc" class="form-control" asp-for="Description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    @if (isEditable)
+                                    {
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                        
+                                        <button onclick="onSubmit(this, event, 'submit');"
+                                                class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                type="submit" id="btn-submit">
+                                            <i class="fa fa-paper-plane"></i> Submit
+                                        </button>
+                                        @if (Model.StatusId != (int)GlobalConst.STATUS.Submit)
+                                        {
+                                            <button onclick="onSubmit(this, event, 'draft');"
+                                                    class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                    type="submit" id="btn-submit">
+                                                <i class="fa fa-save"></i> Save As Draft
+                                            </button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action(GlobalConst.Index, GlobalConst.Archive, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+
+                                        if (form.CurrentAction == GlobalConst.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, 'submit');"
+                                                    class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                    type="submit" id="btn-submit">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+                                        }
+                                        
+                                    }
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
+<script src="https://ernestbrandi.github.io/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.js"></script>
+
+@section Scripts {
+    <script type="text/javascript">
+        var listFileArchiveDetailId = [];
+
+        $(function () {
+
+            if('@ViewBag.isModal' != ''){
+                $('.navbar').hide();
+                $('.page-heading').hide();
+                $('#btn-cancel').hide();
+            }
+
+            listFileArchiveDetailId = [];
+            initForms("@form.CurrentAction");
+
+            var mem = $('#created_date .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
+
+            FilePond.registerPlugin(
+                FilePondPluginFileEncode,
+                FilePondPluginFileValidateSize,
+                FilePondPluginImageExifOrientation,
+                FilePondPluginImagePreview,
+                FilePondPluginMediaPreview
+            );
+
+            FilePond.create(
+                document.querySelector('input[id="filepond"]')
+            );
+
+            $("#txtSubSubjectClassificationId").change(function () {
+                var id = $('#txtSubSubjectClassificationId').val();
+                var url = '@Url.Action("BindSubSubjectClasscificationsById", form.CurrentController, new { Area = form.CurrentArea })';
+
+                $.ajax({
+                    url: url,
+                    type: "@GlobalConst.GET",
+                    data: { Id: id },
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
+                    success: function (data) {
+                        $("#txtCreatorName").val(data.creatorName);
+                        $("#txtCreatorId").val(data.creatorId);
+                        $("#txtActiveRetention").val(data.retentionActive);
+                        $("#txtInactiveRetention").val(data.retentionInactive);
+                    },
+                    error: function () {
+                        alert("Sub Subject Classification Not Found");
+                    }
+                });
+            });
+
+            if ("@form.CurrentAction" == "@GlobalConst.Add") {
+                $('#txtCreatedDateArchive').val("");
+            }
+
+            initDropdown();
+        });
+
+        function deleteFile(id) {
+            listFileArchiveDetailId.push(id);
+            $(`#${id}`).remove();
+        }
+
+        function validate() {
+            let result = true;
+
+            if ($('#txtVolume').val() == "0") {
+                swal("Please enter Volume !");
+                result = false;
+            }
+
+            if ($('#txtInactiveRetention').val() == "0") {
+                swal("Please enter In Active Retention !");
+                result = false;
+            }
+
+            if ($('#txtActiveRetention').val() == "0") {
+                swal("Please enter Active Retention !");
+                result = false;
+            }
+
+            if ($('#txtCreatedDateArchive').val() == "0001-01-01" || $('#txtCreatedDateArchive').val() == "") {
+                swal("Please select Created Date Archive!");
+                $('#txtCreatedDateArchive').val("");
+                result = false;
+            }
+
+            if ($("#txtArchiveTypeId").val() == "") {
+                swal("Please select Archive Type !");
+                result = false;
+            }
+
+            if ($("#txtArchiveOwnerId").val() == "") {
+                swal("Please select Archive Owner !");
+                result = false;
+            }
+
+            if ($('#txtSecurityClassificationId').val() == "") {
+                swal("Please select Security Classification !");
+                result = false;
+            }
+
+            if ($('#txtTitleArchive').val() == "") {
+                swal("Please enter Archive Title !");
+                result = false;
+            }
+
+            if ($('#txtSubSubjectClassificationId').val() == "") {
+                swal("Please select Sub Subject Classification !");
+                result = false;
+            }
+
+            if (!($("#txtInternal").is(':checked')) && !($("#txtExternal").is(':checked'))) {
+                swal("Please select Sender First !");
+                result = false;
+            }
+
+            if ($('#txtGmdId').val() == "") {
+                swal("Please select GMD First !");
+                result = false;
+            }
+
+            return result;
+        }
+
+        function getStatusSubmit(status) {
+            $("#txtStatusId").val("1");
+            if (status == "submit") {
+                $("#txtStatusId").val("5");
+            }
+        }
+
+        function onSubmit(ctl, event, status) {
+
+            listFileArchiveDetailId.forEach((element) => {
+                $("#temp-file-deleted").append(`<input name=idFileDeleted[] type=hidden value=${element} >`);
+            });
+
+            getStatusSubmit(status);
+
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + "@form.CurrentAction" + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "@form.CurrentAction",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#formInput").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+        function initDropdown() {
+            $('#txtGmdId').on('change', function () {
+                $('#txtGmdDetailId').val('').trigger('change');
+            });
+
+            $('#txtGmdDetailId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub Type Storage --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindGmdDetailByGmdId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            Id: $('#txtGmdId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.name + ' - ' + item.unit,
+                                id: item.gmdDetailId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#txtGmdDetailId').on('change', function () {
+                var url = '@Url.Action(GlobalConst.BindGmdDetailById, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive })';
+                $.ajax({
+                    url: url,
+                    type: "@GlobalConst.GET",
+                    data: { Id: $('#txtGmdDetailId').val() },
+                    dataType: "@GlobalConst.JSON",
+                    contentType: "@GlobalConst.APPLICATIONJSON",
+                    success: function (data) {
+                        $("#txtGmdDetailUnit").val(data.unit);
+                    }
+                });
+            });
+        }
+    </script>
+}

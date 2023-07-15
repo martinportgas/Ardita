@@ -37,6 +37,13 @@ public class MediaStorageRepository : IMediaStorageRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
+
+        if (model.sortColumn == "row.level.rack.rackName")
+        {
+            model.sortColumn = $"row.level.rack.rackName {model.sortColumnDirection}, row.level.levelName {model.sortColumnDirection}, row.rowName {model.sortColumnDirection}";
+            model.sortColumnDirection = string.Empty;
+        }
+
         var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
             .Include(x => x.SubjectClassification.Classification.Creator)
