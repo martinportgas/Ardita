@@ -595,6 +595,16 @@ public abstract class BaseController<T> : Controller
         list = data.Where(x => x.LevelId == id && x.TrxMediaStorageInActives.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
+    public async Task<JsonResult> BindRowAvailableArchiveInActiveByLevelId(string Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        List<TrxRow> list = new();
+        Guid id = new(Id);
+
+        var data = await _rowService.GetAvailableRow();
+        list = data.Where(x => x.LevelId == id && x.TrxMediaStorageInActives.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
+        return Json(list);
+    }
     public async Task<JsonResult> BindClassificationSubjectIdByClassificationId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
