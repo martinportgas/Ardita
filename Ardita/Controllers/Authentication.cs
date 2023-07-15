@@ -1,4 +1,6 @@
-﻿using Ardita.Models;
+﻿using Ardita.Extensions;
+using Ardita.Models;
+using Ardita.Models.DbModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -69,6 +71,40 @@ namespace Ardita.Controllers
             TempData["ValidateErrorMessage"] = "User Not Found";
             return RedirectToAction("Login", "Authentication");
         }
-        
+        public async Task<IActionResult> ChangePassword() 
+        {
+            ViewBag.UserId = AppUsers.CurrentUser(User).UserId;
+            ViewBag.Username = AppUsers.CurrentUser(User).Username;
+            return View();
+        }
+        public async Task<IActionResult> Save(MstUser model)
+        {
+
+            if (model is not null)
+            {
+                model.PasswordLast = Global.Encode(model.PasswordLast);
+                model.Password = Global.Encode(Request.Form["txtPasswordNew"].ToString());
+                await _userService.ChangePassword(model);
+            }
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Redirect("~/Authentication");
+        }
+        [HttpGet]
+        public async Task<JsonResult> FindPassword(Guid Id, string Password)
+        {
+
+            if (Id != Guid.Empty && !string.IsNullOrEmpty(Password))
+            {
+                var data = await _userService.FindPasswordByUsername(Id, Global.Encode(Password));
+                if (data)
+                    return Json(true);
+                else
+                    return Json(false);
+            }
+            else
+            {
+                return Json(false);
+            }
+        }
     }
 }

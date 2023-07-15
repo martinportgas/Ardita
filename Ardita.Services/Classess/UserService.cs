@@ -279,5 +279,15 @@ namespace Ardita.Services.Classess
             }
             return result;
         }
+        public async Task<int> ChangePassword(MstUser model)
+        {
+            var result = await _userRepository.ChangePassword(model);
+            return result;
+        }
+
+        public async Task<bool> FindPasswordByUsername(Guid Id, string password)
+        {
+            return await _userRepository.FindPasswordByUsername(Id, password);
+        }
     }
 }

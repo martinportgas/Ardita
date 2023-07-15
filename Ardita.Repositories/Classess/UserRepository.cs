@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess
 {
@@ -153,6 +154,36 @@ namespace Ardita.Repositories.Classess
                 }
             }
             return result;
+        }
+        public async Task<int> ChangePassword(MstUser model)
+        {
+            int result = 0;
+
+            if (model.UserId != Guid.Empty)
+            {
+                var data = await _context.MstUsers.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.UserId);
+                if (data != null)
+                {
+                    model.IsActive = true;
+                    model.Username = data.Username;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
+                    model.PasswordLastChanged = DateTime.Now;
+                    model.EmployeeId = data.EmployeeId;
+                    
+                    _context.MstUsers.Update(model);
+                    result = await _context.SaveChangesAsync();
+                }
+            }
+            return result;
+        }
+        public async Task<bool> FindPasswordByUsername(Guid Id, string password) 
+        {
+            var data = await _context.MstUsers.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == Id && x.Password == password);
+            if (data != null)
+                return true;
+            else
+                return false;
         }
     }
 }
