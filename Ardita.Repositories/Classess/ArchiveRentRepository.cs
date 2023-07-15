@@ -1,6 +1,7 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Report;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using NPOI.OpenXmlFormats.Spreadsheet;
@@ -80,8 +81,8 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.Archive.Creator)
-                .Include(x => x.TrxArchiveRent.Archive.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator)
+                .Include(x => x.TrxArchiveRent.Status)
                 .Where(x => x.Borrower.BorrowerId == Id)
                 .Select(x => new
                 {
@@ -93,12 +94,14 @@ namespace Ardita.Repositories.Classess
                     x.Borrower.BorrowerPhone,
                     x.Borrower.BorrowerEmail,
                     x.TrxArchiveRentId,
-                    ArchiveCode = x.TrxArchiveRent.Archive.ArchiveCode,
-                    ArchiveTitle = x.TrxArchiveRent.Archive.TitleArchive,
-                    CreatorName = x.TrxArchiveRent.Archive.Creator.CreatorName,
+                    ArchiveCode = x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive.ArchiveCode,
+                    ArchiveTitle = x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive,
+                    CreatorName = x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.CreatorName,
                     RentDate = x.TrxArchiveRent.RequestedDate,
                     ReturnDate = x.TrxArchiveRent.ReturnDate,
-                    Status = x.TrxArchiveRent.Status.Name
+                    x.TrxArchiveRent.Description,
+                    Status = x.TrxArchiveRent.Status.Name,
+                    x.TrxArchiveRent.ApprovalNotes
                 })
                 .ToListAsync();
 
@@ -109,9 +112,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                  .Include(x => x.Borrower)
-                 .Include(x => x.TrxArchiveRent.Archive.Creator)
-                 .Include(x => x.TrxArchiveRent.Archive.Status)
-                 .Where(x => x.TrxArchiveRent.StatusId == (Int32)GlobalConst.STATUS.ApprovalProcess)
+                 .Include(x => x.TrxArchiveRent.Status)
                  .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
                  .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                  .Skip(model.skip).Take(model.pageSize)
@@ -120,8 +121,10 @@ namespace Ardita.Repositories.Classess
                      x.TrxArchiveRentId,
                      Name = x.Borrower.BorrowerName,
                      Company = x.Borrower.BorrowerCompany,
-                     ArchiveTitle = x.TrxArchiveRent.Archive.TitleArchive,
-                     CreatorName = x.TrxArchiveRent.Archive.Creator.CreatorName
+                     UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
+                     x.TrxArchiveRent.RequestedDate,
+                     Status = x.TrxArchiveRent.Status.Name,
+                     Color = x.TrxArchiveRent.Status.Color,
                  })
                  .ToListAsync();
 
@@ -132,10 +135,8 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                .Include(x => x.Borrower)
-               .Include(x => x.TrxArchiveRent.Archive.Creator)
-               .Include(x => x.TrxArchiveRent.Archive.Status)
-               .Where(x => x.TrxArchiveRent.StatusId == (Int32)GlobalConst.STATUS.ApprovalProcess)
-               .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Include(x => x.TrxArchiveRent.Status)
+                .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
                .CountAsync();
 
             return result;
@@ -145,7 +146,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.Archive.Status)
+                .Include(x => x.TrxArchiveRent.Status)
                 .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -168,15 +169,18 @@ namespace Ardita.Repositories.Classess
         public async Task<TrxArchiveRent> GetById(Guid id)
         {
             var result = await _context.TrxArchiveRents
+                .Include(x => x.Status)
                 .Include(x => x.TrxRentHistories).ThenInclude(x => x.Borrower)
-                .Include(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit.Company)
+                .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit.Company)
+                .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.MediaStorageInActive.SubSubjectClassification.SubjectClassification.Classification)
                 .Include(x => x.ApprovedByNavigation.Employee.Position)
                 .Include(x => x.ApprovedByNavigation.Creator)
-                .Include(x => x.Archive.SubSubjectClassification)
+                .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator)
+                .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.SubTypeStorage)
                 .Where(x => x.TrxArchiveRentId == id).ToListAsync();
             return result.FirstOrDefault();
         }
-        public async Task<int> Insert(TrxArchiveRent model, MstBorrower borrower)
+        public async Task<int> Insert(TrxArchiveRent model, MstBorrower borrower, List<TrxArchiveRentDetail> listDetail)
         {
             int result = 0;
 
@@ -192,7 +196,7 @@ namespace Ardita.Repositories.Classess
                 bool inValid = true;
                 while (inValid)
                 {
-                    validRentCode = $"BA.{(countData + i).ToString("D3")}/{detail.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                    validRentCode = $"BA.{(countData + i).ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
                     int count = await _context.TrxArchiveRents.Where(x => x.RentCode == validRentCode).CountAsync();
                     if (count > 0)
                         i++;
@@ -200,13 +204,13 @@ namespace Ardita.Repositories.Classess
                         inValid = false;
                 }
 
-                model.MediaStorageInActiveId = detail.MediaStorageInActiveId;
-                model.Sort = detail.Sort;
                 model.RentCode = validRentCode;
-                model.TrxArchiveRentId = new Guid();
                 model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
 
                 _context.TrxArchiveRents.Add(model);
+                await _context.SaveChangesAsync();
+
+                _context.TrxArchiveRentDetails.AddRange(listDetail);
                 await _context.SaveChangesAsync();
 
                 _context.MstBorrowers.Add(borrower);
@@ -225,31 +229,16 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<int> Update(TrxArchiveRent model, MstBorrower borrower)
+        public async Task<int> Update(TrxArchiveRent model, MstBorrower borrower, List<TrxArchiveRentDetail> listDetail)
         {
             int result = 0;
 
             if (model != null)
             {
-                model.TrxArchiveRentId = new Guid();
-                model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
-
-            
 
                 var borrowerResult = await _context.MstBorrowers.AsNoTracking().FirstOrDefaultAsync(x => x.BorrowerId == borrower.BorrowerId);
 
                 if (borrowerResult != null) {
-                    _context.TrxArchiveRents.Add(model);
-                    await _context.SaveChangesAsync();
-
-                    borrower.BorrowerName = borrowerResult.BorrowerName;
-                    borrower.CreatedDate = borrowerResult.CreatedDate;
-                    borrower.CreatedBy = borrowerResult.CreatedBy;
-
-                    _context.MstBorrowers.Update(borrower);
-                    await _context.SaveChangesAsync();
-
-                    var history = new TrxRentHistory();
 
                     var detail = await _context.TrxMediaStorageInActiveDetails
                     .Include(x => x.MediaStorageInActive.TypeStorage.ArchiveUnit)
@@ -261,7 +250,7 @@ namespace Ardita.Repositories.Classess
                     bool inValid = true;
                     while (inValid)
                     {
-                        validRentCode = $"BA.{(countData + i).ToString("D3")}/{detail.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
+                        validRentCode = $"BA.{(countData + i).ToString("D3")}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Year}";
                         int count = await _context.TrxArchiveRents.Where(x => x.RentCode == validRentCode).CountAsync();
                         if (count > 0)
                             i++;
@@ -269,9 +258,23 @@ namespace Ardita.Repositories.Classess
                             inValid = false;
                     }
 
-                    model.MediaStorageInActiveId = detail.MediaStorageInActiveId;
-                    model.Sort = detail.Sort;
                     model.RentCode = validRentCode;
+                    model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
+
+                    _context.TrxArchiveRents.Add(model);
+                    await _context.SaveChangesAsync();
+
+                    _context.TrxArchiveRentDetails.AddRange(listDetail);
+                    await _context.SaveChangesAsync();
+
+                    borrower.BorrowerName = borrowerResult.BorrowerName;
+                    borrower.CreatedDate = borrowerResult.CreatedDate;
+                    borrower.CreatedBy = borrowerResult.CreatedBy;
+
+                    _context.MstBorrowers.Update(borrower);
+                    await _context.SaveChangesAsync();
+
+                    var history = new TrxRentHistory();
 
                     history.RentHistoryId = new Guid();
                     history.TrxArchiveRentId = model.TrxArchiveRentId;
@@ -290,7 +293,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.Archive.Status)
+                .Include(x => x.TrxArchiveRent.Status)
                 .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
                .Where($"(TrxArchiveRent.ReturnDate.ToString()).Contains(@0)", model.searchValue)
                .CountAsync();
@@ -302,24 +305,24 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<object>> GetRetrievalByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxRentHistories
-               .Include(x => x.Borrower)
-               .Include(x => x.TrxArchiveRent.Archive.Status)
-               .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Retrieved)
-               .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
-               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
-               .Skip(model.skip).Take(model.pageSize)
-               .Select(x => new
-               {
-                   x.TrxArchiveRent.TrxArchiveRentId,
-                   Name = x.Borrower.BorrowerName,
-                   x.TrxArchiveRent.RequestedDate,
-                   x.TrxArchiveRent.RequestedReturnDate,
-                   x.TrxArchiveRent.Archive.Status.StatusId,
-                   Status = x.TrxArchiveRent.Status.Name,
-                   Color = x.TrxArchiveRent.Status.Color,
-                   UserCreatedBy = GetUserNameCreatedById(x.CreatedBy)
-               })
-               .ToListAsync();
+                 .Include(x => x.Borrower)
+                 .Include(x => x.TrxArchiveRent.Status)
+                 .Where(x => x.TrxArchiveRent.RetrievalDate != null)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                 .Skip(model.skip).Take(model.pageSize)
+                 .Select(x => new
+                 {
+                     x.TrxArchiveRentId,
+                     Name = x.Borrower.BorrowerName,
+                     Company = x.Borrower.BorrowerCompany,
+                     UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
+                     x.TrxArchiveRent.ApprovalDate,
+                     x.TrxArchiveRent.ApprovalReturnDate,
+                     Status = x.TrxArchiveRent.Status.Name,
+                     Color = x.TrxArchiveRent.Status.Color,
+                 })
+                 .ToListAsync();
 
             return result;
         }
@@ -327,10 +330,10 @@ namespace Ardita.Repositories.Classess
         public async Task<int> GetRetrievalCountByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxRentHistories
-             .Include(x => x.Borrower)
-             .Include(x => x.TrxArchiveRent.Archive.Status)
-             .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Retrieved)
-             .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+            .Include(x => x.Borrower)
+            .Include(x => x.TrxArchiveRent.Status)
+            .Where(x => x.TrxArchiveRent.RetrievalDate != null)
+            .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
              .CountAsync();
 
             return result;
@@ -338,9 +341,9 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<object>> GetRetrievalByArchiveRentId(Guid Id, string form)
         {
             var result = await _context.TrxArchiveRents
-                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
-                .Include(x => x.Archive.Creator.ArchiveUnit)
-                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
                 .Include(x => x.TrxRentHistories).ThenInclude(x => x.Borrower)
                 .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.WaitingForRetrieval : x.StatusId == (int)GlobalConst.STATUS.Retrieved))
                 .Select(x => new {
@@ -349,19 +352,19 @@ namespace Ardita.Repositories.Classess
                     UserEmail = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerEmail,
                     UserPhone = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPhone,
                     UserCompany = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany,
-                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
-                    ArchiveId = x.Archive.ArchiveId,
-                    TitleArchive = x.Archive.TitleArchive,
-                    CreatorName = x.Archive.Creator.CreatorName,
-                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName,
-                    RowName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
-                    LevelName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
-                    RackName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
-                    RoomName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
-                    FloorName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
+                    ClassificationName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.TrxArchiveRentDetails.FirstOrDefault().Archive.ArchiveId,
+                    TitleArchive = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive,
+                    CreatorName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.CreatorName,
+                    ArchiveUnit = x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.ArchiveUnit.ArchiveUnitName,
+                    RowName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
+                    LevelName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
+                    RackName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
+                    RoomName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
+                    FloorName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
                     RequestedDate = x.RequestedDate,
                     RequestedReturnDate = x.RequestedReturnDate,
-                    ArchiveSort = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
+                    ArchiveSort = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
                 })
                 .ToListAsync();
                 
@@ -394,8 +397,8 @@ namespace Ardita.Repositories.Classess
             bool isValid = false;
 
             var result = await _context.TrxArchiveRents
-                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
-                .Where(x => x.TrxArchiveRentId == ArchiveRentId && x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.MediaStorageInActiveCode == mediaInActiveCode)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+                .Where(x => x.TrxArchiveRentId == ArchiveRentId && x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.MediaStorageInActiveCode == mediaInActiveCode)
                 .ToListAsync();
 
             if (result.Count > 0)
@@ -450,7 +453,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                .Include(x => x.Borrower)
-               .Include(x => x.TrxArchiveRent.Archive)
+               .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive)
                .Include(x => x.TrxArchiveRent.Status)
                .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Return)
                .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedDate.ToString()+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
@@ -476,7 +479,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.Archive)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive)
                 .Include(x => x.TrxArchiveRent.Status)
                 .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Return)
                .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedDate.ToString()+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
@@ -489,9 +492,9 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxArchiveRents
                 .Include(x => x.TrxRentHistories).ThenInclude(x => x.Borrower)
-                .Include(x => x.Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
-                .Include(x => x.Archive.Creator.ArchiveUnit)
-                .Include(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification).ThenInclude(x => x.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive).ThenInclude(x => x.Row.Level.Rack.Room.Floor)
                 .Where(x => x.TrxArchiveRentId == Id && (form == "Add" ? x.StatusId == (int)GlobalConst.STATUS.Retrieved : x.StatusId == (int)GlobalConst.STATUS.Return))
                 .Select(x => new {
                     UserNik = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber,
@@ -499,19 +502,19 @@ namespace Ardita.Repositories.Classess
                     UserEmail = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerEmail,
                     UserPhone = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPhone,
                     UserCompany = x.TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany,
-                    ClassificationName = x.Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
-                    ArchiveId = x.Archive.ArchiveId,
-                    TitleArchive = x.Archive.TitleArchive,
-                    CreatorName = x.Archive.Creator.CreatorName,
-                    ArchiveUnit = x.Archive.Creator.ArchiveUnit.ArchiveUnitName,
-                    RowName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
-                    LevelName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
-                    RackName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
-                    RoomName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
-                    FloorName = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
+                    ClassificationName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                    ArchiveId = x.TrxArchiveRentDetails.FirstOrDefault().Archive.ArchiveId,
+                    TitleArchive = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive,
+                    CreatorName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.CreatorName,
+                    ArchiveUnit = x.TrxArchiveRentDetails.FirstOrDefault().Archive.Creator.ArchiveUnit.ArchiveUnitName,
+                    RowName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
+                    LevelName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName,
+                    RackName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName,
+                    RoomName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName,
+                    FloorName = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.Floor.FloorName,
                     RequestedDate = x.RequestedDate,
                     RequestedReturnDate = x.RequestedReturnDate,
-                    ArchiveSort = x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
+                    ArchiveSort = x.TrxArchiveRentDetails.FirstOrDefault().Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
                 })
                 .ToListAsync();
 

@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 using System;
@@ -13,9 +14,11 @@ namespace Ardita.Services.Classess
     public class ArchiveRentService : IArchiveRentService
     {
         private readonly IArchiveRentRepository _archiveRentRepository;
-        public ArchiveRentService(IArchiveRentRepository archiveRentRepository)
+        private readonly IMediaStorageInActiveRepository _mediaStorageInActiveRepository;
+        public ArchiveRentService(IArchiveRentRepository archiveRentRepository, IMediaStorageInActiveRepository mediaStorageInActiveRepository)
         {
             _archiveRentRepository = archiveRentRepository;
+            _mediaStorageInActiveRepository = mediaStorageInActiveRepository;
         }
         public Task<int> Delete(TrxArchiveRent model)
         {
@@ -63,14 +66,47 @@ namespace Ardita.Services.Classess
             return await _archiveRentRepository.GetById(id);
         }
 
-        public async Task<int> Insert(TrxArchiveRent model, MstBorrower borrower)
+        public async Task<int> Insert(TrxArchiveRent model, MstBorrower borrower, string[] listArchive)
         {
-            return await _archiveRentRepository.Insert(model, borrower);
+            var listDetail = await GetDetail(model, listArchive);
+            return await _archiveRentRepository.Insert(model, borrower, listDetail);
         }
 
-        public async Task<int> Update(TrxArchiveRent model, MstBorrower borrower)
+        public async Task<int> Update(TrxArchiveRent model, MstBorrower borrower, string[] listArchive)
         {
-            return await _archiveRentRepository.Update(model, borrower);
+            var listDetail = await GetDetail(model, listArchive);
+            return await _archiveRentRepository.Update(model, borrower, listDetail);
+        }
+        private async Task<List<TrxArchiveRentDetail>> GetDetail(TrxArchiveRent model, string[] listArchive)
+        {
+            TrxArchiveRentDetail item;
+            List<TrxArchiveRentDetail> list = new();
+            if(listArchive.Length > 0)
+            {
+                foreach (string archive in listArchive)
+                {
+                    Guid ArchiveId = Guid.Empty;
+                    if (Guid.TryParse(archive, out ArchiveId))
+                    {
+                        var detail = await _mediaStorageInActiveRepository.GetDetailByArchiveId(ArchiveId);
+
+                        if (detail != null)
+                        {
+                            item = new();
+                            item.TrxArchiveRentId = model.TrxArchiveRentId;
+                            item.ArchiveId = detail.ArchiveId;
+                            item.MediaStorageInActiveId = detail.MediaStorageInActiveId;
+                            item.Sort = detail.Sort;
+                            item.CreatedBy = model.CreatedBy;
+                            item.CreatedDate = model.CreatedDate;
+
+                            list.Add(item);
+                        }
+                    }
+
+                }
+            }
+            return list;
         }
 
         public async Task<DataTableResponseModel<object>> GetApprovalList(DataTablePostModel model)

@@ -76,13 +76,12 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             return View(GlobalConst.Form, model);
         }
         [HttpGet]
-        public async Task<JsonResult> GetDetail(Guid Id)
+        public async Task<JsonResult> GetDetail(string archiveName, Guid subSubjectId)
         {
             try
             {
-                var result = await _MediaStorageInActiveService.GetDetails(Id);
+                var result = await _MediaStorageInActiveService.GetDetails(archiveName, subSubjectId);
                 return Json(result);
-
             }
             catch (Exception ex)
             {
@@ -108,7 +107,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             if (model != null)
             {
                 
-                var ArchiveId = new Guid(Request.Form["txtMdlArchiveId"]);
+                var ListArchive = Request.Form[GlobalConst.listArchive].ToArray();
                 var UserId = AppUsers.CurrentUser(User).UserId;
                 var CreatedDate = DateTime.Now;
                 var CreatedBy = AppUsers.CurrentUser(User).UserId;
@@ -116,7 +115,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 var requestedDate = Request.Form["txtMdlRequestedDate"];
                 var requestedReturnDate = Request.Form["txtMdlRequestedReturnDate"];
 
-                model.ArchiveId = ArchiveId;
+                model.TrxArchiveRentId = Guid.NewGuid();
                 model.Description = Description;
                 model.RequestedDate = Convert.ToDateTime(requestedDate);
                 model.RequestedReturnDate = Convert.ToDateTime(requestedReturnDate);
@@ -134,19 +133,19 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 borrower.BorrowerEmail = Request.Form["BorrowerEmail"].ToString();
                
 
-                if (Request.Form["borrowerType[]"].ToString() == "Baru")
+                if (Request.Form["borrowerType"].ToString() == "Baru")
                 {
                     borrower.BorrowerId = new Guid();
                     borrower.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     borrower.CreatedDate = DateTime.Now;
-                    await _archiveRentService.Insert(model, borrower);
+                    await _archiveRentService.Insert(model, borrower, ListArchive);
                 }
                 else
                 {
                     borrower.BorrowerId = new Guid(Request.Form["borrowerNameSelect"].ToString());
                     borrower.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     borrower.UpdatedDate = DateTime.Now;
-                    await _archiveRentService.Update(model, borrower);
+                    await _archiveRentService.Update(model, borrower, ListArchive);
                 }
 
                 
@@ -161,8 +160,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             {
                 ViewBag.ArchiveRentId = model.TrxArchiveRentId;
                 ViewBag.ArchiveId = model.ArchiveId;
-                ViewBag.TitleArchive = model.Archive.TitleArchive;
-                ViewBag.SubSubJectClassificationId = model.Archive.SubSubjectClassification.SubjectClassificationId;
+                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
               //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }
@@ -176,7 +175,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             TrxArchiveRent data = await _archiveRentService.GetById(Id);
 
-            var result = await _MediaStorageInActiveService.GetDetails(data.ArchiveId);
+            var result = await _MediaStorageInActiveService.GetDetails(data.TrxArchiveRentDetails.FirstOrDefault().ArchiveId);
 
             string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Peminjaman_Arsip.docx");
             var file = Label.GenerateBARent(FilePath, data, result);

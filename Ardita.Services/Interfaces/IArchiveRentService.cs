@@ -20,9 +20,9 @@ namespace Ardita.Services.Interfaces
         Task<DataTableResponseModel<object>> GetApprovalList(DataTablePostModel model);
         Task<DataTableResponseModel<object>> GetRetrievalList(DataTablePostModel model);
         Task<DataTableResponseModel<object>> GetReturnList(DataTablePostModel model);
-        Task<int> Insert(TrxArchiveRent model, MstBorrower borrower);
+        Task<int> Insert(TrxArchiveRent model, MstBorrower borrower, string[] listArchive);
         Task<int> Delete(TrxArchiveRent model);
-        Task<int> Update(TrxArchiveRent model, MstBorrower borrower);
+        Task<int> Update(TrxArchiveRent model, MstBorrower borrower, string[] listArchive);
         Task<int> Approval(Guid id, string description, int status, Guid User);
         Task<bool> ValidateQRBoxWithArchiveRentId(Guid ArchiveRentId, string mediaInActiveCode);
         Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId);

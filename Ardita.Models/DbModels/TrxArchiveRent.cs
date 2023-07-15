@@ -9,7 +9,7 @@ public partial class TrxArchiveRent
 
     public string? RentCode { get; set; }
 
-    public Guid ArchiveId { get; set; }
+    public Guid? ArchiveId { get; set; }
 
     public Guid? MediaStorageInActiveId { get; set; }
 
@@ -47,11 +47,9 @@ public partial class TrxArchiveRent
 
     public virtual MstUser? ApprovedByNavigation { get; set; }
 
-    public virtual TrxArchive Archive { get; set; } = null!;
-
-    public virtual TrxMediaStorageInActive? MediaStorageInActive { get; set; }
-
     public virtual MstStatus? Status { get; set; }
+
+    public virtual ICollection<TrxArchiveRentDetail> TrxArchiveRentDetails { get; } = new List<TrxArchiveRentDetail>();
 
     public virtual ICollection<TrxRentHistory> TrxRentHistories { get; } = new List<TrxRentHistory>();
 }

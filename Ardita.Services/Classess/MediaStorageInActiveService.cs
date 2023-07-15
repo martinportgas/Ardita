@@ -27,6 +27,14 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
 
         return result;
     }
+    public async Task<IEnumerable<VwArchiveRent>> GetDetails(string archiveName, Guid subSubjectId)
+    {
+        var data = await _mediaStorageInActiveRepository.GetArchiveRent();
+        var result = data.Where(x => x.SubSubjectClassificationId == subSubjectId).OrderBy(x => x.MediaStorageInActiveCode).ThenBy(x => x.Sort).ToList();
+        if (!string.IsNullOrEmpty(archiveName))
+            result = result.Where(x => x.TitleArchive.ToLower().Contains(archiveName.ToLower())).OrderBy(x => x.MediaStorageInActiveCode).ThenBy(x => x.Sort).ToList();
+        return result;
+    }
     public async Task<TrxMediaStorageInActive> GetById(Guid id)
     {
         return await _mediaStorageInActiveRepository.GetById(id);

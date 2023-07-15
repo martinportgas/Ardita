@@ -1,157 +1,763 @@
 ﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
+@using Ardita.Models.DbModels;
 @model Ardita.Models.DbModels.TrxArchiveRent;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
+    string borId = "";
+    if (Model.TrxRentHistories.Count > 0)
+    {
+        borId = Model.TrxRentHistories.FirstOrDefault().BorrowerId.ToString();
+    }
 
 }
-
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-        <h2>Media Storage In Active</h2>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
-            </li>
-            <li class="breadcrumb-item">
-                Archive Active
-            </li>
-            <li class="breadcrumb-item">
-                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRent, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
-            </li>
-            <li class="active breadcrumb-item">
-                <strong>@form.LastBreadcrumb</strong>
-            </li>
-        </ol>
+<form id="frmLevelUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ArchiveRentApproval" asp-action="@GlobalConst.SubmitApproval" asp-area="@GlobalConst.ArchiveInActive">
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Media Storage In Active</h2>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+                </li>
+                <li class="breadcrumb-item">
+                    Archive Active
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRent, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
+                </li>
+                <li class="active breadcrumb-item">
+                    <strong>@form.LastBreadcrumb</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+        </div>
     </div>
-    <div class="col-lg-2">
-    </div>
-</div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-title">
-                    <h5>Page</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li>
-                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
-                            </li>
-                            <li>
-                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Page</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
+                                </li>
+                                <li>
+                                    <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="ibox-content">
-                    <div class="row">
-                        
+                    <div class="ibox-content">
+                        <div class="row">
                             <div class="col-sm-12">
-                                <div class="row">
-                                    <div class="col-sm-6 b-r">
+                                @if (form.CurrentAction == GlobalConst.Add)
+                                {
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <input type="hidden" id="txtArchiveRentId" readonly />
 
-                                        <div class="profile-image">
-                                            <img src="~/img/default-user.png" class="rounded-circle circle-border m-b-md" alt="profile">
-                                        </div>
-                                        <div class="profile-info">
-                                            <div class="">
-                                                <div>
-                                                    <h2 class="no-margins">@ViewBag.Name</h2>
-                                                    <h5>@ViewBag.RoleName</h5>
-                                                    <h5>@ViewBag.NIK</h5>
-                                                    <h5>@ViewBag.Email</h5>
-                                                    <h5>@ViewBag.Company</h5>
-                                                    <h5>@ViewBag.Phone</h5>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="borrowerType" id="baru" value="Baru" checked onchange="validateInputType()">
+                                                    <label class="form-check-label" for="baru">Baru</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="borrowerType" id="lama" value="Lama" onchange="validateInputType()">
+                                                    <label class="form-check-label" for="lama">Lama</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6"></div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
+                                }
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Klasifikasi</label>
-                                           
-                                            <input type="text" placeholder="" id="txtMdlClassification" name="txtMdlClassification" class="form-control" value="@ViewBag.SubSubjectClassification" readonly>
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group divNameText">
+                                            <label>Nama</label>
+                                            <input type="hidden" asp-for="TrxArchiveRentId" />
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerName" id="borrowerName" placeholder="Nama" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName : "")" />
                                         </div>
+                                        <div class="form-group divNameSelect">
+                                            <label>Nama</label>
+                                            <select id="borrowerNameSelect"
+                                                    name="borrowerNameSelect"
+                                                    style="width: 100%"
+                                                    class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    asp-items="ViewBag.listBorrower"
+                                                    data-placeholder="-- Pilih Peminjam --">
+                                                <option value=""></option>
+                                            </select>
 
-                                        <div class="form-group">
-                                            <label>Pencipta</label>
-                                            <input type="text" placeholder="" id="txtMdlCreatorName" name="txtMdlCreatorName" class="form-control" value="@ViewBag.CreatorName" readonly>
                                         </div>
                                         <div class="form-group">
-                                            <label>Tanggal Pinjam</label>
-                                            <input type="text" placeholder="" id="txtMdlRequestedDate" class="form-control" value="@ViewBag.RequestedDate" readonly>
+                                            <label>Company</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerCompany" id="borrowerCompany" placeholder="Company" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany : "")" />
                                         </div>
                                         <div class="form-group">
-                                            <label>Keterangan Pengguna</label>
-                                            <textarea class="form-control" id="txtMdlDescription" name="txtMdlDescription" readonly>@ViewBag.DescriptionByUser</textarea>
+                                            <label>Unit Kerja</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerArchiveUnit" id="borrowerArchiveUnit" placeholder="Unit Kerja" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerArchiveUnit : "")" />
                                         </div>
-
+                                        <div class="form-group">
+                                            <label>Jabatan</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerPosition" id="borrowerPosition" placeholder="Jabatan" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPosition : "")" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Alasan Peminjaman</label>
+                                            <textarea class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" placeholder="Alasan Peminjaman" >@(Model.Description)</textarea>
+                                        </div>
                                     </div>
                                     <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>No. Identitas (KTP, SIM)</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerIdentityId" id="borrowerIdentityId" placeholder="No. Identitas (KTP, SIM)" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber : "")" />
+                                        </div>
+                                        <div class="form-group">
 
+                                            <label>No. Handphone</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerPhone" id="borrowerPhone" placeholder="No. Handphone" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPhone : "")" />
+
+                                        </div>
                                         <div class="form-group">
-                                            <label>Judul</label>
-                                            <input type="hidden" id="txtMdlArchiveId" name="txtMdlArchiveId" />
-                                            <input type="text" placeholder="" id="txtMdlTitleArchive" class="form-control" value="@ViewBag.TitleArchive" readonly>
+
+                                            <label>Email</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerEmail" id="borrowerEmail" placeholder="Email" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerEmail : "")" />
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <label>Tanggal Request</label>
+                                            <input type="date" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerEmail" placeholder="Email" value="@(((DateTime)Model.RequestedDate).ToString("yyyy-MM-dd"))" />
+
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Unit Kearsipan</label>
-                                            <input type="text" placeholder="" id="txtMdlArchiveUnit" class="form-control" value="@ViewBag.ArchiveUnitName" readonly>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Tanggal Kembali</label>
-                                            <input type="text" placeholder="" id="txtMdlRequestedReturnDate" class="form-control" value="@ViewBag.ReturnDate" readonly>
-                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-12">
-                            <form id="frmRentApproval" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ArchiveRentApproval" asp-action="@GlobalConst.SubmitApproval" asp-area="@GlobalConst.ArchiveInActive">
+                                @if (form.CurrentAction == GlobalConst.Add)
+                                {
+                                    <div class="row border-top pt-3">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Subjek Klasifikasi</label>
+                                                <select id="txtSubjectClassificationId"
+                                                        class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    asp-items="ViewBag.listSubjectClassification"
+                                                        data-placeholder="-- Pilih Subjek Klasifikasi --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Sub-Subjek Klasifikasi</label>
+
+
+                                                <select asp-items="ViewBag.listSubSubject" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                        id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Sub Subject Classification --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Judul Arsip</label>
+                                                <input type="text" id="txtArchiveId" placeholder="Input Judul Arsip"
+                                                       class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+
+                                                <button class="btn btn-success btn-sm pull-right"
+                                                        type="button" id="search-archive">
+                                                    <i class="fa fa-search"></i> Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <input type="hidden" value="@ViewBag.TrxArchiveRentId" name="txtTrxArchiveRentId" />
-                                        <div class="form-group">
-                                            <label>Keterangan</label>
-                                            <textarea class="form-control" id="txtDescription" name="txtDescription"></textarea>
-                                        </div>
+                                    <div class="col-sm-12">
+                                        <div class="tabs-container">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                @if (form.CurrentAction == GlobalConst.Add)
+                                                {
+                                                    <li><a class="nav-link active" data-toggle="tab" href="#tab-1">Registrasi</a></li>
+                                                }
 
+                                                <li><a class="nav-link @Html.Raw(form.CurrentAction == GlobalConst.Add ? "" : "active")" data-toggle="tab" href="#tab-2">Teregister</a></li>
+                                                <li><a class="nav-link" data-toggle="tab" href="#tab-3">Riwayat</a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                @if (form.CurrentAction == GlobalConst.Add)
+                                                {
+                                                    <div role="tabpanel" id="tab-1" class="tab-pane active">
+                                                        <div class="panel-body">
+                                                            <table id="tbl" class="table table-striped table-hover dataTables-example" style="width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Add</th>
+                                                                        <th>Kode Media Penyimpanan</th>
+                                                                        <th>Urutan</th>
+                                                                        <th>Jenis Penyimpanan</th>
+                                                                        <th>Klasifikasi</th>
+                                                                        <th>Judul Arsip</th>
+                                                                        <th>Pencipta</th>
+                                                                        <th>Unit Kearsipan</th>
+                                                                        <th>Status</th>
+                                                                        <th>Tanggal Pinjam</th>
+                                                                        <th>Tanggal Kembali</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="data-regist"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div role="tabpanel" id="tab-2" class="tab-pane @Html.Raw(form.CurrentAction == GlobalConst.Add ? "" : "active")">
+                                                    <div class="panel-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group float-right">
+                                                                    <button class="btn btn-success btn-sm pull-right"
+                                                                            type="button" id="btnRequestPinjamMdl">
+                                                                        <i class="fa fa-pencil"></i> Request Pinjam
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <table id="tblCart" class="table table-striped table-hover dataTables-example" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Remove</th>
+                                                                            <th>Kode Media Penyimpanan</th>
+                                                                            <th>Urutan</th>
+                                                                            <th>Jenis Penyimpanan</th>
+                                                                            <th>Klasifikasi</th>
+                                                                            <th>Judul Arsip</th>
+                                                                            <th>Pencipta</th>
+                                                                            <th>Unit Kearsipan</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="data-cart">
+                                                                        @if (!form.isInput)
+                                                                        {
+                                                                            if (Model.TrxArchiveRentDetails.Count > 0)
+                                                                            {
+                                                                                foreach (TrxArchiveRentDetail item in Model.TrxArchiveRentDetails)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td></td>
+                                                                                        <td>
+                                                                                            @item.MediaStorageInActive.MediaStorageInActiveCode
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().SubTypeStorage.SubTypeStorageName
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.MediaStorageInActive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.Archive.TitleArchive
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.Archive.Creator.CreatorName
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @item.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div role="tabpanel" id="tab-3" class="tab-pane">
+                                                    <div class="panel-body">
+                                                        <table id="tblHistory" class="table table-striped table-hover dataTables-example" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Kode Arsip</th>
+                                                                    <th>Judul Arsip</th>
+                                                                    <th>Pemilik</th>
+                                                                    <th>Tanggal Pinjam</th>
+                                                                    <th>Tanggal Kembali</th>
+                                                                    <th>Alasan Peminjaman</th>
+                                                                    <th>Catatan Persetujuan</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="float-right">
-                                    <button id="btnApprove" type="submit" value="Approve" name="btnApproval" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve</button>
-                                    <button id="btnReject" type="submit" value="Reject" name="btnApproval" class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Reject</button>
-                                    <a id="btnBack" href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i> Back</a>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        @if(form.CurrentAction == GlobalConst.Approval)
+                                        {
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <input type="hidden" value="@ViewBag.TrxArchiveRentId" name="txtTrxArchiveRentId" />
+                                                    <div class="form-group">
+                                                        <label>Keterangan</label>
+                                                        <textarea class="form-control" id="txtDescription" name="txtDescription"></textarea>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="float-right">
+                                            @if(form.CurrentAction == GlobalConst.Approval)
+                                            {
+                                                <button id="btnApprove" type="submit" value="Approve" name="btnApproval" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve</button>
+                                                <button id="btnReject" type="submit" value="Reject" name="btnApproval" class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Reject</button>
+                                            }
+                                            <a id="btnBack" href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i> Back</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                </form>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-      
     </div>
-</div>
+</form>
 @section Scripts {
     <script type="text/javascript">
+        var tableRegist, tableCart;
+        $(document).ready(function () {
+            initDropdown();
+            //$('.rentHistory').hide();
+            $('.divNameSelect').hide();
+            $('#borrowerNameSelect').select2({
+                width: 'resolve'
+            });
+            $("#borrowerNameSelect").change(function () {
+                initTableHistory();
+            });
+            $('#btnRequestPinjamMdl').hide();
 
+            $('#search-archive').click(function (e) {
+                initTable();
+
+            });
+            $('#btnRequestPinjamMdl').click(function (e) {
+
+                //var archiveId = $('#txtArchiveId').val();
+                //$.ajax({
+                //    'url': '@Url.Action(GlobalConst.GetDetailArchive, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                //    'method': "GET",
+                //    'contentType': 'application/json',
+                //    'data': { "id": archiveId }
+                //}).done(function (data) {
+
+                //    var classificationData = $('#txtSubSubjectClassificationId').select2('data');
+                //    var classification = classificationData[0].text;
+
+                //    var archiveData = $('#txtArchiveId').select2('data');
+                //    var archive = archiveData[0].text;
+
+                //    $('#txtMdlClassification').val(classification);
+                //    $('#txtMdlArchiveId').val(archiveData[0].id);
+                //    $('#txtMdlTitleArchive').val(archive);
+                //    $('#txtMdlCreatorName').val(data[0].creator.creatorName);
+                //    $('#txtMdlArchiveUnit').val(data[0].creator.archiveUnit.archiveUnitName);
+                //});
+
+                $('#frmRequest').modal('show');
+            });
+            $('#txtMdlRequestedDate').change(function () {
+                var newDateOptions = {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit"
+                }
+
+                if ($('#txtMdlRequestedDate').val() != '') {
+                    var requestedDate = new Date($('#txtMdlRequestedDate').val());
+                    requestedDate.setDate(requestedDate.getDate() + 7);
+                    $('#txtMdlRequestedReturnDate').val(requestedDate.toLocaleDateString("en-US", newDateOptions));
+                } else {
+                    $('#txtMdlRequestedReturnDate').val('');
+                }
+            });
+
+            $('input[type=radio]').change(function () {
+                var formType = $(this).val();
+
+                if (formType == "Baru") {
+                    $('.divNameSelect').hide();
+                    $('.divNameText').show();
+                    //$('.rentHistory').hide();
+                    $('#borrowerNameSelect').val('').trigger('change');
+
+                    $('#borrowerCompany').val('');
+                    $('#borrowerArchiveUnit').val('');
+                    $('#borrowerPosition').val('');
+                    $('#borrowerIdentityId').val('');
+                    $('#borrowerPhone').val('');
+                    $('#borrowerEmail').val('');
+                } else {
+                    $('.divNameSelect').show();
+                    $('.divNameText').hide();
+                }
+            });
+
+            initTable();
+
+            initDataTable();
+        });
+
+        function validateInputType() {
+            var inputType = $("input[name='borrowerType']:checked").val();
+            if (inputType == 'Baru') {
+                $('#borrowerName').prop('required', true);
+                $('#borrowerNameSelect').prop('required', false);
+            } else {
+                $('#borrowerName').prop('required', false);
+                $('#borrowerNameSelect').prop('required', true);
+            }
+        }
+
+        function initDataTable() {
+            tableCart = $('#tblCart').DataTable({
+                "destroy": true,
+                "searching": false,
+                "paging": false,
+                "info": false,
+                "columnDefs": [
+                    {
+                        targets: [0],
+                        className: '@Model.TrxArchiveRentId' == '' ? '' : 'd-none'
+                    }
+                ],
+                "columns": [
+                    {
+                        "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return `<i class="fa fa-minus-square" style="color:#ed5565;font-size:14px;" onclick="removeArchive($(this))"></i><input type="hidden" class="listArchive" name="listArchive[]" value=${data} />`;
+                        }
+                    },
+                    { "data": "mediaStorageInActiveCode" },
+                    { "data": "sort" },
+                    { "data": "storageName" },
+                    { "data": "classificationName" },
+                    { "data": "titleArchive" },
+                    { "data": "creatorName" },
+                    { "data": "archiveUnit" }
+                ]
+            });
+
+            initTableHistory();
+        }
+
+        function initDropdown() {
+            $('#txtSubjectClassificationId').on('change', function () {
+                $('#txtSubSubjectClassificationId').val('').trigger('change');
+            });
+
+            $('#txtSubSubjectClassificationId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Pilih Sub Subjek Klasifikasi --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtSubjectClassificationId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+                            return {
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            //$('#txtArchiveId').select2({
+            //    theme: 'bootstrap4',
+            //    allowClear: true,
+            //    placeholder: '-- Select Archive --',
+            //    ajax: {
+            //        url: '@Url.Action(GlobalConst.BindArchivesInActiveBySubSubjectClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+            //        type: "POST",
+            //        data: function (params) {
+            //            var query = {
+            //                id: $('#txtSubSubjectClassificationId').val(),
+            //            }
+            //            return query;
+            //        },
+            //        processResults: function (data) {
+            //            var dataResult = $.map(data, function (item) {
+            //                return {
+            //                    text: item.titleArchive,
+            //                    id: item.archiveId
+            //                }
+            //            });
+            //            return {
+            //                results: dataResult
+            //            };
+            //        }
+            //    }
+            //});
+
+
+        }
+
+        function initButtonRequest(data) {
+            if (data > 0) {
+                $('#btnRequestPinjamMdl').show();
+            } else {
+                $('#btnRequestPinjamMdl').hide();
+            }
+        }
+
+        function addArchive(e) {
+            var tr = e.parent('td').parent('tr');
+            var row = tableRegist.row(tr);
+
+            var data = JSON.parse(JSON.stringify(row.data()));
+
+            row.remove().draw();
+
+            tableCart.row.add(data).draw();
+
+            initButtonRequest($('.listArchive') == undefined ? 0 : $('.listArchive').length);
+        }
+
+        function removeArchive(e) {
+            var tr = e.parent('td').parent('tr');
+            var row = tableCart.row(tr);
+
+            row.remove().draw();
+
+            initTable();
+
+            initButtonRequest($('.listArchive') == undefined ? 0 : $('.listArchive').length);
+        }
+
+        function initTable() {
+            var subSubjectId = $('#txtSubSubjectClassificationId').val();
+            var archiveName = $('#txtArchiveId').val();
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { "archiveName": archiveName, "subSubjectId": subSubjectId }
+            }).done(function (data) {
+                var dataRes = [];
+                var isAvailable = true;
+                $.each(data, function (key, value) {
+                    isAvailable = true;
+                    $('.listArchive').each(function () {
+                        if (value.archiveId == $(this).val()) {
+                            isAvailable = false;
+                        }
+                    });
+                    if (isAvailable) {
+                        dataRes.push(value);
+                    }
+                });
+
+                tableRegist = $('#tbl').DataTable({
+                    "data": dataRes,
+                    "destroy": true,
+                    "searching": false,
+                    "paging": false,
+                    "info": false,
+                    "scrollX": true,
+                    "fixedColumns": true,
+                    "order": [[8, 'desc']],
+                    "columns": [
+                        {
+                            "data": "mediaStorageInActiveCode", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                                return row.statusName != 'Available' ? '' : `<i class="fa fa-plus-square" style="color:#1c84c6;font-size:14px;" onclick="addArchive($(this))"></i>`;
+                            }
+                        },
+                        { "data": "mediaStorageInActiveCode" },
+                        { "data": "sort" },
+                        { "data": "storageName" },
+                        { "data": "classificationName" },
+                        { "data": "titleArchive" },
+                        { "data": "creatorName" },
+                        { "data": "archiveUnit" },
+                        {
+                            "data": "statusName", "searchable": false, "render": function (data, type, row, meta) {
+                                return `<span class='badge badge-pill badge-${row.statusName != 'Available' ? 'warning' : 'primary'} status-class'>${data}</span>`;
+                            }
+                        },
+                        {
+                            "data": "requestedDate", "searchable": false, "render": function (data, type, row, meta) {
+                                var dataRow = new Date(data);
+                                return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                            }
+                        },
+                        {
+                            "data": "requestedReturnDate", "searchable": false, "render": function (data, type, row, meta) {
+                                var dataRow = new Date(data);
+                                return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                            }
+                        }
+                    ]
+                });
+
+                //checkValidate();
+            })
+        }
+
+        function initTableHistory() {
+            var borrowerId = '@borId' != '' ? '@borId' : $('#borrowerNameSelect').val();
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDataHistory, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { "id": borrowerId }
+            }).done(function (data) {
+                if (data.length > 0) {
+                    //$('.rentHistory').show();
+
+                    $('#borrowerCompany').val(data[0].borrowerCompany);
+                    $('#borrowerArchiveUnit').val(data[0].borrowerArchiveUnit);
+                    $('#borrowerPosition').val(data[0].borrowerPosition);
+                    $('#borrowerIdentityId').val(data[0].borrowerIdentityNumber);
+                    $('#borrowerPhone').val(data[0].borrowerPhone);
+                    $('#borrowerEmail').val(data[0].borrowerEmail);
+
+                    $('#tblHistory').DataTable({
+                        "data": data,
+                        "destroy": true,
+                        "searching": false,
+                        "paging": false,
+                        "info": false,
+                        "columns": [
+                            { "data": "archiveCode" },
+                            { "data": "archiveTitle" },
+                            { "data": "creatorName" },
+                            {
+                                "data": "rentDate", "searchable": false, "render": function (data, type, row, meta) {
+                                    var dataRow = new Date(data);
+                                    return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                                }
+                            },
+                            {
+                                "data": "returnDate", "searchable": false, "render": function (data, type, row, meta) {
+                                    var dataRow = new Date(data);
+                                    return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                                }
+                            },
+                            { "data": "description" },
+                            { "data": "approvalNotes" },
+                            {
+                                "data": "status", "searchable": false, "render": function (data, type, row, meta) {
+                                    return `<span class='badge badge-pill badge-${data != 'Available' ? 'warning' : 'primary'} status-class'>${data}</span>`;
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    //$('.rentHistory').hide();
+
+                    $('#borrowerCompany').val('');
+                    $('#borrowerArchiveUnit').val('');
+                    $('#borrowerPosition').val('');
+                    $('#borrowerIdentityId').val('');
+                    $('#borrowerPhone').val('');
+                    $('#borrowerEmail').val('');
+
+                    $('#tblHistory').DataTable({
+                        "destroy": true,
+                        "searching": false,
+                        "paging": false,
+                        "info": false,
+                        "columns": [
+                            { "data": "archiveCode" },
+                            { "data": "archiveTitle" },
+                            { "data": "creatorName" },
+                            {
+                                "data": "rentDate", "searchable": false, "render": function (data, type, row, meta) {
+                                    var dataRow = new Date(data);
+                                    return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                                }
+                            },
+                            {
+                                "data": "returnDate", "searchable": false, "render": function (data, type, row, meta) {
+                                    var dataRow = new Date(data);
+                                    return `<span>${data == null ? '' : dataRow.toLocaleDateString("id-ID")}</span>`;
+                                }
+                            },
+                            { "data": "description" },
+                            { "data": "approvalNotes" },
+                            {
+                                "data": "status", "searchable": false, "render": function (data, type, row, meta) {
+                                    return `<span class='badge badge-pill badge-${data != 'Available' ? 'warning' : 'primary'} status-class'>${data}</span>`;
+                                }
+                            }
+                        ]
+                    });
+                }
+            })
+        }
+
+        function checkValidate() {
+            var oTable = $('#tbl').dataTable();
+            var rowcollection = oTable.$(".status-class");
+            var allChecked = false;
+
+            rowcollection.each(function (index, elem) {
+                console.log($(elem).html());
+                if ($(elem).html() != 'Available') {
+                    allChecked = false;
+                    return false;
+                }
+                else {
+                    allChecked = true;
+                }
+            });
+
+            if (allChecked)
+                $('#btnRequestPinjamMdl').show();
+            else
+                $('#btnRequestPinjamMdl').hide();
+
+        }
     </script>
 }

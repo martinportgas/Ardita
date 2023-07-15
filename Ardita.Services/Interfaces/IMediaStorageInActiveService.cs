@@ -13,4 +13,5 @@ public interface IMediaStorageInActiveService
     Task<int> Update(TrxMediaStorageInActive model, string[] listSts, string[] listArchive);
     Task<TrxMediaStorageInActive> GetById(Guid id);
     Task<int> Delete(Guid ID);
+    Task<IEnumerable<VwArchiveRent>> GetDetails(string archiveName, Guid subSubjectId);
 }

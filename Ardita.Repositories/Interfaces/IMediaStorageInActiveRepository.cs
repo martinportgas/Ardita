@@ -14,5 +14,6 @@ public interface IMediaStorageInActiveRepository
     Task<int> Insert(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail);
     Task<int> Update(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail);
     Task<int> Delete(Guid ID);
+    Task<IEnumerable<VwArchiveRent>> GetArchiveRent();
 
 }

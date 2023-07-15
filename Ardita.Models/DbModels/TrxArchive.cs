@@ -87,7 +87,7 @@ public partial class TrxArchive
 
     public virtual ICollection<TrxArchiveOutIndicator> TrxArchiveOutIndicators { get; } = new List<TrxArchiveOutIndicator>();
 
-    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
+    public virtual ICollection<TrxArchiveRentDetail> TrxArchiveRentDetails { get; } = new List<TrxArchiveRentDetail>();
 
     public virtual ICollection<TrxFileArchiveDetail> TrxFileArchiveDetails { get; } = new List<TrxFileArchiveDetail>();
 

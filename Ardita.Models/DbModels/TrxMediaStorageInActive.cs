@@ -45,7 +45,7 @@ public partial class TrxMediaStorageInActive
 
     public virtual TrxSubSubjectClassification SubSubjectClassification { get; set; } = null!;
 
-    public virtual ICollection<TrxArchiveRent> TrxArchiveRents { get; } = new List<TrxArchiveRent>();
+    public virtual ICollection<TrxArchiveRentDetail> TrxArchiveRentDetails { get; } = new List<TrxArchiveRentDetail>();
 
     public virtual ICollection<TrxMediaStorageInActiveDetail> TrxMediaStorageInActiveDetails { get; } = new List<TrxMediaStorageInActiveDetail>();
 

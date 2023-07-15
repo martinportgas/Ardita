@@ -313,9 +313,9 @@ public static class Label
         document.Replace("[ddString]", Global.Terbilang(((DateTime)data.ApprovalDate).Day), false, true);
         document.Replace("[MMString]", Global.Terbilang(((DateTime)data.ApprovalDate).Month), false, true);
         document.Replace("[dd-MM-yyyy]", ((DateTime)data.ApprovalDate).ToString("dd-MM-yyyy"), false, true);
-        document.Replace("[archive_unit]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
-        document.Replace("[company]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.CompanyName, false, true);
-        document.Replace("[company_address]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.Address, false, true);
+        //document.Replace("[archive_unit]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
+        //document.Replace("[company]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.CompanyName, false, true);
+        //document.Replace("[company_address]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.Address, false, true);
         document.Replace("[bor_name]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName, false, true);
         document.Replace("[bor_nip]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber, false, true);
         document.Replace("[bor_pos]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPosition, false, true);
@@ -324,7 +324,7 @@ public static class Label
         document.Replace("[apr_name]", data.ApprovedByNavigation.Employee.Name, false, true);
         document.Replace("[apr_nip]", data.ApprovedByNavigation.Employee.Nik, false, true);
         document.Replace("[apr_pos]", data.ApprovedByNavigation.Employee.Position.Name, false, true);
-        document.Replace("[apr_uker]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
+        //document.Replace("[apr_uker]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
         document.Replace("[apr_company]", data.ApprovedByNavigation.Employee.Company.CompanyName, false, true);
         document.Replace("[company_city]", data.ApprovedByNavigation.Employee.Company.City, false, true);
         document.Replace("[description]", data.Description, false, true);

@@ -28,11 +28,11 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.SubSubjectClassification)
                     .ThenInclude(x => x.SubjectClassification)
                 .Include(x => x.ArchiveType)
-                .Include(x => x.TrxArchiveRents)
-                    .ThenInclude(x => x.TrxRentHistories)
+                .Include(x => x.TrxArchiveRentDetails)
+                    .ThenInclude(x => x.TrxArchiveRent.TrxRentHistories)
                     .ThenInclude(x => x.Borrower)
                 .AsNoTracking()
-                .Where(x => x.IsActive == true && x.IsArchiveActive == true && x.TrxArchiveRents.FirstOrDefault().TrxArchiveRentId != null && x.TrxArchiveRents.FirstOrDefault().ReturnDate != null)
+                .Where(x => x.IsActive == true && x.IsArchiveActive == true && x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRentId != null && x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.ReturnDate != null)
                 .Select(x => new ReportArchiveLoansInActive
                 {
                     PemilikArsip = x.ArchiveOwner.ArchiveOwnerName,
@@ -42,11 +42,11 @@ namespace Ardita.Repositories.Classess
                     KodeKlasifikasi = x.SubSubjectClassification.SubjectClassification.SubjectClassificationCode ?? string.Empty,
                     NoArsip = x.DocumentNo,
                     JenisArsip = x.ArchiveType.ArchiveTypeName,
-                    NamaPeminjam = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerName,
-                    Perusahaan = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany,
-                    UnitKerja = x.TrxArchiveRents.FirstOrDefault().TrxRentHistories.FirstOrDefault().Borrower.BorrowerArchiveUnit,
-                    TanggalPinjam = x.TrxArchiveRents.FirstOrDefault().ApprovalDate,
-                    TanggalKembali = x.TrxArchiveRents.FirstOrDefault().ReturnDate,
+                    NamaPeminjam = x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName,
+                    Perusahaan = x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.TrxRentHistories.FirstOrDefault().Borrower.BorrowerCompany,
+                    UnitKerja = x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.TrxRentHistories.FirstOrDefault().Borrower.BorrowerArchiveUnit,
+                    TanggalPinjam = x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.ApprovalDate,
+                    TanggalKembali = x.TrxArchiveRentDetails.FirstOrDefault().TrxArchiveRent.ReturnDate,
                     Period = x.CreatedDateArchive
                 }).ToListAsync();
 

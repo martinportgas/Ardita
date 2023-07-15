@@ -94,6 +94,14 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         return results;
 
     }
+    public async Task<IEnumerable<VwArchiveRent>> GetArchiveRent()
+    {
+        var results = await _context.VwArchiveRents
+            .ToListAsync();
+
+        return results;
+
+    }
 
     public async Task<int> Insert(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail)
     {

@@ -39,43 +39,42 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         }
         public override async Task<IActionResult> Approval(Guid Id, int Level)
         {
-            var model = new TrxArchiveRent();
-            ViewBag.listSubSubject = await BindSubSubjectClasscifications();
-            ViewBag.listArchive = await BindArchives();
-
-            ViewBag.Name = AppUsers.CurrentUser(User).EmployeeName;
-            ViewBag.RoleName = AppUsers.CurrentUser(User).RoleName;
-            ViewBag.NIK = AppUsers.CurrentUser(User).EmployeeNIK;
-            ViewBag.Email = AppUsers.CurrentUser(User).EmployeeMail;
-            ViewBag.Company = AppUsers.CurrentUser(User).CompanyName;
-            ViewBag.Phone = AppUsers.CurrentUser(User).EmployeePhone;
-
-            var rent = await _archiveRentService.GetById(Id);
-            var archive = await _MediaStorageInActiveService.GetDetailArchive(rent.ArchiveId);
-
-
-
-            foreach (dynamic items in archive)
+            var model = await _archiveRentService.GetById(Id);
+            if (model != null)
             {
-                ViewBag.TrxArchiveRentId = Id;
-                ViewBag.SubSubjectClassification = items.SubSubjectClassification.SubSubjectClassificationName;
-                ViewBag.TitleArchive = items.TitleArchive;
-                ViewBag.CreatorName = items.Creator.CreatorName;
-                ViewBag.RequestedDate = DateTime.Now.ToString("dd/MM/yyyy");
-                ViewBag.ReturnDate = DateTime.Now.AddDays(7).ToString("dd/MM/yyyy");
-                ViewBag.ArchiveUnitName = items.Creator.ArchiveUnit.ArchiveUnitName;
-                ViewBag.DescriptionByUser = rent.Description;
-                break;
+                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                ViewBag.ArchiveId = model.ArchiveId;
+                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
+                return View(GlobalConst.Form, model);
             }
-
-            
-
-            return View(GlobalConst.Form, model);
+            else
+            {
+                return RedirectToIndex();
+            }
+        }
+        public override async Task<IActionResult> Detail(Guid Id)
+        {
+            var model = await _archiveRentService.GetById(Id);
+            if (model != null)
+            {
+                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                ViewBag.ArchiveId = model.ArchiveId;
+                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
+                return View(GlobalConst.Form, model);
+            }
+            else
+            {
+                return RedirectToIndex();
+            }
         }
 
         public override async Task<IActionResult> SubmitApproval(TrxArchiveRent model)
         {
-            var ArchiveRentId = new Guid(Request.Form["txtTrxArchiveRentId"].ToString());
+            var ArchiveRentId = model.TrxArchiveRentId;
             var Description = Request.Form["txtDescription"];
             int Status = Request.Form["btnApproval"] == "Approve" ? 3 : 4;
             Guid UserId = AppUsers.CurrentUser(User).UserId;
