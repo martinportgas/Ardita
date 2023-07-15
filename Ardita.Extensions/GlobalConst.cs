@@ -55,6 +55,7 @@ public static class GlobalConst
     //Controller
     public const string Company = "Company";
     public const string ChangeRole = "ChangeRole";
+    public const string ChangePassword = "ChangePassword";
     public const string Home = "Home";
     public const string Classification = "Classification";
     public const string ClassificationType = "ClassificationType";
@@ -216,6 +217,7 @@ public static class GlobalConst
     public const string BindLabel = "BindLabel";
     public const string BindTypeStorageByParam = "BindTypeStorageByParam";
     public const string BindRowArchiveInActiveByLevelId = "BindRowArchiveInActiveByLevelId";
+    public const string BindRowAvailableArchiveInActiveByLevelId = "BindRowAvailableArchiveInActiveByLevelId";
     public const string BindSubTypeStorageByTypeStorageId = "BindSubTypeStorageByTypeStorageId";
     public const string BindArchiveActiveBySubjectId = "BindArchiveActiveBySubjectId";
     public const string BindSubTypeStorageById = "BindSubTypeStorageById";

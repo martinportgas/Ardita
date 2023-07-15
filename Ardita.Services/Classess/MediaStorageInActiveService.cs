@@ -45,7 +45,7 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
         {
             var filterData = new DataTableModel();
 
-            filterData.sortColumn = model.columns[model.order[0].column].data;
+            filterData.sortColumn = model.columns[model.order[0].column].name;
             filterData.sortColumnDirection = model.order[0].dir;
             filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
             filterData.pageSize = model.length;

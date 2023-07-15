@@ -91,10 +91,13 @@
                                                 <option value=""></option>
                                             </select>
                                         </div>
-                                        <div class="form-group">
+
+                                        @*hiding description field with styling display none, just in case someday user want this field show again*@
+                                        <div class="form-group" style="display: none">
                                             <label>Deskripsi</label>
                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                         </div>
+
                                     </div>
                                     <div class="col-sm-6">
                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
@@ -131,7 +134,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="row border-top pt-3">
+                                <div class="row border-top pt-3 m-t-lg">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Sub-Subjek Klasifikasi</label>

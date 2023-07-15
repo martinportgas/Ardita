@@ -16,7 +16,7 @@
                 <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
             </li>
             <li class="breadcrumb-item">
-                Archive Active
+                Arsip Inaktif
             </li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveDestroy, new {Area = GlobalConst.ArchiveInActive})">Pemusnahan Arsip</a>
@@ -99,10 +99,13 @@
                                                             <label class="font-normal">Jadwal Pemusnahan</label>
                                                             <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="DestroySchedule" id="txtDestroySchedule">
                                                         </div>
-                                                        <div class="form-group">
+
+                                                         @*hiding description field with styling display none, just in case someday user want this field show again*@
+                                                        <div class="form-group" style="display: none">
                                                             <label>Deskripsi</label>
                                                             <textarea placeholder="" id="txtDesc" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Description"></textarea>
                                                         </div>
+
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <button class="btn btn-success btn-sm pull-right" style="margin-bottom:5px;" type="button" onclick="addRow($(this), 'apr')" id="addApr" @Html.Raw(form.isInput ? string.Empty : GlobalConst.Hidden)><i class="fa fa-plus"></i> Tambah Approval</button>
@@ -153,7 +156,7 @@
                                                 </div>
                                                 @if (form.isInput)
                                                 {
-                                                    <div class="row border-top pt-3">
+                                                    <div class="row border-top pt-3 m-t-lg">
                                                         <div class="col-sm-6">
                                                             <div class="form-group">
                                                                 <label>Sub-Subjek Klasifikasi</label>
@@ -475,7 +478,7 @@
             initSelect2('ars', '@GlobalConst.BindArchiveRetentionInActiveByParam');
             initSelect2('apr', '@GlobalConst.BindApprovalByParam');
 
-            var menuActive = 'Arsip Aktif'
+            var menuActive = 'Arsip Inaktif'
             var subMenuActive = 'Sirkulasi Arsip'
 
             $('ol.breadcrumb').children(':first-child').next().html(menuActive);

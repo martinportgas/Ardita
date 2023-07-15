@@ -1,10 +1,5 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ardita.Services.Interfaces
 {
@@ -12,6 +7,12 @@ namespace Ardita.Services.Interfaces
     {
         Task<TrxRow> GetById(Guid id);
         Task<IEnumerable<TrxRow>> GetAll();
+
+        /// <summary>
+        /// get rows that have never been used by media storage in active
+        /// </summary>
+        /// <returns>list row</returns>
+        Task<IEnumerable<TrxRow>> GetAvailableRow();
         Task<DataTableResponseModel<TrxRow>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxRow model);
         Task<bool> InsertBulk(List<TrxRow> rows);

@@ -19,5 +19,7 @@ namespace Ardita.Repositories.Interfaces
         Task<bool> InsertBulk(List<MstUser> users);
         Task<int> Delete(MstUser model);
         Task<int> Update(MstUser model);
+        Task<int> ChangePassword(MstUser model);
+        Task<bool> FindPasswordByUsername(Guid Id, string password);
     }
 }

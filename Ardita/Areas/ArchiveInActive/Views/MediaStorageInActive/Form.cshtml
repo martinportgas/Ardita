@@ -791,7 +791,7 @@
                 allowClear: true,
                 placeholder: '-- Select Floor --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindRowArchiveInActiveByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindRowAvailableArchiveInActiveByLevelId, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
