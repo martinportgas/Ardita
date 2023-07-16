@@ -19,7 +19,9 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         IArchiveApprovalService archiveApprovalService,
         IUserService userService,
         IEmployeeService employeeService,
-        IHostingEnvironment hostingEnvironment
+        IMediaStorageService mediaStorageService,
+        IHostingEnvironment hostingEnvironment,
+        IArchiveService archiveService
         )
     {
         ArchiveReceivedService = archiveReceivedService;
@@ -29,6 +31,8 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         _employeeService = employeeService;
         _userService = userService;
         _hostingEnvironment = hostingEnvironment;
+        _mediaStorageService = mediaStorageService;
+        _archiveService = archiveService;
     }
     public override async Task<ActionResult> Index() => await base.Index();
 

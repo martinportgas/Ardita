@@ -240,6 +240,7 @@
                                     @if (form.isSubmitForm)
                                             {
                                                 <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                        onclick="onSubmit(this, event);"
                                                         type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Save">
                                                     @Html.Raw(form.SaveText)
                                                 </button>
@@ -247,6 +248,7 @@
                                                 {
                                                     <button
                                                         class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                        onclick="onSubmit(this, event);"
                                                         type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Submit">
                                                         @Html.Raw(form.SubmitText)
                                                     </button>
@@ -814,5 +816,109 @@
                 }
             });
         }
+
+        function validate() {
+            let result = true;
+
+            if ($(".archive-id").length < 1) {
+                swal("Please insert Archive!");
+                result = false;
+            }
+
+            if ($('#txtArchiveYear').val() == "") {
+                swal("Please select Tahun Arsip");
+                result = false;
+            }
+
+            if ($('#txtSubSubjectClassificationId').val() == "") {
+                swal("Please select Sub Subjek Klasifikasi!");
+                result = false;
+            }
+
+            if ($('#txtSubjectClassificationId').val() == "") {
+                swal("Please select Subjek Klasifikasi!");
+                result = false;
+            }
+
+            if ($('#txtDesc').val() == "") {
+                swal("Please insert Description!");
+                result = false;
+            }
+
+            if ($('#txtRowId').val() == "") {
+                swal("Please select Row!");
+                result = false;
+            }
+
+            if ($('#txtLevelId').val() == "") {
+                swal("Please select Level!");
+                result = false;
+            }
+
+            if ($('#txtRackId').val() == "") {
+                swal("Please select Rack!");
+                result = false;
+            }
+
+            if ($('#txtRoomId').val() == "") {
+                swal("Please select Room!");
+                result = false;
+            }
+
+            if ($('#txtFloorId').val() == "") {
+                swal("Please select Floor!");
+                result = false;
+            }
+
+            if ($('#txtGMDDetail').val() == "") {
+                swal("Please select GMD Detail!");
+                result = false;
+            }
+
+            if ($('#txtTypeStorageId').val() == "") {
+                swal("Please select Type Storage!");
+                result = false;
+            }
+
+            if ($('#txtArchiveUnitId').val() == "") {
+                swal("Please select Archive Unit!");
+                result = false;
+            }
+
+            if ($('#txtMediaStorageCode').val() == "") {
+                swal("Please Insert Media Storage Code!");
+                result = false;
+            }
+
+            return result;
+        }
+
+        function onSubmit(ctl, event) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + "@form.CurrentAction" + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "@form.CurrentAction",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        if (validate() == true) {
+                            $('.confirm').prop('disabled', true);
+                            $('.cancel').prop('disabled', true);
+                            $('.cancel').hide();
+                            $("#formInput").submit();
+                        }
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
     </script>
 }

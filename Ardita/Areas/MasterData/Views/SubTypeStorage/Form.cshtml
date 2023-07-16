@@ -74,26 +74,30 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Gmd Header</label>
-                                            <select asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmd" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select GMD --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Gmd Detail</label>
-                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmdDetail" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Gmd Detail --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Size</label>
-                                            <input type="text" placeholder="" id="txtSize" class="form-control">
-                                        </div>
+                                        @if (form.isSubmitForm)
+                                        {
+                                            <div class="form-group">
+                                                <label>Gmd Header</label>
+                                                <select asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                        id="txtGmd" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select GMD --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Gmd Detail</label>
+                                                <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                        id="txtGmdDetail" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Gmd Detail --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Size</label>
+                                                <input type="text" placeholder="" id="txtSize" class="form-control">
+                                            </div>
+                                        }
+                                        
                                         @if (form.CurrentAction != GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
                                         {
                                             <div class="form-group">
@@ -162,7 +166,13 @@
                                 </div>
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.SubTypeStorage, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
-                                    <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))</button>
+                                    @if (form.isSubmitForm)
+                                    {
+                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                            @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
+                                        </button>
+                                    }
+                                    
                                 </div>
                             </form>
                         </div>

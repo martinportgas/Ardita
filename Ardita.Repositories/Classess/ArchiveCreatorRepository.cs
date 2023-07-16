@@ -16,7 +16,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
     {
         int result = 0;
 
-        if (model.ArchiveUnitId != Guid.Empty)
+        if (model.CreatorId != Guid.Empty)
         {
             var data = await _context.MstCreators.AsNoTracking().FirstAsync(x => x.CreatorId == model.CreatorId);
             if (data != null)
@@ -35,9 +35,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         => await _context.MstCreators
         .Include(x=> x.ArchiveUnit)
         .ThenInclude(x=> x.Company)
-        .Where(x => x.IsActive == true 
-            && x.ArchiveUnit.IsActive == true 
-            && x.ArchiveUnit.Company.IsActive == true)
+        .Where(x => x.IsActive == true)
         .ToListAsync();
 
     public async Task<IEnumerable<MstCreator>> GetByFilterModel(DataTableModel model)
@@ -67,7 +65,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstCreator>> GetById(Guid id) => await _context.MstCreators.Where(x => x.CreatorId== id).ToListAsync();
+    public async Task<IEnumerable<MstCreator>> GetById(Guid id) => await _context.MstCreators.Where(x => x.CreatorId== id).Include(x => x.ArchiveUnit).AsNoTracking().ToListAsync();
 
     public async Task<int> GetCount() => await _context.MstCreators.CountAsync(x => x.IsActive == true);
 
@@ -100,7 +98,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
     {
         int result = 0;
 
-        if (model != null && model.ArchiveUnitId != Guid.Empty)
+        if (model != null && model.CreatorId != Guid.Empty)
         {
             var data = await _context.MstCreators.AsNoTracking().FirstAsync(x => x.CreatorId == model.CreatorId);
             if (data != null)
