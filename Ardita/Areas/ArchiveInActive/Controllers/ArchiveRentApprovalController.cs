@@ -37,6 +37,19 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 throw;
             }
         }
+        public async Task<JsonResult> GetDataHistory(Guid Id)
+        {
+            try
+            {
+                var result = await _archiveRentService.GetByBorrowerId(Id);
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public override async Task<IActionResult> Approval(Guid Id, int Level)
         {
             var model = await _archiveRentService.GetById(Id);
@@ -71,7 +84,54 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 return RedirectToIndex();
             }
         }
+        [HttpGet]
+        public async Task<JsonResult> GetDetailArchive(Guid Id)
+        {
+            try
+            {
+                var result = await _MediaStorageInActiveService.GetDetailArchive(Id);
+                return Json(result);
 
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetDetail(string archiveName, Guid subSubjectId)
+        {
+            try
+            {
+                var result = await _MediaStorageInActiveService.GetDetails(archiveName, subSubjectId);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDataRentBoxDetail(Guid Id, int Sort)
+        {
+            try
+            {
+                var dataDetail = await _MediaStorageInActiveService.GetDetailStorages(Id, Sort);
+                var dataLocation = await _MediaStorageInActiveService.GetById(Id);
+                var result = new
+                {
+                    main = dataLocation,
+                    detail = dataDetail
+                };
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public override async Task<IActionResult> SubmitApproval(TrxArchiveRent model)
         {
             var ArchiveRentId = model.TrxArchiveRentId;

@@ -33,5 +33,6 @@ namespace Ardita.Repositories.Interfaces
 
         Task<IEnumerable<MstBorrower>> GetBorrower();
         Task<IEnumerable<object>> GetByBorrowerId(Guid Id);
+        Task<IEnumerable<VwArchiveRentBox>> GetArchiveRentBoxById(Guid Id);
     }
 }

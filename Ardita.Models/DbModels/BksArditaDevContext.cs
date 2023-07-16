@@ -139,6 +139,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<VwArchiveRent> VwArchiveRents { get; set; }
 
+    public virtual DbSet<VwArchiveRentBox> VwArchiveRentBoxes { get; set; }
+
     public virtual DbSet<VwArchiveRentOld> VwArchiveRentOlds { get; set; }
 
     public virtual DbSet<VwArchiveRetention> VwArchiveRetentions { get; set; }
@@ -2639,6 +2641,33 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.Volume).HasColumnName("volume");
+        });
+
+        modelBuilder.Entity<VwArchiveRentBox>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_ARCHIVE_RENT_BOX");
+
+            entity.Property(e => e.ArchiveUnitName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("archive_unit_name");
+            entity.Property(e => e.ClassificationName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("classification_name");
+            entity.Property(e => e.MediaStorageInActiveCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("media_storage_in_active_code");
+            entity.Property(e => e.MediaStorageInActiveId).HasColumnName("media_storage_in_active_id");
+            entity.Property(e => e.Sort).HasColumnName("sort");
+            entity.Property(e => e.SubTypeStorageName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("sub_type_storage_name");
+            entity.Property(e => e.TrxArchiveRentId).HasColumnName("trx_archive_rent_id");
         });
 
         modelBuilder.Entity<VwArchiveRentOld>(entity =>

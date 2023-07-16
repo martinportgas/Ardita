@@ -171,6 +171,26 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             }
         }
         [HttpGet]
+        public async Task<JsonResult> GetDataRentBoxDetail(Guid Id, int Sort)
+        {
+            try
+            {
+                var dataDetail = await _MediaStorageInActiveService.GetDetailStorages(Id, Sort);
+                var dataLocation = await _MediaStorageInActiveService.GetById(Id);
+                var result = new
+                {
+                    main = dataLocation,
+                    detail = dataDetail
+                };
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
             TrxArchiveRent data = await _archiveRentService.GetById(Id);

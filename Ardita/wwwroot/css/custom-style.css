@@ -54,15 +54,15 @@
         float: right !important;
     }
 }
-body > .sk-spinner {
+#wrapper > .sk-spinner {
     display: none;
 }
 
-body.sk-loading {
+#wrapper.sk-loading {
     position: relative;
 }
 
-    body.sk-loading > .sk-spinner {
+    #wrapper.sk-loading > .sk-spinner {
         display: block;
         position: absolute;
         top: 40%;
@@ -71,7 +71,7 @@ body.sk-loading {
         z-index: 3000;
     }
 
-    body.sk-loading:after {
+    #wrapper.sk-loading:after {
         content: '';
         background-color: rgba(255, 255, 255, 0.7);
         position: absolute;

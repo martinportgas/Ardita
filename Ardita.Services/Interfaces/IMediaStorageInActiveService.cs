@@ -14,4 +14,5 @@ public interface IMediaStorageInActiveService
     Task<TrxMediaStorageInActive> GetById(Guid id);
     Task<int> Delete(Guid ID);
     Task<IEnumerable<VwArchiveRent>> GetDetails(string archiveName, Guid subSubjectId);
+    Task<IEnumerable<VwArchiveRent>> GetDetailStorages(Guid Id, int Sort);
 }

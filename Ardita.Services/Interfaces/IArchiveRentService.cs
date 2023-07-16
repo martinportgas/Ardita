@@ -28,5 +28,6 @@ namespace Ardita.Services.Interfaces
         Task<bool> UpdateArchiveRent(Guid ArchiveRentId, Guid UserId);
         Task<IEnumerable<MstBorrower>> GetBorrower();
         Task<IEnumerable<object>> GetByBorrowerId(Guid Id);
+        Task<IEnumerable<VwArchiveRentBox>> GetArchiveRentBoxById(Guid Id);
     }
 }

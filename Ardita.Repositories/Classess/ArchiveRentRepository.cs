@@ -177,6 +177,7 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.ApprovedByNavigation.Creator)
                 .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator)
                 .Include(x => x.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.SubTypeStorage)
+                .Include(x => x.ApprovedByNavigation.Employee.Company)
                 .Where(x => x.TrxArchiveRentId == id).ToListAsync();
             return result.FirstOrDefault();
         }
@@ -319,6 +320,7 @@ namespace Ardita.Repositories.Classess
                      UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
                      x.TrxArchiveRent.ApprovalDate,
                      x.TrxArchiveRent.ApprovalReturnDate,
+                     x.TrxArchiveRent.RetrievalDate,
                      Status = x.TrxArchiveRent.Status.Name,
                      Color = x.TrxArchiveRent.Status.Color,
                  })
@@ -452,25 +454,25 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<object>> GetReturnByFilterModel(DataTableModel model)
         {
             var result = await _context.TrxRentHistories
-               .Include(x => x.Borrower)
-               .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive)
-               .Include(x => x.TrxArchiveRent.Status)
-               .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Return)
-               .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedDate.ToString()+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
-               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
-               .Skip(model.skip).Take(model.pageSize)
-               .Select(x => new
-               {
-                   x.TrxArchiveRentId,
-                   Name = x.Borrower.BorrowerName,
-                   x.TrxArchiveRent.RequestedDate,
-                   x.TrxArchiveRent.RequestedReturnDate,
-                   x.TrxArchiveRent.StatusId,
-                   Status = x.TrxArchiveRent.Status.Name,
-                   Color = x.TrxArchiveRent.Status.Color,
-                   UserCreatedBy = GetUserNameCreatedById(x.CreatedBy)
-               })
-               .ToListAsync();
+                 .Include(x => x.Borrower)
+                 .Include(x => x.TrxArchiveRent.Status)
+                 .Where(x => x.TrxArchiveRent.ReturnDate != null)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                 .Skip(model.skip).Take(model.pageSize)
+                 .Select(x => new
+                 {
+                     x.TrxArchiveRentId,
+                     Name = x.Borrower.BorrowerName,
+                     Company = x.Borrower.BorrowerCompany,
+                     UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
+                     x.TrxArchiveRent.ApprovalDate,
+                     x.TrxArchiveRent.ApprovalReturnDate,
+                     x.TrxArchiveRent.ReturnDate,
+                     Status = x.TrxArchiveRent.Status.Name,
+                     Color = x.TrxArchiveRent.Status.Color,
+                 })
+                 .ToListAsync();
 
             return result;
         }
@@ -479,10 +481,9 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails.FirstOrDefault().Archive)
-                .Include(x => x.TrxArchiveRent.Status)
-                .Where(x => x.TrxArchiveRent.StatusId == (int)GlobalConst.STATUS.Return)
-               .Where($"(Borrower.BorrowerName+TrxArchiveRent.RequestedDate.ToString()+TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+                 .Include(x => x.TrxArchiveRent.Status)
+                 .Where(x => x.TrxArchiveRent.ReturnDate != null)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
                 .CountAsync();
 
             return result;
@@ -558,6 +559,11 @@ namespace Ardita.Repositories.Classess
                 .AsNoTracking()
                 .ToListAsync();
             return results;
+        }
+
+        public async Task<IEnumerable<VwArchiveRentBox>> GetArchiveRentBoxById(Guid Id)
+        {
+            return await _context.VwArchiveRentBoxes.Where(x => x.TrxArchiveRentId == Id).ToListAsync();
         }
         #endregion
 
