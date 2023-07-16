@@ -123,7 +123,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Delete(MstCreator model)
     {
-        if (model != null && model.ArchiveUnitId != Guid.Empty)
+        if (model != null && model.CreatorId != Guid.Empty)
         {
             await _archiveCreatorService.Delete(model);
         }

@@ -81,7 +81,7 @@
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveCreator, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                        <button onclick="onSubmit(this, event, '@form.CurrentAction');" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
                                     }
                                 </div>
                             </form>
@@ -101,17 +101,17 @@
 
         function validate() {
             let result = true;
-
-            if ($('#txtCreatorCode').val() == "") 
-            {
-                swal("Please enter Creator Code !");
-                result = false;
-            } 
+            
             if ($('#txtCreatorName').val() == "") 
             {
                 swal("Please enter Creator Name !");
                 result = false;
             }
+            if ($('#txtCreatorCode').val() == "") 
+            {
+                swal("Please enter Creator Code !");
+                result = false;
+            } 
             if ($('#txtArchiveUnitId').val() == "") {
                 swal("Please select Archive Unit !");
                 result = false;
