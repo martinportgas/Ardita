@@ -73,7 +73,14 @@
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveOwner, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        <button onclick="onSubmit(this, event, @form.CurrentAction);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                        if(form.CurrentAction == GlobalConst.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, '@form.CurrentAction');" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                        }
                                     }
                                 </div>
                             </form>
@@ -114,7 +121,7 @@
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Save",
+                confirmButtonText: "Yes",
                 cancelButtonText: "Cancel",
                 closeOnConfirm: false,
                 closeOnCancel: false

@@ -23,7 +23,7 @@
             </li>
         </ol>
     </div>
-    <div class="col-lg-2">
+    <div class="col-lg-2"> 
     </div>
 </div>
 
@@ -115,14 +115,23 @@
                     @:initDetail("@d.Name", "@d.Unit");
                 }
             }
+
+            $('.delete').click(function () {
+                
+            });
         });
+
+        function deleteRow(param) {
+            $(param).closest('tr').remove();
+            return false;
+        }
 
         function initDetail(name, unit) {
             if(name === "" || unit === "") {
                 alert("Please Input Detail Name and Unit");
                 return false;
             }
-            $(".detail").append(`<tr><td><i class="fa fa-trash"></i></td><td>${name}</td><td>${unit}</td></tr><input type="hidden" name="detail[]" value="${name}#${unit}">`);
+            $(".detail").append(`<tr><td><i class="fa fa-trash" onclick="deleteRow(this)"></i></td><td>${name}</td><td>${unit}</td></tr><input type="hidden" name="detail[]" value="${name}#${unit}">`);
 
             $("#txtDetailName").val("");
             $("#txtDetailUnit").val("");
