@@ -609,10 +609,11 @@
                 "searching": false,
                 "paging": false,
                 "info": false,
+                "fixedColumns": true,
                 "columnDefs": [
                     {
                         targets: [0],
-                        className: '@Model.TrxArchiveRentId' == '' ? '' : 'd-none'
+                        className: '@Model.TrxArchiveRentId' == '' || '@Model.TrxArchiveRentId' == '@Guid.Empty' ? '' : 'd-none'
                     }
                 ],
                 "columns": [
@@ -642,6 +643,7 @@
                 "searching": false,
                 "paging": false,
                 "info": false,
+                "fixedColumns": true,
             });
         }
 
@@ -781,9 +783,9 @@
 
             row.remove().draw();
 
-            initTable();
-
             initButtonRequest($('.listArchive') == undefined ? 0 : $('.listArchive').length);
+
+            initTable();
         }
 
         function initTable() {
@@ -809,9 +811,10 @@
                     }
                 });
 
+                $('#tbl').DataTable().destroy();
                 tableRegist = $('#tbl').DataTable({
                     "data": dataRes,
-                    "destroy": true,
+                    //"destroy": true,
                     "searching": false,
                     "paging": false,
                     "info": false,

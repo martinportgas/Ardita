@@ -55,10 +55,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveRentService.GetById(Id);
             if (model != null)
             {
-                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
-                ViewBag.ArchiveId = model.ArchiveId;
-                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
-                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                //ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                //ViewBag.ArchiveId = model.ArchiveId;
+                //ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                //ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
                 //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }
@@ -72,10 +72,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveRentService.GetById(Id);
             if (model != null)
             {
-                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
-                ViewBag.ArchiveId = model.ArchiveId;
-                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
-                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                //ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                //ViewBag.ArchiveId = model.ArchiveId;
+                //ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                //ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
                 //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }

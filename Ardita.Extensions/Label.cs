@@ -508,7 +508,7 @@ public static class Label
         Body body = paragraph.OwnerTextBody;
         index = body.ChildObjects.IndexOf(paragraph);
 
-        string storageLoc = data.Row.Level.Rack.RackCode + "-" + data.Row.Level.LevelCode + data.Row.RowCode;
+        string storageLoc = data.Row.Level.Rack.RackCode + "-" + data.Row.Level.LevelCode + data.Row.RowName;
         char[] Header = storageLoc.ToCharArray();
 
         Table table = section.AddTable(true);
