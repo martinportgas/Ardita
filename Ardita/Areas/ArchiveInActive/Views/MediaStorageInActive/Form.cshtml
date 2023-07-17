@@ -372,10 +372,10 @@
 
             if(isInput)
             {
-                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-12"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
+                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr><tr><td>Satuan</td><td>:</td><td><span id="sts-unit-${totalDetail}"></span></td></tr></table></div><div class="col-sm-12"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
             }else
             {
-                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><button style="display:none" class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" style="display:none" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
+                $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr><tr><td>Satuan</td><td>:</td><td><span id="sts-unit-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><button style="display:none" class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" style="display:none" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
             }
 
             getSubTypeStorageById(stsId, totalDetail);
@@ -485,7 +485,6 @@
                 dataType: "@GlobalConst.JSON",
                 contentType: "@GlobalConst.APPLICATIONJSON",
                 success: function (data) {
-                    console.log(currentVolume)
                     currentVolume = currentVolume - data.volume;
                     if (currentVolume < 0) {
                         currentVolume = currentVolume + data.volume;
@@ -497,10 +496,13 @@
                     $("#sts-code-" + sort).html('<b>' + data.code + '</b>');
                     $("#sts-name-" + sort).html('<b>' + data.name + '</b>');
                     $("#sts-volume-" + sort).html('<b class="subVolume">' + data.volume + '</b>');
+                    $("#sts-unit-" + sort).html('<b class="subVolume">' + data.unit + '</b>');
 
-                    if ('@form.CurrentAction' != "Add") {
-                        $("#txtDifferenceVolume").val(currentVolume);
-                    }
+                    //if ('@form.CurrentAction' != "Add") {
+                    //    console.log(currentVolume);
+                        
+                    //}
+                    $("#txtDifferenceVolume").val(currentVolume);
                 },
                 error: function () {
                     alert("Type Storage Not Found");

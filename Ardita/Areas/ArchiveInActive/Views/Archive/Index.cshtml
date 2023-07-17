@@ -156,11 +156,11 @@
                 },
                 columnDefs: [
                     {
-                        width: 50, targets: 0
+                        width: 10, targets: 0
                     }, {
-                        width: 100, targets: 1
+                        targets: 1, width: 100
                     }, {
-                        width: 100, targets: 10
+                        width: 20, targets: 10
                     },
                     {
                         targets: [10],
@@ -195,7 +195,7 @@
                             //}
 
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+                            var JoinButton = '<div style="width:100px">' + edit.concat(" ", detail).concat(" ", remove) + '</div>';
                             return JoinButton;
                         }
                     },

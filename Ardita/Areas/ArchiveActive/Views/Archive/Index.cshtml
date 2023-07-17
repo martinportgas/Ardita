@@ -194,9 +194,9 @@
                                 remove = `<a class="btn btn-sm btn-danger" href="@Url.Action(GlobalConst.Remove, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                                 remove = remove.replace("-1", row.archiveId);
                             //}
-                            
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+
+                            var JoinButton = '<div style="width:100px">' + edit.concat(" ", detail).concat(" ", remove) + '</div>';
                             return JoinButton;
                         }
                     },
