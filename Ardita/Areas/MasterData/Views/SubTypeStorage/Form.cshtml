@@ -6,6 +6,13 @@
     Layout = GlobalConst.ViewStart;
 
     FormModel form = Html.Form();
+
+    bool isViewOnly = false;
+
+    if (form.CurrentAction == GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
+    {
+        isViewOnly = true;
+    }
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -35,37 +42,18 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <h5>Sub Type Storage</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li>
-                                <a href="form_basic.html#" class="dropdown-item">Config option 1</a>
-                            </li>
-                            <li>
-                                <a href="form_basic.html#" class="dropdown-item">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
                 </div>
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                            <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
                                             <div class="form-group">
                                                 <label>Sub Type Storage Code</label>
                                                 <input type="hidden" asp-for="SubTypeStorageId">
-                                                <input type="text" placeholder="" id="txtCode" name="txtCode" class="form-control" asp-for="SubTypeStorageCode" />
+                                                <input type="text" placeholder="" id="txtCode" name="txtCode" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="SubTypeStorageCode" />
                                             </div>
                                             <div class="form-group">
                                                 <label>Sub Type Storage Name</label>
@@ -74,7 +62,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        @if (form.isSubmitForm)
+                                        @if (!isViewOnly)
                                         {
                                             <div class="form-group">
                                                 <label>Gmd Header</label>
@@ -96,14 +84,12 @@
                                                 <label>Size</label>
                                                 <input type="text" placeholder="" id="txtSize" class="form-control">
                                             </div>
-                                        }
-                                        
-                                        @if (form.CurrentAction != GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
-                                        {
                                             <div class="form-group">
                                                 <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>
                                             </div>
+
                                         }
+                                        
                                         <table class="table table-striped table-hover dataTables-example mt-5" style="width:100%">
                                             <thead>
                                                 <tr>
@@ -168,9 +154,20 @@
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.SubTypeStorage, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
-                                            @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
-                                        </button>
+                                        
+
+                                        if (form.CurrentAction == GlobalConst.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, '@form.CurrentAction');" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
+                                            </button>
+                                        }
                                     }
                                     
                                 </div>
@@ -186,7 +183,31 @@
 @section Scripts {
     <script type="text/javascript">
 
-     
+        function onSubmit(ctl, event, currentAction) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + currentAction + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $('.confirm').prop('disabled', true);
+                        $('.cancel').prop('disabled', true);
+                        $('.cancel').hide();
+                        $("#formInput").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
 
         function addRow(e, name) {
             var nameCapital = toCapitalCase(name);
@@ -383,6 +404,11 @@
                     initDetail($("#GmdDetailId").val(), $("#GmdDetailName").val(), $("#txtSize").val(), $("#GmdUnit").val());
                 }
             });
+
+            if ("@isViewOnly" === "True") {
+                $(".fa-trash").hide();
+            }
+
         });
     </script>
 }

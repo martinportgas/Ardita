@@ -92,6 +92,18 @@ namespace Ardita.Areas.MasterData.Controllers
                 return RedirectToIndex();
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(MstSubTypeStorage model)
+        {
+            if (model != null && model.SubTypeStorageId != Guid.Empty)
+            {
+                await _subTypeStorageService.Delete(model);
+            }
+            return RedirectToIndex();
+        }
+
         protected async Task BindAllDropdown(Guid Id)
         {
             ViewBag.listArchiveUnit = await BindArchiveUnits();
@@ -175,7 +187,14 @@ namespace Ardita.Areas.MasterData.Controllers
 
             return RedirectToIndex();
         }
+        
+        #endregion
 
+        #region HELPER
+        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.SubTypeStorage, new { Area = GlobalConst.MasterData });
+        #endregion
+
+        #region EXPORT IMPORT Excel
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         //public override async Task<IActionResult> Delete(TrxTypeStorage model)
@@ -346,11 +365,6 @@ namespace Ardita.Areas.MasterData.Controllers
 
         //    return RedirectToIndex();
         //}
-        #endregion
-
-        #region HELPER
-        private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.SubTypeStorage, new { Area = GlobalConst.MasterData });
-
         #endregion
     }
 }
