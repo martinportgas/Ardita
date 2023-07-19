@@ -266,6 +266,7 @@ public static class GlobalConst
     public const string Available = "Tersedia";
     public static DateTime MinDate = DateTime.Parse("1900-01-01");
     public static DateTime MaxDate = DateTime.Now;
+    public static string SelectAll = "-- Semua --";
 
     //ClaimTypes
     public const string Username = "Username";

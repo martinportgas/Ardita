@@ -120,6 +120,28 @@ namespace Ardita.Repositories.Classess
 
             return query;
         }
+        public async Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ArchiveActiveParams param)
+        {
+            await Task.Delay(0);
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("company", param.companyId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCompanies.FirstOrDefault(x => x.CompanyId == param.companyId).CompanyName);
+            parameters.Add("unitArchive", param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitId).ArchiveUnitName);
+            parameters.Add("room", param.roomId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRooms.FirstOrDefault(x => x.RoomId == param.roomId).RoomName);
+            parameters.Add("rack", param.rackId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRacks.FirstOrDefault(x => x.RackId == param.rackId).RackName);
+            parameters.Add("level", param.levelId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxLevels.FirstOrDefault(x => x.LevelId == param.levelId).LevelName);
+            parameters.Add("row", param.rowId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRows.FirstOrDefault(x => x.RowId == param.rowId).RowName);
+            parameters.Add("status", param.status == null ? GlobalConst.SelectAll : param.status == true ? GlobalConst.Used : GlobalConst.Available);
+            parameters.Add("gmd", param.gmdId == Guid.Empty ? GlobalConst.SelectAll : _context.MstGmds.FirstOrDefault(x => x.GmdId == param.gmdId).GmdName);
+            parameters.Add("creator", param.creatorId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCreators.FirstOrDefault(x => x.CreatorId == param.creatorId).CreatorName);
+            parameters.Add("owner", param.archiveOwnerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstArchiveOwners.FirstOrDefault(x => x.ArchiveOwnerId == param.archiveOwnerId).ArchiveOwnerName);
+            parameters.Add("classification", param.classificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxClassifications.FirstOrDefault(x => x.ClassificationId == param.classificationId).ClassificationName);
+            parameters.Add("subjectClassification", param.subjectClassificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxSubjectClassifications.FirstOrDefault(x => x.SubjectClassificationId == param.subjectClassificationId).SubjectClassificationName);
+            parameters.Add("createPeriode", (param.startDate == null ? "-" : ((DateTime)param.startDate).ToString("dd-MM-yyyy")) + " s/d " + (param.endDate == null ? "-" : ((DateTime)param.endDate).ToString("dd-MM-yyyy")));
+            parameters.Add("inputPeriode", "");
+            parameters.Add("destroyPeriode", "");
+            parameters.Add("typeStorage", param.typeStorageId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxTypeStorages.FirstOrDefault(x => x.TypeStorageId == param.typeStorageId).TypeStorageName);
+            return parameters;
+        }
 
         public async Task<IEnumerable<ArchiveActive>> GetArchiveActives(ArchiveActiveParams param)
         {
@@ -145,7 +167,7 @@ namespace Ardita.Repositories.Classess
               .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
               .Where(x => (param.status == null ? true : x.IsUsed == param.status))
               .Where(x => (param.startDate == null ? true : x.CreatedDateArchive >= param.startDate))
-              .Where(x => (param.endDate == null ? true : x.CreatedDateArchive <= param.endDate))
+              .Where(x => (param.endDate == null ? x.CreatedDateArchive <= DateTime.Now : x.CreatedDateArchive <= param.endDate))
               .Select(x => new ArchiveActive
               {
                   DocumentNo = x.DocumentNo,

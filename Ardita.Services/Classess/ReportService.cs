@@ -42,8 +42,8 @@ namespace Ardita.Services.Classess
         {
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
-            var parameters = new Dictionary<string, string>();
-            
+            var parameters = await _reportRepository.GetArchiveActiveNamingParams(param);
+
             var data = await _reportRepository.GetArchiveActives(param);
 
             report.AddDataSource("dsArchiveActive", data);
