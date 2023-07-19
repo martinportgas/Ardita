@@ -84,6 +84,40 @@ function GetClock() {
     }
 }
 
+function initGlobalDropdown(obj, url, objParent = undefined) {
+    if (objParent != undefined) {
+        objParent.change(function () {
+            obj.val('').trigger('change');
+        });
+    }
+
+    obj.select2({
+        minimumInputLength: 0,
+        theme: 'bootstrap4',
+        allowClear: true,
+        ajax: {
+            url: url,
+            type: "POST",
+            data: function (params) {
+                var query = {
+                    param: params.term,
+                }
+                if (objParent != undefined) {
+                    query = {
+                        id: objParent.val(), param: params.term,
+                    }
+                }
+                return query;
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
+    });
+}
+
 function textAreaCounterInit() {
     if ($('textarea:enabled')[0]) {
         var inti = 0;

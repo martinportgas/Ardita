@@ -51,6 +51,7 @@ public static class GlobalConst
     public const string General = "General";
     public const string ArchiveActive = "ArchiveActive";
     public const string ArchiveInActive = "ArchiveInActive";
+    public const string Report = "Report";
 
     //Controller
     public const string Company = "Company";
@@ -87,6 +88,7 @@ public static class GlobalConst
     public const string ArchiveOwner = "ArchiveOwner";
     public const string ArchiveType = "ArchiveType";
     public const string ArchiveCirculation = "ArchiveCirculation";
+    public const string ReportArchiveActive = "ReportArchiveActive";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -190,6 +192,7 @@ public static class GlobalConst
     public const string BindLevels = "BindLevels";
     public const string BindArchiveUnits = "BindArchiveUnits";
     public const string BindArchiveUnitsByParam = "BindArchiveUnitsByParam";
+    public const string BindArchiveUnitsByCompanyIdAndParam = "BindArchiveUnitsByCompanyIdAndParam";
     public const string BindRooms = "BindRooms";
     public const string BindRoomActiveByFloorId = "BindRoomActiveByFloorId";
     public const string BindRoomInActiveByFloorId = "BindRoomInActiveByFloorId";
@@ -227,6 +230,12 @@ public static class GlobalConst
     public const string BindGmdDetailById = "BindGmdDetailById";
     public const string BindGMDDetailVolumeByTypeStorageId = "BindGMDDetailVolumeByTypeStorageId";
     public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
+    public const string BindRoomActiveByArchiveUnitId = "BindRoomActiveByArchiveUnitId";
+    public const string BindParamRackByRoomId = "BindParamRackByRoomId";
+    public const string BindParamLevelByRackId = "BindParamLevelByRackId";
+    public const string BindParamRowByLevelId = "BindParamRowByLevelId";
+    public const string BindParamCreatorByArchiveUnitId = "BindParamCreatorByArchiveUnitId";
+    public const string BindParamClassificationSubjectIdByClassificationId = "BindParamClassificationSubjectIdByClassificationId";
 
     //Web Component
     public const string GET = "GET";

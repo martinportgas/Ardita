@@ -724,9 +724,6 @@
         <Left>0.11333in</Left>
         <Height>0.62361in</Height>
         <Width>8.49445in</Width>
-        <Visibility>
-          <Hidden>=Fields!ItemArchiveNo.Value = ""</Hidden>
-        </Visibility>
         <Style>
           <Border>
             <Style>None</Style>

@@ -1,5 +1,6 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models.DbModels;
+using Ardita.Models.ReportModels;
 using Ardita.Report;
 using Ardita.Repositories.Interfaces;
 using Castle.Components.DictionaryAdapter.Xml;
@@ -120,13 +121,31 @@ namespace Ardita.Repositories.Classess
             return query;
         }
 
-        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives()
+        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives(ArchiveActiveParams param)
         {
-            var result = await _context.TrxArchives
+            var result = await _context.TrxArchives.AsNoTracking()
               .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
               .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room)
+              .Include(x => x.Creator.ArchiveUnit.Company)
+              .Include(x => x.Gmd)
+              .Include(x => x.ArchiveOwner)
               .Where(x => x.IsActive == true && x.IsArchiveActive == true)
-              .Where(x => x.TrxMediaStorageDetails != null)
+              .Where(x => x.SubSubjectClassification != null)
+              .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
+              .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
+              .Where(x => (param.roomId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == param.roomId))
+              .Where(x => (param.rackId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.RackId == param.rackId))
+              .Where(x => (param.levelId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.LevelId == param.levelId))
+              .Where(x => (param.rowId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.RowId == param.rowId))
+              .Where(x => (param.gmdId == Guid.Empty ? true : x.GmdId == param.gmdId))
+              .Where(x => (param.typeStorageId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorageId == param.typeStorageId))
+              .Where(x => (param.creatorId == Guid.Empty ? true : x.CreatorId == param.creatorId))
+              .Where(x => (param.archiveOwnerId == Guid.Empty ? true : x.ArchiveOwnerId == param.archiveOwnerId))
+              .Where(x => (param.classificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassification.ClassificationId == param.classificationId))
+              .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
+              .Where(x => (param.status == null ? true : x.IsUsed == param.status))
+              .Where(x => (param.startDate == null ? true : x.CreatedDateArchive >= param.startDate))
+              .Where(x => (param.endDate == null ? true : x.CreatedDateArchive <= param.endDate))
               .Select(x => new ArchiveActive
               {
                   DocumentNo = x.DocumentNo,

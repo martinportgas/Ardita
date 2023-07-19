@@ -55,6 +55,10 @@
     }
 }
 
+.rowreport {
+    margin-left: -5px !important;
+}
+
 .footer{
     /*bottom: unset !important;*/
 }

@@ -4,6 +4,7 @@ using AspNetCore.Reporting;
 using System.Collections;
 using Ardita.Report;
 using Ardita.Repositories.Interfaces;
+using Ardita.Models.ReportModels;
 
 namespace Ardita.Services.Classess
 {
@@ -37,13 +38,13 @@ namespace Ardita.Services.Classess
             var result = report.Execute(RenderType.Pdf, 1, parameters);
             return result.MainStream;
         }
-        public async Task<byte[]> GenerateReportArchiveActiveAsync(string reportName)
+        public async Task<byte[]> GenerateReportArchiveActiveAsync(string reportName, ArchiveActiveParams param)
         {
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = new Dictionary<string, string>();
             
-            var data = await _reportRepository.GetArchiveActives();
+            var data = await _reportRepository.GetArchiveActives(param);
 
             report.AddDataSource("dsArchiveActive", data);
             var result = report.Execute(RenderType.Pdf, 1, parameters);
