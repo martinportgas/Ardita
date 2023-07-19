@@ -198,7 +198,7 @@
                                             <div class="form-group">
                                                 <label>Judul Arsip</label>
                                                 <input type="text" id="txtArchiveId" placeholder="Input Judul Arsip"
-                                                       class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" />
+                                                       class="select2_demo_1 form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -500,6 +500,9 @@
         var tableRegist, tableCart;
         var isInput = @form.isInput.ToString().ToLower();
         $(document).ready(function () {
+            $('#borrowerName').prop('required', true);
+            $('#borrowerNameSelect').prop('required', false);
+
             initDropdown();
             //$('.rentHistory').hide();
             $('.divNameSelect').hide();

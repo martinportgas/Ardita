@@ -54,6 +54,10 @@
         float: right !important;
     }
 }
+
+.footer{
+    /*bottom: unset !important;*/
+}
 #wrapper > .sk-spinner {
     display: none;
 }
