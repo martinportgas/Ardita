@@ -51,7 +51,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
             .Include(s => s.SubSubjectClassification.Creator)
             .Include(t => t.TypeStorage)
                 .ThenInclude(a => a.ArchiveUnit)
-            .Include(r => r.Row!.Level!.Rack!.Room!.Floor)
+            .Include(r => r.Row!.Level!.Rack!.Room!.Floor.ArchiveUnit)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
         return data!;

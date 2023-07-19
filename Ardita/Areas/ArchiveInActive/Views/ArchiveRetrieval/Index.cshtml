@@ -40,6 +40,7 @@
                                 <th>Company</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
+                                <th>Tanggal Diambil</th>
                                 <th>PIC</th>
                                 <th>Status</th>
                             </tr>
@@ -79,13 +80,11 @@
                     {
                         "data": "trxArchiveRentId", "name": "trxArchiveRentId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var approve = row.status != 'Approval Process' ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-check"></i> </a>`;
-                            approve = approve.replace("-1", data);
 
-                            var detail = row.status == 'Approval Process' ? '' : `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRetrieval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var JoinButton = approve.concat(" ", detail);
+                            var JoinButton = detail;
                             return JoinButton;
                         }
                     },
@@ -93,6 +92,7 @@
                     { "data": "company", "name": "borrower.borrowerCompany", "autoWidth": true },
                     { "data": "approvalDate", "name": "trxArchiveRent.approvalDate", "autoWidth": true },
                     { "data": "approvalReturnDate", "name": "trxArchiveRent.approvalReturnDate", "autoWidth": true },
+                    { "data": "retrievalDate", "name": "trxArchiveRent.retrievalDate", "autoWidth": true },
                     { "data": "userCreatedBy", "name": "createdBy", "autoWidth": true },
                     {
                         "data": "status", "name": "trxArchiveRent.status.name", "autoWidth": true, "render": function (data, type, row, meta) {

@@ -7,6 +7,7 @@ using Spire.Doc.Interface;
 using System.Collections;
 using System.Data;
 using System.Drawing;
+using System.Security.Claims;
 
 namespace Ardita.Extensions;
 
@@ -313,9 +314,9 @@ public static class Label
         document.Replace("[ddString]", Global.Terbilang(((DateTime)data.ApprovalDate).Day), false, true);
         document.Replace("[MMString]", Global.Terbilang(((DateTime)data.ApprovalDate).Month), false, true);
         document.Replace("[dd-MM-yyyy]", ((DateTime)data.ApprovalDate).ToString("dd-MM-yyyy"), false, true);
-        //document.Replace("[archive_unit]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
-        //document.Replace("[company]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.CompanyName, false, true);
-        //document.Replace("[company_address]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.Company.Address, false, true);
+        document.Replace("[archive_unit]", "", false, true);
+        document.Replace("[company]", data.ApprovedByNavigation.Employee.Company.CompanyName, false, true);
+        document.Replace("[company_address]", data.ApprovedByNavigation.Employee.Company.Address, false, true);
         document.Replace("[bor_name]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName, false, true);
         document.Replace("[bor_nip]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber, false, true);
         document.Replace("[bor_pos]", data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPosition, false, true);
@@ -324,13 +325,30 @@ public static class Label
         document.Replace("[apr_name]", data.ApprovedByNavigation.Employee.Name, false, true);
         document.Replace("[apr_nip]", data.ApprovedByNavigation.Employee.Nik, false, true);
         document.Replace("[apr_pos]", data.ApprovedByNavigation.Employee.Position.Name, false, true);
-        //document.Replace("[apr_uker]", data.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName, false, true);
+        document.Replace("[apr_uker]", "", false, true);
         document.Replace("[apr_company]", data.ApprovedByNavigation.Employee.Company.CompanyName, false, true);
         document.Replace("[company_city]", data.ApprovedByNavigation.Employee.Company.City, false, true);
         document.Replace("[description]", data.Description, false, true);
         document.Replace("[dd MMMM yyyy]", ((DateTime)data.ApprovalDate).ToString("dd MMMM yyyy", culture), false, true);
 
-        var file = QRCodeExtension.Generate(data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber + " - " + data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName, 2);
+        string QR1 = data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber + " - " + data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName;
+        string QR2 = data.ApprovedByNavigation.Employee.Nik + " - " + data.ApprovedByNavigation.Employee.Name;
+        if(QR1.Length > QR2.Length)
+        {
+            for(int i = 0; i < QR1.Length - QR2.Length; i++)
+            {
+                QR2 += " ";
+            }
+        }
+        else
+        {
+            for (int i = 0; i < QR2.Length - QR1.Length; i++)
+            {
+                QR1 += " ";
+            }
+        }
+
+        var file = QRCodeExtension.Generate(QR1, 2);
         int index = 0;
         TextRange range = null;
 
@@ -357,7 +375,7 @@ public static class Label
             File.Delete(file);
         }
 
-        file = QRCodeExtension.Generate(data.ApprovedByNavigation.Employee.Nik + " - " + data.ApprovedByNavigation.Employee.Name, 2);
+        file = QRCodeExtension.Generate(QR2, 2);
         index = 0;
         range = null;
 
@@ -420,10 +438,10 @@ public static class Label
         Body body = paragraph.OwnerTextBody;
         index = body.ChildObjects.IndexOf(paragraph);
 
-        string[] Header = { "No", "Subjek", "Kode Arsip", "Judul Arsip", "Tahun", "Jumlah" };
+        string[] Header = { "No", "Kode Media Penyimpanan", "Urutan", "Jenis Penyimpanan", "Klasifikasi", "Judul Arsip", "Pencipta", "Unit Kearsipan" };
 
         Table table = section.AddTable(true);
-        table.ResetCells(detail.Count() + 1, Header.Length);
+        table.ResetCells(data.TrxArchiveRentDetails.Count() + 1, Header.Length);
 
         TableRow FRow = table.Rows[0];
         FRow.IsHeader = true;
@@ -438,22 +456,24 @@ public static class Label
 
             TextRange TR = p.AppendText(Header[i]);
             TR.CharacterFormat.FontName = "Calibri";
-            TR.CharacterFormat.FontSize = 10;
+            TR.CharacterFormat.FontSize = 8;
             TR.CharacterFormat.Bold = true;
         }
 
         int x = 1;
-        foreach (VwArchiveRent item in detail)
+        foreach (TrxArchiveRentDetail item in data.TrxArchiveRentDetails)
         {
             TableRow DataRow = table.Rows[x];
             DataRow.Height = 20;
 
             SetRowData(0, DataRow, x.ToString());
-            SetRowData(1, DataRow, item.SubjectClassificationName!);
-            SetRowData(2, DataRow, item.ArchiveCode);
-            SetRowData(3, DataRow, item.TitleArchive);
-            SetRowData(4, DataRow, item.ArchiveYear.ToString());
-            SetRowData(5, DataRow, item.Volume.ToString());
+            SetRowData(1, DataRow, item.MediaStorageInActive.MediaStorageInActiveCode);
+            SetRowData(2, DataRow, item.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().Sort.ToString());
+            SetRowData(3, DataRow, item.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().SubTypeStorage.SubTypeStorageName);
+            SetRowData(4, DataRow, item.MediaStorageInActive.SubSubjectClassification.SubjectClassification.Classification.ClassificationName);
+            SetRowData(5, DataRow, item.Archive.TitleArchive);
+            SetRowData(6, DataRow, item.Archive.Creator.CreatorName);
+            SetRowData(7, DataRow, item.MediaStorageInActive.TypeStorage.ArchiveUnit.ArchiveUnitName);
 
             x++;
         }
@@ -488,7 +508,7 @@ public static class Label
         Body body = paragraph.OwnerTextBody;
         index = body.ChildObjects.IndexOf(paragraph);
 
-        string storageLoc = data.Row.Level.Rack.RackCode + "-" + data.Row.Level.LevelCode + data.Row.RowCode;
+        string storageLoc = data.Row.Level.Rack.RackCode + "-" + data.Row.Level.LevelCode + data.Row.RowName;
         char[] Header = storageLoc.ToCharArray();
 
         Table table = section.AddTable(true);
@@ -635,6 +655,6 @@ public static class Label
         p2.Format.HorizontalAlignment = HorizontalAlignment.Center;
 
         TR2.CharacterFormat.FontName = "Calibri";
-        TR2.CharacterFormat.FontSize = 10;
+        TR2.CharacterFormat.FontSize = 8;
     }
 }

@@ -110,7 +110,7 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
                          SubTypeStorageId = mst.SubTypeStorageId,
                          SubTypeStorageCode = mst.SubTypeStorageCode, 
                          SubTypeStorageName = mst.SubTypeStorageName, 
-                         Volume = mstdtl.Size 
+                         Volume = mstdtl.Size
                      };
 
         await Task.Delay(0);

@@ -244,5 +244,10 @@ namespace Ardita.Services.Classess
         {
             return await _archiveRentRepository.GetByBorrowerId(Id);
         }
+
+        public async Task<IEnumerable<VwArchiveRentBox>> GetArchiveRentBoxById(Guid Id)
+        {
+            return await _archiveRentRepository.GetArchiveRentBoxById(Id);
+        }
     }
 }

@@ -37,7 +37,8 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
                     x.StatusReceived,
                     x.DescriptionReceived,
                     x.StatusReceivedNavigation!.Color,
-                    Status = x.StatusReceivedNavigation!.Name
+                    Status = x.StatusReceivedNavigation!.Name,
+                    x.ArchiveUnitIdFromNavigation.ArchiveUnitName
                 })
                 .ToListAsync();
 

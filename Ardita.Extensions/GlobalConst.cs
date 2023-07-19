@@ -132,6 +132,8 @@ public static class GlobalConst
     public const string UpdateRetrieval = "UpdateRetrieval";
     public const string UpdateReturn = "UpdateReturn";
     public const string GetDataHistory = "GetDataHistory";
+    public const string GetDataRentBox = "GetDataRentBox";
+    public const string GetDataRentBoxDetail = "GetDataRentBoxDetail";
     public const string GenerateReport = "GenerateReport";
     public const string Admin = "Admin";
     public const string Active = "Active";
@@ -243,6 +245,7 @@ public static class GlobalConst
     public const string UnitPengolah = "Unit Pengolah";
     public const string UnitKearsipan = "Unit Kearsipan";
     public const string Notification = "Notification";
+    public const string NotFound = "NotFound";
     public const string Success = "Success";
     public const string NothingSelected = "Tidak ada yang dipilih";
     public const string Failed = "Failed";

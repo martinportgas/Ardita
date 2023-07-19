@@ -12,7 +12,7 @@ public static class QRCodeExtension
     public static string Generate(string text, int size = 12)
     {
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.M);
         QRCode qrCode = new QRCode(qrCodeData);
         Bitmap qrCodeImage1 = qrCode.GetGraphic(size, Color.Black, Color.White, null, 15, 2);
 

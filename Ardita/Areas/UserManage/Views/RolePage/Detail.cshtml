@@ -152,7 +152,7 @@
 
     <script type="text/javascript">
         function submitMe() {
-            $('body').toggleClass('sk-loading');
+            $('#wrapper').toggleClass('sk-loading');
             var selectedElmsIds = [];
             var selectedElms = $('#jstree1').jstree("get_selected", true);
             $.each(selectedElms, function () {
@@ -165,7 +165,7 @@
             param.role = '@Model.role.RoleId';
             param.listPage = selectedElmsIds;
             ajaxcallreturn(url, 'POST', param, '', 'multipart/form-data').then(function (result) {
-                $('body').toggleClass('sk-loading');
+                $('#wrapper').toggleClass('sk-loading');
                 if(result.code == 200){
                     swal({ title : "Pesan!", text: result.msg, type: "success"}, function () {
                         location.reload();

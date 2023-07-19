@@ -158,16 +158,36 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             var model = await _archiveRentService.GetById(Id);
             if (model != null)
             {
-                ViewBag.ArchiveRentId = model.TrxArchiveRentId;
-                ViewBag.ArchiveId = model.ArchiveId;
-                ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
-                ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
+                //ViewBag.ArchiveRentId = model.TrxArchiveRentId;
+                //ViewBag.ArchiveId = model.ArchiveId;
+                //ViewBag.TitleArchive = model.TrxArchiveRentDetails.FirstOrDefault().Archive.TitleArchive;
+                //ViewBag.SubSubJectClassificationId = model.TrxArchiveRentDetails.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationId;
               //  ViewBag.SubSubJectClassificationName = model.FirstOrDefault().Archive.SubSubjectClassification.SubjectClassificationName;
                 return View(GlobalConst.Form, model);
             }
             else
             {
                 return RedirectToIndex();
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetDataRentBoxDetail(Guid Id, int Sort)
+        {
+            try
+            {
+                var dataDetail = await _MediaStorageInActiveService.GetDetailStorages(Id, Sort);
+                var dataLocation = await _MediaStorageInActiveService.GetById(Id);
+                var result = new
+                {
+                    main = dataLocation,
+                    detail = dataDetail
+                };
+                return Json(result);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
         [HttpGet]

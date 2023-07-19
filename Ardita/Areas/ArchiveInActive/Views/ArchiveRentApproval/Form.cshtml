@@ -13,7 +13,7 @@
     }
 
 }
-<form id="frmLevelUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ArchiveRentApproval" asp-action="@GlobalConst.SubmitApproval" asp-area="@GlobalConst.ArchiveInActive">
+<form id="frmLevelUpload" method="post" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-action="@GlobalConst.SubmitApproval" asp-area="@GlobalConst.ArchiveInActive">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10">
             <h2>Media Storage In Active</h2>
@@ -25,7 +25,7 @@
                     Archive Active
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRent, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
+                    <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new {Area = GlobalConst.ArchiveInActive})">Archive Rent</a>
                 </li>
                 <li class="active breadcrumb-item">
                     <strong>@form.LastBreadcrumb</strong>
@@ -116,6 +116,14 @@
                                             <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerPosition" id="borrowerPosition" placeholder="Jabatan" value="@(Model.TrxRentHistories.Count > 0 ? Model.TrxRentHistories.FirstOrDefault().Borrower.BorrowerPosition : "")" />
                                         </div>
                                         <div class="form-group">
+                                            <label>Tanggal Pinjam</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" value="@(Model.ApprovalDate == null ? "" : ((DateTime)Model.ApprovalDate).ToString("yyyy-MM-dd"))" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tanggal Diambil</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" value="@(Model.RetrievalDate == null ? "" : ((DateTime)Model.RetrievalDate).ToString("yyyy-MM-dd"))" />
+                                        </div>
+                                        <div class="form-group">
                                             <label>Alasan Peminjaman</label>
                                             <textarea class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" placeholder="Alasan Peminjaman" >@(Model.Description)</textarea>
                                         </div>
@@ -142,6 +150,14 @@
                                             <label>Tanggal Request</label>
                                             <input type="date" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" name="borrowerEmail" placeholder="Email" value="@(((DateTime)Model.RequestedDate).ToString("yyyy-MM-dd"))" />
 
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tanggal Kembali</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" value="@(Model.ApprovalReturnDate == null ? "" : ((DateTime)Model.RequestedReturnDate).ToString("yyyy-MM-dd"))" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tanggal Dikembalikan</label>
+                                            <input type="text" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" value="@(Model.ReturnDate == null ? "" : ((DateTime)Model.ReturnDate).ToString("yyyy-MM-dd"))" />
                                         </div>
 
                                     </div>
@@ -245,7 +261,11 @@
                                                                 <table id="tblCart" class="table table-striped table-hover dataTables-example" style="width:100%">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th>Remove</th>
+                                                                            @if (form.isInput)
+                                                                            {
+                                                                                <th>Remove</th>
+                                                                            }
+                                                                            <th>Detail</th>
                                                                             <th>Kode Media Penyimpanan</th>
                                                                             <th>Urutan</th>
                                                                             <th>Jenis Penyimpanan</th>
@@ -263,7 +283,7 @@
                                                                                 foreach (TrxArchiveRentDetail item in Model.TrxArchiveRentDetails)
                                                                                 {
                                                                                     <tr>
-                                                                                        <td></td>
+                                                                                        <td><button type="button" class="btn btn-sm btn-warning" onclick="detail($(this))" value="@(item.MediaStorageInActiveId.ToString() + "#" + item.Sort.ToString())"><i class="fa fa-eye" style="color:white;font-size:14px;"></i> Detail</button></td>
                                                                                         <td>
                                                                                             @item.MediaStorageInActive.MediaStorageInActiveCode
                                                                                         </td>
@@ -340,11 +360,79 @@
                                                 <button id="btnApprove" type="submit" value="Approve" name="btnApproval" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Approve</button>
                                                 <button id="btnReject" type="submit" value="Reject" name="btnApproval" class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Reject</button>
                                             }
-                                            <a id="btnBack" href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i> Back</a>
+                                            <a id="btnBack" href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i> Back</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal inmodal" id="frmDetail" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" style="width:80%;max-width:unset !important">
+                    <div class="modal-content animated fadeIn">
+
+                        @Html.AntiForgeryToken();
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Detail Media Penyimpanan</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Unit Kearsipan</label>
+                                                <input type="text" placeholder="" id="txtArchiveUnit" class="form-control" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Lantai</label>
+                                                <input type="text" placeholder="" id="txtFloor" class="form-control" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Ruangan</label>
+                                                <input type="text" placeholder="" id="txtRoom" class="form-control" disabled>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-sm-6">
+
+                                            <div class="form-group">
+                                                <label>Rak</label>
+                                                <input type="text" placeholder="" id="txtRack" class="form-control" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tingkat</label>
+                                                <input type="text" placeholder="" id="txtLevel" class="form-control" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Baris</label>
+                                                <input type="text" placeholder="" id="txtRow" class="form-control" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <table id="tblToValidate" class="table table-striped table-hover dataTables-example" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode Media Penyimpanan</th>
+                                            <th>Urutan</th>
+                                            <th>Jenis Penyimpanan</th>
+                                            <th>Klasifikasi</th>
+                                            <th>Judul Arsip</th>
+                                            <th>Pencipta</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -355,6 +443,7 @@
 @section Scripts {
     <script type="text/javascript">
         var tableRegist, tableCart;
+        var isInput = @form.isInput.ToString().ToLower();
         $(document).ready(function () {
             initDropdown();
             //$('.rentHistory').hide();
@@ -375,7 +464,7 @@
 
                 //var archiveId = $('#txtArchiveId').val();
                 //$.ajax({
-                //    'url': '@Url.Action(GlobalConst.GetDetailArchive, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                //    'url': '@Url.Action(GlobalConst.GetDetailArchive, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
                 //    'method': "GET",
                 //    'contentType': 'application/json',
                 //    'data': { "id": archiveId }
@@ -450,6 +539,17 @@
         }
 
         function initDataTable() {
+
+            if (isInput) {
+                initTableRegistered();
+            } else {
+                initTableRegisteredDetail();
+            }
+
+            initTableHistory();
+        }
+
+        function initTableRegistered() {
             tableCart = $('#tblCart').DataTable({
                 "destroy": true,
                 "searching": false,
@@ -467,6 +567,11 @@
                             return `<i class="fa fa-minus-square" style="color:#ed5565;font-size:14px;" onclick="removeArchive($(this))"></i><input type="hidden" class="listArchive" name="listArchive[]" value=${data} />`;
                         }
                     },
+                    {
+                        "data": "mediaStorageInActiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return `<button type="button" class="btn btn-sm btn-warning" onclick="detail($(this))" value="${data + '#' + row.sort}"><i class="fa fa-eye" style="color:white;font-size:14px;"></i> Detail</button>`;
+                        }
+                    },
                     { "data": "mediaStorageInActiveCode" },
                     { "data": "sort" },
                     { "data": "storageName" },
@@ -476,8 +581,60 @@
                     { "data": "archiveUnit" }
                 ]
             });
+        }
+        function initTableRegisteredDetail() {
+            tableCart = $('#tblCart').DataTable({
+                "destroy": true,
+                "searching": false,
+                "paging": false,
+                "info": false,
+            });
+        }
 
-            initTableHistory();
+        function detail(e) {
+            $('#wrapper').toggleClass('sk-loading');
+
+            var dataBox = e.val().split('#');
+
+            initTableDetail(dataBox[0], dataBox[1]);
+        }
+
+        function initTableDetail(id, sort) {
+            $.ajax({
+                'url': '@Url.Action(GlobalConst.GetDataRentBoxDetail, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
+                'method': "GET",
+                'contentType': 'application/json',
+                'data': { "Id": id, "Sort": sort }
+            }).done(function (data) {
+
+                $('#txtArchiveUnit').val(data.main.row.level.rack.room.floor.archiveUnit.archiveUnitName);
+                $('#txtFloor').val(data.main.row.level.rack.room.floor.floorName);
+                $('#txtRoom').val(data.main.row.level.rack.room.roomName);
+                $('#txtRack').val(data.main.row.level.rack.rackName);
+                $('#txtLevel').val(data.main.row.level.levelName);
+                $('#txtRow').val(data.main.row.rowName);
+
+                $('#tblToValidate').DataTable({
+                    "data": data.detail,
+                    "destroy": true,
+                    "searching": false,
+                    "paging": false,
+                    "info": false,
+                    "fixedColumns": true,
+                    "columns": [
+                        { "data": "mediaStorageInActiveCode" },
+                        { "data": "sort" },
+                        { "data": "storageName" },
+                        { "data": "classificationName" },
+                        { "data": "titleArchive" },
+                        { "data": "creatorName" },
+                    ]
+                });
+
+                $('#frmDetail').modal('show');
+
+                $('#wrapper').toggleClass('sk-loading');
+            })
         }
 
         function initDropdown() {
@@ -490,7 +647,7 @@
                 allowClear: true,
                 placeholder: '-- Pilih Sub Subjek Klasifikasi --',
                 ajax: {
-                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByClassificationId, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
                     type: "POST",
                     data: function (params) {
                         var query = {
@@ -518,7 +675,7 @@
             //    allowClear: true,
             //    placeholder: '-- Select Archive --',
             //    ajax: {
-            //        url: '@Url.Action(GlobalConst.BindArchivesInActiveBySubSubjectClassificationId, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+            //        url: '@Url.Action(GlobalConst.BindArchivesInActiveBySubSubjectClassificationId, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
             //        type: "POST",
             //        data: function (params) {
             //            var query = {
@@ -579,7 +736,7 @@
             var subSubjectId = $('#txtSubSubjectClassificationId').val();
             var archiveName = $('#txtArchiveId').val();
             $.ajax({
-                'url': '@Url.Action(GlobalConst.GetDetail, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                'url': '@Url.Action(GlobalConst.GetDetail, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
                 'data': { "archiveName": archiveName, "subSubjectId": subSubjectId }
@@ -647,7 +804,7 @@
         function initTableHistory() {
             var borrowerId = '@borId' != '' ? '@borId' : $('#borrowerNameSelect').val();
             $.ajax({
-                'url': '@Url.Action(GlobalConst.GetDataHistory, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive })',
+                'url': '@Url.Action(GlobalConst.GetDataHistory, form.CurrentController, new { Area = GlobalConst.ArchiveInActive })',
                 'method': "GET",
                 'contentType': 'application/json',
                 'data': { "id": borrowerId }

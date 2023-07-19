@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
     $('form').on('submit', function () {
         $('html,body').scrollTop(0);
-        $('body').toggleClass('sk-loading');
+        $('#wrapper').toggleClass('sk-loading');
     });
     $('.required').each(function () {
         $(this).prop('required', true);

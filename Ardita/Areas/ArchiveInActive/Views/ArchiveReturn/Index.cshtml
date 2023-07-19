@@ -36,9 +36,11 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Nama Peminjam</th>
+                                <th>Name</th>
+                                <th>Company</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
+                                <th>Tanggal Dikembalikan</th>
                                 <th>PIC</th>
                                 <th>Status</th>
                             </tr>
@@ -80,15 +82,19 @@
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
-                            return detail;
+
+                            var JoinButton = detail;
+                            return JoinButton;
                         }
                     },
                     { "data": "name", "name": "borrower.borrowerName", "autoWidth": true },
-                    { "data": "requestedDate", "name": "trxArchiveRent.requestedDate", "autoWidth": true },
-                    { "data": "requestedReturnDate", "name": "trxArchiveRent.requestedReturnDate", "autoWidth": true },
-                    { "data": "userCreatedBy", "name": "userCreatedBy", "autoWidth": true },
+                    { "data": "company", "name": "borrower.borrowerCompany", "autoWidth": true },
+                    { "data": "approvalDate", "name": "trxArchiveRent.approvalDate", "autoWidth": true },
+                    { "data": "approvalReturnDate", "name": "trxArchiveRent.approvalReturnDate", "autoWidth": true },
+                    { "data": "returnDate", "name": "trxArchiveRent.returnDate", "autoWidth": true },
+                    { "data": "userCreatedBy", "name": "createdBy", "autoWidth": true },
                     {
-                        "data": "status", "name": "status.name", "autoWidth": true, "render": function (data, type, row, meta) {
+                        "data": "status", "name": "trxArchiveRent.status.name", "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<span class="badge badge-pill center ${row.color}">${data}</span>`;
                         }
                     },
