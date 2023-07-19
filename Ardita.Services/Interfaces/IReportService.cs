@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface IReportService
     {
         byte[] GenerateReportAsync(string reportName);
-        Task<byte[]> GenerateReportArchiveActiveAsync(string reportName, ArchiveActiveParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ArchiveActiveParams param);
         Task<byte[]> GenerateReportDocumentAsync(string reportName);
         Task<byte[]> GenerateReportArchiveLoansInActive(string reportName);
         Task<byte[]> GenerateReportArchiveProcessingInActive(string reportName);

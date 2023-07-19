@@ -168,8 +168,8 @@
                             @if (ViewBag.Data != null)
                             {
                                 <div class="form-group">
-                                    <button class="btn btn-sm btn-warning float-left m-t-n-xs" id="btnSearch" style="margin-right: 10px"><i class="fa fa-file-excel-o"></i> Export Excel</button>
-                                    <button class="btn btn-sm btn-info float-left m-t-n-xs" id="btnSearch"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+                                    <a href="@ViewBag.DataExcel" class="btn btn-sm btn-warning float-left m-t-n-xs" id="btnSearch" style="margin-right: 10px" download="reportArsipAktif.xlsx"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+                                    <a href="@ViewBag.Data" class="btn btn-sm btn-info float-left m-t-n-xs" id="btnSearch" download="reportArsipAktif.pdf"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
                                 </div>
                                 <div class="form-group" style="margin-top: 30px">
                                     <embed src="@ViewBag.Data#view=FitH" style="width:100%;min-height:500px" />

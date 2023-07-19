@@ -44,6 +44,7 @@ namespace Ardita.Areas.Report.Controllers
         public override async Task<ActionResult> Index()
         {
             ViewBag.Data = null;
+            ViewBag.DataExcel = null;
 
             await AllViewBag();
             return View();
@@ -52,7 +53,8 @@ namespace Ardita.Areas.Report.Controllers
         {
             var reportName = "RptArchiveActive";
             var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName, param);
-            ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString));
+            ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
+            ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
 
             await AllViewBag();
             return View(GlobalConst.Index);
