@@ -474,7 +474,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -504,7 +506,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!AsalArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -534,7 +538,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!DokumenSerahTerima.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -564,7 +570,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Jumlah.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -594,7 +602,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!NoArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -624,7 +634,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!PemilikArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -654,7 +666,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Penerima.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -684,7 +698,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Pengirim.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -714,7 +730,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Tanggal.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
