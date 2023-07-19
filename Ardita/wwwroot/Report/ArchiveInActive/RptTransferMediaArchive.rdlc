@@ -603,7 +603,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -633,7 +635,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!AsalArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -663,7 +667,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Jumlah.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -693,7 +699,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!KodeKlasifikasi.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -723,7 +731,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!NoArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -753,7 +763,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!KodeKlasifikasi.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -783,7 +795,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!NoArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -813,7 +827,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Periode.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -843,7 +859,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Perusahaan.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -873,7 +891,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!TanggalPindai.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -903,7 +923,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!TipeArsip.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -933,7 +955,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!UnitPencipta.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
