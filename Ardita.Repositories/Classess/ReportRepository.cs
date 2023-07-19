@@ -1,5 +1,6 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models.DbModels;
+using Ardita.Models.ReportModels;
 using Ardita.Report;
 using Ardita.Repositories.Interfaces;
 using Castle.Components.DictionaryAdapter.Xml;
@@ -119,14 +120,54 @@ namespace Ardita.Repositories.Classess
 
             return query;
         }
-
-        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives()
+        public async Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ArchiveActiveParams param)
         {
-            var result = await _context.TrxArchives
+            await Task.Delay(0);
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("company", param.companyId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCompanies.FirstOrDefault(x => x.CompanyId == param.companyId).CompanyName);
+            parameters.Add("unitArchive", param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitId).ArchiveUnitName);
+            parameters.Add("room", param.roomId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRooms.FirstOrDefault(x => x.RoomId == param.roomId).RoomName);
+            parameters.Add("rack", param.rackId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRacks.FirstOrDefault(x => x.RackId == param.rackId).RackName);
+            parameters.Add("level", param.levelId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxLevels.FirstOrDefault(x => x.LevelId == param.levelId).LevelName);
+            parameters.Add("row", param.rowId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRows.FirstOrDefault(x => x.RowId == param.rowId).RowName);
+            parameters.Add("status", param.status == null ? GlobalConst.SelectAll : param.status == true ? GlobalConst.Used : GlobalConst.Available);
+            parameters.Add("gmd", param.gmdId == Guid.Empty ? GlobalConst.SelectAll : _context.MstGmds.FirstOrDefault(x => x.GmdId == param.gmdId).GmdName);
+            parameters.Add("creator", param.creatorId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCreators.FirstOrDefault(x => x.CreatorId == param.creatorId).CreatorName);
+            parameters.Add("owner", param.archiveOwnerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstArchiveOwners.FirstOrDefault(x => x.ArchiveOwnerId == param.archiveOwnerId).ArchiveOwnerName);
+            parameters.Add("classification", param.classificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxClassifications.FirstOrDefault(x => x.ClassificationId == param.classificationId).ClassificationName);
+            parameters.Add("subjectClassification", param.subjectClassificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxSubjectClassifications.FirstOrDefault(x => x.SubjectClassificationId == param.subjectClassificationId).SubjectClassificationName);
+            parameters.Add("createPeriode", (param.startDate == null ? "-" : ((DateTime)param.startDate).ToString("dd-MM-yyyy")) + " s/d " + (param.endDate == null ? "-" : ((DateTime)param.endDate).ToString("dd-MM-yyyy")));
+            parameters.Add("inputPeriode", "");
+            parameters.Add("destroyPeriode", "");
+            parameters.Add("typeStorage", param.typeStorageId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxTypeStorages.FirstOrDefault(x => x.TypeStorageId == param.typeStorageId).TypeStorageName);
+            return parameters;
+        }
+
+        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives(ArchiveActiveParams param)
+        {
+            var result = await _context.TrxArchives.AsNoTracking()
               .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
               .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room)
+              .Include(x => x.Creator.ArchiveUnit.Company)
+              .Include(x => x.Gmd)
+              .Include(x => x.ArchiveOwner)
               .Where(x => x.IsActive == true && x.IsArchiveActive == true)
-              .Where(x => x.TrxMediaStorageDetails != null)
+              .Where(x => x.SubSubjectClassification != null)
+              .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
+              .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
+              .Where(x => (param.roomId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == param.roomId))
+              .Where(x => (param.rackId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.RackId == param.rackId))
+              .Where(x => (param.levelId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.LevelId == param.levelId))
+              .Where(x => (param.rowId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.RowId == param.rowId))
+              .Where(x => (param.gmdId == Guid.Empty ? true : x.GmdId == param.gmdId))
+              .Where(x => (param.typeStorageId == Guid.Empty ? true : x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorageId == param.typeStorageId))
+              .Where(x => (param.creatorId == Guid.Empty ? true : x.CreatorId == param.creatorId))
+              .Where(x => (param.archiveOwnerId == Guid.Empty ? true : x.ArchiveOwnerId == param.archiveOwnerId))
+              .Where(x => (param.classificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassification.ClassificationId == param.classificationId))
+              .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
+              .Where(x => (param.status == null ? true : x.IsUsed == param.status))
+              .Where(x => (param.startDate == null ? true : x.CreatedDateArchive >= param.startDate))
+              .Where(x => (param.endDate == null ? x.CreatedDateArchive <= DateTime.Now : x.CreatedDateArchive <= param.endDate))
               .Select(x => new ArchiveActive
               {
                   DocumentNo = x.DocumentNo,

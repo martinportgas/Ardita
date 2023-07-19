@@ -123,6 +123,7 @@ namespace Ardita.Repositories.Classess
                      Company = x.Borrower.BorrowerCompany,
                      UserCreatedBy = GetUserNameCreatedById(x.CreatedBy),
                      x.TrxArchiveRent.RequestedDate,
+                     x.TrxArchiveRent.StatusId,
                      Status = x.TrxArchiveRent.Status.Name,
                      Color = x.TrxArchiveRent.Status.Color,
                  })

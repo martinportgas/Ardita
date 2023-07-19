@@ -78,10 +78,11 @@
                     {
                         "data": "trxArchiveRentId", "name": "trxArchiveRentId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
-                            var approve = row.status != 'Approval Process' ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-check"></i> </a>`;
+                            console.log(row, '@((int)GlobalConst.STATUS.ApprovalProcess)');
+                            var approve = row.statusId != '@((int)GlobalConst.STATUS.ApprovalProcess)' ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Approval, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-check"></i> </a>`;
                             approve = approve.replace("-1", data);
 
-                            var detail = row.status == 'Approval Process' ? '' : `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
+                            var detail = row.statusId == '@((int)GlobalConst.STATUS.ApprovalProcess)' ? '' : `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRentApproval, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
                             var JoinButton = approve.concat(" ", detail);
