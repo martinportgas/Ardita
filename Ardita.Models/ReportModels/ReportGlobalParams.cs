@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ardita.Models.ReportModels
 {
-    public class ArchiveActiveParams
+    public class ReportGlobalParams
     {
         public Guid companyId { get; set; }
         public Guid archiveUnitId { get; set; }

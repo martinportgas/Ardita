@@ -2321,7 +2321,7 @@
       <Width>24.52587cm</Width>
       <Page>
         <PageHeader>
-          <Height>2.02849cm</Height>
+          <Height>1.67571cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -2329,7 +2329,6 @@
               <Source>Embedded</Source>
               <Value>bks</Value>
               <Sizing>FitProportional</Sizing>
-              <Top>0.105in</Top>
               <Left>0.11333in</Left>
               <Height>0.59944in</Height>
               <Width>0.86806in</Width>
@@ -2359,7 +2358,6 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox7</rd:DefaultName>
-              <Top>0.105in</Top>
               <Left>0.99527in</Left>
               <Height>0.59944in</Height>
               <Width>7.70834in</Width>

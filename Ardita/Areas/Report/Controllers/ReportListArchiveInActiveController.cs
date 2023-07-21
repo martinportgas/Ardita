@@ -47,7 +47,7 @@ namespace Ardita.Areas.Report.Controllers
             await AllViewBag();
             return View();
         }
-        public async Task<IActionResult> GenerateReport(ArchiveActiveParams param)
+        public async Task<IActionResult> GenerateReport(ReportGlobalParams param)
         {
             var reportName = "RptArchiveActive";
             var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName, param);

@@ -48,12 +48,12 @@ namespace Ardita.Areas.Report.Controllers
             await AllViewBag();
             return View();
         }
-        public async Task<IActionResult> GenerateReport(ArchiveActiveParams param)
+        public async Task<IActionResult> GenerateReport(ReportGlobalParams param)
         {
-            var reportName = "RptArchiveActive";
-            var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName, param);
-            ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
-            ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
+            var reportName = GlobalConst.RptReportTransferMedia;
+            var returnString = await _reportService.GenerateReportTransferMediaAsync(reportName, param);
+            ViewBag.Data = String.Format(GlobalConst.Base64FormatPdf, Convert.ToBase64String(returnString.Item1));
+            ViewBag.DataExcel = String.Format(GlobalConst.Base64FormatExcel, Convert.ToBase64String(returnString.Item2));
 
             await AllViewBag();
             return View(GlobalConst.Index);

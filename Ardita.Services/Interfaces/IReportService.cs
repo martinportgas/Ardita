@@ -11,15 +11,15 @@ namespace Ardita.Services.Interfaces
     public interface IReportService
     {
         byte[] GenerateReportAsync(string reportName);
-        Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ArchiveActiveParams param);
-        Task<byte[]> GenerateReportArchiveLoansInActive(string reportName);
-        Task<byte[]> GenerateReportArchiveProcessingInActive(string reportName);
-        Task<byte[]> GenerateReportTransferMediaArchiveInActive(string reportName);
-        Task<byte[]> GenerateReportListArchiveInActive(string reportName);
-        Task<byte[]> GenerateReportArchiveReceivedInActive(string reportName);
-        Task<byte[]> GenerateReportTransferMediaAsync(string reportName);
-        Task<byte[]> GenerateReportArchiveMovementAsync(string reportName);
-        Task<byte[]> GenerateReportArchiveDestroyAsync(string reportName);
-        Task<byte[]> GenerateReportArchiveUsedAsync(string reportName);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveLoansInActive(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveProcessingInActive(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaArchiveInActive(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportListArchiveInActive(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveReceivedInActive(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaAsync(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveMovementAsync(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyAsync(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveUsedAsync(string reportName, ReportGlobalParams param);
     }
 }

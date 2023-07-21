@@ -1,6 +1,6 @@
 ﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
-@model Ardita.Models.ReportModels.ArchiveActiveParams;
+@model Ardita.Models.ReportModels.ReportGlobalParams;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <form role="form" id="frmReport" enctype="multipart/form-data" asp-area=@GlobalConst.Report asp-controller=@GlobalConst.ReportArchiveActive asp-action=@GlobalConst.GenerateReport>
+                    <form role="form" id="frmReport" enctype="multipart/form-data" asp-area=@GlobalConst.Report asp-controller=@GlobalConst.ReportTransferMedia asp-action=@GlobalConst.GenerateReport>
                         <div class="row">
                             <div class="col-sm-6 b-r">
                                 <div class="form-group row rowreport">
@@ -92,12 +92,6 @@
                                     </div>
                                 </div>
                                 <div class="form-group row rowreport">
-                                    <label class="col-lg-3 col-form-label">Bentuk Media Simpan</label>
-                                    <div class="col-lg-9">
-                                        <select id="txtTypeStoraged" class="form-control" asp-items="ViewBag.ListTypeStorage" data-placeholder="-- Semua --" asp-for="typeStorageId"><option value=""></option></select>
-                                    </div>
-                                </div>
-                                <div class="form-group row rowreport">
                                     <label class="col-lg-3 col-form-label">Pencipta Arsip</label>
                                     <div class="col-lg-9">
                                         <select id="txtCreatorId" class="form-control" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Semua --" asp-for="creatorId"><option value=""></option></select>
@@ -133,12 +127,24 @@
                                         <input type="date" id="txtEndDate" class="form-control" asp-for="endDate" />
                                     </div>
                                 </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Periode Input</label>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtStartDateCreated" class="form-control" asp-for="startDateCreated" />
+                                    </div>
+                                    <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                        <strong>s/d</strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtEndDateCreated" class="form-control" asp-for="endDateCreated" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group mb-0">
-                                    <a class="btn btn-sm btn-warning mr-2" id="btnSearch" href="@Url.Action(GlobalConst.Index, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })"><i class="fa fa-refresh"></i> Clear Search</a>
+                                    <a class="btn btn-sm btn-warning mr-2" id="btnSearch" href="@Url.Action(GlobalConst.Index, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })"><i class="fa fa-refresh"></i> Clear Search</a>
                                     <button class="btn btn-sm btn-primary" id="btnSearch"><i class="fa fa-filter" onclick=""></i> Generate Report</button>
                                 </div>
                             </div>
@@ -188,19 +194,19 @@
             initDropdown();
         });
         function initDropdown() {
-            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtCompanyId'));
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtCompanyId'));
 
-            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindRoomActiveByArchiveUnitId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindRoomActiveByArchiveUnitId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
 
-            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtRoomId'));
+            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtRoomId'));
 
-            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtRackId'));
+            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtRackId'));
 
-            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtLevelId'));
+            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtLevelId'));
 
-            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
 
-            initGlobalDropdown($('#txtSubjectClaasificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtClaasificationId'));
+            initGlobalDropdown($('#txtSubjectClaasificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.ReportTransferMedia, new { Area = GlobalConst.Report })', $('#txtClaasificationId'));
         }
     </script>
 }

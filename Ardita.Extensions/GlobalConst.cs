@@ -89,6 +89,7 @@ public static class GlobalConst
     public const string ArchiveType = "ArchiveType";
     public const string ArchiveCirculation = "ArchiveCirculation";
     public const string ReportArchiveActive = "ReportArchiveActive";
+    public const string ReportTransferMedia = "ReportTransferMedia";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -237,6 +238,10 @@ public static class GlobalConst
     public const string BindParamCreatorByArchiveUnitId = "BindParamCreatorByArchiveUnitId";
     public const string BindParamClassificationSubjectIdByClassificationId = "BindParamClassificationSubjectIdByClassificationId";
 
+    //Report
+    public const string RptArchiveActive = "RptArchiveActive";
+    public const string RptReportTransferMedia = "RptReportTransferMedia";
+
     //Web Component
     public const string GET = "GET";
     public const string JSON = "JSON";
@@ -267,6 +272,8 @@ public static class GlobalConst
     public static DateTime MinDate = DateTime.Parse("1900-01-01");
     public static DateTime MaxDate = DateTime.Now;
     public static string SelectAll = "-- Semua --";
+    public static string Base64FormatPdf = "data:application/pdf;base64,{0}";
+    public static string Base64FormatExcel = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}";
 
     //ClaimTypes
     public const string Username = "Username";

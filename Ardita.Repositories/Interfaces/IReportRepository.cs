@@ -11,9 +11,9 @@ namespace Ardita.Repositories.Interfaces
     public interface IReportRepository
     {
         Task<IEnumerable<ReportDocument>> GetReportDocument();
-        Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ArchiveActiveParams param);
-        Task<IEnumerable<ArchiveActive>> GetArchiveActives(ArchiveActiveParams param);
-        Task<IEnumerable<TransferMedia>> GetTransferMedias();
+        Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ReportGlobalParams param);
+        Task<IEnumerable<ArchiveActive>> GetArchiveActives(ReportGlobalParams param);
+        Task<IEnumerable<TransferMedia>> GetTransferMedias(ReportGlobalParams param);
         Task<IEnumerable<ArchiveMovement>> GetArchiveMovements();
         Task<IEnumerable<ArchiveDestroy>> GetArchiveDestroys();
         Task<IEnumerable<ArchiveUsed>> GetArchiveUseds();

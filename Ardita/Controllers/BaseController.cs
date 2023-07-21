@@ -503,11 +503,13 @@ public abstract class BaseController<T> : Controller
         }).OrderBy(x => x.text).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindArchiveUnitsByCompanyIdAndParam(Guid id, string param = "")
+    public async Task<JsonResult> BindArchiveUnitsByCompanyIdAndParam(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveUnitService.GetAll();
-        var result = data.Where(x => x.CompanyId == id && x.ArchiveUnitName.ToLower().Contains(param.ToLower())).Select(x => new
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.CompanyId == Id).ToList();
+        var result = data.Where(x => x.ArchiveUnitName.ToLower().Contains(param.ToLower())).Select(x => new
         {
             id = x.ArchiveUnitId.ToString(),
             text = x.ArchiveUnitName
@@ -551,7 +553,9 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _roomService.GetAll();
-        var result = data.Where(x => x.Floor.ArchiveUnitId == Id && x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == Id).ToList();
+        var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).Select(
             x => new
             {
                 id = x.RoomId.ToString(),
@@ -585,7 +589,9 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _rackService.GetAll();
-        var result = data.Where(x => x.RoomId == Id && x.RackName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RackName).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.RoomId == Id).ToList();
+        var result = data.Where(x => x.RackName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RackName).Select(
             x => new
             {
                 id = x.RackId.ToString(),
@@ -609,7 +615,9 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _levelService.GetAll();
-        var result = data.Where(x => x.RackId == Id && x.LevelName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.LevelName).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.RackId == Id).ToList();
+        var result = data.Where(x => x.LevelName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.LevelName).Select(
             x => new
             {
                 id = x.LevelId.ToString(),
@@ -633,7 +641,9 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _rowService.GetAll();
-        var result = data.Where(x => x.LevelId == Id && x.RowName!.ToLower().Contains(param.ToLower())).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.LevelId == Id).ToList();
+        var result = data.Where(x => x.RowName!.ToLower().Contains(param.ToLower())).Select(
             x => new
             {
                 id = x.RowId.ToString(),
@@ -647,7 +657,9 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _archiveCreatorService.GetAll();
-        var result = data.Where(x => x.ArchiveUnitId == Id && x.CreatorName!.ToLower().Contains(param.ToLower())).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == Id).ToList();
+        var result = data.Where(x => x.CreatorName!.ToLower().Contains(param.ToLower())).Select(
             x => new
             {
                 id = x.CreatorId.ToString(),
@@ -697,7 +709,9 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubjectService.GetAll();
-        var result = data.Where(x => x.ClassificationId == Id && x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubjectClassificationName).Select(
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.ClassificationId == Id).ToList();
+        var result = data.Where(x => x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubjectClassificationName).Select(
             x => new
             {
                 id = x.SubjectClassificationId.ToString(),
