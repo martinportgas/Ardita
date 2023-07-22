@@ -2,6 +2,7 @@
 using Ardita.Extensions;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Report;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -87,6 +88,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             {
                 var files = Request.Form[GlobalConst.Files];
                 model.IsArchiveActive = false;
+                model.InactiveBy = AppUsers.CurrentUser(User).UserId;
+                model.InactiveDate = DateTime.Now;
                 if (model.ArchiveId != Guid.Empty)
                 {
                     string[] filesDeleted = Request.Form[GlobalConst.IdFileDeletedArray].ToArray();

@@ -63,9 +63,15 @@ public partial class TrxArchive
 
     public Guid? UpdatedBy { get; set; }
 
+    public Guid? InactiveBy { get; set; }
+
+    public DateTime? InactiveDate { get; set; }
+
     public virtual MstArchiveOwner ArchiveOwner { get; set; } = null!;
 
     public virtual MstArchiveType ArchiveType { get; set; } = null!;
+
+    public virtual MstUser CreatedByNavigation { get; set; } = null!;
 
     public virtual MstCreator Creator { get; set; } = null!;
 

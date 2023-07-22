@@ -90,6 +90,7 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         {
             var ApprovalAction = Request.Form[GlobalConst.Approval];
 
+            model.StatusId = ApprovalAction == GlobalConst.Approve ? (int)GlobalConst.STATUS.ArchiveReceived : (int)GlobalConst.STATUS.Rejected;
             model.StatusReceived = ApprovalAction == GlobalConst.Approve ? (int)GlobalConst.STATUS.ArchiveReceived : (int)GlobalConst.STATUS.Rejected;
             model.ReceivedBy = AppUsers.CurrentUser(User).UserId;
             model.DateReceived = DateTime.Now;
@@ -118,6 +119,8 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
                             archive.IsArchiveActive = false;
                             archive.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                             archive.UpdatedDate = DateTime.Now;
+                            archive.InactiveBy = AppUsers.CurrentUser(User).UserId;
+                            archive.InactiveDate = DateTime.Now;
 
                             await _archiveService.Update(archive, "", new string[] { });
                         }

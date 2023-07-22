@@ -242,6 +242,25 @@ public static class GlobalConst
     public const string RptArchiveActive = "RptArchiveActive";
     public const string RptReportTransferMedia = "RptReportTransferMedia";
 
+    //ReportParameter
+    public const string ParamNameCompany = "company";
+    public const string ParamNameUnitArchive = "unitArchive";
+    public const string ParamNameRoom = "room";
+    public const string ParamNameRack = "rack";
+    public const string ParamNameLevel = "level";
+    public const string ParamNameRow = "row";
+    public const string ParamNameStatus = "status";
+    public const string ParamNameGmd = "gmd";
+    public const string ParamNameCreator = "creator";
+    public const string ParamNameOwner = "owner";
+    public const string ParamNameClassification = "classification";
+    public const string ParamNameSubjectClassification = "subjectClassification";
+    public const string ParamNameTypeStorage = "typeStorage";
+    public const string ParamNameCreatePeriode = "createPeriode";
+    public const string ParamNameInputPeriode = "inputPeriode";
+    public const string ParamNameDestroyPeriode = "destroyPeriode";
+    public const string ParamNameRentPeriode = "rentPeriode";
+
     //Web Component
     public const string GET = "GET";
     public const string JSON = "JSON";

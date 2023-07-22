@@ -1260,6 +1260,10 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("document_no");
             entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
             entity.Property(e => e.GmdId).HasColumnName("gmd_id");
+            entity.Property(e => e.InactiveBy).HasColumnName("inactive_by");
+            entity.Property(e => e.InactiveDate)
+                .HasColumnType("datetime")
+                .HasColumnName("inactive_date");
             entity.Property(e => e.InactiveRetention).HasColumnName("inactive_retention");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsArchiveActive).HasColumnName("is_archive_active");
@@ -1303,6 +1307,11 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TRX_ARCHIVE_MST_ARCHIVE_TYPE");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TrxArchives)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TRX_ARCHIVE_MST_USER");
 
             entity.HasOne(d => d.Creator).WithMany(p => p.TrxArchives)
                 .HasForeignKey(d => d.CreatorId)

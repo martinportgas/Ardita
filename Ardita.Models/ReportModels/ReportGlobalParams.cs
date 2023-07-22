@@ -10,6 +10,7 @@ namespace Ardita.Models.ReportModels
     {
         public Guid companyId { get; set; }
         public Guid archiveUnitId { get; set; }
+        public Guid archiveUnitFromId { get; set; }
         public Guid roomId { get; set; }
         public Guid rackId { get; set; }
         public Guid levelId { get; set; }
@@ -21,11 +22,22 @@ namespace Ardita.Models.ReportModels
         public Guid classificationId { get; set; }
         public Guid subjectClassificationId { get; set; }
         public bool? status { get; set; }
+        public long statusId { get; set; }
         public DateTime? startDate { get; set; } = DateTime.Parse("1900-01-01");
         public DateTime? endDate { get; set; } = DateTime.Now;
         public DateTime? startDateCreated { get; set; } = DateTime.Parse("1900-01-01");
         public DateTime? endDateCreated { get; set; } = DateTime.Now;
         public DateTime? startDateDestroy { get; set; } = DateTime.Parse("1900-01-01");
         public DateTime? endDateDestroy { get; set; } = DateTime.Now;
+        public DateTime? startDateRent { get; set; } = DateTime.Parse("1900-01-01");
+        public DateTime? endDateRent { get; set; } = DateTime.Now;
+        public DateTime? startDateReceive { get; set; } = DateTime.Parse("1900-01-01");
+        public DateTime? endDateReceive { get; set; } = DateTime.Now;
+        public DateTime? startDateMove { get; set; } = DateTime.Parse("1900-01-01");
+        public DateTime? endDateMove { get; set; } = DateTime.Now;
+        public DateTime? startDateUse { get; set; } = DateTime.Parse("1900-01-01");
+        public DateTime? endDateUse { get; set; } = DateTime.Now;
+        public Guid sender { get; set; }
+        public Guid receiver { get; set; }
     }
 }

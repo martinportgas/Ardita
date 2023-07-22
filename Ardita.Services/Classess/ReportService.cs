@@ -6,6 +6,8 @@ using Ardita.Report;
 using Ardita.Repositories.Interfaces;
 using Ardita.Models.ReportModels;
 using Ardita.Extensions;
+using Castle.Components.DictionaryAdapter.Xml;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Ardita.Services.Classess
 {
@@ -23,6 +25,12 @@ namespace Ardita.Services.Classess
             Environment = _environment;
             _archiveRepository = archiveRepository;
             _reportRepository = reportRepository;
+        }
+        private List<string> GetReportParameter(string rdlcFilePath)
+        {
+            var reportCore = new Microsoft.Reporting.NETCore.LocalReport();
+            reportCore.ReportPath = rdlcFilePath;
+            return reportCore.GetParameters().Select(x => x.Name).ToList();
         }
         public byte[] GenerateReportAsync(string reportName)
         {
@@ -42,11 +50,12 @@ namespace Ardita.Services.Classess
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ReportGlobalParams param)
         {
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
-            var report = new LocalReport(rdlcFilePath);
-            var parameters = await _reportRepository.GetArchiveActiveNamingParams(param);
+
+            var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
 
             var data = await _reportRepository.GetArchiveActives(param);
 
+            var report = new LocalReport(rdlcFilePath);
             report.AddDataSource("dsArchiveActive", data);
             var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
             var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
@@ -55,12 +64,12 @@ namespace Ardita.Services.Classess
         public async Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaAsync(string reportName, ReportGlobalParams param)
         {
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
-            var report = new LocalReport(rdlcFilePath);
 
-            var parameters = await _reportRepository.GetArchiveActiveNamingParams(param);
+            var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
 
             var data = await _reportRepository.GetTransferMedias(param);
 
+            var report = new LocalReport(rdlcFilePath);
             report.AddDataSource("dsTransferMedia", data.ToList());
             var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
             var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
