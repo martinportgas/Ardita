@@ -20,6 +20,16 @@
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
 
+    <div class="row mb-2">
+        <div class="col-lg-6">
+            <div class="input-group">
+                <input type="text" placeholder="Pencarian Arsip" class="form-control" id="Search" style="border-radius: 5px 0px 0px 5px !important" /> <span class="input-group-append">
+                    <button class="btn btn-sm btn-warning" onclick="window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Areas = GlobalConst.General, keyword = "-1"})'.replace('-1', $('#Search').val())">Cari</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-3">
             <div class="ibox ">

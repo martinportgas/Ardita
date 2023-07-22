@@ -46,10 +46,11 @@ public class ArchiveRepository : IArchiveRepository
     {
         listArchiveUnitCode = listArchiveUnitCode == null ? new List<string> { } : listArchiveUnitCode;
         return await _context.TrxArchives
+            .Include(x => x.TrxFileArchiveDetails)
             .Include(x => x.Gmd)
-            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
             .Include(x => x.SecurityClassification)
-            .Include(x => x.Creator)
+            .Include(x => x.Creator.ArchiveUnit.Company)
             .Include(x => x.ArchiveOwner)
             .Include(x => x.ArchiveType)
             .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)

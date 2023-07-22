@@ -50,6 +50,18 @@ namespace Ardita.Areas.General.Controllers
             _archiveRetentionService = archiveRetentionService;
             _archiveRentService = archiveRentService;
         }
+        public async Task<IActionResult> SearchActive(string keyword)
+        {
+            var dataArchive = await _archiveService.GetAll();
+            ViewBag.Data = dataArchive.Where(x => x.IsArchiveActive == true && x.TitleArchive.ToLower().Contains(keyword.ToLower())).ToList();
+            return View("Search");
+        }
+        public async Task<IActionResult> SearchInActive(string keyword)
+        {
+            var dataArchive = await _archiveService.GetAll();
+            ViewBag.Data = dataArchive.Where(x => x.IsArchiveActive == false && x.TitleArchive.ToLower() == keyword.ToLower()).ToList();
+            return View();
+        }
         public async Task<IActionResult> Index()
         {
             if(AppUsers.CurrentUser(User).RoleCode == GlobalConst.ROLE.ADM.ToString())
@@ -322,6 +334,23 @@ namespace Ardita.Areas.General.Controllers
                 available = dataArchive.Where(x => x.IsArchiveActive == false).Count() - dataRent.Where(x => x.StatusId != statusReturn).Count(),
             };
             return Json(result);
+        }
+        public async Task<IActionResult> BindFileArchive(Guid Id, bool IsDownload = true)
+        {
+            var data = await _fileArchiveDetailService.GetById(Id);
+            if (data != null)
+            {
+                var path = string.Concat(data.FilePath, data.FileNameEncrypt);
+                var bytes = System.IO.File.ReadAllBytes(path);
+                if (IsDownload)
+                    return File(bytes, data.FileType, data.FileName);
+                else
+                    return File(bytes, data.FileType);
+            }
+            if (IsDownload)
+                return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
+            else
+                return File(new byte[] { }, "application/octet-stream");
         }
     }
 }
