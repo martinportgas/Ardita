@@ -90,6 +90,9 @@ public static class GlobalConst
     public const string ArchiveCirculation = "ArchiveCirculation";
     public const string ReportArchiveActive = "ReportArchiveActive";
     public const string ReportTransferMedia = "ReportTransferMedia";
+    public const string ReportArchiveMovement = "ReportArchiveMovement";
+    public const string ReportArchiveDestroy = "ReportArchiveDestroy";
+    public const string ReportArchiveUsed = "ReportArchiveUsed";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -260,6 +263,7 @@ public static class GlobalConst
     public const string ParamNameInputPeriode = "inputPeriode";
     public const string ParamNameDestroyPeriode = "destroyPeriode";
     public const string ParamNameRentPeriode = "rentPeriode";
+    public const string ParamNameMovementPeriode = "movementPeriode";
 
     //Web Component
     public const string GET = "GET";

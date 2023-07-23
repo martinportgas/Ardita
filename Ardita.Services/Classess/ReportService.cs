@@ -49,7 +49,7 @@ namespace Ardita.Services.Classess
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ReportGlobalParams param)
         {
-            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
 
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
 
@@ -77,22 +77,24 @@ namespace Ardita.Services.Classess
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveMovementAsync(string reportName, ReportGlobalParams param = null)
         {
-            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
-            var report = new LocalReport(rdlcFilePath);
-            var parameters = new Dictionary<string, string>();
-            var data = await _reportRepository.GetArchiveMovements();
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
 
-            report.AddDataSource("dsArchiveMovement", data.ToList());
+            var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
+
+            var data = await _reportRepository.GetArchiveMovements(param);
+
+            var report = new LocalReport(rdlcFilePath);
+            report.AddDataSource("dsArchiveMovement", data);
             var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
             var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyAsync(string reportName, ReportGlobalParams param = null)
         {
-            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
-            var parameters = new Dictionary<string, string>();
-            var data = await _reportRepository.GetArchiveDestroys();
+            var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
+            var data = await _reportRepository.GetArchiveDestroys(param);
 
             report.AddDataSource("dsArchiveDestroy", data.ToList());
             var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
@@ -101,10 +103,10 @@ namespace Ardita.Services.Classess
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveUsedAsync(string reportName, ReportGlobalParams param = null)
         {
-            string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
+            string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
-            var parameters = new Dictionary<string, string>();
-            var data = await _reportRepository.GetArchiveUseds();
+            var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
+            var data = await _reportRepository.GetArchiveUseds(param);
 
             report.AddDataSource("dsArchiveUsed", data.ToList());
             var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);

@@ -1048,9 +1048,6 @@
             <Left>0.65863cm</Left>
             <Height>1.47517cm</Height>
             <Width>21.59467cm</Width>
-            <Visibility>
-              <Hidden>=Fields!NomorArsip.Value = ""</Hidden>
-            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
