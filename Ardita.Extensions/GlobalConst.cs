@@ -89,10 +89,16 @@ public static class GlobalConst
     public const string ArchiveType = "ArchiveType";
     public const string ArchiveCirculation = "ArchiveCirculation";
     public const string ReportArchiveActive = "ReportArchiveActive";
+    public const string ReportArchiveProcessingInActive = "ReportArchiveProcessingInActive";
     public const string ReportTransferMedia = "ReportTransferMedia";
+    public const string ReportTransferMediaArchiveInActive = "ReportTransferMediaArchiveInActive";
     public const string ReportArchiveMovement = "ReportArchiveMovement";
     public const string ReportArchiveDestroy = "ReportArchiveDestroy";
+    public const string ReportArchiveDestroyInActive = "ReportArchiveDestroyInActive";
     public const string ReportArchiveUsed = "ReportArchiveUsed";
+    public const string ReportArchiveLoansInActive = "ReportArchiveLoansInActive";
+    public const string ReportListArchiveInActive = "ReportListArchiveInActive";
+    public const string ReportArchiveReceivedInActive = "ReportArchiveReceivedInActive";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -247,6 +253,7 @@ public static class GlobalConst
 
     //ReportParameter
     public const string ParamNameCompany = "company";
+    public const string ParamNameUnitArchiveFrom = "unitArchiveFrom";
     public const string ParamNameUnitArchive = "unitArchive";
     public const string ParamNameRoom = "room";
     public const string ParamNameRack = "rack";
@@ -263,7 +270,12 @@ public static class GlobalConst
     public const string ParamNameInputPeriode = "inputPeriode";
     public const string ParamNameDestroyPeriode = "destroyPeriode";
     public const string ParamNameRentPeriode = "rentPeriode";
+    public const string ParamNameReceivePeriode = "receivePeriode";
     public const string ParamNameMovementPeriode = "movementPeriode";
+    public const string ParamNameBorrower = "borrower";
+    public const string ParamNamePIC = "PIC";
+    public const string ParamNameSender = "sender";
+    public const string ParamNameReceiver = "receiver";
 
     //Web Component
     public const string GET = "GET";

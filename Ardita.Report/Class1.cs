@@ -52,11 +52,11 @@ namespace Ardita.Report
         public string KodeKlasifikasi { get; set; }
         public string NoArsip { get; set; }
         public string JenisArsip { get; set; }
-        public DateTime TahunPenciptaan { get; set; }
+        public DateTime? TahunPenciptaan { get; set; }
         public int Retensi { get; set; }
         public string Lokasi { get; set; }
         public string KodeMediaSimpan { get; set; }
-        public DateTime PeriodeOlah { get; set; }
+        public DateTime? PeriodeOlah { get; set; }
     }
 
     public class ReportTransferMediaArchiveInActive
@@ -82,7 +82,7 @@ namespace Ardita.Report
         public string JenisArsip { get; set; }
         public string SubjectArsip { get; set; }
         public string DeskripsiArsip { get; set; }
-        public DateTime TahunArsip { get; set; }
+        public DateTime? TahunArsip { get; set; }
         public int Jumlah { get; set; }
         public int Retensi { get; set; }
         public string Lokasi { get; set; }

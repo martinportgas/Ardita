@@ -21,6 +21,10 @@ namespace Ardita.Models.ReportModels
         public Guid archiveOwnerId { get; set; }
         public Guid classificationId { get; set; }
         public Guid subjectClassificationId { get; set; }
+        public Guid borrowerId { get; set; }
+        public Guid PIC { get; set; }
+        public Guid senderId { get; set; }
+        public Guid receiverId { get; set; }
         public bool? status { get; set; }
         public long statusId { get; set; }
         public DateTime? startDate { get; set; } = DateTime.Parse("1900-01-01");

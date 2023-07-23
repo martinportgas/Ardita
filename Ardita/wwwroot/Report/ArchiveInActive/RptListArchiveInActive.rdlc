@@ -152,7 +152,7 @@
                   <Width>1.91792cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.36771cm</Width>
+                  <Width>1.83972cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.73271cm</Width>
@@ -191,6 +191,7 @@
                                 <TextRun>
                                   <Value>No</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -228,6 +229,7 @@
                                 <TextRun>
                                   <Value>Asal Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -265,6 +267,7 @@
                                 <TextRun>
                                   <Value>Deskripsi Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -302,6 +305,7 @@
                                 <TextRun>
                                   <Value>Jenis Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -339,6 +343,7 @@
                                 <TextRun>
                                   <Value>Jumlah</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -376,6 +381,7 @@
                                 <TextRun>
                                   <Value>Kode Klasifikasi</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -413,6 +419,7 @@
                                 <TextRun>
                                   <Value>Kode Media Simpan</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -450,6 +457,7 @@
                                 <TextRun>
                                   <Value>Lokasi</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -487,6 +495,7 @@
                                 <TextRun>
                                   <Value>No Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -524,6 +533,7 @@
                                 <TextRun>
                                   <Value>Pemilik Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -561,6 +571,7 @@
                                 <TextRun>
                                   <Value>Retensi</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -598,6 +609,7 @@
                                 <TextRun>
                                   <Value>Subject Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -635,6 +647,7 @@
                                 <TextRun>
                                   <Value>Tahun Arsip</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -672,6 +685,7 @@
                                 <TextRun>
                                   <Value>Unit Pencipta</Value>
                                   <Style>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -714,11 +728,13 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox2</rd:DefaultName>
@@ -746,11 +762,13 @@
                                 <TextRun>
                                   <Value>=Fields!AsalArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AsalArsip</rd:DefaultName>
@@ -778,7 +796,7 @@
                                 <TextRun>
                                   <Value>=Fields!DeskripsiArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -810,7 +828,7 @@
                                 <TextRun>
                                   <Value>=Fields!JenisArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -842,11 +860,13 @@
                                 <TextRun>
                                   <Value>=Fields!Jumlah.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Jumlah</rd:DefaultName>
@@ -874,7 +894,7 @@
                                 <TextRun>
                                   <Value>=Fields!KodeKlasifikasi.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -908,11 +928,13 @@
                                 <TextRun>
                                   <Value>=Fields!KodeMediaSimpan.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>KodeMediaSimpan</rd:DefaultName>
@@ -940,7 +962,7 @@
                                 <TextRun>
                                   <Value>=Fields!Lokasi.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -972,7 +994,7 @@
                                 <TextRun>
                                   <Value>=Fields!NoArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1004,7 +1026,7 @@
                                 <TextRun>
                                   <Value>=Fields!PemilikArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1036,11 +1058,13 @@
                                 <TextRun>
                                   <Value>=Fields!Retensi.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Retensi</rd:DefaultName>
@@ -1068,7 +1092,7 @@
                                 <TextRun>
                                   <Value>=Fields!SubjectArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1100,7 +1124,8 @@
                                 <TextRun>
                                   <Value>=Fields!TahunArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1132,7 +1157,7 @@
                                 <TextRun>
                                   <Value>=Fields!UnitPencipta.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1189,7 +1214,7 @@
             <Top>5.86317cm</Top>
             <Left>0.36862cm</Left>
             <Height>1.75562cm</Height>
-            <Width>23.34605cm</Width>
+            <Width>22.81806cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
