@@ -1,6 +1,8 @@
 ﻿@using Ardita.Extensions;
+@using Ardita.Models.DbModels;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int count = 0;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -20,19 +22,75 @@
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
 
+    <div class="row mb-2">
+        <div class="col-lg-6">
+            <div class="input-group">
+                <input type="text" placeholder="Pencarian Arsip" class="form-control" id="Search" style="border-radius: 5px 0px 0px 5px !important" /> <span class="input-group-append">
+                    <button class="btn btn-sm btn-warning" onclick="window.location.href = '@Url.Action("SearchInActive", GlobalConst.Home, new { Areas = GlobalConst.General, keyword = "-1"})'.replace('-1', $('#Search').val())">Cari</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-3">
             <div class="ibox ">
                 <div class="ibox-title">
                     <h5>User Kearsipan</h5>
                 </div>
-                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                <div class="ibox-content text-center" style="min-height:100px;max-height:100px;display:flex;justify-content: space-between;">
                     <div style="display:flex;flex-direction:column">
-                        <span style="font-size:30px">@ViewBag.userKearsipan</span>
+                        <span style="font-size:30px">@ViewBag.userKearsipan.Count</span>
                         <span style="font-size:9px">Total User</span>
                     </div>
                     <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                        <a style="font-size:9px" data-toggle="modal" data-target="#modalUserKearsipan" href="">View Detail >></a>
+                    </div>
+                    <div class="modal inmodal" id="modalUserKearsipan" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" style="width:80%;max-width:unset !important">
+                            <div class="modal-content animated fadeIn">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Daftar User Kearsipan</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <table id="tblUserPengolah" class="table table-hover" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama</th>
+                                                    <th>Posisi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.userKearsipan.Count > 0)
+                                                {
+                                                    count = 1;
+                                                    foreach (IdxUserRole item in ViewBag.userKearsipan)
+                                                    {
+                                                        <tr>
+                                                            <td>@count</td>
+                                                            <td style="text-align:left">@item.User.Employee.Name</td>
+                                                            <td style="text-align:left">@item.User.Employee.Position.Name</td>
+                                                        </tr>
+                                                        {
+                                                            count++;
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                </div>
+
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,13 +100,57 @@
                 <div class="ibox-title">
                     <h5>Ruangan</h5>
                 </div>
-                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                <div class="ibox-content text-center" style="min-height:100px;max-height:100px;display:flex;justify-content: space-between;">
                     <div style="display:flex;flex-direction:column">
-                        <span style="font-size:30px">@ViewBag.totalRoom</span>
+                        <span style="font-size:30px">@ViewBag.totalRoom.Count</span>
                         <span style="font-size:9px">Total Ruangan</span>
                     </div>
                     <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                        <a style="font-size:9px" data-toggle="modal" data-target="#modalRoom" href="">View Detail >></a>
+                    </div>
+                    <div class="modal inmodal" id="modalRoom" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" style="width:80%;max-width:unset !important">
+                            <div class="modal-content animated fadeIn">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Daftar Ruangan</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <table id="tblRoom" class="table table-hover" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Ruangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.totalRoom.Count > 0)
+                                                {
+                                                    count = 1;
+                                                    foreach (TrxRoom item in ViewBag.totalRoom)
+                                                    {
+                                                        <tr>
+                                                            <td>@count</td>
+                                                            <td style="text-align:left">@item.RoomName</td>
+                                                        </tr>
+                                                        {
+                                                            count++;
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                </div>
+
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,13 +160,59 @@
                 <div class="ibox-title">
                     <h5>Unit Pengolah</h5>
                 </div>
-                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                <div class="ibox-content text-center" style="min-height:100px;max-height:100px;display:flex;justify-content: space-between;">
                     <div style="display:flex;flex-direction:column">
-                        <span style="font-size:30px">@ViewBag.totalLokasi</span>
+                        <span style="font-size:30px">@ViewBag.totalLokasi.Count</span>
                         <span style="font-size:9px">Total Unit Pengolah</span>
                     </div>
                     <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                        <a style="font-size:9px" data-toggle="modal" data-target="#modalLoc" href="">View Detail >></a>
+                    </div>
+                    <div class="modal inmodal" id="modalLoc" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" style="width:80%;max-width:unset !important">
+                            <div class="modal-content animated fadeIn">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Daftar Unit Pengolah</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <table id="tblRoom" class="table table-hover" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Unit Pengolah</th>
+                                                    <th>Total Arsip</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.totalLokasi.Count > 0)
+                                                {
+                                                    count = 1;
+                                                    foreach (TrxArchiveUnit item in ViewBag.totalLokasi)
+                                                    {
+                                                        <tr>
+                                                            <td>@count</td>
+                                                            <td style="text-align:left">@item.ArchiveUnitName</td>
+                                                            <td>@(((List<TrxArchive>)ViewBag.totalArsip).Where(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.ArchiveUnitId == item.ArchiveUnitId).Count()).</td>
+                                                        </tr>
+                                                        {
+                                                            count++;
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                </div>
+
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,13 +222,13 @@
                 <div class="ibox-title">
                     <h5>Media Penyimpanan</h5>
                 </div>
-                <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
+                <div class="ibox-content text-center" style="min-height:100px;max-height:100px;display:flex;justify-content: space-between;">
                     <div style="display:flex;flex-direction:column">
-                        <span style="font-size:30px">@ViewBag.totalStorage</span>
+                        <span style="font-size:30px">@ViewBag.totalStorage.Count</span>
                         <span style="font-size:9px">Total Media Penyimpanan</span>
                     </div>
-                    <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                    <div style="padding-top: 43px;padding-left: 5px;width:100px">
+                        <a style="font-size:9px" href="@Url.Action(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive})">View Detail >></a>
                     </div>
                 </div>
             </div>
@@ -111,7 +259,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-center">
-                                <canvas id="polarChart" height="200"></canvas>
+                                <canvas id="pieChart" height="200"></canvas>
                             </div>
                         </div>
                     </div>
@@ -158,9 +306,20 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <h5>Jumlah Peminjaman Arsip</h5>
+                    <div class="ibox-tools">
+                        <select id="txtPeriode" class="select2_demo_1 form-control"
+                                data-placeholder="Periode">
+                            <option value=""></option>
+                            @for (int i = 0; i > -30; i--)
+                            {
+                                <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                            }
+                        </select>
+                    </div>
+                    
                 </div>
                 <div class="ibox-content text-center p-md" style="min-height:200px">
-                    <div>
+                    <div id="rentCanvas">
                         <canvas id="doughnutChart2" height="100"></canvas>
                     </div>
                 </div>
@@ -178,37 +337,58 @@
             initTotalGMD();
             initTotalRetensi();
             initTotalRent();
+
+            $('#txtPeriode').change(function(){
+                initTotalRent();
+            });
         });
 
         function initTotalRowUse() {
             var url = '@Url.Action("BindTotalStorageUseInActive", GlobalConst.Home, new { Area = GlobalConst.General })';
 
             ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
-                var polarData = {
+                //var polarData = {
+                //    datasets: [{
+                //        data: [
+                //            result.totalUse, result.totalAvailable
+                //        ],
+                //        backgroundColor: [
+                //            "#a3e1d4", "#dedede"
+                //        ],
+                //        label: [
+                //            "Statistik Penyimpanan"
+                //        ]
+                //    }],
+                //    labels: [
+                //        "Digunakan", "Tersedia"
+                //    ]
+                //};
+
+                //var polarOptions = {
+                //    segmentStrokeWidth: 2,
+                //    responsive: true
+
+                //};
+
+                //var ctx3 = document.getElementById("polarChart").getContext("2d");
+                //new Chart(ctx3, { type: 'polarArea', data: polarData, options: polarOptions });
+
+                var pieData = {
+                    labels: ["Digunakan", "Tersedia"],
                     datasets: [{
-                        data: [
-                            result.totalUse, result.totalAvailable
-                        ],
-                        backgroundColor: [
-                            "#a3e1d4", "#dedede"
-                        ],
-                        label: [
-                            "Statistik Penyimpanan"
-                        ]
-                    }],
-                    labels: [
-                        "Digunakan", "Tersedia"
-                    ]
+                        data: [result.totalUse, result.totalAvailable],
+                        backgroundColor: ["#a3e1d4", "#dedede"]
+                    }]
                 };
 
-                var polarOptions = {
-                    segmentStrokeWidth: 2,
+
+                var pieOptions = {
                     responsive: true
-
                 };
 
-                var ctx3 = document.getElementById("polarChart").getContext("2d");
-                new Chart(ctx3, { type: 'polarArea', data: polarData, options: polarOptions });
+
+                var ctx5 = document.getElementById("pieChart").getContext("2d");
+                new Chart(ctx5, { type: 'pie', data: pieData, options: pieOptions });
             });
         }
 
@@ -240,10 +420,10 @@
             ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
 
                 var doughnutData = {
-                    labels: ["Active", "Retensi"],
+                    labels: ["Active", "Retensi", "Dimusnahkan"],
                     datasets: [{
-                        data: [result.active, result.retensi],
-                        backgroundColor: ["#a3e1d4", "#dedede"]
+                        data: [result.active, result.retensi, result.destroy],
+                        backgroundColor: ["#a3e1d4", "#dedede", "#4a4b4c"]
                     }]
                 };
 
@@ -258,17 +438,17 @@
 
             });
         }
-
+        var chartData;
         function initTotalRent() {
-            var url = '@Url.Action("BindTotalRent", GlobalConst.Home, new { Area = GlobalConst.General })';
+            var url = '@Url.Action("BindTotalRent", GlobalConst.Home, new { Area = GlobalConst.General, Period = "-1" })'.replace('-1', $('#txtPeriode').val());
 
             ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
 
                 var doughnutData = {
-                    labels: ["Dipinjam", "Tersedia"],
+                    labels: ["Dipinjam", "Tersedia", "Dimusnahkan"],
                     datasets: [{
-                        data: [result.rent, result.available],
-                        backgroundColor: ["#a3e1d4", "#dedede"]
+                        data: [result.rent, result.available, result.destroy],
+                        backgroundColor: ["#a3e1d4", "#dedede", "#4a4b4c"]
                     }]
                 };
 
@@ -277,9 +457,14 @@
                     responsive: true
                 };
 
+                if ($('#rentCanvas').children('canvas') != undefined) {
+                    $('#rentCanvas').children('canvas').remove();
+                }
+
+                $('#rentCanvas').append('<canvas id="doughnutChart2" height="100"></canvas>');
 
                 var ctx4 = document.getElementById("doughnutChart2").getContext("2d");
-                new Chart(ctx4, { type: 'doughnut', data: doughnutData, options: doughnutOptions });
+                chartData = new Chart(ctx4, { type: 'doughnut', data: doughnutData, options: doughnutOptions });
 
             });
         }

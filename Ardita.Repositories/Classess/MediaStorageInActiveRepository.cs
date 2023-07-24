@@ -56,7 +56,24 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
             .FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
         return data!;
     }
-
+    public async Task<IEnumerable<TrxMediaStorageInActive>> GetAll()
+    {
+        var data = await _context.TrxMediaStorageInActives
+            .Include(g => g.GmdDetail)
+            .Include(d => d.TrxMediaStorageInActiveDetails)
+                .ThenInclude(a => a.Archive)
+                .ThenInclude(c => c.Creator)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(x => x.SubTypeStorage)
+            .Include(s => s.SubSubjectClassification.Creator)
+            .Include(t => t.TypeStorage.TrxTypeStorageDetails)
+            .Include(t => t.TypeStorage)
+                .ThenInclude(a => a.ArchiveUnit)
+            .Include(r => r.Row!.Level!.Rack!.Room!.Floor.ArchiveUnit)
+            .AsNoTracking()
+            .ToListAsync();
+        return data!;
+    }
     public async Task<int> GetCountByFilterModel(DataTableModel model)
     {
         return await _context.TrxMediaStorageInActives

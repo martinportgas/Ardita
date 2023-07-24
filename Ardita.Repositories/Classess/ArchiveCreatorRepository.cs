@@ -33,6 +33,7 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
 
     public async Task<IEnumerable<MstCreator>> GetAll() 
         => await _context.MstCreators
+        .Include(x => x.TrxArchives)
         .Include(x=> x.ArchiveUnit)
         .ThenInclude(x=> x.Company)
         .Where(x => x.IsActive == true)
