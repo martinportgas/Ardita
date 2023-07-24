@@ -136,7 +136,7 @@
                   <Width>1.57396cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.70625cm</Width>
+                  <Width>1.38858cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.89146cm</Width>
@@ -157,7 +157,7 @@
                   <Width>2.20896cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.67979cm</Width>
+                  <Width>1.84836cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.60042cm</Width>
@@ -184,6 +184,7 @@
                                 <TextRun>
                                   <Value>No</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -221,6 +222,7 @@
                                 <TextRun>
                                   <Value>Asal Arsip</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -258,6 +260,7 @@
                                 <TextRun>
                                   <Value>Jenis Arsip</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -295,6 +298,7 @@
                                 <TextRun>
                                   <Value>Jumlah</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -332,6 +336,7 @@
                                 <TextRun>
                                   <Value>Kode Klasifikasi</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -369,6 +374,7 @@
                                 <TextRun>
                                   <Value>Nama Peminjam</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -406,6 +412,7 @@
                                 <TextRun>
                                   <Value>No Arsip</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -443,6 +450,7 @@
                                 <TextRun>
                                   <Value>Pemilik Arsip</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -480,6 +488,7 @@
                                 <TextRun>
                                   <Value>Period</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -517,6 +526,7 @@
                                 <TextRun>
                                   <Value>Perusahaan</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -554,6 +564,7 @@
                                 <TextRun>
                                   <Value>Tanggal Kembali</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -591,6 +602,7 @@
                                 <TextRun>
                                   <Value>Tanggal Pinjam</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -628,6 +640,7 @@
                                 <TextRun>
                                   <Value>Unit Kerja</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -665,6 +678,7 @@
                                 <TextRun>
                                   <Value>Unit Pencipta</Value>
                                   <Style>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -707,11 +721,13 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox6</rd:DefaultName>
@@ -739,11 +755,13 @@
                                 <TextRun>
                                   <Value>=Fields!AsalArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>AsalArsip</rd:DefaultName>
@@ -771,7 +789,7 @@
                                 <TextRun>
                                   <Value>=Fields!JenisArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -803,11 +821,13 @@
                                 <TextRun>
                                   <Value>=Fields!Jumlah.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Jumlah</rd:DefaultName>
@@ -835,7 +855,7 @@
                                 <TextRun>
                                   <Value>=Fields!KodeKlasifikasi.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -867,7 +887,7 @@
                                 <TextRun>
                                   <Value>=Fields!NamaPeminjam.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -899,7 +919,7 @@
                                 <TextRun>
                                   <Value>=Fields!NoArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -931,7 +951,7 @@
                                 <TextRun>
                                   <Value>=Fields!PemilikArsip.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -963,7 +983,8 @@
                                 <TextRun>
                                   <Value>=Fields!Period.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -995,7 +1016,7 @@
                                 <TextRun>
                                   <Value>=Fields!Perusahaan.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1027,7 +1048,8 @@
                                 <TextRun>
                                   <Value>=Fields!TanggalKembali.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1059,7 +1081,8 @@
                                 <TextRun>
                                   <Value>=Fields!TanggalPinjam.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1091,7 +1114,7 @@
                                 <TextRun>
                                   <Value>=Fields!UnitKerja.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1123,11 +1146,13 @@
                                 <TextRun>
                                   <Value>=Fields!UnitPencipta.Value</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>UnitPencipta</rd:DefaultName>
@@ -1180,7 +1205,7 @@
             <Top>5.61969cm</Top>
             <Left>0.40374cm</Left>
             <Height>1.57042cm</Height>
-            <Width>24.05723cm</Width>
+            <Width>23.90813cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2104,7 +2129,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!pic.Value</Value>
+                                  <Value>=Parameters!PIC.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -3085,7 +3110,7 @@
         <Height>7.98033cm</Height>
         <Style />
       </Body>
-      <Width>24.75637cm</Width>
+      <Width>24.31187cm</Width>
       <Page>
         <PageHeader>
           <Height>2.46946cm</Height>
@@ -3229,7 +3254,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="pic">
+    <ReportParameter Name="PIC">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
@@ -3318,7 +3343,7 @@
         <CellDefinition>
           <ColumnIndex>2</ColumnIndex>
           <RowIndex>2</RowIndex>
-          <ParameterName>pic</ParameterName>
+          <ParameterName>PIC</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>3</ColumnIndex>

@@ -23,7 +23,10 @@ namespace Ardita.Areas.Report.Controllers
             IArchiveCreatorService archiveCreatorService,
             IArchiveOwnerService archiveOwnerService,
             IClassificationService classificationService,
-            IClassificationSubjectService classificationSubjectService)
+            IClassificationSubjectService classificationSubjectService,
+            IEmployeeService employeeService
+            
+            )
         {
             _reportService = reportService;
             _companyService = companyService;
@@ -38,6 +41,7 @@ namespace Ardita.Areas.Report.Controllers
             _archiveOwnerService = archiveOwnerService;
             _classificationService = classificationService;
             _classificationSubjectService = classificationSubjectService;
+            _employeeService = employeeService;
         }
         public override async Task<ActionResult> Index()
         {
@@ -49,8 +53,8 @@ namespace Ardita.Areas.Report.Controllers
         }
         public async Task<IActionResult> GenerateReport(ReportGlobalParams param)
         {
-            var reportName = "RptArchiveActive";
-            var returnString = await _reportService.GenerateReportArchiveActiveAsync(reportName, param);
+            var reportName = "RptReportArchiveProcessing";
+            var returnString = await _reportService.GenerateReportArchiveProcessingInActive(reportName, param);
             ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
             ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
 
@@ -71,6 +75,7 @@ namespace Ardita.Areas.Report.Controllers
             ViewBag.ListArchiveOwner = await BindArchiveOwners();
             ViewBag.ListClassification = await BindClasscifications();
             ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
+            ViewBag.ListEmplyees = await BindEmployee();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Ardita.Services.Interfaces
         Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaAsync(string reportName, ReportGlobalParams param);
         Task<Tuple<byte[], byte[]>> GenerateReportArchiveMovementAsync(string reportName, ReportGlobalParams param);
         Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyAsync(string reportName, ReportGlobalParams param);
+        Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyInActiveAsync(string reportName, ReportGlobalParams param);
         Task<Tuple<byte[], byte[]>> GenerateReportArchiveUsedAsync(string reportName, ReportGlobalParams param);
     }
 }

@@ -1,5 +1,6 @@
 ﻿@using Ardita.Extensions;
 @using Ardita.Models.ViewModels;
+@model Ardita.Models.ReportModels.ReportGlobalParams;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
@@ -19,23 +20,167 @@
     </div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content animated fadeInRight pb-0">
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
                     <h5>Report</h5>
                     <div class="ibox-tools">
-                        <a target="_blank" href="@Url.Action(GlobalConst.GenerateReport, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Generate Report</span></a>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
                     </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="frmReport" enctype="multipart/form-data" asp-area=@GlobalConst.Report asp-controller=@GlobalConst.ReportArchiveReceivedInActive asp-action=@GlobalConst.GenerateReport>
+                        <div class="row">
+                            <div class="col-sm-6 b-r">
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Perusahaan</label>
+                                    <div class="col-lg-9">
+                                        <select id="txtCompanyId" class="form-control" asp-items="ViewBag.ListCompany" data-placeholder="-- Semua --" asp-for="companyId"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Lokasi Kearsipan</label>
+                                    <div class="col-lg-9">
+                                        <select id="txtArchiveUnitId" class="form-control" asp-items="ViewBag.ListArchiveUnit" data-placeholder="-- Semua --" asp-for="archiveUnitId"><option value=""></option></select>
+                                    </div>
+                                </div>
+                               
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Status</label>
+                                    <div class="col-lg-9">
+                                        <input style="vertical-align:middle" type="radio" value="" id="all" asp-for="status" checked />
+                                        <label for="all">Semua </label>
+                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@false" id="available" asp-for="status" />
+                                        <label for="available">@GlobalConst.Available </label>
+                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@true" id="use" asp-for="status" />
+                                        <label for="use">@GlobalConst.Used</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Bentuk Media Arsip</label>
+                                    <div class="col-lg-9">
+                                        <select id="txtGmdId" class="form-control" asp-items="ViewBag.ListGMD" data-placeholder="-- Semua --" asp-for="gmdId"><option value=""></option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                               
+                               
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Pemilik Arsip</label>
+                                    <div class="col-lg-9">
+                                        <select id="txtOwnerId" class="form-control" asp-items="ViewBag.ListArchiveOwner" data-placeholder="-- Semua --" asp-for="archiveOwnerId"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Pengirim</label>
+                                    <div class="col-lg-9">
+                                        <select asp-for="senderId" id="txtSenderId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Penerima</label>
+                                    <div class="col-lg-9">
+                                        <select asp-for="receiverId" id="txtReceiverId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
+                                    </div>
+                                </div>
+                            
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Periode Penciptaan</label>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtStartDate" class="form-control" asp-for="startDate" />
+                                    </div>
+                                    <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                        <strong>s/d</strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtEndDate" class="form-control" asp-for="endDate" />
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Periode Penerimaan</label>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtStartDate" class="form-control" asp-for="startDateReceive" />
+                                    </div>
+                                    <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                        <strong>s/d</strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtEndDate" class="form-control" asp-for="endDateReceive" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group mb-0">
+                                    <a class="btn btn-sm btn-warning mr-2" id="btnSearch" href="@Url.Action(GlobalConst.Index, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })"><i class="fa fa-refresh"></i> Clear Search</a>
+                                    <button class="btn btn-sm btn-primary" id="btnSearch"><i class="fa fa-filter" onclick=""></i> Generate Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Preview</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @if (ViewBag.Data != null)
+                            {
+                                <div class="form-group">
+                                    <a href="@ViewBag.DataExcel" class="btn btn-sm btn-warning float-left m-t-n-xs" id="btnSearch" style="margin-right: 10px" download="reportPenerimaan.xlsx"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+                                    <a href="@ViewBag.Data" class="btn btn-sm btn-info float-left m-t-n-xs" id="btnSearch" download="reportPenerimaan.pdf"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                </div>
+                                <div class="form-group" style="margin-top: 30px">
+                                    <embed src="@ViewBag.Data#view=FitH" style="width:100%;min-height:500px" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script type="text/javascript">
+        $(function () {
+            initDropdown();
+        });
+        function initDropdown() {
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtCompanyId'));
+
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindRoomActiveByArchiveUnitId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+
+            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtRoomId'));
+
+            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtRackId'));
+
+            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtLevelId'));
+
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+
+            initGlobalDropdown($('#txtSubjectClaasificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.ReportArchiveReceivedInActive, new { Area = GlobalConst.Report })', $('#txtClaasificationId'));
+        }
     </script>
 }

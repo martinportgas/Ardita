@@ -89,13 +89,13 @@
                   <Width>1.04903cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.5cm</Width>
+                  <Width>3.71938cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>4.68673cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.5cm</Width>
+                  <Width>1.63217cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.5cm</Width>
@@ -128,7 +128,7 @@
                                 <TextRun>
                                   <Value>No</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -166,7 +166,7 @@
                                 <TextRun>
                                   <Value>Asal Arsip</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -204,7 +204,7 @@
                                 <TextRun>
                                   <Value>Dokumen Serah Terima</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -242,7 +242,7 @@
                                 <TextRun>
                                   <Value>Jumlah</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -280,7 +280,7 @@
                                 <TextRun>
                                   <Value>No Arsip</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -318,7 +318,7 @@
                                 <TextRun>
                                   <Value>Pemilik Arsip</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -356,7 +356,7 @@
                                 <TextRun>
                                   <Value>Penerima</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -394,7 +394,7 @@
                                 <TextRun>
                                   <Value>Pengirim</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -432,7 +432,7 @@
                                 <TextRun>
                                   <Value>Tanggal</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>Silver</Color>
                                   </Style>
@@ -479,7 +479,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox2</rd:DefaultName>
@@ -575,7 +577,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Jumlah</rd:DefaultName>
@@ -607,7 +611,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>NoArsip</rd:DefaultName>
@@ -639,7 +645,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>PemilikArsip</rd:DefaultName>
@@ -671,7 +679,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Penerima</rd:DefaultName>
@@ -703,7 +713,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Pengirim</rd:DefaultName>
@@ -732,10 +744,13 @@
                                   <Value>=Fields!Tanggal.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Tanggal</rd:DefaultName>
@@ -783,7 +798,7 @@
             <Top>4.82458cm</Top>
             <Left>0.36786cm</Left>
             <Height>1.2cm</Height>
-            <Width>23.23576cm</Width>
+            <Width>23.58731cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1446,7 +1461,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>:</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -1675,7 +1690,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>:</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -1904,7 +1919,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>:</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>

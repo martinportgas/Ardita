@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <form role="form" id="frmReport" enctype="multipart/form-data" asp-area=@GlobalConst.Report asp-controller=@GlobalConst.ReportArchiveActive asp-action=@GlobalConst.GenerateReport>
+                    <form role="form" id="frmReport" enctype="multipart/form-data" asp-area=@GlobalConst.Report asp-controller=@GlobalConst.ReportArchiveDestroy asp-action=@GlobalConst.GenerateReport>
                         <div class="row">
                             <div class="col-sm-6 b-r">
                                 <div class="form-group row rowreport">
@@ -75,12 +75,14 @@
                                 <div class="form-group row rowreport">
                                     <label class="col-lg-3 col-form-label">Status</label>
                                     <div class="col-lg-9">
-                                        <input style="vertical-align:middle" type="radio" value="" id="all" asp-for="status" checked />
-                                        <label for="all">Semua </label>
-                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@false" id="available" asp-for="status" />
-                                        <label for="available">@GlobalConst.Available </label>
-                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@true" id="use" asp-for="status" />
-                                        <label for="use">@GlobalConst.Used</label>
+                                        <select id="txtStatus" class="form-control" asp-items="ViewBag.ListStatus" data-placeholder="-- Semua --" asp-for="statusId">
+                                            <option value=""></option>
+                                            <option value="1">Draft</option>
+                                            <option value="2">Proses Persetujuan</option>
+                                            <option value="11">Usul Musnah</option>
+                                            <option value="12">Musnah</option>
+                                            <option value="4">Ditolak</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -89,12 +91,6 @@
                                     <label class="col-lg-3 col-form-label">Bentuk Media Arsip</label>
                                     <div class="col-lg-9">
                                         <select id="txtGmdId" class="form-control" asp-items="ViewBag.ListGMD" data-placeholder="-- Semua --" asp-for="gmdId"><option value=""></option></select>
-                                    </div>
-                                </div>
-                                <div class="form-group row rowreport">
-                                    <label class="col-lg-3 col-form-label">Bentuk Media Simpan</label>
-                                    <div class="col-lg-9">
-                                        <select id="txtTypeStoraged" class="form-control" asp-items="ViewBag.ListTypeStorage" data-placeholder="-- Semua --" asp-for="typeStorageId"><option value=""></option></select>
                                     </div>
                                 </div>
                                 <div class="form-group row rowreport">
@@ -133,12 +129,36 @@
                                         <input type="date" id="txtEndDate" class="form-control" asp-for="endDate" />
                                     </div>
                                 </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Periode Input</label>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtStartDate" class="form-control" asp-for="startDateCreated" />
+                                    </div>
+                                    <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                        <strong>s/d</strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtEndDate" class="form-control" asp-for="endDateCreated" />
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Periode Pemusnahan</label>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtStartDateDestroy" class="form-control" asp-for="startDateDestroy" />
+                                    </div>
+                                    <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                        <strong>s/d</strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="date" id="txtEndDateDestroy" class="form-control" asp-for="endDateDestroy" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group mb-0">
-                                    <a class="btn btn-sm btn-warning mr-2" id="btnSearch" href="@Url.Action(GlobalConst.Index, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })"><i class="fa fa-refresh"></i> Clear Search</a>
+                                    <a class="btn btn-sm btn-warning mr-2" id="btnSearch" href="@Url.Action(GlobalConst.Index, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })"><i class="fa fa-refresh"></i> Clear Search</a>
                                     <button class="btn btn-sm btn-primary" id="btnSearch"><i class="fa fa-filter" onclick=""></i> Generate Report</button>
                                 </div>
                             </div>
@@ -188,19 +208,19 @@
             initDropdown();
         });
         function initDropdown() {
-            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtCompanyId'));
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtCompanyId'));
 
-            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindRoomActiveByArchiveUnitId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindRoomActiveByArchiveUnitId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
 
-            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtRoomId'));
+            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtRoomId'));
 
-            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtRackId'));
+            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtRackId'));
 
-            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtLevelId'));
+            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtLevelId'));
 
-            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtArchiveUnitId'));
 
-            initGlobalDropdown($('#txtSubjectClaasificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.ReportArchiveActive, new { Area = GlobalConst.Report })', $('#txtClaasificationId'));
+            initGlobalDropdown($('#txtSubjectClaasificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.ReportArchiveDestroy, new { Area = GlobalConst.Report })', $('#txtClaasificationId'));
         }
     </script>
 }

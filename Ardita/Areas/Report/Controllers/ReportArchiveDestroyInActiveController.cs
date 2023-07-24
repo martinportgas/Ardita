@@ -8,10 +8,10 @@ namespace Ardita.Areas.Report.Controllers
 {
     [CustomAuthorize]
     [Area("Report")]
-    public class ReportArchiveUsedController : BaseController<ArchiveUsedParams>
+    public class ReportArchiveDestroyInActiveController : BaseController<ArchiveDestroyParams>
     {
         private IReportService _reportService;
-        public ReportArchiveUsedController(IReportService reportService,
+        public ReportArchiveDestroyInActiveController(IReportService reportService,
             ICompanyService companyService,
             IArchiveUnitService archiveUnitService,
             IRoomService roomService,
@@ -49,8 +49,8 @@ namespace Ardita.Areas.Report.Controllers
         }
         public async Task<IActionResult> GenerateReport(ReportGlobalParams param)
         {
-            var reportName = "RptReportArchiveUsed";
-            var returnString = await _reportService.GenerateReportArchiveUsedAsync(reportName, param);
+            var reportName = "RptReportArchiveDestroy";
+            var returnString = await _reportService.GenerateReportArchiveDestroyInActiveAsync(reportName, param);
             ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
             ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
 
