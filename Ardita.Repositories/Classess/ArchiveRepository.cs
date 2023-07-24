@@ -397,8 +397,6 @@ public class ArchiveRepository : IArchiveRepository
             {
                 lastCOunt = lastCOunt + 1;
                 item.IsUsed = false;
-                item.IsArchiveActive = true;
-                item.IsActive = true;
                 item.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{item.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}{lastCOunt.ToString("D4")}";
             }
 

@@ -226,8 +226,11 @@ namespace Ardita.Areas.General.Controllers
             dataStorage = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).ToList();
             foreach(var row in dataStorage)
             {
-                total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
-                use += row.TrxMediaStorageDetails.Sum(i => i.Archive.Volume);
+                if (row.GmdDetailId != null)
+                {
+                    total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
+                    use += row.TrxMediaStorageDetails.Sum(i => i.Archive.Volume);
+                } 
             }
             var result = new
             {
@@ -245,8 +248,11 @@ namespace Ardita.Areas.General.Controllers
             dataStorage = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).ToList();
             foreach (var row in dataStorage)
             {
-                total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
-                use += row.TrxMediaStorageInActiveDetails.Sum(i => i.Archive.Volume);
+                if(row.GmdDetailId != null)
+                {
+                    total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
+                    use += row.TrxMediaStorageInActiveDetails.Sum(i => i.Archive.Volume);
+                }
             }
             var result = new
             {
@@ -377,16 +383,16 @@ namespace Ardita.Areas.General.Controllers
             if (data != null)
             {
                 var path = string.Concat(data.FilePath, data.FileNameEncrypt);
-                var bytes = System.IO.File.ReadAllBytes(path);
-                if (IsDownload)
-                    return File(bytes, data.FileType, data.FileName);
-                else
-                    return File(bytes, data.FileType);
+                if (System.IO.File.Exists(path))
+                {
+                    var bytes = System.IO.File.ReadAllBytes(path);
+                    if (IsDownload)
+                        return File(bytes, data.FileType, data.FileName);
+                    else
+                        return File(bytes, data.FileType);
+                }
             }
-            if (IsDownload)
-                return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
-            else
-                return File(new byte[] { }, "application/octet-stream");
+            return File(new byte[] { }, "application/octet-stream", "FileNotFound.txt");
         }
     }
 }

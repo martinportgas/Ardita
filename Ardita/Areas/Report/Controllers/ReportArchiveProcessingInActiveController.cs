@@ -75,7 +75,7 @@ namespace Ardita.Areas.Report.Controllers
             ViewBag.ListArchiveOwner = await BindArchiveOwners();
             ViewBag.ListClassification = await BindClasscifications();
             ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
-            ViewBag.ListEmplyees = await BindEmployee();
+            ViewBag.ListEmployees = await BindEmployee();
         }
     }
 }

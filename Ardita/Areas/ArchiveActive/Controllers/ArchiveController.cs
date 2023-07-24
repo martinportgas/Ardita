@@ -287,6 +287,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             trxArchive.InactiveRetention = inActiveRetention;
                             trxArchive.Volume = total;
                             trxArchive.IsActive = true;
+                            trxArchive.IsArchiveActive = true;
                             trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                             trxArchive.CreatedDate = DateTime.Now;
                             trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;

@@ -289,7 +289,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 trxArchive.ActiveRetention = activeRetention;
                                 trxArchive.InactiveRetention = inActiveRetention;
                                 trxArchive.Volume = total;
+                                trxArchive.IsArchiveActive = false;
                                 trxArchive.IsActive = true;
+                                trxArchive.InactiveBy = AppUsers.CurrentUser(User).UserId;
+                                trxArchive.InactiveDate = DateTime.Now;
                                 trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                                 trxArchive.CreatedDate = DateTime.Now;
                                 trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;

@@ -160,7 +160,7 @@
     <None Include="wwwroot\fonts\font-awesome\scss\_variables.scss" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
     <None Include="wwwroot\fonts\glyphicons-halflings-regular.woff2" />
-    <None Include="wwwroot\Report\RptArchiveActive.rdlc">
+    <None Include="wwwroot\Report\ArchiveActive\RptArchiveActive.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

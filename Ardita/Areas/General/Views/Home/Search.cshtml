@@ -60,28 +60,28 @@
                                                     <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                         <div style="width:200px;"><strong>Klasifikasi - Subjek Klasifikasi</strong></div>
                                                         <div> : </div>
-                                                        <div class="ml-2"><p>@item.SubSubjectClassification.SubjectClassification.Classification.ClassificationName - @item.SubSubjectClassification.SubjectClassification.SubjectClassificationName</p></div>
+                                                        <div class="ml-2" style="width: 575px;"><p>@item.SubSubjectClassification.SubjectClassification.Classification.ClassificationName - @item.SubSubjectClassification.SubjectClassification.SubjectClassificationName</p></div>
                                                     </div>
                                                     <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                         <div style="width:200px;"><strong>Judul Arsip</strong></div>
                                                         <div> : </div>
-                                                        <div class="ml-2"><p>@item.TitleArchive</p></div>
+                                                        <div class="ml-2" style="width: 575px;"><p>@item.TitleArchive</p></div>
                                                     </div>
                                                     <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                         <div style="width:200px;"><strong>Pemilik - Unit Pencipta</strong></div>
                                                         <div> : </div>
-                                                        <div class="ml-2"><p>@item.ArchiveOwner.ArchiveOwnerName - @item.Creator.CreatorName</p></div>
+                                                        <div class="ml-2" style="width: 575px;"><p>@item.ArchiveOwner.ArchiveOwnerName - @item.Creator.CreatorName</p></div>
                                                     </div>
                                                     <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                         <div style="width:200px;"><strong>Status</strong></div>
                                                         <div> : </div>
                                                         @if (form.CurrentAction == "SearchActive")
                                                         {
-                                                            <div class="ml-2"><p>@Html.Raw(item.IsUsed == true ? "<span class='badge badge-pill badge-success'>Digunakan</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
+                                                            <div class="ml-2" style="width: 575px;"><p>@Html.Raw(item.IsUsed == true ? "<span class='badge badge-pill badge-success'>Digunakan</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
                                                         }
                                                         else
                                                         {
-                                                            <div class="ml-2"><p>@Html.Raw(item.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? "<span class='badge badge-pill badge-primary'>Tersedia</span>" : item.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? "<span class='badge badge-pill badge-success'>Dipinjam</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
+                                                            <div class="ml-2" style="width: 575px;"><p>@Html.Raw(item.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? "<span class='badge badge-pill badge-primary'>Tersedia</span>" : item.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? "<span class='badge badge-pill badge-success'>Dipinjam</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
                                                         }
                                                     </div>
                                                     <div class="d-flex align-items-center">
@@ -106,27 +106,27 @@
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Judul</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.TitleArchive</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.TitleArchive</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Klasifikasi</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.SubSubjectClassification.SubjectClassification.Classification.ClassificationName</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.SubSubjectClassification.SubjectClassification.Classification.ClassificationName</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Subjek Klasifikasi</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.SubSubjectClassification.SubjectClassification.SubjectClassificationName</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.SubSubjectClassification.SubjectClassification.SubjectClassificationName</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Nomor Dokumen</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.DocumentNo</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.DocumentNo</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Lokasi Arsip</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.Creator.ArchiveUnit.ArchiveUnitName</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.Creator.ArchiveUnit.ArchiveUnitName</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Lokasi Simpan</strong></div>
@@ -135,7 +135,7 @@
                                                                                             {
                                                                                                 @if (item.TrxMediaStorageDetails.FirstOrDefault() != null)
                                                                                                 {
-                                                                                                    <div class="ml-2">
+                                                                                                    <div class="ml-2" style="width: 470px;">
                                                                                                         <p>
                                                                                                             @(
                                                                                                                 item.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.RoomName + " - " +
@@ -148,14 +148,14 @@
                                                                                                 }
                                                                                                 else
                                                                                                 {
-                                                                                                    <div class="ml-2"><p>-</p></div>
+                                                                                                    <div class="ml-2" style="width: 470px;"><p>-</p></div>
                                                                                                 }
                                                                                             }
                                                                                             else
                                                                                             {
                                                                                                 @if (item.TrxMediaStorageInActiveDetails.FirstOrDefault() != null)
                                                                                                 {
-                                                                                                    <div class="ml-2">
+                                                                                                    <div class="ml-2" style="width: 470px;">
                                                                                                         <p>
                                                                                                             @(
                                                                                                                 item.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.RoomName + " - " +
@@ -168,7 +168,7 @@
                                                                                                 }
                                                                                                 else
                                                                                                 {
-                                                                                                    <div class="ml-2"><p>-</p></div>
+                                                                                                    <div class="ml-2" style="width: 470px;"><p>-</p></div>
                                                                                                 }
                                                                                             }
                                                                                             
@@ -176,28 +176,28 @@
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Tanggal Arsip</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.CreatedDateArchive.ToShortDateString()</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.CreatedDateArchive.ToShortDateString()</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Pemilik</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.ArchiveOwner.ArchiveOwnerName</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.ArchiveOwner.ArchiveOwnerName</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Pencipta</strong></div>
                                                                                             <div> : </div>
-                                                                                            <div class="ml-2"><p>@item.Creator.CreatorName</div>
+                                                                                            <div class="ml-2" style="width: 470px;"><p>@item.Creator.CreatorName</div>
                                                                                         </div>
                                                                                         <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
                                                                                             <div style="width:200px;"><strong>Status</strong></div>
                                                                                             <div> : </div>
                                                                                             @if (form.CurrentAction == "SearchActive")
                                                                                             {
-                                                                                                <div class="ml-2"><p>@Html.Raw(item.IsUsed == true ? "<span class='badge badge-pill badge-success'>Digunakan</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
+                                                                                                <div class="ml-2" style="width: 470px;"><p>@Html.Raw(item.IsUsed == true ? "<span class='badge badge-pill badge-success'>Digunakan</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <div class="ml-2"><p>@Html.Raw(item.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? "<span class='badge badge-pill badge-primary'>Tersedia</span>" : item.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? "<span class='badge badge-pill badge-success'>Dipinjam</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
+                                                                                                <div class="ml-2" style="width: 470px;"><p>@Html.Raw(item.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? "<span class='badge badge-pill badge-primary'>Tersedia</span>" : item.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? "<span class='badge badge-pill badge-success'>Dipinjam</span>" : "<span class='badge badge-pill badge-primary'>Tersedia</span>")</p></div>
                                                                                             }
                                                                                         </div>
                                                                                     </div>

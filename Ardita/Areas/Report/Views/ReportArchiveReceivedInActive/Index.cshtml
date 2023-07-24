@@ -48,22 +48,21 @@
                                         <select id="txtArchiveUnitId" class="form-control" asp-items="ViewBag.ListArchiveUnit" data-placeholder="-- Semua --" asp-for="archiveUnitId"><option value=""></option></select>
                                     </div>
                                 </div>
-                               
-                                <div class="form-group row rowreport">
-                                    <label class="col-lg-3 col-form-label">Status</label>
-                                    <div class="col-lg-9">
-                                        <input style="vertical-align:middle" type="radio" value="" id="all" asp-for="status" checked />
-                                        <label for="all">Semua </label>
-                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@false" id="available" asp-for="status" />
-                                        <label for="available">@GlobalConst.Available </label>
-                                        <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@true" id="use" asp-for="status" />
-                                        <label for="use">@GlobalConst.Used</label>
-                                    </div>
-                                </div>
                                 <div class="form-group row rowreport">
                                     <label class="col-lg-3 col-form-label">Bentuk Media Arsip</label>
                                     <div class="col-lg-9">
                                         <select id="txtGmdId" class="form-control" asp-items="ViewBag.ListGMD" data-placeholder="-- Semua --" asp-for="gmdId"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row rowreport">
+                                    <label class="col-lg-3 col-form-label">Status</label>
+                                    <div class="col-lg-9">
+                                        <select id="txtStatus" class="form-control" asp-items="ViewBag.ListStatus" data-placeholder="-- Semua --" asp-for="statusId">
+                                            <option value=""></option>
+                                            <option value="7">Menunggu</option>
+                                            <option value="6">Diterima</option>
+                                            <option value="4">Ditolak</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -79,13 +78,13 @@
                                 <div class="form-group row rowreport">
                                     <label class="col-lg-3 col-form-label">Pengirim</label>
                                     <div class="col-lg-9">
-                                        <select asp-for="senderId" id="txtSenderId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
+                                        <select asp-for="sender" id="txtSenderId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
                                     </div>
                                 </div>
                                 <div class="form-group row rowreport">
                                     <label class="col-lg-3 col-form-label">Penerima</label>
                                     <div class="col-lg-9">
-                                        <select asp-for="receiverId" id="txtReceiverId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
+                                        <select asp-for="receiver" id="txtReceiverId" asp-items="ViewBag.ListEmployees" data-placeholder="-- Semua --" class="select2_demo_1 form-control"><option value=""></option></select>
                                     </div>
                                 </div>
                             
@@ -135,7 +134,7 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Preview</h5>
+                    <h4>Preview</h4>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>

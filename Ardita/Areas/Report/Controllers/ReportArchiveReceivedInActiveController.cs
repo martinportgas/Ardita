@@ -24,7 +24,8 @@ namespace Ardita.Areas.Report.Controllers
             IArchiveCreatorService archiveCreatorService,
             IArchiveOwnerService archiveOwnerService,
             IClassificationService classificationService,
-            IClassificationSubjectService classificationSubjectService)
+            IClassificationSubjectService classificationSubjectService,
+            IEmployeeService employeeService)
         {
             _reportService = reportService;
             _companyService = companyService;
@@ -39,6 +40,7 @@ namespace Ardita.Areas.Report.Controllers
             _archiveOwnerService = archiveOwnerService;
             _classificationService = classificationService;
             _classificationSubjectService = classificationSubjectService;
+            _employeeService = employeeService;
         }
         public override async Task<ActionResult> Index()
         {
@@ -72,6 +74,7 @@ namespace Ardita.Areas.Report.Controllers
             ViewBag.ListArchiveOwner = await BindArchiveOwners();
             ViewBag.ListClassification = await BindClasscifications();
             ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
+            ViewBag.ListEmployees = await BindEmployee();
         }
     }
 }

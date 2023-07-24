@@ -34,6 +34,7 @@ namespace Ardita.Services.Classess
         }
         public byte[] GenerateReportAsync(string reportName)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{reportName}.rdlc";
             LocalReport report = new LocalReport(rdlcFilePath);
             Dictionary<string, string> parameters = new Dictionary<string, string>();
@@ -44,11 +45,12 @@ namespace Ardita.Services.Classess
             obj.Add(new Archive { ArchiveId = "003", ArchiveTitle = "Arhive 3"});
 
             report.AddDataSource("DataSet1", obj);
-            var result = report.Execute(RenderType.Pdf, 1, parameters);
+            var result = report.Execute(RenderType.Pdf, ext, parameters);
             return result.MainStream;
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveActiveAsync(string reportName, ReportGlobalParams param)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
 
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
@@ -57,12 +59,13 @@ namespace Ardita.Services.Classess
 
             var report = new LocalReport(rdlcFilePath);
             report.AddDataSource("dsArchiveActive", data);
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]> ( resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaAsync(string reportName, ReportGlobalParams param)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
 
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
@@ -71,12 +74,13 @@ namespace Ardita.Services.Classess
 
             var report = new LocalReport(rdlcFilePath);
             report.AddDataSource("dsTransferMedia", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveMovementAsync(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\Report\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
 
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
@@ -85,104 +89,112 @@ namespace Ardita.Services.Classess
 
             var report = new LocalReport(rdlcFilePath);
             report.AddDataSource("dsArchiveMovement", data);
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyAsync(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetArchiveDestroys(param);
 
             report.AddDataSource("dsArchiveDestroy", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveDestroyInActiveAsync(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetArchiveInActiveDestroys(param);
 
             report.AddDataSource("dsArchiveDestroy", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveUsedAsync(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetArchiveUseds(param);
 
             report.AddDataSource("dsArchiveUsed", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveLoansInActive(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetReportArchiveLoansInActive(param);
 
             report.AddDataSource("dsReportArchiveLoansInActive", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveProcessingInActive(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetReportArchiveProcessingInActive(param);
 
             report.AddDataSource("dsReportArchiveProcessingInActive", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportTransferMediaArchiveInActive(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetReportTransferMediaArchiveInActive(param);
 
             report.AddDataSource("dsTransferMedia", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportListArchiveInActive(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetReportListArchiveInActive(param);
 
             report.AddDataSource("dsReportListArchiveInActive", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
         public async Task<Tuple<byte[], byte[]>> GenerateReportArchiveReceivedInActive(string reportName, ReportGlobalParams param = null)
         {
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{GlobalConst.ArchiveInActive}\\{reportName}.rdlc";
             var report = new LocalReport(rdlcFilePath);
             var parameters = await _reportRepository.GetGlobalParamsDescription(param, GetReportParameter(rdlcFilePath));
             var data = await _reportRepository.GetReportArchiveReceivedInActive(param);
 
             report.AddDataSource("dsReportArchiveReceivedInActive", data.ToList());
-            var resultPdf = report.Execute(RenderType.Pdf, 1, parameters);
-            var resultExcel = report.Execute(RenderType.ExcelOpenXml, 1, parameters);
+            var resultPdf = report.Execute(RenderType.Pdf, ext, parameters);
+            var resultExcel = report.Execute(RenderType.ExcelOpenXml, ext, parameters);
             return new Tuple<byte[], byte[]>(resultPdf.MainStream, resultExcel.MainStream);
         }
     }

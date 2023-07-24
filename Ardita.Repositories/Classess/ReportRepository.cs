@@ -73,9 +73,9 @@ namespace Ardita.Repositories.Classess
                     if (item == GlobalConst.ParamNamePIC)
                         parameters.Add(GlobalConst.ParamNamePIC, param.PIC == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.PIC).Name);
                     if (item == GlobalConst.ParamNameSender)
-                        parameters.Add(GlobalConst.ParamNameSender, param.PIC == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.senderId).Name);
+                        parameters.Add(GlobalConst.ParamNameSender, param.sender == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.sender).Name);
                     if (item == GlobalConst.ParamNameReceiver)
-                        parameters.Add(GlobalConst.ParamNameReceiver, param.PIC == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.receiverId).Name);
+                        parameters.Add(GlobalConst.ParamNameReceiver, param.receiver == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.receiver).Name);
                 }
             }
             return parameters;
@@ -222,7 +222,8 @@ namespace Ardita.Repositories.Classess
                 .Include(p => p.TrxArchiveMovementDetails).
                     ThenInclude(p => p.ArchiveMovement.ReceivedByNavigation.Employee)
                 .AsNoTracking()
-                .Where(x => x.IsActive == true && x.IsArchiveActive == false)
+                .Where(x => x.IsActive == true)
+                .Where(x => (x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.IsArchiveActive == false : true))
                 .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
                 .Where(x => (param.archiveUnitFromId == Guid.Empty ? true : x.TrxArchiveMovementDetails == null ? x.Creator.ArchiveUnitId == param.archiveUnitFromId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdFrom == param.archiveUnitFromId))
                 .Where(x => (param.gmdId == Guid.Empty ? true : x.GmdId == param.gmdId))
@@ -529,7 +530,7 @@ namespace Ardita.Repositories.Classess
               .Where(x => (param.archiveOwnerId == Guid.Empty ? true : x.ArchiveOwnerId == param.archiveOwnerId))
               .Where(x => (param.classificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassification.ClassificationId == param.classificationId))
               .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
-              .Where(x => (param.status == null ? true : x.IsUsed == param.status))
+              .Where(x => (param.status == null ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == param.status))
               .Where(x => (param.startDate == null ? true : x.CreatedDateArchive.Date >= param.startDate))
               .Where(x => (param.endDate == null ? true : x.CreatedDateArchive.Date <= param.endDate))
               .Select(x => new ReportListArchiveInActive
@@ -617,7 +618,7 @@ namespace Ardita.Repositories.Classess
               .Where(x => (param.archiveOwnerId == Guid.Empty ? true : x.ArchiveOwnerId == param.archiveOwnerId))
               .Where(x => (param.classificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassification.ClassificationId == param.classificationId))
               .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
-              .Where(x => (param.status == null ? true : x.IsUsed == param.status))
+              .Where(x => (param.status == null ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == param.status))
               .Where(x => (param.startDate == null ? true : x.CreatedDateArchive.Date >= param.startDate))
               .Where(x => (param.endDate == null ? true : x.CreatedDateArchive.Date <= param.endDate))
               .Where(x => (param.startDateCreated == null ? true : x.CreatedDate.Date >= param.startDateCreated))

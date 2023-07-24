@@ -34,7 +34,7 @@
                         <span style="font-size:9px">Total Companies</span>
                     </div>
                     <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                        <a style="font-size:9px" href="@Url.Action(GlobalConst.Index, GlobalConst.Company, new { Area = GlobalConst.MasterData})">View Detail >></a>
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                         <span style="font-size:9px">Total Lokasi</span>
                     </div>
                     <div style="padding-top: 43px;padding-left: 10px;">
-                        <a style="font-size:9px" href="">View Detail >></a>
+                        <a style="font-size:9px" href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveUnit, new { Area = GlobalConst.MasterData})">View Detail >></a>
                     </div>
                 </div>
             </div>
@@ -59,6 +59,9 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <h5>Users</h5>
+                    <div class="ibox-tools">
+                        <a style="font-size:9px;color:blue !important;" href="@Url.Action(GlobalConst.Index, GlobalConst.User, new { Area = GlobalConst.UserManage})">View Detail >></a>
+                    </div>
                 </div>
                 <div class="ibox-content text-center" style="min-height:100px;display:flex;justify-content: space-between;">
                     <div style="display:flex;flex-direction:column">
