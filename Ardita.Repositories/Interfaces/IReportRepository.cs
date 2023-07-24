@@ -10,7 +10,7 @@ namespace Ardita.Repositories.Interfaces
 {
     public interface IReportRepository
     {
-        Task<Dictionary<string, string>> GetGlobalParamsDescription(ReportGlobalParams param, List<string> listParameter);
+        Task<string> GetGlobalParamsDescription(ReportGlobalParams param, string item);
         Task<IEnumerable<ReportDocument>> GetReportDocument(ReportGlobalParams param = null);
         Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ReportGlobalParams param);
         Task<IEnumerable<ArchiveActive>> GetArchiveActives(ReportGlobalParams param);

@@ -44,41 +44,41 @@
         </Field>
         <Field Name="Jumlah">
           <DataField>Jumlah</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="KodeKlasifikasi">
           <DataField>KodeKlasifikasi</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="NomorArsip">
-          <DataField>NomorArsip</DataField>
+        <Field Name="NoArsip">
+          <DataField>NoArsip</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="PenciptaArsip">
-          <DataField>PenciptaArsip</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Period">
-          <DataField>Period</DataField>
+        <Field Name="Periode">
+          <DataField>Periode</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="PeriodPindai">
-          <DataField>PeriodPindai</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Perusahaan">
           <DataField>Perusahaan</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="TanggalPindai">
+          <DataField>TanggalPindai</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
         <Field Name="TipeArsip">
           <DataField>TipeArsip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UnitPencipta">
+          <DataField>UnitPencipta</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Ardita.Report</rd:DataSetName>
-        <rd:TableName>TransferMedia</rd:TableName>
-        <rd:ObjectDataSourceType>Ardita.Report.TransferMedia, Ardita.Report, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:TableName>ReportTransferMediaArchiveInActive</rd:TableName>
+        <rd:ObjectDataSourceType>Ardita.Report.ReportTransferMediaArchiveInActive, Ardita.Report, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
@@ -609,14 +609,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="PenciptaArsip">
+                        <Textbox Name="UnitPencipta">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!PenciptaArsip.Value</Value>
+                                  <Value>=Fields!UnitPencipta.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -625,7 +625,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>PenciptaArsip</rd:DefaultName>
+                          <rd:DefaultName>UnitPencipta</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -641,14 +641,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Period">
+                        <Textbox Name="Periode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Period.Value</Value>
+                                  <Value>=Fields!Periode.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>d MMM yyyy</Format>
@@ -658,7 +658,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Period</rd:DefaultName>
+                          <rd:DefaultName>Periode</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -708,14 +708,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="PeriodPindai">
+                        <Textbox Name="TanggalPindai">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!PeriodPindai.Value</Value>
+                                  <Value>=Fields!TanggalPindai.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>d MMM yyyy</Format>
@@ -725,7 +725,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>PeriodPindai</rd:DefaultName>
+                          <rd:DefaultName>TanggalPindai</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -775,14 +775,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="NomorArsip">
+                        <Textbox Name="NoArsip">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!NomorArsip.Value</Value>
+                                  <Value>=Fields!NoArsip.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -791,7 +791,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>NomorArsip</rd:DefaultName>
+                          <rd:DefaultName>NoArsip</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>

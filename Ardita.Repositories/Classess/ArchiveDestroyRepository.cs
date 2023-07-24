@@ -47,6 +47,7 @@ namespace Ardita.Repositories.Classess
                     data.StatusId = model.StatusId == (int)GlobalConst.STATUS.Approved ? (int)GlobalConst.STATUS.UsulMusnah : model.StatusId;
                     data.UpdatedBy = model.UpdatedBy;
                     data.UpdatedDate = model.UpdatedDate;
+                    data.DestroySchedule = model.DestroySchedule;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
                 }

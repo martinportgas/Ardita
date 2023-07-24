@@ -191,6 +191,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 model.StatusId = (int)GlobalConst.STATUS.Musnah;
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
+                model.DestroySchedule = DateTime.Now;
                 await _archiveDestroyService.Submit(model);
 
                 var modelDetail = await _archiveDestroyService.GetDetailByMainId(model.ArchiveDestroyId);

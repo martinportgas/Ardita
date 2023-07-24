@@ -19,66 +19,60 @@ namespace Ardita.Repositories.Classess
         private readonly BksArditaDevContext _context;
 
         public ReportRepository(BksArditaDevContext context) => _context = context;
-        public async Task<Dictionary<string, string>> GetGlobalParamsDescription(ReportGlobalParams param, List<string> listParameter)
+        public async Task<string> GetGlobalParamsDescription(ReportGlobalParams param, string item)
         {
             await Task.Delay(0);
-            var parameters = new Dictionary<string, string>();
+            string result = GlobalConst.SelectAll;
+            if (item == GlobalConst.ParamNameCompany)
+                result = param.companyId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCompanies.FirstOrDefault(x => x.CompanyId == param.companyId).CompanyName;
+            if (item == GlobalConst.ParamNameUnitArchive)
+                result = param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitId).ArchiveUnitName;
+            if (item == GlobalConst.ParamNameUnitArchiveFrom)
+                result = param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitFromId).ArchiveUnitName;
+            if (item == GlobalConst.ParamNameRoom)
+                result = param.roomId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRooms.FirstOrDefault(x => x.RoomId == param.roomId).RoomName;
+            if (item == GlobalConst.ParamNameRack)
+                result = param.rackId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRacks.FirstOrDefault(x => x.RackId == param.rackId).RackName;
+            if (item == GlobalConst.ParamNameLevel)
+                result = param.levelId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxLevels.FirstOrDefault(x => x.LevelId == param.levelId).LevelName;
+            if (item == GlobalConst.ParamNameRow)
+                result = param.rowId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRows.FirstOrDefault(x => x.RowId == param.rowId).RowName;
+            if (item == GlobalConst.ParamNameStatus)
+                result = param.status == null ? GlobalConst.SelectAll : param.status == true ? GlobalConst.Used : GlobalConst.Available;
+            if (item == GlobalConst.ParamNameGmd)
+                result = param.gmdId == Guid.Empty ? GlobalConst.SelectAll : _context.MstGmds.FirstOrDefault(x => x.GmdId == param.gmdId).GmdName;
+            if (item == GlobalConst.ParamNameCreator)
+                result = param.creatorId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCreators.FirstOrDefault(x => x.CreatorId == param.creatorId).CreatorName;
+            if (item == GlobalConst.ParamNameOwner)
+                result = param.archiveOwnerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstArchiveOwners.FirstOrDefault(x => x.ArchiveOwnerId == param.archiveOwnerId).ArchiveOwnerName;
+            if (item == GlobalConst.ParamNameClassification)
+                result = param.classificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxClassifications.FirstOrDefault(x => x.ClassificationId == param.classificationId).ClassificationName;
+            if (item == GlobalConst.ParamNameSubjectClassification)
+                result = param.subjectClassificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxSubjectClassifications.FirstOrDefault(x => x.SubjectClassificationId == param.subjectClassificationId).SubjectClassificationName;
+            if (item == GlobalConst.ParamNameTypeStorage)
+                result = param.typeStorageId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxTypeStorages.FirstOrDefault(x => x.TypeStorageId == param.typeStorageId).TypeStorageName;
+            if (item == GlobalConst.ParamNameCreatePeriode)
+                result = (param.startDate == null ? "-" : ((DateTime)param.startDate).ToString("dd-MM-yyyy")) + " s/d " + (param.endDate == null ? "-" : ((DateTime)param.endDate).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameInputPeriode)
+                result = (param.startDateCreated == null ? "-" : ((DateTime)param.startDateCreated).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateCreated == null ? "-" : ((DateTime)param.endDateCreated).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameDestroyPeriode)
+                result = (param.startDateDestroy == null ? "-" : ((DateTime)param.startDateDestroy).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateDestroy == null ? "-" : ((DateTime)param.endDateDestroy).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameRentPeriode)
+                result = (param.startDateRent == null ? "-" : ((DateTime)param.startDateRent).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateRent == null ? "-" : ((DateTime)param.endDateRent).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameMovementPeriode)
+                result = (param.startDateMove == null ? "-" : ((DateTime)param.startDateMove).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateMove == null ? "-" : ((DateTime)param.endDateMove).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameReceivePeriode)
+                result = (param.startDateReceive == null ? "-" : ((DateTime)param.startDateReceive).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateReceive == null ? "-" : ((DateTime)param.endDateReceive).ToString("dd-MM-yyyy"));
+            if (item == GlobalConst.ParamNameBorrower)
+                result = param.borrowerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstBorrowers.FirstOrDefault(x => x.BorrowerId == param.borrowerId).BorrowerName;
+            if (item == GlobalConst.ParamNamePIC)
+                result = param.PIC == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.PIC).Name;
+            if (item == GlobalConst.ParamNameSender)
+                result = param.sender == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.sender).Name;
+            if (item == GlobalConst.ParamNameReceiver)
+                result = param.receiver == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.receiver).Name;
 
-            if (listParameter.Count > 0)
-            {
-                foreach (var item in listParameter)
-                {
-                    if (item == GlobalConst.ParamNameCompany)
-                        parameters.Add(GlobalConst.ParamNameCompany, param.companyId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCompanies.FirstOrDefault(x => x.CompanyId == param.companyId).CompanyName);
-                    if (item == GlobalConst.ParamNameUnitArchive)
-                        parameters.Add(GlobalConst.ParamNameUnitArchive, param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitId).ArchiveUnitName);
-                    if (item == GlobalConst.ParamNameUnitArchiveFrom)
-                        parameters.Add(GlobalConst.ParamNameUnitArchiveFrom, param.archiveUnitId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxArchiveUnits.FirstOrDefault(x => x.ArchiveUnitId == param.archiveUnitFromId).ArchiveUnitName);
-                    if (item == GlobalConst.ParamNameRoom)
-                        parameters.Add(GlobalConst.ParamNameRoom, param.roomId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRooms.FirstOrDefault(x => x.RoomId == param.roomId).RoomName);
-                    if (item == GlobalConst.ParamNameRack)
-                        parameters.Add(GlobalConst.ParamNameRack, param.rackId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRacks.FirstOrDefault(x => x.RackId == param.rackId).RackName);
-                    if (item == GlobalConst.ParamNameLevel)
-                        parameters.Add(GlobalConst.ParamNameLevel, param.levelId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxLevels.FirstOrDefault(x => x.LevelId == param.levelId).LevelName);
-                    if (item == GlobalConst.ParamNameRow)
-                        parameters.Add(GlobalConst.ParamNameRow, param.rowId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxRows.FirstOrDefault(x => x.RowId == param.rowId).RowName);
-                    if (item == GlobalConst.ParamNameStatus)
-                        parameters.Add(GlobalConst.ParamNameStatus, param.status == null ? GlobalConst.SelectAll : param.status == true ? GlobalConst.Used : GlobalConst.Available);
-                    if (item == GlobalConst.ParamNameGmd)
-                        parameters.Add(GlobalConst.ParamNameGmd, param.gmdId == Guid.Empty ? GlobalConst.SelectAll : _context.MstGmds.FirstOrDefault(x => x.GmdId == param.gmdId).GmdName);
-                    if (item == GlobalConst.ParamNameCreator)
-                        parameters.Add(GlobalConst.ParamNameCreator, param.creatorId == Guid.Empty ? GlobalConst.SelectAll : _context.MstCreators.FirstOrDefault(x => x.CreatorId == param.creatorId).CreatorName);
-                    if (item == GlobalConst.ParamNameOwner)
-                        parameters.Add(GlobalConst.ParamNameOwner, param.archiveOwnerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstArchiveOwners.FirstOrDefault(x => x.ArchiveOwnerId == param.archiveOwnerId).ArchiveOwnerName);
-                    if (item == GlobalConst.ParamNameClassification)
-                        parameters.Add(GlobalConst.ParamNameClassification, param.classificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxClassifications.FirstOrDefault(x => x.ClassificationId == param.classificationId).ClassificationName);
-                    if (item == GlobalConst.ParamNameSubjectClassification)
-                        parameters.Add(GlobalConst.ParamNameSubjectClassification, param.subjectClassificationId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxSubjectClassifications.FirstOrDefault(x => x.SubjectClassificationId == param.subjectClassificationId).SubjectClassificationName);
-                    if (item == GlobalConst.ParamNameTypeStorage)
-                        parameters.Add(GlobalConst.ParamNameTypeStorage, param.typeStorageId == Guid.Empty ? GlobalConst.SelectAll : _context.TrxTypeStorages.FirstOrDefault(x => x.TypeStorageId == param.typeStorageId).TypeStorageName);
-                    if (item == GlobalConst.ParamNameCreatePeriode)
-                        parameters.Add(GlobalConst.ParamNameCreatePeriode, (param.startDate == null ? "-" : ((DateTime)param.startDate).ToString("dd-MM-yyyy")) + " s/d " + (param.endDate == null ? "-" : ((DateTime)param.endDate).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameInputPeriode)
-                        parameters.Add(GlobalConst.ParamNameInputPeriode, (param.startDateCreated == null ? "-" : ((DateTime)param.startDateCreated).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateCreated == null ? "-" : ((DateTime)param.endDateCreated).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameDestroyPeriode)
-                        parameters.Add(GlobalConst.ParamNameDestroyPeriode, (param.startDateDestroy == null ? "-" : ((DateTime)param.startDateDestroy).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateDestroy == null ? "-" : ((DateTime)param.endDateDestroy).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameRentPeriode)
-                        parameters.Add(GlobalConst.ParamNameRentPeriode, (param.startDateRent == null ? "-" : ((DateTime)param.startDateRent).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateRent == null ? "-" : ((DateTime)param.endDateRent).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameMovementPeriode)
-                        parameters.Add(GlobalConst.ParamNameMovementPeriode, (param.startDateMove == null ? "-" : ((DateTime)param.startDateMove).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateMove == null ? "-" : ((DateTime)param.endDateMove).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameReceivePeriode)
-                        parameters.Add(GlobalConst.ParamNameReceivePeriode, (param.startDateReceive == null ? "-" : ((DateTime)param.startDateReceive).ToString("dd-MM-yyyy")) + " s/d " + (param.endDateReceive == null ? "-" : ((DateTime)param.endDateReceive).ToString("dd-MM-yyyy")));
-                    if (item == GlobalConst.ParamNameBorrower)
-                        parameters.Add(GlobalConst.ParamNameBorrower, param.borrowerId == Guid.Empty ? GlobalConst.SelectAll : _context.MstBorrowers.FirstOrDefault(x => x.BorrowerId == param.borrowerId).BorrowerName);
-                    if (item == GlobalConst.ParamNamePIC)
-                        parameters.Add(GlobalConst.ParamNamePIC, param.PIC == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.PIC).Name);
-                    if (item == GlobalConst.ParamNameSender)
-                        parameters.Add(GlobalConst.ParamNameSender, param.sender == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.sender).Name);
-                    if (item == GlobalConst.ParamNameReceiver)
-                        parameters.Add(GlobalConst.ParamNameReceiver, param.receiver == Guid.Empty ? GlobalConst.SelectAll : _context.MstEmployees.AsNoTracking().FirstOrDefault(x => x.EmployeeId == param.receiver).Name);
-                }
-            }
-            return parameters;
+            return result;
         }
         public async Task<Dictionary<string, string>> GetArchiveActiveNamingParams(ReportGlobalParams param)
         {
@@ -376,7 +370,7 @@ namespace Ardita.Repositories.Classess
                   Perusahaan = x.Creator.ArchiveUnit.Company.CompanyName,
                   AsalArsip = x.ArchiveOwner.ArchiveOwnerName,
                   PenciptaArsip = x.Creator.CreatorName,
-                  Period = x.TrxArchiveDestroyDetails.FirstOrDefault().ArchiveDestroy.CreatedDate,
+                  Period = x.TrxArchiveDestroyDetails.FirstOrDefault().ArchiveDestroy.DestroySchedule,
                   Jumlah = x.Volume.ToString(),
                   SifatArsip = x.Description,
                   KodeKlasifikasi = x.SubSubjectClassification.SubjectClassification.Classification.ClassificationCode,

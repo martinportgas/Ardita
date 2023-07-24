@@ -309,6 +309,8 @@ public static class GlobalConst
     public static string SelectAll = "-- Semua --";
     public static string Base64FormatPdf = "data:application/pdf;base64,{0}";
     public static string Base64FormatExcel = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}";
+    public static string RenderPDF = "PDF";
+    public static string RenderExcel = "EXCELOPENXML";
 
     //ClaimTypes
     public const string Username = "Username";

@@ -84,7 +84,7 @@
                                 <label for="all">Semua </label>
                                 <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@GlobalConst.Available" id="available" name="status" />
                                 <label for="available">@GlobalConst.Available </label>
-                                <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@GlobalConst.Used" id="use" name="status" />
+                                <input style="vertical-align:middle;margin-left:5px;" type="radio" value="@GlobalConst.Rent" id="use" name="status" />
                                 <label for="use">@GlobalConst.Rent</label>
                             </div>
                         </div>
@@ -198,9 +198,9 @@
                     { "data": "typeArchive", "name": "archiveType.archiveTypeName", "autoWidth": true },
                     { "data": "mediaStorage", "name": "trxMediaStorageDetails.FirstOrDefault().mediaStorage.typeStorage.typeStorageName", "autoWidth": true },
                     { "data": "volume", "name": "volume", "autoWidth": true },
-                    { "data": "labelCode", "name": "TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName", "autoWidth": true, "orderable": false },
+                    { "data": "labelCode", "name": "TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName", "autoWidth": true },
                     {
-                        "data": "statusUse", "name": "IsUsed", "autoWidth": true, "orderable": false,
+                        "data": "statusUse", "name": "IsUsed", "autoWidth": true,
                         "render": function (data, type, row, meta) {
                             var status = `<span class="badge badge-pill badge-${data == '@GlobalConst.Available' ? 'primary' : 'success'}">${data}</span>`;
 
@@ -219,7 +219,7 @@
                 var creator = $('#txtCreatorId').val() == '' ? '1=1' : `CreatorId == \"${$('#txtCreatorId').val()}\"`;
                 var year = $('#txtYear').val() == '' ? '1=1' : `createdDateArchive.Year == ${$('#txtYear').val()}`;
                 var row = $('#txtRowId').val() == '' ? '1=1' : `TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.RowId == \"${$('#txtRowId').val()}\"`;
-                var status = $('input[name="status"]:checked').val() == '' ? '1=1' : `TrxArchiveRents.FirstOrDefault().StatusId ${$('input[name="status"]:checked').val() == '@GlobalConst.Used' ? '!=' : '=='} @((int)GlobalConst.STATUS.Return)`;
+                var status = $('input[name="status"]:checked').val() == '' ? '1=1' : `${$('input[name="status"]:checked').val() == '@GlobalConst.Rent' ? 'TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true' : 'TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent != true'}`;
                 var search = defaultSearch + and + creator + and + year + and + row + and + status;
                 table
                     .column(0).search($('#txtStartDate').val())
