@@ -266,7 +266,7 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataRoom = await _roomService.GetAll();
             var dataStorage = await _mediaStorageService.GetAll();
-            var result = dataRoom
+            var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah)
                 .Select(x => new {
                     name = x.RoomName,
                     totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.RoomId == x.RoomId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count(),
@@ -278,7 +278,7 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataRoom = await _roomService.GetAll();
             var dataStorage = await _mediaStorageInActiveService.GetAll();
-            var result = dataRoom
+            var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitKearsipan)
                 .Select(x => new {
                     name = x.RoomName,
                     totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.RoomId == x.RoomId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count(),
