@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <form id="frmUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.Company" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.MasterData">
+                    <form id="frmUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ArchiveType" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.MasterData">
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="input-group">
@@ -51,9 +51,9 @@
                         <br />
                         <div class="row">
                             <div class="col-sm-12">
-                                <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.Company, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-success"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                                <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.ArchiveType, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-success"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
                                 <button id="btnUpload" class="btn btn-sm btn-primary"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Company, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i><span class="bold"> Back</span></a>
+                                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveType, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i><span class="bold"> Back</span></a>
                             </div>
                         </div>
                     </form>
@@ -81,11 +81,8 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Code</th>
-                                            <th>Name</th>
-                                            <th>Address</th>
-                                            <th>Telephone</th>
-                                            <th>Email</th>
+                                            <th>Archive Type Code</th>
+                                            <th>Archive Type Name</th>
                                             <th>Error</th>
                                         </tr>
                                     </thead>
@@ -168,8 +165,8 @@
                 $("#frmUpload").submit();
             });
 
-            var menuActive = 'Master Perusahaan'
-            var subMenuActive = 'Upload Perusahaan'
+            var menuActive = 'Tingkat Perkembangan'
+            var subMenuActive = 'Upload Tingkat Perkembangan'
 
             $('ol.breadcrumb').children(':first-child').next().html(menuActive);
             $('ol.breadcrumb').children(':first-child').next().next().html(subMenuActive);
