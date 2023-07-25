@@ -7,6 +7,7 @@ using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -129,6 +130,12 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         }
         return RedirectToIndex();
     }
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -137,36 +144,75 @@ public class ArchiveCreatorController : BaseController<MstCreator>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-            var archiveUnits = await _archiveUnitService.GetAll();
-
-
-            List<MstCreator> mstCreators = new();
-            MstCreator mstCreator;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                mstCreator = new();
-                mstCreator.CreatorId = Guid.NewGuid();
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                var archiveUnits = await _archiveUnitService.GetAll();
 
-                mstCreator.ArchiveUnitId = archiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[1].ToString())).FirstOrDefault().ArchiveUnitId;
-                mstCreator.CreatorCode = row[2].ToString();
-                mstCreator.CreatorName = row[3].ToString();
+                if (result.Rows.Count > 0)
+                {
+                    List<MstCreator> mstCreators = new();
+                    MstCreator mstCreator;
 
 
-                mstCreator.IsActive = true;
-                mstCreator.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                mstCreator.CreatedDate = DateTime.Now;
+                    bool valid = true;
+                    int errorCount = 0;
 
-                mstCreators.Add(mstCreator);
+                    result.Columns.Add("Keterangan");
+
+                    var archiveCreatorDetail = await _archiveCreatorService.GetAll();
+
+
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+
+                        if (archiveCreatorDetail.Where(x => x.CreatorCode == row[2].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode Pencipta sudah ada";
+                        }
+
+                        if (valid)
+                        {
+                            mstCreator = new();
+                            mstCreator.CreatorId = Guid.NewGuid();
+
+                            mstCreator.ArchiveUnitId = archiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[1].ToString())).FirstOrDefault().ArchiveUnitId;
+                            mstCreator.CreatorCode = row[2].ToString();
+                            mstCreator.CreatorName = row[3].ToString();
+
+
+                            mstCreator.IsActive = true;
+                            mstCreator.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            mstCreator.CreatedDate = DateTime.Now;
+
+                            mstCreators.Add(mstCreator);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _archiveCreatorService.InsertBulk(mstCreators);
+                }
+                return View(GlobalConst.UploadForm);
             }
-            await _archiveCreatorService.InsertBulk(mstCreators);
-            return RedirectToIndex();
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
         }
         catch (Exception)
         {
-
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }

@@ -33,7 +33,8 @@
                     <div class="ibox-tools">
                         <a href="@Url.Action(GlobalConst.Add, GlobalConst.User, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                         <a href="@Url.Action(GlobalConst.Export, GlobalConst.User, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
-                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                        <a href="@Url.Action(GlobalConst.UploadForm, GlobalConst.User, new { Area = GlobalConst.UserManage})" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
+
                     </div>
                 </div>
                 <div class="ibox-content">                   
@@ -45,6 +46,7 @@
                                 <th>Username</th>
                                 <th>Name</th>
                                 <th>Position</th>
+                                <th>Unit Kearsipan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -52,37 +54,7 @@
                 </div>
             </div>
         </div>
-        <!--Modal-->
-        <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content animated fadeIn">
-                    <form id="frmUserUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.User" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.UserManage">
-                        @Html.AntiForgeryToken()
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">User Upload</h4>
-                            <small>Pastikan format file anda sudah benar.</small>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                        </div>
-                        <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.User, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>>
-                </div>
-            </div>
-        </div>
+       
     </div>
 </div>
 @section Scripts {
@@ -138,6 +110,7 @@
                     { "data": "username", "name": "username", "autoWidth": true },
                     { "data": "employeeName", "name": "employee.name", "autoWidth": true },
                     { "data": "positionName", "name": "employee.position.name", "autoWidth": true },
+                    { "data": "unitArchive", "name": "idxUserArchiveUnits.firstOrDefault().archiveUnit.archiveUnitName", "autoWidth": true },
                 ]
             });
 

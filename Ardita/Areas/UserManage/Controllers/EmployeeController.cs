@@ -17,6 +17,8 @@ using System.Data;
 
 using Ardita.Controllers;
 using Ardita.Extensions;
+using ICSharpCode.SharpZipLib.Tar;
+using Newtonsoft.Json;
 
 namespace Ardita.Areas.UserManage.Controllers
 {
@@ -143,6 +145,12 @@ namespace Ardita.Areas.UserManage.Controllers
             return RedirectToIndex();
         }
 
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         public async Task<IActionResult> DownloadTemplate()
         {
             try
@@ -259,39 +267,97 @@ namespace Ardita.Areas.UserManage.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, _hostingEnvironment.WebRootPath);
-                var positions = await _positionService.GetAll();
 
-                List<MstEmployee> employees = new();
-                MstEmployee employee;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    employee = new();
-                    employee.EmployeeId = Guid.NewGuid();
-                    employee.Nik = row[1].ToString();
-                    employee.Name = row[2].ToString();
-                    employee.Email = row[3].ToString();
-                    employee.Gender = row[4].ToString();
-                    employee.PlaceOfBirth = row[5].ToString();
-                    employee.DateOfBirth = Convert.ToDateTime(row[6].ToString());
-                    employee.Address = row[7].ToString();
-                    employee.Phone = row[8].ToString();
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, _hostingEnvironment.WebRootPath);
+                    var positions = await _positionService.GetAll();
+                    var employeeDetail = await _employeeService.GetAll();
 
-                    employee.PositionId = positions.Where(x => x.Code.Contains(row[9].ToString())).FirstOrDefault().PositionId;
-                    employee.IsActive = true;
-                    employee.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    employee.CreatedDate = DateTime.Now;
+                    if (result.Rows.Count > 0)
+                    {
+                        List<MstEmployee> employees = new();
+                        MstEmployee employee;
 
-                    employees.Add(employee);
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+
+                        foreach (DataRow row in result.Rows)
+                        {
+                            DateTime dateOfBirth = DateTime.Now;
+                            string error = string.Empty;
+
+                            var positionDetail = positions.FirstOrDefault(x => x.Code == row[9].ToString());
+
+                            if (positionDetail == null)
+                            {
+                                valid = false;
+                                error = "_Position Tidak Valid";
+                            }
+                            else if (!DateTime.TryParse(row[6].ToString(), out dateOfBirth))
+                            {
+                                valid = false;
+                                error = "_Tanggal Lahir Tidak Valid";
+                            }
+                            else if (result.AsEnumerable().Where(x => x.Field<string>("Nik") == row[1].ToString()).Count() > 1)
+                            {
+                                valid = false;
+                                error = "_Terdapat Nik Yang sama";
+                            }
+                            else if (employeeDetail.Where(x => x.Nik == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_NIK sudah ada di database";
+                            }
+
+                            if (valid)
+                            {
+                                employee = new();
+                                employee.EmployeeId = Guid.NewGuid();
+                                employee.Nik = row[1].ToString();
+                                employee.Name = row[2].ToString();
+                                employee.Email = row[3].ToString();
+                                employee.Gender = row[4].ToString();
+                                employee.PlaceOfBirth = row[5].ToString();
+                                employee.DateOfBirth = Convert.ToDateTime(row[6].ToString());
+                                employee.Address = row[7].ToString();
+                                employee.Phone = row[8].ToString();
+
+                                employee.PositionId = positions.Where(x => x.Code.Contains(row[9].ToString())).FirstOrDefault().PositionId;
+                                employee.IsActive = true;
+                                employee.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                employee.CreatedDate = DateTime.Now;
+
+                                employees.Add(employee);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+                        }
+
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _employeeService.InsertBulk(employees);
+                    }
+
+                    return View(GlobalConst.UploadForm);
                 }
-                await _employeeService.InsertBulk(employees);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
             }
             catch (Exception)
             {
-
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
         }
 

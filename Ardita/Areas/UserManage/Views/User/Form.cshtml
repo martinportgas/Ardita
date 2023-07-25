@@ -64,7 +64,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Username</label>
-                                            <input type="text" placeholder="" class="form-control" asp-for="Username" autocomplete="off">
+                                            <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="Username" autocomplete="off">
                                             <input type="hidden" asp-for="UserId" />
                                         </div>
                                         <div class="form-group">
@@ -243,7 +243,28 @@
                 function (isConfirm) {
                     if (isConfirm) {
                         if (validate() == true) {
-                            $("#frmUser").submit();
+
+                            var url = '@Url.Action("CheckUsername", form.CurrentController, new { Area = form.CurrentArea })';
+                            var userName = $('#txtUserName').val();
+
+                            $.ajax({
+                                url: url,
+                                type: "@GlobalConst.GET",
+                                data: { id: userName },
+                                dataType: "@GlobalConst.JSON",
+                                contentType: "@GlobalConst.APPLICATIONJSON",
+                                success: function (data) {
+                                    if(data){
+                                        swal("Username sudah ada!");
+                                    }else{
+                                        $("#frmUser").submit();
+                                    }
+                                },
+                                error: function () {
+                                    swal("Terdapat kesalahan Input");
+                                }
+                            });
+                            
                         }
                     } else {
                         swal("Cancelled", "You have Cancelled Form Submission!", "error");
