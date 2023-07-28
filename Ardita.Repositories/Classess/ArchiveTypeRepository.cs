@@ -74,9 +74,9 @@ namespace Ardita.Repositories.Classess
             if (model != null)
             {
                 var data = await _context.MstArchiveTypes.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.ArchiveTypeCode == model.ArchiveTypeCode && x.ArchiveTypeName == model.ArchiveTypeName);
+                .FirstOrDefaultAsync(x => x.ArchiveTypeCode == model.ArchiveTypeCode);
 
-                if (data != null)
+                if (data == null)
                 {
                     model.IsActive = true;
                     _context.MstArchiveTypes.Add(model);

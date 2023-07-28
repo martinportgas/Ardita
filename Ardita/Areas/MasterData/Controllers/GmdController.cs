@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -95,6 +96,12 @@ public class GmdController : BaseController<MstGmd>
         }
         return RedirectToIndex();
     }
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -103,32 +110,73 @@ public class GmdController : BaseController<MstGmd>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-            List<MstGmd> gmds = new();
-            MstGmd gmd;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                gmd = new();
-                gmd.GmdId = Guid.NewGuid();
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                gmd.GmdCode = row[1].ToString();
-                gmd.GmdName = row[2].ToString();
+                if (result.Rows.Count > 0)
+                {
+                    List<MstGmd> gmds = new();
+                    MstGmd gmd;
 
-                gmd.IsActive = true;
-                gmd.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                gmd.CreatedDate = DateTime.Now;
+                    bool valid = true;
+                    int errorCount = 0;
 
-                gmds.Add(gmd);
+                    result.Columns.Add("Keterangan");
+
+                    var gmdDetails = await _gmdService.GetAll();
+
+
+
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+
+                        if (gmdDetails.Where(x => x.GmdCode == row[1].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode GMD sudah ada";
+                        }
+
+                        if (valid)
+                        {
+                            gmd = new();
+                            gmd.GmdId = Guid.NewGuid();
+
+                            gmd.GmdCode = row[1].ToString();
+                            gmd.GmdName = row[2].ToString();
+
+                            gmd.IsActive = true;
+                            gmd.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            gmd.CreatedDate = DateTime.Now;
+
+                            gmds.Add(gmd);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _gmdService.InsertBulk(gmds);
+                }
             }
-            await _gmdService.InsertBulk(gmds);
-            return RedirectToIndex();
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
+            return View(GlobalConst.UploadForm);
         }
         catch (Exception)
         {
 
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }

@@ -60,6 +60,8 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.MstUsers
                   .Include(x => x.Employee.Position)
+                  .Include(x => x.IdxUserArchiveUnits)
+                  .ThenInclude(x => x.ArchiveUnit)
                  .Where(
                              x => (x.Username).Contains(model.searchValue) &&
                              x.IsActive == true
@@ -70,7 +72,8 @@ namespace Ardita.Repositories.Classess
                     x.UserId,
                     x.Username,
                     EmployeeName = x.Employee.Name,
-                    PositionName = x.Employee.Position.Name
+                    PositionName = x.Employee.Position.Name,
+                    UnitArchive = x.IdxUserArchiveUnits.FirstOrDefault().ArchiveUnit.ArchiveUnitName
 
                  })
                  .ToListAsync();

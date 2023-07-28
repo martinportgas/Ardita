@@ -40,6 +40,25 @@ namespace Ardita.Areas.UserManage.Controllers
                 throw;
             }
         }
+
+        public async Task<JsonResult> CheckUsername(string id)
+        {
+            try
+            {
+                var result = await _userService.GetAll();
+                bool duplicate = false;
+
+                if (result.Where(x => x.Username == id).Count() > 0) 
+                {
+                    duplicate = true;
+                }
+                return Json(duplicate);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public override async Task<IActionResult> Add()
         {
 
@@ -97,7 +116,7 @@ namespace Ardita.Areas.UserManage.Controllers
                 {
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;
-
+                    model.UserId = Guid.NewGuid();
                     await _userService.Insert(model, archiveUnitIds);
                 }
 
@@ -135,6 +154,12 @@ namespace Ardita.Areas.UserManage.Controllers
             {
                 return RedirectToIndex();
             }
+        }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
         }
         public async Task<IActionResult> DownloadTemplate()
         {

@@ -442,7 +442,7 @@ public abstract class BaseController<T> : Controller
         return result.Select(x => new SelectListItem
         {
             Value = x.EmployeeId.ToString(),
-            Text = x.Name
+            Text = x.Nik + " - " + x.Name
         }).ToList();
     }
     public async Task<List<SelectListItem>> BindArchiveRetention()

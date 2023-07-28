@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -127,6 +128,12 @@ public class CompanyController : BaseController<MstCompany>
         }
         return RedirectToIndex();
     }
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -135,34 +142,72 @@ public class CompanyController : BaseController<MstCompany>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-            List<MstCompany> companies = new();
-            MstCompany company;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                company = new();
-                company.CompanyId = Guid.NewGuid();
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                company.CompanyCode = row[1].ToString();
-                company.CompanyName = row[2].ToString();
-                company.Address = row[3].ToString();
-                company.Telepone = row[4].ToString();
-                company.Email = row[5].ToString();
-                company.IsActive = true;
-                company.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                company.CreatedDate = DateTime.Now;
+                if (result.Rows.Count > 0)
+                {
+                    List<MstCompany> companies = new();
+                    MstCompany company;
 
-                companies.Add(company);
+                    bool valid = true;
+                    int errorCount = 0;
+
+                    result.Columns.Add("Keterangan");
+
+                    var companiesDetail = await _companyService.GetAll();
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+
+                        if (companiesDetail.Where(x => x.CompanyCode == row[1].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode Perusahaan sudah ada";
+                        }
+
+                        if (valid)
+                        {
+                            company = new();
+                            company.CompanyId = Guid.NewGuid();
+
+                            company.CompanyCode = row[1].ToString();
+                            company.CompanyName = row[2].ToString();
+                            company.Address = row[3].ToString();
+                            company.Telepone = row[4].ToString();
+                            company.Email = row[5].ToString();
+                            company.IsActive = true;
+                            company.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            company.CreatedDate = DateTime.Now;
+
+                            companies.Add(company);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _companyService.InsertBulk(companies);
+                }
+                return View(GlobalConst.UploadForm);
             }
-            await _companyService.InsertBulk(companies);
-            return RedirectToIndex();
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
         }
         catch (Exception)
         {
 
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }

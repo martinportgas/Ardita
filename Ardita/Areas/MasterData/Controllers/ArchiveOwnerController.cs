@@ -4,6 +4,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -111,6 +112,13 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
@@ -119,34 +127,72 @@ namespace Ardita.Areas.MasterData.Controllers
             {
                 IFormFile file = Request.Form.Files[0];
 
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-                var archiveOwner = await _archiveOwnerService.GetAll();
-
-
-                List<MstArchiveOwner> mstArchiveOwners = new();
-                MstArchiveOwner mstArchiveOwner;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    mstArchiveOwner = new();
-                    mstArchiveOwner.ArchiveOwnerId = Guid.NewGuid();
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                    var archiveOwner = await _archiveOwnerService.GetAll();
 
-                    mstArchiveOwner.ArchiveOwnerCode = row[1].ToString();
-                    mstArchiveOwner.ArchiveOwnerName = row[2].ToString();
+                    if (result.Rows.Count > 0)
+                    {
+                        List<MstArchiveOwner> mstArchiveOwners = new();
+                        MstArchiveOwner mstArchiveOwner;
 
-                    mstArchiveOwner.IsActive = true;
-                    mstArchiveOwner.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    mstArchiveOwner.CreatedDate = DateTime.Now;
+                        bool valid = true;
+                        int errorCount = 0;
 
-                    mstArchiveOwners.Add(mstArchiveOwner);
+                        result.Columns.Add("Keterangan");
+
+                        var archiveOwnersDetail = await _archiveOwnerService.GetAll();
+
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (archiveOwnersDetail.Where(x => x.ArchiveOwnerCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Pemilik sudah ada";
+                            }
+
+                            if (valid)
+                            {
+                                mstArchiveOwner = new();
+                                mstArchiveOwner.ArchiveOwnerId = Guid.NewGuid();
+
+                                mstArchiveOwner.ArchiveOwnerCode = row[1].ToString();
+                                mstArchiveOwner.ArchiveOwnerName = row[2].ToString();
+
+                                mstArchiveOwner.IsActive = true;
+                                mstArchiveOwner.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                mstArchiveOwner.CreatedDate = DateTime.Now;
+
+                                mstArchiveOwners.Add(mstArchiveOwner);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _archiveOwnerService.InsertBulk(mstArchiveOwners);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _archiveOwnerService.InsertBulk(mstArchiveOwners);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
             }
             catch (Exception)
             {
-
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
 
         }
