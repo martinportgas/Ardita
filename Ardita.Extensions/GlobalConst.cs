@@ -241,6 +241,8 @@ public static class GlobalConst
     public const string BindGMDDetailVolumeByTypeStorageId = "BindGMDDetailVolumeByTypeStorageId";
     public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
     public const string BindRoomActiveByArchiveUnitId = "BindRoomActiveByArchiveUnitId";
+    public const string BindParamRoomActiveByFloorId = "BindParamRoomActiveByFloorId";
+    public const string BindParamFloorsByArchiveUnitId = "BindParamFloorsByArchiveUnitId";
     public const string BindParamRackByRoomId = "BindParamRackByRoomId";
     public const string BindParamLevelByRackId = "BindParamLevelByRackId";
     public const string BindParamRowByLevelId = "BindParamRowByLevelId";
@@ -325,6 +327,10 @@ public static class GlobalConst
     public const string CompanyId = "CompanyId";
     public const string CompanyName = "CompanyName";
     public const string EmployeeId = "EmployeeId";
+    public const string ArchiveUnitId = "ArchiveUnitId";
+    public const string ArchiveUnitName = "ArchiveUnitName";
+    public const string CreatorId = "CreatorId";
+    public const string CreatorName = "CreatorName";
     public const string ArchiveUnitCode = "ArchiveUnitCode";
 
     //Excel Template Header From Json

@@ -37,6 +37,8 @@ public partial class TrxArchiveUnit
 
     public virtual ICollection<IdxUserArchiveUnit> IdxUserArchiveUnits { get; } = new List<IdxUserArchiveUnit>();
 
+    public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
+
     public virtual ICollection<MstCreator> MstCreators { get; } = new List<MstCreator>();
 
     public virtual ICollection<TrxArchiveDestroy> TrxArchiveDestroys { get; } = new List<TrxArchiveDestroy>();

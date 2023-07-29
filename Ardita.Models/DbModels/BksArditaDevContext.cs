@@ -247,10 +247,12 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UserRoleId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("user_role_id");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.IsPrimary).HasColumnName("is_primary");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.UpdateBy).HasColumnName("update_by");
@@ -258,6 +260,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.IdxUserRoles)
+                .HasForeignKey(d => d.ArchiveUnitId)
+                .HasConstraintName("FK_IDX_USER_ROLE_TRX_ARCHIVE_UNIT");
+
+            entity.HasOne(d => d.Creator).WithMany(p => p.IdxUserRoles)
+                .HasForeignKey(d => d.CreatorId)
+                .HasConstraintName("FK_IDX_USER_ROLE_MST_CREATOR");
 
             entity.HasOne(d => d.Role).WithMany(p => p.IdxUserRoles)
                 .HasForeignKey(d => d.RoleId)
@@ -1135,8 +1145,6 @@ public partial class BksArditaDevContext : DbContext
             entity.HasKey(e => e.UserId).HasName("PK_USERS");
 
             entity.ToTable("MST_USER");
-
-            entity.HasIndex(e => e.Username, "IX_USERNAME").IsUnique();
 
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")

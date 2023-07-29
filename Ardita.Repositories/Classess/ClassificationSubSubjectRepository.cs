@@ -4,6 +4,7 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace Ardita.Repositories.Classess
 {
@@ -36,7 +37,7 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<TrxSubSubjectClassification>> GetAll()
         {
             var results = await _context.TrxSubSubjectClassifications
-                .Include(x => x.Creator)
+                .Include(x => x.Creator.ArchiveUnit)
                 .Include(x => x.SubjectClassification)
                 .AsNoTracking()
                 .Where(x => x.IsActive == true)

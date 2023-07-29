@@ -67,7 +67,8 @@ public class ArchiveService : IArchiveService
                     EndDate = validEnd ? endDate : GlobalConst.MaxDate,
                     Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
                 },
-                IsArchiveActive = model.IsArchiveActive
+                IsArchiveActive = model.IsArchiveActive,
+                SessionUser = model.SessionUser
             };
 
             int dataCount = await _archiveRepository.GetCountByFilterData(filterData);

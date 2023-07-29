@@ -32,6 +32,8 @@
                                 <th>Action</th>
                                 <th>Kode Role</th>
                                 <th>Nama Role</th>
+                                <th>Lokasi Kearsipan</th>
+                                <th>Unit Pencipta</th>
                                 <th>Aktif</th>
                             </tr>
                         </thead>
@@ -79,7 +81,7 @@
                         }
                     },
                     {
-                        "data": "roleId", "name": "roleId", "orderable": false, "searchable": false,
+                        "data": "userRoleId", "name": "roleId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-success" onclick="$('body').toggleClass('sk-loading')" href="@Url.Action(GlobalConst.ChangeRole, GlobalConst.ChangeRole, new { Area = GlobalConst.General, Id = -1 })"><i class="fa fa-share-square-o"></i> Ganti Role </a>`;
                             detail = detail.replace("-1", data);
@@ -89,6 +91,8 @@
                     },
                     { "data": "code", "name": "role.code", "autoWidth": true },
                     { "data": "name", "name": "role.name", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
                     {
                         "data": "aktif", "name": "aktif", "orderable": false, "autoWidth": true, "render": function (data, type, row, meta) {
                             return `<input type="checkbox" ${data ? 'checked' : ''} style="pointer-events:none" />`;

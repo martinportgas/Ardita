@@ -220,6 +220,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindAllArchiveUnits()
     {
         var data = await _archiveUnitService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
         data = data.OrderBy(x => x.ArchiveUnitName);
         return data.Where(x => x.CompanyId == AppUsers.CurrentUser(User).CompanyId).Select(x => new SelectListItem
         {
@@ -287,6 +289,20 @@ public abstract class BaseController<T> : Controller
             Text = x.SubSubjectClassificationName
         }).ToList();
     }
+    public async Task<List<SelectListItem>> BindMySubSubjectClasscifications()
+    {
+        var data = await _classificationSubSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
+
+        return data.Select(x => new SelectListItem
+        {
+            Value = x.SubSubjectClassificationId.ToString(),
+            Text = x.SubSubjectClassificationName
+        }).ToList();
+    }
     public async Task<List<SelectListItem>> BindAllSubjectClasscifications()
     {
         var data = await _classificationSubjectService.GetAll();
@@ -320,6 +336,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindArchiveCreators()
     {
         var data = await _archiveCreatorService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
 
         return data.Select(x => new SelectListItem
         {
@@ -340,6 +360,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindClasscifications()
     {
         var data = await _classificationService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
 
         return data.Select(x => new SelectListItem
         {
@@ -527,6 +551,23 @@ public abstract class BaseController<T> : Controller
         return Json(listFloors);
 
     }
+    public async Task<JsonResult> BindParamFloorsByArchiveUnitId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _floorService.GetAll();
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == Id).ToList();
+        var result = data.Where(x => x.FloorName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.FloorName).Select(
+            x => new
+            {
+                id = x.FloorId.ToString(),
+                text = x.FloorName
+            }
+            ).ToList();
+        return Json(result);
+
+    }
     public async Task<JsonResult> BindRoomByFloorId(string Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
@@ -547,6 +588,22 @@ public abstract class BaseController<T> : Controller
         var data = await _roomService.GetAll();
         list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
+    }
+    public async Task<JsonResult> BindParamRoomActiveByFloorId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _roomService.GetAll();
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.FloorId == Id).ToList();
+        var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).OrderBy(x => x.RoomName).Select(
+            x => new
+            {
+                id = x.RoomId.ToString(),
+                text = x.RoomName
+            }
+            ).ToList();
+        return Json(result);
     }
     public async Task<JsonResult> BindRoomActiveByArchiveUnitId(Guid Id, string param = "")
     {

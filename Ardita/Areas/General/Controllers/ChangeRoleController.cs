@@ -45,7 +45,7 @@ namespace Ardita.Areas.General.Controllers
         }
         public async Task<IActionResult> ChangeRole(Guid Id)
         {
-            var roleData = await _roleService.GetById(Id);
+            var roleData = await _userRoleService.GetById(Id);
 
             TempData[GlobalConst.Notification] = GlobalConst.Failed;
 
@@ -55,12 +55,12 @@ namespace Ardita.Areas.General.Controllers
 
                 List<Claim> claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.Role, roleData.Code),
+                    new Claim(ClaimTypes.Role, roleData.Role.Code),
                     new Claim(GlobalConst.Username ,user.Username),
                     new Claim(GlobalConst.UserId ,user.UserId.ToString()),
                     new Claim(GlobalConst.RoleId ,roleData.RoleId.ToString()),
-                    new Claim(GlobalConst.RoleCode ,roleData.Code.ToString()),
-                    new Claim(GlobalConst.RoleName, roleData.Name),
+                    new Claim(GlobalConst.RoleCode ,roleData.Role.Code.ToString()),
+                    new Claim(GlobalConst.RoleName, roleData.Role.Name),
                     new Claim(GlobalConst.EmployeeNIK, user.EmployeeNIK),
                     new Claim(GlobalConst.EmployeeName, user.EmployeeName),
                     new Claim(GlobalConst.EmployeeMail, string.IsNullOrEmpty(user.EmployeeMail) ? string.Empty : user.EmployeeMail),
@@ -69,6 +69,10 @@ namespace Ardita.Areas.General.Controllers
                     new Claim(GlobalConst.CompanyId, user.CompanyId.ToString()!),
                     new Claim(GlobalConst.CompanyName, user.CompanyName),
                     new Claim(GlobalConst.EmployeeId, user.EmployeeId.ToString()),
+                    new Claim(GlobalConst.ArchiveUnitId, roleData.ArchiveUnitId?.ToString() ?? string.Empty),
+                    new Claim(GlobalConst.ArchiveUnitName, roleData.ArchiveUnit?.ArchiveUnitName ?? string.Empty),
+                    new Claim(GlobalConst.CreatorId, roleData.CreatorId?.ToString() ?? string.Empty),
+                    new Claim(GlobalConst.CreatorName, roleData.Creator?.CreatorName ?? string.Empty),
                     new Claim(GlobalConst.ArchiveUnitCode, user.ListArchiveUnitCode.Count > 0 ? string.Join(",", user.ListArchiveUnitCode.ToArray()) : string.Empty)
                 };
 

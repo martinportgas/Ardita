@@ -19,12 +19,16 @@ namespace Ardita.Areas.UserManage.Controllers
         public UserRoleController(
             IUserService userService,
             IRoleService roleService,
-            IUserRoleService userRoleService
+            IUserRoleService userRoleService,
+            IArchiveUnitService archiveUnitService,
+            IArchiveCreatorService archiveCreatorService
             )
         {
             _userService = userService;
             _roleService = roleService;
             _userRoleService = userRoleService;
+            _archiveUnitService = archiveUnitService;
+            _archiveCreatorService = archiveCreatorService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
         [HttpPost]
@@ -49,6 +53,8 @@ namespace Ardita.Areas.UserManage.Controllers
             {
                 ViewBag.listUserRole = await _userRoleService.GetIdxUserRoleByUserId(Id);
                 ViewBag.listRoles = await BindRoles();
+                ViewBag.listArchiveUnit = await BindArchiveUnits();
+                ViewBag.listCreator = await BindArchiveCreators();
                 return View(data);
             }
             else
@@ -60,15 +66,19 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             Guid UserId = Guid.Empty;
             Guid RoleId = Guid.Empty;
+            Guid ArchiveUnitId;
+            Guid CreatorId;
             if (model != null)
             {
                 Guid.TryParse(Request.Form["UserId"], out UserId);
                 Guid.TryParse(Request.Form["RoleId"], out RoleId);
+                Guid.TryParse(Request.Form["ArchiveUnitId"], out ArchiveUnitId);
+                Guid.TryParse(Request.Form["CreatorId"], out CreatorId);
                 bool IsPrimary = Request.Form["IsPrimary"] == GlobalConst.Yes;
 
                 int countPrimary = await _userRoleService.GetCountIsPrimaryByUserId(UserId);
 
-                var data = await _userRoleService.GetByUserAndRoleId(UserId, RoleId);
+                var data = await _userRoleService.GetByUserAndRoleId(UserId, RoleId, ArchiveUnitId, CreatorId);
                 bool isNew = data == null;
 
                 var listUserRole = await _userRoleService.GetIdxUserRoleByUserId(UserId);
@@ -95,6 +105,8 @@ namespace Ardita.Areas.UserManage.Controllers
                     model.UserRoleId = Guid.NewGuid();
                     model.UserId = UserId;
                     model.RoleId = RoleId;
+                    model.ArchiveUnitId = ArchiveUnitId;
+                    model.CreatorId = CreatorId;
                     model.IsPrimary = IsPrimary || countPrimary == 0;
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;

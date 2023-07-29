@@ -13,12 +13,16 @@ namespace Ardita.Extensions
             Guid positionId = Guid.Empty;
             Guid companyId = Guid.Empty;
             Guid employeeId = Guid.Empty;
+            Guid archiveUnitId = Guid.Empty;
+            Guid creatorId = Guid.Empty;
 
             Guid.TryParse(claims.FindFirst(GlobalConst.UserId)!.Value, out userId);
             Guid.TryParse(claims.FindFirst(GlobalConst.RoleId)!.Value, out roleId);
             Guid.TryParse(claims.FindFirst(GlobalConst.PositionId)!.Value, out positionId);
             Guid.TryParse(claims.FindFirst(GlobalConst.CompanyId)!.Value, out companyId);
             Guid.TryParse(claims.FindFirst(GlobalConst.EmployeeId)!.Value, out employeeId);
+            Guid.TryParse(claims.FindFirst(GlobalConst.ArchiveUnitId)!.Value, out archiveUnitId);
+            Guid.TryParse(claims.FindFirst(GlobalConst.CreatorId)!.Value, out creatorId);
 
             SessionModel session = new SessionModel();
             session.UserId = userId;
@@ -32,6 +36,10 @@ namespace Ardita.Extensions
             session.CompanyId = companyId;
             session.CompanyName = claims.FindFirst(GlobalConst.CompanyName)!.Value;
             session.EmployeeId = employeeId;
+            session.ArchiveUnitId = archiveUnitId;
+            session.ArchiveUnitName = claims.FindFirst(GlobalConst.ArchiveUnitName)!.Value;
+            session.CreatorId = creatorId;
+            session.CreatorName = claims.FindFirst(GlobalConst.CreatorName)!.Value;
             session.ListArchiveUnitCode = new List<string>();
 
             if (claims.FindFirst(GlobalConst.ArchiveUnitCode) != null)
