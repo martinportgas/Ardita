@@ -1,0 +1,178 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@using System.Data;
+@using Newtonsoft.Json;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    DataTable dt = ViewBag.result == null ? new DataTable() : JsonConvert.DeserializeObject<DataTable>(ViewBag.result.ToString());
+    int errorCount = ViewBag.errorCount == null ? 0 : ViewBag.errorCount;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Archive</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new { Area = GlobalConst.General })"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Pengguna
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Karyawan</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Upload Data</h5>
+                    <div class="ibox-tools">
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="frmUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.ClassificationSubject" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.MasterData">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
+                                        <label class="custom-file-label" for="fUpload">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.ClassificationSubject, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-success"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
+                                <button id="btnUpload" class="btn btn-sm btn-primary"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                                <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubject, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-default"><i class="fa fa-chevron-circle-left"></i><span class="bold"> Back</span></a>
+                            </div>
+                        </div>
+                    </form>
+                    <br />
+                    <div class="row">
+                        @if (errorCount >= 0)
+                        {
+                            <div class="col-sm-12">
+                                <span><strong>Status : </strong><span class="badge badge-pill badge-@(errorCount > 0 ? "danger" : "success")">@(errorCount > 0 ? "Gagal" : "Berhasil")</span></span>
+                            </div>
+                        }
+                        @if (errorCount > 0)
+                        {
+                            <div class="col-sm-12">
+                                <span><strong>Pesan Error : @(errorCount > 100000000 ? "File" : $"{errorCount} Baris") Tidak Valid</strong></span>
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    @if (dt.Rows.Count > 0)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="tblUpload" class="table table-striped table-hover dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Kode Subyek Klasifikasi</th>
+                                            <th>Nama Subyek Klasifikasi</th>
+                                            <th>Kode Klasifikasi</th>
+                                            <th>Error</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (dt.Rows.Count > 0)
+                                        {
+                                            foreach (DataRow dr in dt.Rows)
+                                            {
+                                                <tr style="background-color: @Html.Raw(dr[dt.Columns.Count -1] == "" ? "white" : "red");@Html.Raw(dr[dt.Columns.Count -1] == "" ? "" : "color: white")">
+                                                    @for (int i = 0; i < dt.Columns.Count; i++)
+                                                    {
+                                                        if (i == dt.Columns.Count - 1)
+                                                        {
+                                                            <td>
+                                                                @if (dr[i].ToString() != "")
+                                                                {
+                                                                    <ul style="padding: 0px">
+                                                                        @{
+                                                                            string[] error = dr[i].ToString()!.Split('_');
+                                                                        }
+                                                                        @for (int x = 0; x < error.Length; x++)
+                                                                        {
+                                                                            if (!string.IsNullOrEmpty(@error[x]))
+                                                                            {
+                                                                                <li>@error[x]</li>
+                                                                            }
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @dr[i]
+                                                                }
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@dr[i]</td>
+                                                        }
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            bsCustomFileInput.init();
+
+            $('#tblUpload').DataTable({
+                fixedColumns: true,
+                scrollX: true
+            });
+
+            $('#btnUpload').on('click', function () {
+                var fileExtension = ['xls', 'xlsx'];
+                var filename = $('#fUpload').val();
+                if (filename.length == 0) {
+                    alert("Please select a file.");
+                    return false;
+                }
+                else {
+                    var extension = filename.replace(/^.*\./, '');
+                    if ($.inArray(extension, fileExtension) == -1) {
+                        alert("Please select only excel files.");
+                        return false;
+                    }
+                }
+                $("#frmUpload").submit();
+            });
+
+            var menuActive = 'Subyek Klasifikasi'
+            var subMenuActive = 'Upload Subyek Klasifikasi'
+
+            $('ol.breadcrumb').children(':first-child').next().html(menuActive);
+            $('ol.breadcrumb').children(':first-child').next().next().html(subMenuActive);
+            $('.page-heading').children().children('h2').html(subMenuActive);
+            $('.ibox-title').children('h5').html(subMenuActive);
+        });
+    </script>
+}

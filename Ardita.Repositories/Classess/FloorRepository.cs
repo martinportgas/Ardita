@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,38 +56,21 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<IEnumerable<TrxFloor>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxFloor> result;
-
-            var propertyInfo = typeof(TrxFloor).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxFloor).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxFloors
-                    .Include(x => x.ArchiveUnit)
-                .Where(
-                    x => (x.FloorId + x.FloorName).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderBy(x => EF.Property<TrxFloor>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxFloors
-                    .Include(x => x.ArchiveUnit)
-                .Where(
-                    x => (x.FloorId + x.FloorName).Contains(model.searchValue) &&
-                    x.IsActive == true
-                    )
-                .OrderByDescending(x => EF.Property<TrxFloor>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-
+            var result = await _context.TrxFloors
+               .Include(x => x.ArchiveUnit)
+               .Where(x => x.IsActive == true && (x.FloorCode + x.FloorName + x.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue))
+               .Where(x => x.ArchiveUnit!.IsActive == true)
+               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .Select(x => new {
+                   x.FloorId,
+                   x.FloorCode,
+                   x.FloorName,
+                   x.ArchiveUnit.ArchiveUnitName
+               })
+               .ToListAsync();
             return result;
         }
 
@@ -99,10 +83,15 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(DataTableModel model)
         {
-            var results = await _context.TrxFloors.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
-            return results;
+            var result = await _context.TrxFloors
+            .Include(x => x.ArchiveUnit)
+            .Where(x => x.IsActive == true && (x.FloorCode + x.FloorName + x.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue))
+            .Where(x => x.ArchiveUnit!.IsActive == true)
+            .CountAsync();
+
+            return result;
         }
 
         public async Task<int> Insert(TrxFloor model)

@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -181,6 +182,12 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         public async Task<IActionResult> DownloadTemplate()
         {
             try
@@ -198,16 +205,18 @@ namespace Ardita.Areas.MasterData.Controllers
                 IRow rowSubject = excelSheetSubject.CreateRow(0);
                 IRow rowSecurity = excelSheetSecurity.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
-                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(3).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
-                row.CreateCell(4).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
-                row.CreateCell(5).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
-                row.CreateCell(6).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
+                row.CreateCell(3).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(4).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                row.CreateCell(5).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
+                row.CreateCell(6).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
+                row.CreateCell(7).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
 
-                rowSubject.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                rowSubject.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                rowSubject.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                rowSubject.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                rowSubject.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
 
                 var dataclassificationSubject = await _classificationSubjectService.GetAll();
 
@@ -216,13 +225,15 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     rowSubject = excelSheetSubject.CreateRow(no);
 
-                    rowSubject.CreateCell(0).SetCellValue(item.SubjectClassificationCode);
-                    rowSubject.CreateCell(1).SetCellValue(item.SubjectClassificationName);
+                    rowSubject.CreateCell(0).SetCellValue(no);
+                    rowSubject.CreateCell(1).SetCellValue(item.SubjectClassificationCode);
+                    rowSubject.CreateCell(2).SetCellValue(item.SubjectClassificationName);
                     no += 1;
                 }
 
-                rowSecurity.CreateCell(0).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
-                rowSecurity.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+                rowSecurity.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                rowSecurity.CreateCell(1).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                rowSecurity.CreateCell(2).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
 
                 var dataSecurity = await _securityClassificationService.GetAll();
 
@@ -231,8 +242,9 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     rowSecurity = excelSheetSecurity.CreateRow(no);
 
-                    rowSecurity.CreateCell(0).SetCellValue(item.SecurityClassificationCode);
-                    rowSecurity.CreateCell(1).SetCellValue(item.SecurityClassificationName);
+                    rowSecurity.CreateCell(0).SetCellValue(no);
+                    rowSecurity.CreateCell(1).SetCellValue(item.SecurityClassificationCode);
+                    rowSecurity.CreateCell(2).SetCellValue(item.SecurityClassificationName);
                     no += 1;
                 }
 
@@ -266,17 +278,18 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
-                row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
-                row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorName));
-                row.CreateCell(4).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(5).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
-                row.CreateCell(6).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
-                row.CreateCell(7).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
-                row.CreateCell(8).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
-                row.CreateCell(9).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
-                row.CreateCell(10).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(TrxSubSubjectClassification.SubSubjectClassificationName));
+                row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorCode));
+                row.CreateCell(4).SetCellValue(nameof(MstCreator.CreatorName));
+                row.CreateCell(5).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(6).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(7).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationCode));
+                row.CreateCell(8).SetCellValue(nameof(MstSecurityClassification.SecurityClassificationName));
+                row.CreateCell(9).SetCellValue(nameof(TrxSubSubjectClassification.RetentionActive));
+                row.CreateCell(10).SetCellValue(nameof(TrxSubSubjectClassification.RetentionInactive));
+                row.CreateCell(11).SetCellValue(nameof(TrxSubSubjectClassification.BasicInformation));
 
                 int no = 1;
                 if (data.Any())
@@ -290,17 +303,18 @@ namespace Ardita.Areas.MasterData.Controllers
                         if(dataCreator != null && dataSubject != null && dataSecurity != null)
                         {
                             row = excelSheet.CreateRow(no);
-                            row.CreateCell(0).SetCellValue(item.SubSubjectClassificationCode);
-                            row.CreateCell(1).SetCellValue(item.SubSubjectClassificationName);
-                            row.CreateCell(2).SetCellValue(dataCreator.CreatorCode);
-                            row.CreateCell(3).SetCellValue(dataCreator.CreatorName);
-                            row.CreateCell(4).SetCellValue(dataSubject.SubjectClassificationCode);
-                            row.CreateCell(5).SetCellValue(dataSubject.SubjectClassificationName);
-                            row.CreateCell(6).SetCellValue(dataSecurity.SecurityClassificationCode);
-                            row.CreateCell(7).SetCellValue(dataSecurity.SecurityClassificationName);
-                            row.CreateCell(8).SetCellValue(item.RetentionActive.ToString());
-                            row.CreateCell(9).SetCellValue(item.RetentionInactive.ToString());
-                            row.CreateCell(10).SetCellValue(item.BasicInformation);
+                            row.CreateCell(0).SetCellValue(no);
+                            row.CreateCell(1).SetCellValue(item.SubSubjectClassificationCode);
+                            row.CreateCell(2).SetCellValue(item.SubSubjectClassificationName);
+                            row.CreateCell(3).SetCellValue(dataCreator.CreatorCode);
+                            row.CreateCell(4).SetCellValue(dataCreator.CreatorName);
+                            row.CreateCell(5).SetCellValue(dataSubject.SubjectClassificationCode);
+                            row.CreateCell(6).SetCellValue(dataSubject.SubjectClassificationName);
+                            row.CreateCell(7).SetCellValue(dataSecurity.SecurityClassificationCode);
+                            row.CreateCell(8).SetCellValue(dataSecurity.SecurityClassificationName);
+                            row.CreateCell(9).SetCellValue(item.RetentionActive.ToString());
+                            row.CreateCell(10).SetCellValue(item.RetentionInactive.ToString());
+                            row.CreateCell(11).SetCellValue(item.BasicInformation);
                             no += 1;
                         }
                     }
@@ -320,44 +334,103 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public async Task<IActionResult> Upload()
         {
-            IFormFile file = Request.Form.Files[0];
-
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-            var dataSubjects = await _classificationSubjectService.GetAll();
-            var dataCreators = await _archiveCreatorService.GetAll();
-            var dataSecuritys = await _securityClassificationService.GetAll();
-
-            List<TrxSubSubjectClassification> models = new();
-            TrxSubSubjectClassification model;
-
-            foreach (DataRow row in result.Rows)
+            try 
             {
-                var dataSubject = dataSubjects.Where(x => x.SubjectClassificationCode == row[2].ToString()).FirstOrDefault();
-                var dataSecurity = dataSecuritys.Where(x => x.SecurityClassificationCode == row[3].ToString()).FirstOrDefault();
-
-                if (dataSubject != null && dataSecurity != null)
+                IFormFile file = Request.Form.Files[0];
+                if (file.Length > 0)
                 {
-                    model = new();
-                    model.SubSubjectClassificationId = Guid.NewGuid();
-                    model.SubSubjectClassificationCode = row[0].ToString();
-                    model.SubSubjectClassificationName = row[1].ToString();
-                    model.CreatorId = dataSubject.Classification.CreatorId;
-                    model.SubjectClassificationId = dataSubject.SubjectClassificationId;
-                    model.SecurityClassificationId = dataSecurity.SecurityClassificationId;
-                    model.RetentionActive = int.Parse(row[4].ToString());
-                    model.RetentionInactive = int.Parse(row[5].ToString());
-                    model.BasicInformation = row[6].ToString();
-                    model.IsActive = true;  
-                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    model.CreatedDate = DateTime.Now;
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                   
 
-                    models.Add(model);
+                    if (result.Rows.Count > 0)
+                    {
+                        var dataSubjects = await _classificationSubjectService.GetAll();
+                        var dataCreators = await _archiveCreatorService.GetAll();
+                        var dataSecuritys = await _securityClassificationService.GetAll();
+                        var dataSubSubjects = await _classificationSubSubjectService.GetAll();
+
+                        List<TrxSubSubjectClassification> models = new();
+                        TrxSubSubjectClassification model;
+
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).ToList().Count == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Subjek Klasifikasi tidak ditemukan";
+                            }
+                            else if (dataSubSubjects.Where(x => x.SubSubjectClassificationCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Sub Subyek Klasifikasi sudah ada!";
+                            }
+                            else if (dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).Count() == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Keamanan Klasifikasi tidak ditemukan!";
+                            }
+                            else if (!int.TryParse(row[5].ToString(), out int n))
+                            {
+                                valid = false;
+                                error = "_Retensi Aktif harus angka!";
+                            }
+                            else if (!int.TryParse(row[6].ToString(), out int m))
+                            {
+                                valid = false;
+                                error = "_Retensi In Aktif harus angka!";
+                            }
+
+                            if (valid)
+                            {
+                                model = new();
+                                model.SubSubjectClassificationId = Guid.NewGuid();
+                                model.SubSubjectClassificationCode = row[1].ToString();
+                                model.SubSubjectClassificationName = row[2].ToString();
+                                model.CreatorId = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault().Classification.CreatorId;
+                                model.SubjectClassificationId = dataSubjects.Where(x => x.SubjectClassificationCode == row[3].ToString()).FirstOrDefault().SubjectClassificationId;
+                                model.SecurityClassificationId = dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).FirstOrDefault().SecurityClassificationId;
+                                model.RetentionActive = int.Parse(row[5].ToString());
+                                model.RetentionInactive = int.Parse(row[6].ToString());
+                                model.BasicInformation = row[7].ToString();
+                                model.IsActive = true;
+                                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                model.CreatedDate = DateTime.Now;
+
+                                models.Add(model);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _classificationSubSubjectService.InsertBulk(models);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-            }
-            await _classificationSubSubjectService.InsertBulk(models);
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
 
-            return RedirectToIndex();
+                }
+            } 
+            catch (Exception ex) 
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
         }
         #endregion
         #region HELPER

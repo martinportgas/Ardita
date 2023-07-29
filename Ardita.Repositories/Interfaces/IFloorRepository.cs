@@ -12,8 +12,8 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<TrxFloor> GetById(Guid id);
         Task<IEnumerable<TrxFloor>> GetAll();
-        Task<IEnumerable<TrxFloor>> GetByFilterModel(DataTableModel model);
-        Task<int> GetCount();
+        Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+        Task<int> GetCount(DataTableModel model);
         Task<int> Insert(TrxFloor model);
         Task<bool> InsertBulk(List<TrxFloor> floors);
         Task<int> Delete(TrxFloor model);

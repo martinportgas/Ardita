@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,10 +49,15 @@ namespace Ardita.Repositories.Classess
                 .ToListAsync();
             return results;
         }
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(DataTableModel model)
         {
-            var results = await _context.TrxSubjectClassifications.Where(x => x.IsActive == true).CountAsync();
-            return results;
+            var result = await _context.TrxSubjectClassifications
+                 .Include(x => x.Classification)
+                 .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName + x.Classification.ClassificationCode + x.Classification.ClassificationName).Contains(model.searchValue))
+                 .Where(x => x.Classification.IsActive == true)
+                .Where(x => x.Classification.Creator.IsActive == true)
+                 .CountAsync();
+            return result;
         }
 
         public async Task<TrxSubjectClassification> GetById(Guid id)
@@ -62,35 +68,23 @@ namespace Ardita.Repositories.Classess
                 .FirstOrDefaultAsync(x => x.IsActive == true && x.SubjectClassificationId == id);
             return result;
         }
-        public async Task<IEnumerable<TrxSubjectClassification>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxSubjectClassification> result;
-
-            var propertyInfo = typeof(TrxSubjectClassification).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxSubjectClassification).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxSubjectClassifications
-                .Include(x => x.Classification.Creator)
-                .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
-                .Where(x => x.Classification.IsActive == true)
+            var result = await _context.TrxSubjectClassifications
+                 .Include(x => x.Classification)
+                 .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName + x.Classification.ClassificationCode + x.Classification.ClassificationName).Contains(model.searchValue))
+                 .Where(x => x.Classification.IsActive == true)
                 .Where(x => x.Classification.Creator.IsActive == true)
-                .OrderBy(x => EF.Property<TrxSubjectClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxSubjectClassifications
-                .Include(x => x.Classification.Creator)
-                .Where(x => x.IsActive == true && (x.SubjectClassificationCode + x.SubjectClassificationName).Contains(model.searchValue))
-                .Where(x => x.Classification.IsActive == true)
-                .Where(x => x.Classification.Creator.IsActive == true)
-                .OrderByDescending(x => EF.Property<TrxSubjectClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                 .Skip(model.skip).Take(model.pageSize)
+                 .Select(x => new {
+                     x.SubjectClassificationId,
+                     x.SubjectClassificationCode,
+                     x.SubjectClassificationName,
+                     x.Classification.ClassificationCode,
+                     x.Classification.ClassificationName
+                 })
+                 .ToListAsync();
 
             return result;
         }
