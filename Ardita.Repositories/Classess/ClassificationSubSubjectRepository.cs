@@ -46,10 +46,15 @@ namespace Ardita.Repositories.Classess
             return results;
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(DataTableModel model)
         {
-            var results = await _context.TrxSubSubjectClassifications.Where(x => x.IsActive == true).CountAsync();
-            return results;
+            var result = await _context.TrxSubSubjectClassifications
+              .Include(x => x.SubjectClassification)
+              .Include(x => x.Creator)
+              .Where(x => x.IsActive == true && (x.SubSubjectClassificationCode + x.SubSubjectClassificationName + x.SubjectClassification.SubjectClassificationCode + x.SubjectClassification.SubjectClassificationName).Contains(model.searchValue))
+              .Where(x => x.Creator!.IsActive == true)
+              .CountAsync();
+            return result;
         }
 
         public async Task<TrxSubSubjectClassification> GetById(Guid id)
@@ -61,32 +66,40 @@ namespace Ardita.Repositories.Classess
                 .FirstOrDefaultAsync(x => x.SubSubjectClassificationId == id && x.IsActive == true);
             return result;
         }
-        public async Task<IEnumerable<TrxSubSubjectClassification>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxSubSubjectClassification> result;
+            var result = await _context.TrxSubSubjectClassifications
+               .Include(x => x.SubjectClassification.Classification.TypeClassification)
+               .Include(x => x.Creator)
+               .Include(x => x.SecurityClassification)
+               .Where(x => x.IsActive == true && (
+                                x.SubSubjectClassificationCode + 
+                                x.SubSubjectClassificationName + 
+                                x.SubjectClassification.SubjectClassificationCode + 
+                                x.SubjectClassification.SubjectClassificationName +
+                                x.SubjectClassification.Classification.ClassificationName +
+                                x.SubjectClassification.Classification.TypeClassification.TypeClassificationName +
+                                x.SecurityClassification.SecurityClassificationName +
+                                x.RetentionActive +
+                                x.RetentionInactive
+                                ).Contains(model.searchValue))
+               .Where(x => x.Creator!.IsActive == true)
+               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .Select(x => new {
+                   x.SubSubjectClassificationId,
+                   x.SubSubjectClassificationCode,
+                   x.SubSubjectClassificationName,
+                   x.SubjectClassification.SubjectClassificationCode,
+                   x.SubjectClassification.SubjectClassificationName,
+                   x.SubjectClassification.Classification.ClassificationName,
+                   x.SubjectClassification.Classification.TypeClassification.TypeClassificationName,
+                   x.SecurityClassification.SecurityClassificationName,
+                   x.RetentionActive,
+                   x.RetentionInactive
 
-            var propertyInfo = typeof(TrxSubSubjectClassification).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxSubSubjectClassification).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxSubSubjectClassifications
-                .Include(x => x.SubjectClassification)
-                .Where(x => x.IsActive == true && (x.SubSubjectClassificationCode + x.SubSubjectClassificationName).Contains(model.searchValue))
-                .OrderBy(x => EF.Property<TrxSubSubjectClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxSubSubjectClassifications
-                .Include(x => x.SubjectClassification)
-                .Where(x => x.IsActive == true && (x.SubSubjectClassificationCode + x.SubSubjectClassificationName).Contains(model.searchValue))
-                .OrderByDescending(x => EF.Property<TrxSubSubjectClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-
+               })
+               .ToListAsync();
             return result;
         }
 
