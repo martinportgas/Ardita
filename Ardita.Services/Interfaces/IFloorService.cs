@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using NPOI.HSSF.Record.Chart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<TrxFloor> GetById(Guid id);
         Task<IEnumerable<TrxFloor>> GetAll();
-        Task<DataTableResponseModel<TrxFloor>> GetListClassification(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxFloor model);
         Task<bool> InsertBulk(List<TrxFloor> floors);
         Task<int> Delete(TrxFloor model);

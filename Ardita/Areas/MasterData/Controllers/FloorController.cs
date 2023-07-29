@@ -7,6 +7,7 @@ using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using NPOI.HPSF;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.Formula.Functions;
@@ -117,6 +118,12 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
@@ -125,34 +132,79 @@ namespace Ardita.Areas.MasterData.Controllers
             {
                 IFormFile file = Request.Form.Files[0];
 
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-                var ArchiveUnits = await _archiveUnitService.GetAll();
-
-
-                List<TrxFloor> floors = new();
-                TrxFloor floor;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    floor = new();
-                    floor.FloorId = Guid.NewGuid();
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                    floor.ArchiveUnitId = ArchiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[0].ToString())).FirstOrDefault().ArchiveUnitId;
-                    floor.FloorCode = row[1].ToString();
-                    floor.FloorName = row[2].ToString();
-                    floor.IsActive = true;
-                    floor.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    floor.CreatedDate = DateTime.Now;
+                    if (result.Rows.Count > 0)
+                    {
+                        var ArchiveUnits = await _archiveUnitService.GetAll();
+                        var floorDetails = await _floorService.GetAll();
 
-                    floors.Add(floor);
+                        List<TrxFloor> floors = new();
+                        TrxFloor floor;
+
+
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (floorDetails.Where(x => x.FloorCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Lantai sudah ada";
+                            }
+                            else if (ArchiveUnits.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Unit Kearsipan tidak ditemukan";
+                            }
+
+                            if (valid)
+                            {
+
+                                floor = new();
+                                floor.FloorId = Guid.NewGuid();
+
+                                floor.ArchiveUnitId = ArchiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[3].ToString())).FirstOrDefault().ArchiveUnitId;
+                                floor.FloorCode = row[1].ToString();
+                                floor.FloorName = row[2].ToString();
+                                floor.IsActive = true;
+                                floor.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                floor.CreatedDate = DateTime.Now;
+
+                                floors.Add(floor);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _floorService.InsertBulk(floors);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _floorService.InsertBulk(floors);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
             }
             catch (Exception)
             {
-
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
 
         }
@@ -171,17 +223,20 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
+                
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
                 row.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
                 row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
+                row.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
 
                 int no = 1;
                 foreach (var item in floors)
                 {
                     row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
+                    row.CreateCell(0).SetCellValue(GlobalConst.No);
                     row.CreateCell(1).SetCellValue(item.FloorCode);
                     row.CreateCell(2).SetCellValue(item.FloorName);
+                    row.CreateCell(3).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
 
                     no += 1;
                 }
@@ -212,13 +267,15 @@ namespace Ardita.Areas.MasterData.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowArchive = excelSheetArchiceUnit.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
                 row.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
-                row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
+                row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName)); 
+                row.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
 
 
-                rowArchive.CreateCell(0).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
-                rowArchive.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
+                rowArchive.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                rowArchive.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
+                rowArchive.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
 
                 var dataArchive = await _archiveUnitService.GetAll();
 
@@ -227,8 +284,9 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     rowArchive = excelSheetArchiceUnit.CreateRow(no);
 
-                    rowArchive.CreateCell(0).SetCellValue(item.ArchiveUnitCode);
-                    rowArchive.CreateCell(1).SetCellValue(item.ArchiveUnitName);
+                    rowArchive.CreateCell(0).SetCellValue(no);
+                    rowArchive.CreateCell(1).SetCellValue(item.ArchiveUnitCode);
+                    rowArchive.CreateCell(2).SetCellValue(item.ArchiveUnitName);
                     no += 1;
                 }
                 using (var exportData = new MemoryStream())
