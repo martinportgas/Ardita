@@ -47,7 +47,7 @@ public class MediaStorageRepository : IMediaStorageRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-
+        var User = AppUsers.CurrentUser(model.SessionUser);
         if (model.sortColumn == "row.level.rack.rackName")
         {
             model.sortColumn = $"row.level.rack.rackName {model.sortColumnDirection}, row.level.levelName {model.sortColumnDirection}, row.rowName {model.sortColumnDirection}";
@@ -58,10 +58,14 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(x => x.Status)
             .Include(x => x.SubjectClassification.Classification.Creator)
             .Include(x => x.TypeStorage.ArchiveUnit)
-            .Include(x => x.Row.Level.Rack)
+            .Include(x => x.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive)
             .Where(x => (x.MediaStorageCode + x.SubjectClassification.SubjectClassificationName + x.Status.Name 
             + x.SubjectClassification.Classification.Creator.CreatorName + x.TypeStorage.TypeStorageName + x.TypeStorage.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
             .Where(x => x.IsActive == true)
+            .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.SubjectClassification.Classification.Creator.ArchiveUnitId == User.ArchiveUnitId))
+            .Where(x => (User.CreatorId == Guid.Empty ? true : x.SubjectClassification.Classification.CreatorId == User.CreatorId))
+            .Where(model.advanceSearch!.Search)
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
             .Select(x => new
@@ -84,13 +88,19 @@ public class MediaStorageRepository : IMediaStorageRepository
     }
     public async Task<int> GetCountByFilterModel(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         var result = await _context.TrxMediaStorages
             .Include(x => x.Status)
             .Include(x => x.SubjectClassification.Classification.Creator)
             .Include(x => x.TypeStorage.ArchiveUnit)
+            .Include(x => x.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive)
             .Where(x => (x.MediaStorageCode + x.SubjectClassification.SubjectClassificationName + x.Status.Name
             + x.SubjectClassification.Classification.Creator.CreatorName + x.TypeStorage.TypeStorageName + x.TypeStorage.ArchiveUnit.ArchiveUnitName).Contains(model.searchValue!))
             .Where(x => x.IsActive == true)
+            .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.SubjectClassification.Classification.Creator.ArchiveUnitId == User.ArchiveUnitId))
+            .Where(x => (User.CreatorId == Guid.Empty ? true : x.SubjectClassification.Classification.CreatorId == User.CreatorId))
+            .Where(model.advanceSearch!.Search)
             .CountAsync();
 
         return result;

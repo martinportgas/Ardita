@@ -181,6 +181,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindRacks()
     {
         var data = await _rackService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -191,6 +193,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindRooms()
     {
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -201,6 +205,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindFloors()
     {
         var data = await _floorService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -210,7 +216,9 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchiveUnits()
     {
-        var data = await _archiveUnitService.GetByListArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+        var data = await _archiveUnitService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
@@ -221,7 +229,7 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _archiveUnitService.GetAll();
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         data = data.OrderBy(x => x.ArchiveUnitName);
         return data.Where(x => x.CompanyId == AppUsers.CurrentUser(User).CompanyId).Select(x => new SelectListItem
         {
@@ -232,6 +240,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindLevels()
     {
         var data = await _levelService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -262,6 +272,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindSubjectClasscifications()
     {
         var data = await _classificationSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -281,7 +295,11 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
-        var data = await _classificationSubSubjectService.GetByArchiveUnit(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+        var data = await _classificationSubSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -293,9 +311,9 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _classificationSubSubjectService.GetAll();
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -306,6 +324,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindAllSubjectClasscifications()
     {
         var data = await _classificationSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -316,6 +338,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindAllSubSubjectClasscifications()
     {
         var data = await _classificationSubSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -337,9 +363,9 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _archiveCreatorService.GetAll();
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -361,9 +387,9 @@ public abstract class BaseController<T> : Controller
     {
         var data = await _classificationService.GetAll();
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId);
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId);
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -374,6 +400,10 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindClasscificationSubjects()
     {
         var data = await _classificationSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -393,7 +423,11 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchives()
     {
-        var data = await _archiveService.GetAll(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+        var data = await _archiveService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -403,7 +437,11 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchivesInActive()
     {
-        var data = await _archiveService.GetAllInActive(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+        var data = await _archiveService.GetAllInActive();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data
             .Select(x => new SelectListItem
@@ -416,6 +454,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindTypeStorage()
     {
         var data = await _typeStorageService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.TypeStorageId.ToString(),
@@ -425,6 +465,8 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindRows()
     {
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
@@ -435,6 +477,8 @@ public abstract class BaseController<T> : Controller
     {
         string spr = " - ";
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
@@ -520,6 +564,8 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveUnitService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         var result = data.Where(x => x.ArchiveUnitName.ToLower().Contains(param.ToLower())).Select(x => new
         {
             id = x.ArchiveUnitId.ToString(),
@@ -531,6 +577,8 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveUnitService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.CompanyId == Id).ToList();
         var result = data.Where(x => x.ArchiveUnitName.ToLower().Contains(param.ToLower())).Select(x => new
@@ -547,6 +595,8 @@ public abstract class BaseController<T> : Controller
         Guid ArchiveUnitId = new(Id);
 
         var data = await _floorService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         listFloors = data.Where(x => x.ArchiveUnitId == ArchiveUnitId && x.FloorName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.FloorName).ToList();
         return Json(listFloors);
 
@@ -556,6 +606,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _floorService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.ArchiveUnitId == Id).ToList();
         var result = data.Where(x => x.FloorName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.FloorName).Select(
@@ -575,6 +627,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.FloorId == id && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
 
@@ -586,6 +640,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
     }
@@ -594,6 +650,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.FloorId == Id).ToList();
         var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).OrderBy(x => x.RoomName).Select(
@@ -610,6 +668,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.Floor.ArchiveUnitId == Id).ToList();
         var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).Select(
@@ -628,6 +688,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.FloorId == id && x.ArchiveRoomType == GlobalConst.UnitKearsipan && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
         return Json(list);
     }
@@ -638,6 +700,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rackService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.RoomId == id && x.RackName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RackName).ToList();
         return Json(list);
     }
@@ -646,6 +710,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _rackService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.RoomId == Id).ToList();
         var result = data.Where(x => x.RackName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RackName).Select(
@@ -664,6 +730,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _levelService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.RackId == id && x.LevelName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.LevelName).ToList();
         return Json(list);
     }
@@ -672,6 +740,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _levelService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.RackId == Id).ToList();
         var result = data.Where(x => x.LevelName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.LevelName).Select(
@@ -690,6 +760,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.LevelId == id && x.RowName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(list);
     }
@@ -698,6 +770,8 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.LevelId == Id).ToList();
         var result = data.Where(x => x.RowName!.ToLower().Contains(param.ToLower())).Select(
@@ -714,6 +788,10 @@ public abstract class BaseController<T> : Controller
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
 
         var data = await _archiveCreatorService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.ArchiveUnitId == Id).ToList();
         var result = data.Where(x => x.CreatorName!.ToLower().Contains(param.ToLower())).Select(
@@ -732,6 +810,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.LevelId == id && x.TrxMediaStorages.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
@@ -742,6 +822,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rowService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.LevelId == id && x.TrxMediaStorageInActives.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
@@ -752,6 +834,8 @@ public abstract class BaseController<T> : Controller
         Guid id = new(Id);
 
         var data = await _rowService.GetAvailableRow();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         list = data.Where(x => x.LevelId == id && x.TrxMediaStorageInActives.FirstOrDefault() == null && x.RowName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RowName).ToList();
         return Json(list);
     }
@@ -766,6 +850,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         if (Id != Guid.Empty)
             data = data.Where(x => x.ClassificationId == Id).ToList();
         var result = data.Where(x => x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.SubjectClassificationName).Select(
@@ -781,6 +869,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.TypeClassificationId == Id && x.ClassificationName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.ClassificationName).ToList();
         return Json(result);
     }
@@ -840,6 +932,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubjectClassificationId == SubjectId && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower()))
             .Select(x => new { id = x.SubSubjectClassificationId, text = x.SubSubjectClassificationName }).ToList();
         return Json(result);
@@ -848,6 +944,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.Classification.Creator!.ArchiveUnitId == Id && x.SubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
@@ -855,6 +955,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _classificationSubSubjectService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.SubjectClassificationId == Id).ToList();
         return Json(result);
     }
@@ -867,6 +971,8 @@ public abstract class BaseController<T> : Controller
         Guid.TryParse(arrParam[1], out DetailId);
 
         var data = await _typeStorageService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         var result = data.Where(x => x.ArchiveUnitId == DetailId).Select(x => new
         {
             id = x.TypeStorageId.ToString(),
@@ -1019,6 +1125,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
         return Json(result);
     }
@@ -1026,6 +1136,10 @@ public abstract class BaseController<T> : Controller
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
         var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.GmdDetailId == gmdDetailId && x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
         return Json(result);
     }

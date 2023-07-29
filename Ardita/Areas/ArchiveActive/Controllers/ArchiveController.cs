@@ -448,7 +448,7 @@ public class ArchiveController : BaseController<TrxArchive>
         ViewBag.ListRow = await BindRows();
         ViewBag.ListArchiveCreator = await BindArchiveCreators();
         ViewBag.ListClassification = await BindClasscifications();
-        ViewBag.ListSubjectClassification = await BindMySubSubjectClasscifications();
+        ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
     }
     [HttpGet]
     public async Task<IActionResult> BindDownload(Guid Id)

@@ -17,23 +17,37 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         IArchiveCreatorService archiveCreatorService,
         IRowService rowService,
         IArchiveService archiveService,
-        IFileArchiveDetailService fileArchiveDetailService)
+        IFileArchiveDetailService fileArchiveDetailService,
+        IArchiveUnitService archiveUnitService,
+        IFloorService floorService,
+        IRoomService roomService,
+        IRackService rackService,
+        ILevelService levelService,
+        IClassificationService classificationService,
+        IClassificationSubjectService classificationSubjectService)
         {
             _archiveCreatorService = archiveCreatorService;
             _rowService = rowService;
             _fileArchiveDetailService = fileArchiveDetailService;
             _archiveService = archiveService;
+            _archiveUnitService = archiveUnitService;
+            _floorService = floorService;
+            _roomService = roomService;
+            _rackService = rackService;
+            _levelService = levelService;
+            _classificationService = classificationService;
+            _classificationSubjectService = classificationSubjectService;
         }
         public override async Task<ActionResult> Index()
         {
-            ViewBag.ListArchiveCreator = await BindArchiveCreators();
-            ViewBag.listRow = await BindRowsWithDetails();
+            await AllViewBagIndex();
             return View();
         }
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
+                model.SessionUser = User;
                 model.whereClause = GlobalConst.WhereClauseArchiveMonitoring;
                 model.IsArchiveActive = true;
                 if (AppUsers.CurrentUser(User).RoleCode == GlobalConst.ROLE.USV.ToString())
@@ -67,6 +81,18 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 return File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
             }
             return NotFound();
+        }
+        public async Task AllViewBagIndex()
+        {
+            ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.ListFloor = await BindFloors();
+            ViewBag.ListRoom = await BindRooms();
+            ViewBag.ListRack = await BindRacks();
+            ViewBag.ListLevel = await BindLevels();
+            ViewBag.ListRow = await BindRows();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListClassification = await BindClasscifications();
+            ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
     }
 }

@@ -507,6 +507,7 @@
             param.gmdDetailId = $('#txtGMDDetail').val();
 
             ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                console.log(result);
                 var dataRes = [];
                 if(@form.isInput.ToString().ToLower()){
                     dataRes = result;
