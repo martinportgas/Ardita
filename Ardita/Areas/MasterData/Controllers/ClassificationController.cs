@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -137,16 +138,25 @@ public class ClassificationController : BaseController<TrxClassification>
             workbook = new XSSFWorkbook();
             ISheet excelSheet = workbook.CreateSheet(nameof(TrxClassification).ToCleanNameOf());
             ISheet excelSheetParent = workbook.CreateSheet(nameof(MstTypeClassification).ToCleanNameOf());
+            ISheet excelSheetCreator = workbook.CreateSheet(nameof(MstCreator).ToCleanNameOf());
 
             IRow row = excelSheet.CreateRow(0);
             IRow rowParent = excelSheetParent.CreateRow(0);
+            IRow rowCreator = excelSheetCreator.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(nameof(TrxClassification.ClassificationCode));
-            row.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationName));
-            row.CreateCell(2).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+            row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+            row.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationCode));
+            row.CreateCell(2).SetCellValue(nameof(TrxClassification.ClassificationName));
+            row.CreateCell(3).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+            row.CreateCell(4).SetCellValue(nameof(MstCreator.CreatorCode));
 
-            rowParent.CreateCell(0).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
-            rowParent.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
+            rowParent.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+            rowParent.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+            rowParent.CreateCell(2).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
+
+            rowCreator.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+            rowCreator.CreateCell(1).SetCellValue(nameof(MstCreator.CreatorCode));
+            rowCreator.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorName));
 
             var dataclassificationType = await _classificationTypeService.GetAll();
 
@@ -159,6 +169,19 @@ public class ClassificationController : BaseController<TrxClassification>
                 rowParent.CreateCell(1).SetCellValue(item.TypeClassificationName);
                 no += 1;
             }
+
+            var creators = await _archiveCreatorService.GetAll();
+            no = 1;
+            foreach (var item in creators)
+            {
+                rowCreator = excelSheetCreator.CreateRow(no);
+
+                rowCreator.CreateCell(0).SetCellValue(no);
+                rowCreator.CreateCell(1).SetCellValue(item.CreatorCode);
+                rowCreator.CreateCell(2).SetCellValue(item.CreatorName);
+                no += 1;
+            }
+
             using (var exportData = new MemoryStream())
             {
                 workbook.Write(exportData);
@@ -180,6 +203,7 @@ public class ClassificationController : BaseController<TrxClassification>
 
             var data = await _classificationService.GetAll();
             var type = await _classificationTypeService.GetAll();
+            var creators = await _archiveCreatorService.GetAll();
 
             IWorkbook workbook;
             workbook = new XSSFWorkbook();
@@ -187,22 +211,27 @@ public class ClassificationController : BaseController<TrxClassification>
 
             IRow row = excelSheet.CreateRow(0);
 
-            row.CreateCell(0).SetCellValue(nameof(TrxClassification.ClassificationCode));
-            row.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationName));
-            row.CreateCell(2).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
-            row.CreateCell(3).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
+            row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+            row.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationCode));
+            row.CreateCell(2).SetCellValue(nameof(TrxClassification.ClassificationName));
+            row.CreateCell(3).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+            row.CreateCell(4).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
+            row.CreateCell(5).SetCellValue(nameof(MstCreator.CreatorName));
 
             int no = 1;
             foreach (var item in data)
             {
                 var typeData = type.Where(x => x.TypeClassificationId == item.TypeClassificationId).FirstOrDefault();
-                if (typeData != null)
+                var creatorData = creators.Where(x => x.CreatorId == item.CreatorId).FirstOrDefault();
+                if (typeData != null && creatorData != null)
                 {
                     row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(item.ClassificationCode);
-                    row.CreateCell(1).SetCellValue(item.ClassificationName);
-                    row.CreateCell(2).SetCellValue(typeData.TypeClassificationCode);
-                    row.CreateCell(3).SetCellValue(typeData.TypeClassificationName);
+                    row.CreateCell(0).SetCellValue(no);
+                    row.CreateCell(1).SetCellValue(item.ClassificationCode);
+                    row.CreateCell(2).SetCellValue(item.ClassificationName);
+                    row.CreateCell(3).SetCellValue(typeData.TypeClassificationCode);
+                    row.CreateCell(4).SetCellValue(typeData.TypeClassificationName);
+                    row.CreateCell(5).SetCellValue(creatorData.CreatorName);
                     no += 1;
                 }
             }
@@ -218,42 +247,98 @@ public class ClassificationController : BaseController<TrxClassification>
             throw new Exception();
         }
     }
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     public async Task<IActionResult> Upload()
     {
         try
         {
             IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-            var type = await _classificationTypeService.GetAll();
-
-            List<TrxClassification> models = new();
-            TrxClassification model;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                var dataType = type.Where(x => x.TypeClassificationCode == row[2].ToString()).FirstOrDefault();
-                if (dataType != null)
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+
+                if (result.Rows.Count > 0)
                 {
-                    model = new();
-                    model.ClassificationId = Guid.NewGuid();
-                    model.ClassificationCode = row[0].ToString();
-                    model.ClassificationName = row[1].ToString();
-                    model.TypeClassificationId = dataType.TypeClassificationId;
-                    model.IsActive = true;
-                    model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    model.CreatedDate = DateTime.Now;
+                    var type = await _classificationTypeService.GetAll();
+                    var creator = await _archiveCreatorService.GetAll();
 
-                    models.Add(model);
+                    List<TrxClassification> models = new();
+                    TrxClassification model;
+
+                    bool valid = true;
+                    int errorCount = 0;
+
+                    result.Columns.Add("Keterangan");
+                    var classificationDetail = await _classificationService.GetAll();
+
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+                        var dataType = type.Where(x => x.TypeClassificationCode == row[3].ToString()).FirstOrDefault();
+                        var dataCreator = creator.Where(x => x.CreatorCode == row[4].ToString()).FirstOrDefault();
+
+                        if (classificationDetail.Where(x => x.ClassificationCode == row[1].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode Klasifikasi sudah ada";
+                        }
+                        else if (dataType == null)
+                        {
+                            valid = false;
+                            error = "_Tipe Klasifikasi tidak ditemukan!";
+                        }
+                        else if (dataCreator == null)
+                        {
+                            valid = false;
+                            error = "_Pencipta tidak ditemukan!";
+                        }
+
+
+                        if (valid)
+                        {
+                            model = new();
+                            model.ClassificationId = Guid.NewGuid();
+                            model.ClassificationCode = row[1].ToString();
+                            model.ClassificationName = row[2].ToString();
+                            model.TypeClassificationId = dataType.TypeClassificationId;
+                            model.CreatorId = dataCreator.CreatorId;
+                            model.IsActive = true;
+                            model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            model.CreatedDate = DateTime.Now;
+
+                            models.Add(model);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _classificationService.InsertBulk(models);
                 }
+                return View(GlobalConst.UploadForm);
             }
-            await _classificationService.InsertBulk(models);
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
 
-            return RedirectToIndex();
+            }
         }
         catch (Exception ex)
         {
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
     }
     #endregion

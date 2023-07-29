@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
         Task<TrxClassification> GetById(Guid id);
         Task<IEnumerable<TrxClassification>> GetByTypeId(Guid id);
         Task<IEnumerable<TrxClassification>> GetAll();
-        Task<DataTableResponseModel<TrxClassification>> GetListClassification(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxClassification model);
         Task<bool> InsertBulk(List<TrxClassification> models);
         Task<int> Delete(TrxClassification model);

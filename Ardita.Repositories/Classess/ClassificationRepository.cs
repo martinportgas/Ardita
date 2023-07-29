@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ardita.Repositories.Classess
 {
@@ -43,10 +45,14 @@ namespace Ardita.Repositories.Classess
             var results = await _context.TrxClassifications.Include(x => x.Creator.ArchiveUnit).Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
             return results;
         }
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(DataTableModel model)
         {
-            var results = await _context.TrxClassifications.Where(x => x.IsActive == true).CountAsync();
-            return results;
+            var result = await _context.TrxClassifications
+                    .Include(x => x.TypeClassification)
+                    .Include(x => x.Creator)
+                    .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName + x.TypeClassification.TypeClassificationName + x.Creator.CreatorName).Contains(model.searchValue))
+                    .CountAsync();
+            return result;
         }
 
         public async Task<TrxClassification> GetById(Guid id)
@@ -54,29 +60,22 @@ namespace Ardita.Repositories.Classess
             var result = await _context.TrxClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.IsActive == true && x.ClassificationId == id);
             return result;
         }
-        public async Task<IEnumerable<TrxClassification>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<TrxClassification> result;
-
-            var propertyInfo = typeof(TrxClassification).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(TrxClassification).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.TrxClassifications
-                .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
-                .OrderBy(x => EF.Property<TrxClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.TrxClassifications
-                .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName).Contains(model.searchValue))
-                .OrderByDescending(x => EF.Property<TrxClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+            var result = await _context.TrxClassifications
+                 .Include(x => x.TypeClassification)
+                 .Include(x => x.Creator)
+                 .Where(x => x.IsActive == true && (x.ClassificationCode + x.ClassificationName + x.TypeClassification.TypeClassificationName + x.Creator.CreatorName).Contains(model.searchValue))
+                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                 .Skip(model.skip).Take(model.pageSize)
+                 .Select(x => new {
+                     x.ClassificationId,
+                     x.ClassificationCode,
+                     x.ClassificationName,
+                     x.TypeClassification.TypeClassificationName,
+                     x.Creator.CreatorName
+                 })
+                 .ToListAsync();
 
             return result;
         }

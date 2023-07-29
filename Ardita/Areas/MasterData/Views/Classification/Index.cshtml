@@ -1,6 +1,9 @@
 ﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -28,8 +31,9 @@
                     <h5>Classification</h5>
                     <div class="ibox-tools">
                         <a href="@Url.Action("Add", "Classification", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action("Export", "Classification", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
-                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                        <a href="@Url.Action("Export", "Classification", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a> 
+                        <a href="@Url.Action(GlobalConst.UploadForm, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
+
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -38,8 +42,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Classification Code</th>
-                                <th>Classification Name</th>
+                                <th>Kode Klasifikasi</th>
+                                <th>Nama Klasifikasi</th>
+                                <th>Tipe Klasifikasi</th>
+                                <th>Pencipta</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -47,36 +53,7 @@
                 </div>
             </div>
         </div>
-        <!--Modal-->
-        <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content animated fadeIn">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Classification Upload</h4>
-                        <small>Pastikan format file anda sudah benar.</small>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="row">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <a id="btnDownloadTemplate" href="@Url.Action("DownloadTemplate", "Classification", new { Area="MasterData"})" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                        <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      
     </div>
 </div>
 @section Scripts {
@@ -102,12 +79,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "classificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "classificationId",  "name": "classificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "classificationId", "orderable": false, "searchable": false,
+                        "data": "classificationId", "name": "classificationId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Classification", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.classificationId);
@@ -124,84 +101,15 @@
                     },
                     { "data": "classificationCode", "name": "classificationCode", "autoWidth": true },
                     { "data": "classificationName", "name": "classificationName", "autoWidth": true },
+                    { "data": "typeClassificationName", "name": " typeClassification.typeClassificationName", "autoWidth": true },
+                    { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
                 ],
                 buttons: [
                     { extend: 'excel', title: 'user-data' },
                 ]
             });
 
-            $('#btnUpload').on('click', function () {
-                var fileExtension = ['xls', 'xlsx'];
-                var filename = $('#fUpload').val();
-                if (filename.length == 0) {
-                    alert("Please select a file.");
-                    return false;
-                }
-                else {
-                    var extension = filename.replace(/^.*\./, '');
-                    if ($.inArray(extension, fileExtension) == -1) {
-                        alert("Please select only excel files.");
-                        return false;
-                    }
-                }
-                var fdata = new FormData();
-                var fileUpload = $("#fUpload").get(0);
-                var files = fileUpload.files;
-                fdata.append(files[0].name, files[0]);
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("Upload", "MasterData", new { Area = "UserManage" })',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: fdata,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        window.location.reload();
-                    },
-                    error: function (e) {
-                        alert(e.responseText);
-                    }
-                });
-            });
-            $('#btnUpload').on('click', function () {
-                var fileExtension = ['xls', 'xlsx'];
-                var filename = $('#fUpload').val();
-                if (filename.length == 0) {
-                    alert("Please select a file.");
-                    return false;
-                }
-                else {
-                    var extension = filename.replace(/^.*\./, '');
-                    if ($.inArray(extension, fileExtension) == -1) {
-                        alert("Please select only excel files.");
-                        return false;
-                    }
-                }
-                var fdata = new FormData();
-                var fileUpload = $("#fUpload").get(0);
-                var files = fileUpload.files;
-                fdata.append(files[0].name, files[0]);
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("Upload", "Classification", new { Area = "MasterData" })',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("XSRF-TOKEN",
-                            $('input:hidden[name="__RequestVerificationToken"]').val());
-                    },
-                    data: fdata,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        window.location.reload();
-                    },
-                    error: function (e) {
-                        alert(e.responseText);
-                    }
-                });
-            });
+          
         });
     </script>
 }

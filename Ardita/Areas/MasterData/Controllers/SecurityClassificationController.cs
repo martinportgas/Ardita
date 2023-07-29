@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -83,6 +84,12 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
             return RedirectToIndex();
         }
     }
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -125,32 +132,75 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-            List<MstSecurityClassification> securityClassifications = new();
-            MstSecurityClassification securityClassification;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                securityClassification = new();
-                securityClassification.SecurityClassificationId = Guid.NewGuid();
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                
+                if (result.Rows.Count > 0) 
+                {
+                    List<MstSecurityClassification> securityClassifications = new();
+                    MstSecurityClassification securityClassification;
 
-                securityClassification.SecurityClassificationCode = row[1].ToString();
-                securityClassification.SecurityClassificationName = row[2].ToString();
 
-                securityClassification.IsActive = true;
-                securityClassification.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                securityClassification.CreatedDate = DateTime.Now;
+                    bool valid = true;
+                    int errorCount = 0;
 
-                securityClassifications.Add(securityClassification);
+                    result.Columns.Add("Keterangan");
+                    var securitiesDetail = await _securityClassificationService.GetAll();
+
+
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+
+                        if (securitiesDetail.Where(x => x.SecurityClassificationCode == row[1].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode Klasifikasi Keamanan sudah ada";
+                        }
+
+                        if (valid)
+                        {
+                            securityClassification = new();
+                            securityClassification.SecurityClassificationId = Guid.NewGuid();
+
+                            securityClassification.SecurityClassificationCode = row[1].ToString();
+                            securityClassification.SecurityClassificationName = row[2].ToString();
+
+                            securityClassification.IsActive = true;
+                            securityClassification.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            securityClassification.CreatedDate = DateTime.Now;
+
+                            securityClassifications.Add(securityClassification);
+
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _securityClassificationService.InsertBulk(securityClassifications);
+                }
+                return View(GlobalConst.UploadForm);
             }
-            await _securityClassificationService.InsertBulk(securityClassifications);
-            return RedirectToIndex();
+            else 
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
+
         }
         catch (Exception)
         {
 
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }
