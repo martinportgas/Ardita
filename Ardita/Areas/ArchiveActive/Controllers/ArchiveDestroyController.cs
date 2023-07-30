@@ -27,6 +27,14 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IArchiveUnitService archiveUnitService,
             IClassificationSubSubjectService classificationSubSubjectService,
             IUserService userService,
+            IArchiveCreatorService archiveCreatorService,
+            IFloorService floorService,
+            IRoomService roomService,
+            IRackService rackService,
+            ILevelService levelService,
+            IRowService rowService,
+            IClassificationService classificationService,
+            IClassificationSubjectService classificationSubjectService,
             IHostingEnvironment hostingEnvironment)
         {
             _archiveExtendService = archiveExtendService;
@@ -41,15 +49,28 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _classificationSubSubjectService = classificationSubSubjectService;
             _userService = userService;
             _hostingEnvironment = hostingEnvironment;
+            _archiveCreatorService = archiveCreatorService;
+            _floorService = floorService;
+            _roomService = roomService;
+            _rackService = rackService;
+            _levelService = levelService;
+            _rowService = rowService;
+            _classificationService = classificationService;
+            _classificationSubjectService = classificationSubjectService;
         }
         #endregion
         #region MAIN ACTION
-        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<ActionResult> Index()
+        {
+            await AllViewBagIndex();
+            return await base.Index();
+        }
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
                 model.IsArchiveActive = true;
+                model.SessionUser = User;
                 var result = await _archiveDestroyService.GetList(model);
 
                 return Json(result);
@@ -398,6 +419,18 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                 ViewBag.listSubSubject = await BindSubSubjectClasscifications();
             }
 
+        }
+        public async Task AllViewBagIndex()
+        {
+            ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.ListFloor = await BindFloors();
+            ViewBag.ListRoom = await BindRooms();
+            ViewBag.ListRack = await BindRacks();
+            ViewBag.ListLevel = await BindLevels();
+            ViewBag.ListRow = await BindRows();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListClassification = await BindClasscifications();
+            ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveCirculation, new { Area = GlobalConst.ArchiveActive });
         #endregion

@@ -23,7 +23,12 @@ public class ArchiveReceivedService : IArchiveReceivedService
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
-                skip = model.start
+                skip = model.start,
+                SessionUser = model.SessionUser,
+                advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                }
             };
 
             var dataCount = await _archiveReceivedRepository.GetCountByFilterDataArchiveMovement(filterData);

@@ -1,5 +1,7 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Report;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.WebPages;
 
 namespace Ardita.Services.Classess
 {
@@ -61,6 +64,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
+                filterData.SessionUser = model.SessionUser;
 
                 var dataCount = await _archiveDestroyRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveDestroyRepository.GetByFilterModel(filterData);

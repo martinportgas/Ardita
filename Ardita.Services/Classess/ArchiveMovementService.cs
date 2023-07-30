@@ -60,6 +60,12 @@ namespace Ardita.Services.Classess
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value,
+                    SearchOther = model.columns[3].search.value == null ? "1=1" : model.columns[3].search.value
+                };
 
                 var dataCount = await _archiveMovementRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveMovementRepository.GetByFilterModel(filterData);

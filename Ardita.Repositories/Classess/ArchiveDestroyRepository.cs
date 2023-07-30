@@ -72,10 +72,17 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxArchiveDestroys
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Include(x => x.Status)
                 .Where(x => x.IsActive == true && ( x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
-                .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
+                .Where(x => x.IsArchiveActive == model.IsArchiveActive)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveDestroyDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
@@ -93,10 +100,16 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<int> GetCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxArchiveDestroys
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Include(x => x.Status)
-                .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Status.Name).Contains(model.searchValue))
-                .Where(" IsArchiveActive = @0 ", model.IsArchiveActive)
+                .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                .Where(x => x.IsArchiveActive == model.IsArchiveActive)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
+                .Where(model.advanceSearch!.Search)
                 .CountAsync();
 
             return result;

@@ -20,6 +20,110 @@
     <div class="col-lg-2">
     </div>
 </div>
+<div class="wrapper wrapper-content animated fadeInRight pb-0">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h4>Pencarian</h4>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6 b-r">
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Judul Arsip</label>
+                                <div class="col-lg-9">
+                                    <input type="text" id="txtTitle" class="form-control" placeholder="Judul Arsip" />
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Pencipta Arsip</label>
+                                <div class="col-lg-9">
+                                    <select id="txtCreatorId" class="form-control" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Tahun</label>
+                                <div class="col-lg-9">
+                                    <select id="txtYear" class="select2_demo_1 form-control"
+                                            data-placeholder="-- Semua --">
+                                        <option value=""></option>
+                                        @for (int i = 0; i > -30; i--)
+                                        {
+                                            <option value="@DateTime.Now.AddYears(i).ToString("yyyy")">@DateTime.Now.AddYears(i).ToString("yyyy")</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Klasifikasi</label>
+                                <div class="col-lg-9">
+                                    <select id="txtClassificationId" class="form-control" asp-items="ViewBag.ListClassification" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Subjek Klasifikasi</label>
+                                <div class="col-lg-9">
+                                    <select id="txtSubjectClassificationId" class="form-control" asp-items="ViewBag.ListSubjectClassification" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Lokasi Kearsipan</label>
+                                <div class="col-lg-9">
+                                    <select id="txtArchiveUnitId" class="form-control" asp-items="ViewBag.ListArchiveUnit" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Lantai</label>
+                                <div class="col-lg-9">
+                                    <select id="txtFloorId" class="form-control" asp-items="ViewBag.ListFloor" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Ruangan</label>
+                                <div class="col-lg-9">
+                                    <select id="txtRoomId" class="form-control" asp-items="ViewBag.ListRoom" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Rak</label>
+                                <div class="col-lg-9">
+                                    <select id="txtRackId" class="form-control" asp-items="ViewBag.ListRack" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Tingkat</label>
+                                <div class="col-lg-9">
+                                    <select id="txtLevelId" class="form-control" asp-items="ViewBag.ListLevel" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Baris</label>
+                                <div class="col-lg-9">
+                                    <select id="txtRowId" class="form-control" asp-items="ViewBag.ListRow" data-placeholder="-- Semua --"><option value=""></option></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group mb-0">
+                                <button class="btn btn-sm btn-success pull-right" id="btnSearch"><i class="fa fa-filter"></i> Cari</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12">
@@ -53,7 +157,25 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        function initDropdown() {
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtCompanyId'));
+
+            initGlobalDropdown($('#txtFloorId'), '@Url.Action(GlobalConst.BindParamFloorsByArchiveUnitId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtArchiveUnitId'));
+
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindParamRoomActiveByFloorId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtFloorId'));
+
+            initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRoomId'));
+
+            initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRackId'));
+
+            initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtLevelId'));
+
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtArchiveUnitId'));
+
+            initGlobalDropdown($('#txtSubjectClassificationId'), '@Url.Action(GlobalConst.BindParamClassificationSubjectIdByClassificationId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtClassificationId'));
+        }
         $(document).ready(function () {
+            initDropdown();
             var table = $('#tbl').DataTable({
                 processing: true,
                 serverSide: true,
@@ -101,6 +223,29 @@
                     },
                     
                 ]
+            });
+            var defaultSearch = '1=1';
+
+            $('#btnSearch').on('click', function () {
+                var and = ' && ';
+                var title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TitleArchive.Contains(\"${$('#txtTitle').val()}\"))`;
+                var creator = $('#txtCreatorId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == \"${$('#txtCreatorId').val()}\")`;
+                var year = $('#txtYear').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.ArchiveYear.Contains(\"${$('#txtYear').val()}\"))`;
+                var classification = $('#txtClassificationId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassification.ClassificationId == \"${$('#txtClassificationId').val()}\")`;
+                var subclassification = $('#txtSubjectClassificationId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassificationId == \"${$('#txtSubjectClassificationId').val()}\")`;
+                var archiveUnit = $('#txtArchiveUnitId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == \"${$('#txtArchiveUnitId').val()}\")`;
+                var floor = $('#txtFloorId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.Room.FloorId == \"${$('#txtFloorId').val()}\")`;
+                var room = $('#txtRoomId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RoomId == \"${$('#txtRoomId').val()}\")`;
+                var rack = $('#txtRackId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.RackId == \"${$('#txtRackId').val()}\")`;
+                var level = $('#txtLevelId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.LevelId == \"${$('#txtLevelId').val()}\")`;
+                var row = $('#txtRowId').val() == '' ? '1=1' : `TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.RowId == \"${$('#txtRowId').val()}\")`;
+                var search = `${defaultSearch}${and}${title}${and}${creator}${and}${year}${and}${classification}${and}${subclassification}${and}${archiveUnit}${and}${floor}${and}${room}${and}${rack}${and}${level}${and}${row}`;
+
+                table
+                    //.column(0).search($('#txtStartDate').val())
+                    //.column(1).search($('#txtEndDate').val())
+                    .column(2).search(search)
+                    .draw();
             });
         });
     </script>

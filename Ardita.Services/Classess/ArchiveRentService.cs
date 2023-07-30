@@ -42,6 +42,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
 
                 var dataCount = await _archiveRentRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveRentRepository.GetByFilterModel(filterData);
@@ -121,6 +126,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
 
                 var dataCount = await _archiveRentRepository.GetApprovalCountByFilterModel(filterData);
                 var results = await _archiveRentRepository.GetApprovalByFilterModel(filterData);
@@ -157,6 +167,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
 
                 var dataCount = await _archiveRentRepository.GetRetrievalCountByFilterModel(filterData);
                 var results = await _archiveRentRepository.GetRetrievalByFilterModel(filterData);
@@ -188,6 +203,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
 
                 var dataCount = await _archiveRentRepository.GetReturnCountByFilterModel(filterData);
                 var results = await _archiveRentRepository.GetReturnByFilterModel(filterData);
