@@ -11,5 +11,6 @@ namespace Ardita.Models.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Search { get; set; }
+        public string SearchOther { get; set; }
     }
 }

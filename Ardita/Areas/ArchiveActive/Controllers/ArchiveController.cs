@@ -20,10 +20,10 @@ public class ArchiveController : BaseController<TrxArchive>
         IGmdService gmdService,
         IClassificationSubSubjectService classificationSubSubjectService,
         ISecurityClassificationService securityClassificationService,
-        IArchiveCreatorService archiveCreatorService,
         IFileArchiveDetailService fileArchiveDetailService,
         IArchiveOwnerService archiveOwnerService,
         IArchiveTypeService archiveTypeService,
+        IArchiveCreatorService archiveCreatorService,
         IArchiveUnitService archiveUnitService,
         IFloorService floorService,
         IRoomService roomService,
@@ -42,6 +42,7 @@ public class ArchiveController : BaseController<TrxArchive>
         _archiveOwnerService = archiveOwnerService;
         _archiveTypeService = archiveTypeService;
         _archiveUnitService = archiveUnitService;
+        _archiveCreatorService = archiveCreatorService;
         _floorService = floorService;
         _roomService = roomService;
         _rackService = rackService;

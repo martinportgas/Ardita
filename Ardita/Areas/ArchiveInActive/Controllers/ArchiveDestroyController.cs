@@ -24,7 +24,15 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             IArchiveApprovalService archiveApprovalService,
             IMediaStorageService mediaStorageService,
             IArchiveUnitService archiveUnitService,
-            IClassificationSubSubjectService classificationSubSubjectService)
+            IClassificationSubSubjectService classificationSubSubjectService,
+        IClassificationService classificationService,
+        IClassificationSubjectService classificationSubjectService,
+        IFloorService floorService,
+        IRoomService roomService,
+        IRackService rackService,
+        ILevelService levelService,
+        IRowService rowService,
+        IArchiveCreatorService archiveCreatorService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -36,6 +44,16 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _mediaStorageService = mediaStorageService;
             _archiveUnitService = archiveUnitService;
             _classificationSubSubjectService = classificationSubSubjectService;
+            _archiveUnitService = archiveUnitService;
+            _classificationSubSubjectService = classificationSubSubjectService;
+            _classificationSubjectService = classificationSubjectService;
+            _levelService = levelService;
+            _rowService = rowService;
+            _archiveCreatorService = archiveCreatorService;
+            _classificationService = classificationService;
+            _rackService = rackService;
+            _roomService = roomService;
+            _floorService = floorService;
         }
         #endregion
         #region MAIN ACTION
@@ -45,6 +63,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             try
             {
                 model.IsArchiveActive = false;
+                model.SessionUser = User;
                 var result = await _archiveDestroyService.GetList(model);
 
                 return Json(result);
@@ -419,6 +438,18 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 ViewBag.listSubSubject = await BindSubSubjectClasscifications();
             }
             
+        }
+        public async Task AllViewBagIndex()
+        {
+            ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.ListFloor = await BindFloors();
+            ViewBag.ListRoom = await BindRooms();
+            ViewBag.ListRack = await BindRacks();
+            ViewBag.ListLevel = await BindLevels();
+            ViewBag.ListRow = await BindRows();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListClassification = await BindClasscifications();
+            ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive });
         #endregion

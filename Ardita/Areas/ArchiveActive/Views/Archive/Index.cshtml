@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="form-group row rowreport">
-                                <label class="col-lg-3 col-form-label">Tahun</label>
+                                <label class="col-lg-3 col-form-label">Tahun Pemusnahan</label>
                                 <div class="col-lg-9">
                                     <select id="txtYear" class="select2_demo_1 form-control"
                                             data-placeholder="-- Semua --">
@@ -350,17 +350,17 @@
 
             $('#btnSearch').on('click', function () {
                 var and = ' && ';
-                var title = $('#txtTitle').val() == '' ? '1=1' : `TitleArchive.ToLower().Contains(\"${$('#txtTitle').val()}\")`;
-                var creator = $('#txtCreatorId').val() == '' ? '1=1' : `CreatorId == \"${$('#txtCreatorId').val()}\"`;
-                var year = $('#txtYear').val() == '' ? '1=1' : `createdDateArchive.Year == ${$('#txtYear').val()}`;
-                var classification = $('#txtClassificationId').val() == '' ? '1=1' : `SubSubjectClassification.SubjectClassification.ClassificationId == \"${$('#txtClassificationId').val()}\"`;
-                var subclassification = $('#txtSubjectClassificationId').val() == '' ? '1=1' : `SubSubjectClassification.SubjectClassificationId == \"${$('#txtSubjectClassificationId').val()}\"`;
-                var archiveUnit = $('#txtArchiveUnitId').val() == '' ? '1=1' : `Creator.ArchiveUnitId == \"${$('#txtArchiveUnitId').val()}\"`;
-                var floor = $('#txtFloorId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.FloorId == \"${$('#txtFloorId').val()}\"`;
-                var room = $('#txtRoomId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == \"${$('#txtRoomId').val()}\"`;
-                var rack = $('#txtRackId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.RackId == \"${$('#txtRackId').val()}\"`;
-                var level = $('#txtLevelId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.LevelId == \"${$('#txtLevelId').val()}\"`;
-                var row = $('#txtRowId').val() == '' ? '1=1' : `TrxMediaStorageDetails.FirstOrDefault().MediaStorage.RowId == \"${$('#txtRowId').val()}\"`;
+                var title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TitleArchive.ToLower().Contains(\"${$('#txtTitle').val()}\")`;
+                var creator = $('#txtCreatorId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.CreatorId == \"${$('#txtCreatorId').val()}\")`;
+                var year = $('#txtYear').val() == '' ? '1=1' : `destroySchedule.Year == ${$('#txtYear').val()}`;
+                var classification = $('#txtClassificationId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassification.ClassificationId == \"${$('#txtClassificationId').val()}\")`;
+                var subclassification = $('#txtSubjectClassificationId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassificationId == \"${$('#txtSubjectClassificationId').val()}\")`;
+                var archiveUnit = $('#txtArchiveUnitId').val() == '' ? '1=1' : `ArchiveUnitId == \"${$('#txtArchiveUnitId').val()}\"`;
+                var floor = $('#txtFloorId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.Room.FloorId == \"${$('#txtFloorId').val()}\")`;
+                var room = $('#txtRoomId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == \"${$('#txtRoomId').val()}\")`;
+                var rack = $('#txtRackId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.RackId == \"${$('#txtRackId').val()}\")`;
+                var level = $('#txtLevelId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.LevelId == \"${$('#txtLevelId').val()}\")`;
+                var row = $('#txtRowId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.RowId == \"${$('#txtRowId').val()}\")`;
                 var search = `${defaultSearch}${and}${title}${and}${creator}${and}${year}${and}${classification}${and}${subclassification}${and}${archiveUnit}${and}${floor}${and}${room}${and}${rack}${and}${level}${and}${row}`;
 
                 table

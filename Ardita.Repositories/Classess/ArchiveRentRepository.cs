@@ -110,10 +110,16 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<object>> GetApprovalByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
                  .Include(x => x.Borrower)
                  .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                  .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                  .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                  .Skip(model.skip).Take(model.pageSize)
                  .Select(x => new
@@ -134,10 +140,16 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetApprovalCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
-               .Include(x => x.Borrower)
-                .Include(x => x.TrxArchiveRent.Status)
-                .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                 .Include(x => x.Borrower)
+                 .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                .CountAsync();
 
             return result;
@@ -145,10 +157,16 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
                 .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new
@@ -293,11 +311,16 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<int> GetCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
                 .Include(x => x.Borrower)
                 .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Where($"(TrxArchiveRent.RequestedReturnDate.ToString()).Contains(@0)", model.searchValue)
-               .Where($"(TrxArchiveRent.ReturnDate.ToString()).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                .CountAsync();
 
             return result;
@@ -306,11 +329,17 @@ namespace Ardita.Repositories.Classess
         #region Retrieval
         public async Task<IEnumerable<object>> GetRetrievalByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
                  .Include(x => x.Borrower)
                  .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                  .Where(x => x.TrxArchiveRent.RetrievalDate != null)
                  .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                  .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                  .Skip(model.skip).Take(model.pageSize)
                  .Select(x => new
@@ -332,11 +361,17 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetRetrievalCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
-            .Include(x => x.Borrower)
-            .Include(x => x.TrxArchiveRent.Status)
-            .Where(x => x.TrxArchiveRent.RetrievalDate != null)
-            .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                 .Include(x => x.Borrower)
+                 .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
+                 .Where(x => x.TrxArchiveRent.RetrievalDate != null)
+                 .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
              .CountAsync();
 
             return result;
@@ -454,11 +489,17 @@ namespace Ardita.Repositories.Classess
         #region Return
         public async Task<IEnumerable<object>> GetReturnByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
                  .Include(x => x.Borrower)
                  .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                  .Where(x => x.TrxArchiveRent.ReturnDate != null)
                  .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                  .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                  .Skip(model.skip).Take(model.pageSize)
                  .Select(x => new
@@ -480,11 +521,17 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetReturnCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await _context.TrxRentHistories
-                .Include(x => x.Borrower)
+                 .Include(x => x.Borrower)
                  .Include(x => x.TrxArchiveRent.Status)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.Creator.ArchiveUnit)
+                .Include(x => x.TrxArchiveRent.TrxArchiveRentDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                  .Where(x => x.TrxArchiveRent.ReturnDate != null)
                  .Where($"(Borrower.BorrowerName).Contains(@0)", model.searchValue)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId)))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveRent.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                .Where(model.advanceSearch!.Search)
                 .CountAsync();
 
             return result;

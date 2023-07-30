@@ -21,7 +21,17 @@ public class ArchiveCirculationController : BaseController<TrxArchiveMovement>
         IArchiveRetentionService archiveRetentionService,
         IArchiveApprovalService archiveApprovalService,
         ITypeStorageService typeStorageService,
-        IMediaStorageService mediaStorageService)
+        IMediaStorageService mediaStorageService,
+        IArchiveUnitService archiveUnitService,
+        IClassificationService classificationService,
+        IClassificationSubjectService classificationSubjectService,
+        IFloorService floorService,
+        IRoomService roomService,
+        IRackService rackService,
+        ILevelService levelService,
+        IRowService rowService,
+        IArchiveCreatorService archiveCreatorService,
+        IClassificationSubSubjectService classificationSubSubjectService)
     {
         _archiveExtendService = archiveExtendService;
         _employeeService = employeeService;
@@ -32,13 +42,28 @@ public class ArchiveCirculationController : BaseController<TrxArchiveMovement>
         _archiveMovementService = archiveMovementService;
         _typeStorageService = typeStorageService;
         _mediaStorageService = mediaStorageService;
+        _archiveUnitService = archiveUnitService;
+        _classificationSubSubjectService = classificationSubSubjectService;
+        _classificationSubjectService = classificationSubjectService;
+        _levelService = levelService;
+        _rowService = rowService;
+        _archiveCreatorService = archiveCreatorService;
+        _classificationService = classificationService;
+        _rackService = rackService;
+        _roomService = roomService;
+        _floorService = floorService;
     }
     #endregion
-    public override async Task<ActionResult> Index() => await base.Index();
+    public override async Task<ActionResult> Index()
+    {
+        await AllViewBagIndex();
+        return await base.Index();
+    }
     public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
+            model.SessionUser = User;
             var result = await _archiveMovementService.GetList(model);
 
             return Json(result);
@@ -53,5 +78,17 @@ public class ArchiveCirculationController : BaseController<TrxArchiveMovement>
     {
         await Task.Delay(0);
         return View(GlobalConst.Form);
+    }
+    public async Task AllViewBagIndex()
+    {
+        ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+        ViewBag.ListFloor = await BindFloors();
+        ViewBag.ListRoom = await BindRooms();
+        ViewBag.ListRack = await BindRacks();
+        ViewBag.ListLevel = await BindLevels();
+        ViewBag.ListRow = await BindRows();
+        ViewBag.ListArchiveCreator = await BindArchiveCreators();
+        ViewBag.ListClassification = await BindClasscifications();
+        ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
     }
 }
