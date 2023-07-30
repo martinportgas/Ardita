@@ -1,0 +1,41 @@
+{
+  "export": {
+    "0": {
+      "name": "Tingkat",
+      "column": {
+        "0": "No",
+        "1": "Kode Tingkat",
+        "2": "Nama Tingkat",
+        "3": "Nama Rak",
+        "4": "Nama Ruangan",
+        "5": "Tipe Ruangan",
+        "6": "Nama Lantai",
+        "7": "Unit Kearsipan"
+      }
+    }
+  },
+  "import": {
+    "0": {
+      "name": "Tingkat",
+      "column": {
+        "0": "No",
+        "1": "Kode Tingkat",
+        "2": "Nama Tingkat",
+        "3": "Kode Rak"
+      }
+    },
+    "1": {
+      "name": "Daftar Rak",
+      "column": {
+        "0": "No",
+        "1": "Kode Rak",
+        "2": "Nama Rak",
+        "3": "Kode Ruangan",
+        "4": "Nama Ruangan",
+        "5": "Tipe Ruangan",
+        "6": "Nama Lantai",
+        "7": "Unit Kearsipan"
+      }
+    }
+  }
+}
