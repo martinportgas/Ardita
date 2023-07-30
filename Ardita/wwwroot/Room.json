@@ -1,0 +1,44 @@
+{
+  "export": {
+    "0": {
+      "name": "Ruangan",
+      "column": {
+        "0": "No",
+        "1": "Kode Ruangan",
+        "2": "Nama Ruangan",
+        "3": "Tipe Ruangan",
+        "4": "Kode Lantai",
+        "5": "Nama Lantai",
+        "6": "Unit Kearsipan"
+      }
+    }
+  },
+  "import": {
+    "0": {
+      "name": "Ruangan",
+      "column": {
+        "0": "No",
+        "1": "Kode Ruangan",
+        "2": "Nama Ruangan",
+        "3": "Tipe Ruangan",
+        "4": "Kode Lantai"
+      }
+    },
+    "1": {
+      "name": "Daftar Lantai",
+      "column": {
+        "0": "No",
+        "1": "Kode Lantai",
+        "2": "Nama Lantai",
+        "3": "Unit Kearsipan"
+      }
+    },
+    "2": {
+      "name": "Daftar Tipe Ruangan",
+      "column": {
+        "0": "No",
+        "1": "Tipe Ruangan"
+      }
+    }
+  }
+}

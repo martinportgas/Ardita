@@ -53,17 +53,17 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Ruangan</label>
-                                        <input type="text" placeholder="" id="txtRoomCode" class="form-control" asp-for="RoomCode">
+                                        <input type="text" placeholder="" id="txtRoomCode" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RoomCode" >
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Ruangan</label>
-                                        <input type="text" placeholder="" id="txtRoomName" class="form-control" asp-for="RoomName">
+                                        <input type="text" placeholder="" id="txtRoomName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RoomName">
                                     </div>
                                     <div class="form-group">
                                         <label>Tipe Ruangan</label>
 
                                         <select asp-for="ArchiveRoomType" asp-items="ViewBag.listTypeOfRooms"
-                                                id="txtArchiveRoomType" class="select2_demo_1 form-control"
+                                                id="txtArchiveRoomType" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                 data-placeholder="-- Pilih Tipe Ruangan --">
                                             <option value=""></option>
                                             <option value="@GlobalConst.UnitPengolah">@GlobalConst.UnitPengolah</option>

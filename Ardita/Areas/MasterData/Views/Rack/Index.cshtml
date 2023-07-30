@@ -1,7 +1,9 @@
 ﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -30,7 +32,7 @@
                     <div class="ibox-tools">
                         <a href="@Url.Action(GlobalConst.Add, GlobalConst.Rack, new { Area = GlobalConst.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                         <a href="@Url.Action(GlobalConst.Export, GlobalConst.Rack, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
-                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                        <a href="@Url.Action(GlobalConst.UploadForm, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -44,6 +46,8 @@
                                 <th>Panjang</th>
                                 <th>Ruangan</th>
                                 <th>Tipe Ruangan</th>
+                                <th>Nama Lantai</th>
+                                <th>Unit Kearsipan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -51,37 +55,7 @@
                 </div>
             </div>
         </div>
-        <!--Modal-->
-        <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content animated fadeIn">
-                    <form id="frmRackUpload" method="post" enctype="multipart/form-data" asp-controller="@GlobalConst.Rack" asp-action="@GlobalConst.Upload" asp-area="@GlobalConst.MasterData">
-                        @Html.AntiForgeryToken()
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Rack Upload</h4>
-                            <small>Pastikan format file anda sudah benar.</small>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                        </div>
-                        <div class="modal-footer">
-                            <a id="btnDownloadTemplate" href="@Url.Action(GlobalConst.DownloadTemplate, GlobalConst.Rack, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                            <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>>
-                </div>
-            </div>
-        </div>
+       
     </div>
 </div>
 @section Scripts {
@@ -107,12 +81,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "rackId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "rackId", "name": "rackId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "rackId", "orderable": false, "searchable": false,
+                        "data": "rackId", "name": "rackId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Rack", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.rackId);
@@ -130,26 +104,13 @@
                     { "data": "rackCode", "name": "rackCode", "autoWidth": true },
                     { "data": "rackName", "name": "rackName", "autoWidth": true },
                     { "data": "length", "name": "length", "autoWidth": true },
-                    { "data": "room.roomName", "name": "room.roomName", "autoWidth": true },
-                    { "data": "room.archiveRoomType", "name": "room.archiveRoomType", "autoWidth": true },
+                    { "data": "roomName", "name": "room.roomName", "autoWidth": true },
+                    { "data": "archiveRoomType", "name": "room.archiveRoomType", "autoWidth": true },
+                    { "data": "floorName", "name": "room.floor.floorName", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "room.floor.archiveUnit.archiveUnitName", "autoWidth": true },
                 ]
             });
-            $('#btnUpload').on('click', function () {
-                var fileExtension = ['xls', 'xlsx'];
-                var filename = $('#fUpload').val();
-                if (filename.length == 0) {
-                    alert("Please select a file.");
-                    return false;
-                }
-                else {
-                    var extension = filename.replace(/^.*\./, '');
-                    if ($.inArray(extension, fileExtension) == -1) {
-                        alert("Please select only excel files.");
-                        return false;
-                    }
-                }
-                $("#frmRackUpload").submit();
-            });
+            
         });
         
     </script>
