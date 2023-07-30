@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -37,7 +38,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                var result = await _rowService.GetListClassification(model);
+                var result = await _rowService.GetList(model);
                 return Json(result);
             }
             catch (Exception ex)
@@ -141,6 +142,12 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
@@ -148,74 +155,121 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                var levels = await _levelService.GetAll();
-
-                List<TrxRow> trxRows = new();
-                TrxRow objRow;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    objRow = new();
-                    objRow.RowId = Guid.NewGuid();
-                    objRow.LevelId = levels.Where(x => x.LevelCode.Contains(row[1].ToString())).FirstOrDefault().LevelId;
-                    objRow.RowCode = row[2].ToString();
-                    objRow.RowName = row[3].ToString();
-                    objRow.IsActive = true;
-                    objRow.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    objRow.CreatedDate = DateTime.Now;
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                    if (result.Rows.Count > 0)
+                    {
+                        var levels = await _levelService.GetAll();
+                        var rowDetails = await _rowService.GetAll();
 
-                    trxRows.Add(objRow);
+                        List<TrxRow> trxRows = new();
+                        TrxRow objRow;
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+                            if (string.IsNullOrEmpty(row[1].ToString()))
+                            {
+                                valid = false;
+                                error = "_Kode Baris harus diisi";
+                            }
+                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            {
+                                valid = false;
+                                error = "_Nama Baris harus diisi";
+                            }
+                            else if (rowDetails.Where(x => x.RowCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Baris sudah ada";
+                            }
+                            else if (levels.Where(x => x.LevelCode == row[3].ToString()).Count() == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Tingkat tidak ditemukan";
+                            }
+
+
+                            if (valid)
+                            {
+                                objRow = new();
+                                objRow.RowId = Guid.NewGuid();
+                                objRow.LevelId = levels.Where(x => x.LevelCode.Contains(row[3].ToString())).FirstOrDefault().LevelId;
+                                objRow.RowCode = row[1].ToString();
+                                objRow.RowName = row[2].ToString();
+                                objRow.IsActive = true;
+                                objRow.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                objRow.CreatedDate = DateTime.Now;
+
+                                trxRows.Add(objRow);
+
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _rowService.InsertBulk(trxRows);
+                    }
+                    else
+                    {
+                        TempData["errorCount"] = 100000001;
+                        return RedirectToAction(GlobalConst.UploadForm);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _rowService.InsertBulk(trxRows);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
         }
         public async Task<IActionResult> Export()
         {
             try
             {
+                string templateName = nameof(TrxRow).ToCleanNameOf();
                 string fileName = nameof(TrxRow).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var rows = await _rowService.GetAll();
 
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-                row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
-                row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
-                row.CreateCell(4).SetCellValue(nameof(TrxRack.RackName));
-                row.CreateCell(5).SetCellValue(nameof(TrxLevel.LevelName));
-                row.CreateCell(6).SetCellValue(nameof(TrxRow.RowCode));
-                row.CreateCell(7).SetCellValue(nameof(TrxRow.RowName));
-
-                int no = 1;
-                foreach (var item in rows)
+                List<DataTable> listData = new List<DataTable>() {
+                rows.Select(x => new
                 {
-                    row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(no);
-                    row.CreateCell(1).SetCellValue(item.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName);
-                    row.CreateCell(2).SetCellValue(item.Level.Rack.Room.Floor.FloorName);
-                    row.CreateCell(3).SetCellValue(item.Level.Rack.Room.RoomName);
-                    row.CreateCell(4).SetCellValue(item.Level.Rack.RackName);
-                    row.CreateCell(5).SetCellValue(item.Level.LevelName);
-                    row.CreateCell(6).SetCellValue(item.RowCode);
-                    row.CreateCell(7).SetCellValue(item.RowName);
-
-                    no += 1;
+                    x.RowId,
+                    x.RowCode,
+                    x.RowName,
+                    x.Level.LevelName,
+                    x.Level.Rack.RackName,
+                    x.Level.Rack.Room.RoomName,
+                    x.Level.Rack.Room.Floor.FloorName,
+                    x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
                 }
+                ).ToList().ToDataTable()
+            };
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);
@@ -232,47 +286,30 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{GlobalConst.Template}-{nameof(TrxRow).ToCleanNameOf()}";
-                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
-
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRow).ToCleanNameOf());
-                ISheet excelSheetLevels = workbook.CreateSheet(nameof(TrxLevel).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-                IRow rowLevel = excelSheetLevels.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxLevel.LevelCode));
-                row.CreateCell(2).SetCellValue(nameof(TrxRow.RowCode));
-                row.CreateCell(3).SetCellValue(nameof(TrxRow.RowName));
-
-
-                rowLevel.CreateCell(0).SetCellValue(GlobalConst.No);
-                rowLevel.CreateCell(1).SetCellValue(nameof(TrxLevel.LevelCode));
-                rowLevel.CreateCell(2).SetCellValue(nameof(TrxLevel.LevelName));
-                rowLevel.CreateCell(3).SetCellValue(nameof(TrxRack.RackName));
-                rowLevel.CreateCell(4).SetCellValue(nameof(TrxRoom.RoomName));
-                rowLevel.CreateCell(5).SetCellValue(nameof(TrxFloor.FloorName));
-                rowLevel.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-
                 var dataLevels = await _levelService.GetAll();
 
-                int no = 1;
-                foreach (var item in dataLevels)
-                {
-                    rowLevel = excelSheetLevels.CreateRow(no);
+                List<DataTable> listData = new List<DataTable>() {
+                new DataTable(),
+                dataLevels.Select(x => new {
+                    x.LevelId,
+                    x.LevelCode,
+                    x.LevelName,
+                    x.Rack.RackCode,
+                    x.Rack.RackName,
+                    x.Rack.Room.RoomCode,
+                    x.Rack.Room.RoomName,
+                    x.Rack.Room.Floor.FloorCode,
+                    x.Rack.Room.Floor.FloorName,
+                    x.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName,
+                }).ToList().ToDataTable()
+            };
 
-                    rowLevel.CreateCell(0).SetCellValue(no);
-                    rowLevel.CreateCell(1).SetCellValue(item.LevelCode);
-                    rowLevel.CreateCell(2).SetCellValue(item.LevelName);
-                    rowLevel.CreateCell(3).SetCellValue(item.Rack.RackName);
-                    rowLevel.CreateCell(4).SetCellValue(item.Rack.Room.RoomName);
-                    rowLevel.CreateCell(5).SetCellValue(item.Rack.Room.Floor.FloorName);
-                    rowLevel.CreateCell(6).SetCellValue(item.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName);
-                    no += 1;
-                }
+                string templateName = nameof(TrxRow).ToCleanNameOf();
+                string fileName = $"{GlobalConst.Template}-{templateName}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Import.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);

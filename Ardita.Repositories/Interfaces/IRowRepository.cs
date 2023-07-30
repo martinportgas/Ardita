@@ -9,8 +9,8 @@ public interface IRowRepository
     Task<IEnumerable<TrxRow>> GetAll();
     Task<IEnumerable<TrxRow>> GetRowNotAvailable();
     Task<IEnumerable<TrxRow>> GetRowAvailable(IEnumerable<TrxRow> listRowNotAvailable);
-    Task<IEnumerable<TrxRow>> GetByFilterModel(DataTableModel model);
-    Task<int> GetCount();
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCount(DataTableModel model);
     Task<int> Insert(TrxRow model);
     Task<bool> InsertBulk(List<TrxRow> rows);
     Task<int> Delete(TrxRow model);
