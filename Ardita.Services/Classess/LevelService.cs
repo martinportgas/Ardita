@@ -42,23 +42,23 @@ namespace Ardita.Services.Classess
         {
             return await _levelRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxLevel>> GetListClassification(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _levelRepository.GetCount();
+                
 
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
 
                 var results = await _levelRepository.GetByFilterModel(filterData);
-
-                var responseModel = new DataTableResponseModel<TrxLevel>();
+                var dataCount = await _levelRepository.GetCount(filterData);
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

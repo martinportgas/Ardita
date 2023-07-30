@@ -69,6 +69,8 @@ namespace Ardita.Repositories.Classess
                     x => (x.RoomId + x.RoomName).Contains(model.searchValue) &&
                     x.IsActive == true && x.Floor.IsActive == true
                     )
+                  .Where(x => x.Floor!.IsActive == true)
+                .Where(x => x.Floor!.ArchiveUnit!.IsActive == true)
                 .OrderBy(x => EF.Property<TrxRoom>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -81,6 +83,8 @@ namespace Ardita.Repositories.Classess
                     x => (x.RoomId + x.RoomName).Contains(model.searchValue) &&
                     x.IsActive == true
                     )
+                  .Where(x => x.Floor!.IsActive == true)
+                .Where(x => x.Floor!.ArchiveUnit!.IsActive == true)
                 .OrderByDescending(x => EF.Property<TrxRoom>(x, propertyName))
                 .Skip(model.skip).Take(model.pageSize)
                 .ToListAsync();
@@ -99,7 +103,8 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetCount()
         {
-            var results = await _context.TrxRooms.AsNoTracking().Where(x=>x.IsActive == true).CountAsync();
+            var results = await _context.TrxRooms.AsNoTracking().Include(x => x.Floor.ArchiveUnit).Where(x=>x.IsActive == true).Where(x => x.Floor!.IsActive == true)
+                .Where(x => x.Floor!.ArchiveUnit!.IsActive == true).CountAsync();
             return results;
         }
 

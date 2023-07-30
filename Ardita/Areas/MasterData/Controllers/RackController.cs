@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -32,7 +33,7 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                var result = await _rackService.GetListClassification(model);
+                var result = await _rackService.GetList(model);
                 return Json(result);
             }
             catch (Exception ex)
@@ -129,6 +130,12 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload()
@@ -136,75 +143,125 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                var rooms = await _roomService.GetAll();
-                var floors = await _floorService.GetAll();
-
-                List<TrxRack> racks = new();
-                TrxRack rack;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    rack = new();
-                    rack.RackId = Guid.NewGuid();
-                    rack.RoomId = rooms.Where(x => x.RoomCode == row[1].ToString()).FirstOrDefault().RoomId;
-                    rack.RackCode = row[2].ToString();
-                    rack.RackName = row[3].ToString();
-                    rack.Length = Convert.ToInt32(row[4]);
-                    rack.IsActive = true;
-                    rack.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    rack.CreatedDate = DateTime.Now;
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                    if (result.Rows.Count > 0)
+                    {
+                        var rooms = await _roomService.GetAll();
+                        var floors = await _floorService.GetAll();
+                        var racksDetail = await _rackService.GetAll();
 
-                    racks.Add(rack);
+                        List<TrxRack> racks = new();
+                        TrxRack rack;
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (racksDetail.Where(x => x.RackCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Rak sudah ada";
+                            }
+                            else if (rooms.Where(x => x.RoomCode == row[4].ToString()).Count() == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Ruangan tidak ditemukan";
+                            }
+                            else if (!int.TryParse(row[3].ToString(), out int n))
+                            {
+                                valid = false;
+                                error = "_Kolom Panjang harus angka!";
+                            }
+                            else if (string.IsNullOrEmpty(row[1].ToString()))
+                            {
+                                valid = false;
+                                error = "_Kode Rak harus diisi!";
+                            }
+                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            {
+                                valid = false;
+                                error = "_Nama Rak harus diisi!";
+                            }
+
+                            if (valid)
+                            {
+                                rack = new();
+                                rack.RackId = Guid.NewGuid();
+                                rack.RoomId = rooms.Where(x => x.RoomCode == row[4].ToString()).FirstOrDefault().RoomId;
+                                rack.RackCode = row[1].ToString();
+                                rack.RackName = row[2].ToString();
+                                rack.Length = Convert.ToInt32(row[3]);
+                                rack.IsActive = true;
+                                rack.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                rack.CreatedDate = DateTime.Now;
+
+                                racks.Add(rack);
+                            }
+                            else 
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _rackService.InsertBulk(racks);
+
+                    }
+                    else
+                    {
+                        TempData["errorCount"] = 100000001;
+                        return RedirectToAction(GlobalConst.UploadForm);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _rackService.InsertBulk(racks);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
         }
         public async Task<IActionResult> Export()
         {
             try
             {
+                string templateName = nameof(TrxRack).ToCleanNameOf();
                 string fileName = nameof(TrxRack).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var racks = await _rackService.GetAll();
 
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-                row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
-                row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
-                row.CreateCell(4).SetCellValue(nameof(TrxRack.RackCode));
-                row.CreateCell(5).SetCellValue(nameof(TrxRack.RackName));
-                row.CreateCell(6).SetCellValue(nameof(TrxRack.Length));
-
-                int no = 1;
-                foreach (var item in racks)
+                List<DataTable> listData = new List<DataTable>() {
+                racks.Select(x => new
                 {
-                    row = excelSheet.CreateRow(no);
-
-                    row.CreateCell(0).SetCellValue(no);
-                    row.CreateCell(1).SetCellValue(item.Room.Floor.ArchiveUnit.ArchiveUnitName);
-                    row.CreateCell(2).SetCellValue(item.Room.Floor.FloorName);
-                    row.CreateCell(3).SetCellValue(item.Room.RoomName);
-                    row.CreateCell(4).SetCellValue(item.RackCode);
-                    row.CreateCell(5).SetCellValue(item.RackName);
-                    row.CreateCell(6).SetCellValue(item.Length.ToString());
-
-                    no += 1;
+                    x.RackId,
+                    x.RackCode,
+                    x.RackName,
+                    x.Length,
+                    x.Room.RoomName,
+                    x.Room.ArchiveRoomType,
+                    x.Room.Floor.FloorName,
+                    x.Room.Floor.ArchiveUnit.ArchiveUnitName
                 }
+                ).ToList().ToDataTable()
+            };
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);
@@ -221,46 +278,28 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{GlobalConst.Template}-{nameof(TrxRack).ToCleanNameOf()}";
-                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
-
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRack).ToCleanNameOf());
-                ISheet excelSheetRooms = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-                IRow rowRoom = excelSheetRooms.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxRoom.RoomCode));
-                row.CreateCell(2).SetCellValue(nameof(TrxRack.RackCode));
-                row.CreateCell(3).SetCellValue(nameof(TrxRack.RackName));
-                row.CreateCell(4).SetCellValue(nameof(TrxRack.Length));
-
-
-                rowRoom.CreateCell(0).SetCellValue(GlobalConst.No);
-                rowRoom.CreateCell(1).SetCellValue(nameof(TrxRoom.RoomCode));
-                rowRoom.CreateCell(2).SetCellValue(nameof(TrxRoom.RoomName));
-                rowRoom.CreateCell(3).SetCellValue(nameof(TrxFloor.FloorName));
-                rowRoom.CreateCell(4).SetCellValue(nameof(TrxRoom.ArchiveRoomType));
-                rowRoom.CreateCell(5).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-
                 var dataRooms = await _roomService.GetAll();
 
-                int no = 1;
-                foreach (var item in dataRooms)
-                {
-                    rowRoom = excelSheetRooms.CreateRow(no);
+                List<DataTable> listData = new List<DataTable>() {
+                new DataTable(),
+                dataRooms.Select(x => new { 
+                    x.RoomId, 
+                    x.RoomCode, 
+                    x.RoomName, 
+                    x.ArchiveRoomType, 
+                    x.Floor.FloorCode, 
+                    x.Floor.FloorName, 
+                    x.Floor.ArchiveUnit.ArchiveUnitName 
+                }).ToList().ToDataTable(),
+                GlobalConst.dataRoomType()
+            };
 
-                    rowRoom.CreateCell(0).SetCellValue(no);
-                    rowRoom.CreateCell(1).SetCellValue(item.RoomCode);
-                    rowRoom.CreateCell(2).SetCellValue(item.RoomName);
-                    rowRoom.CreateCell(3).SetCellValue(item.ArchiveRoomType);
-                    rowRoom.CreateCell(4).SetCellValue(item.Floor.FloorName);
-                    rowRoom.CreateCell(5).SetCellValue(item.Floor.ArchiveUnit.ArchiveUnitName);
-                    no += 1;
-                }
+                string templateName = nameof(TrxRack).ToCleanNameOf();
+                string fileName = $"{GlobalConst.Template}-{templateName}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Import.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);

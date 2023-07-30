@@ -357,6 +357,23 @@ public static class GlobalConst
         dtSender.Rows.Add(dataRow);
         return dtSender;
     }
+
+    public static DataTable dataRoomType()
+    {
+        DataTable dt = new DataTable();
+        dt.Columns.Add("no");
+        dt.Columns.Add("tipeRuangan");
+        DataRow dataRow = dt.NewRow();
+        dataRow[0] = 1;
+        dataRow[1] = "Unit Kearsipan";
+        dt.Rows.Add(dataRow);
+        dataRow = dt.NewRow();
+        dataRow[0] = 2;
+        dataRow[1] = "Unit Pengolah";
+        dt.Rows.Add(dataRow);
+        return dt;
+    }
+
     //Document Code
     public const string RetentionExtendDoc = "PR";
     public const string ArchiveDestroyDoc = "PH";

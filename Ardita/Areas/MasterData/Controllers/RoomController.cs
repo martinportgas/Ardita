@@ -8,6 +8,7 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -63,7 +64,8 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _roomService.GetById(Id);
             if (data != null)
             {
-               ViewBag.listFloors = await BindFloors();
+                ViewBag.listArchiveUnits = await BindArchiveUnits();
+                ViewBag.listFloors = await BindFloors();
                 return View(GlobalConst.Form, data);
             }
             else
@@ -76,6 +78,7 @@ namespace Ardita.Areas.MasterData.Controllers
             var data = await _roomService.GetById(Id);
             if (data != null)
             {
+                ViewBag.listArchiveUnits = await BindArchiveUnits();
                 ViewBag.listFloors = await BindFloors();
                 return View(GlobalConst.Form, data);
             }
@@ -123,74 +126,129 @@ namespace Ardita.Areas.MasterData.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-                var floors = await _floorService.GetAll();
-
-                List<TrxRoom> rooms = new();
-                TrxRoom room;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    room = new();
-                    room.RoomId = Guid.NewGuid();
-                    room.FloorId = floors.Where(x => x.FloorCode.Contains(row[1].ToString())).FirstOrDefault().FloorId;
-                    room.RoomCode = row[2].ToString();
-                    room.RoomName = row[3].ToString();
-                    room.ArchiveRoomType = row[4].ToString();
-                    room.IsActive = true;
-                    room.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                    room.CreatedDate = DateTime.Now;
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                    rooms.Add(room);
+                    if (result.Rows.Count > 0)
+                    {
+                        var floors = await _floorService.GetAll();
+                        var roomDetails = await _roomService.GetAll();
+
+                        List<TrxRoom> rooms = new();
+                        TrxRoom room;
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (roomDetails.Where(x => x.RoomCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Ruangan sudah ada";
+                            }
+                            else if (string.IsNullOrEmpty(row[1].ToString()))
+                            {
+                                valid = false;
+                                error = "_Kode Ruangan harus diisi";
+                            }
+                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            {
+                                valid = false;
+                                error = "_Nama Ruangan harus diisi";
+                            }
+                            else if (string.IsNullOrEmpty(row[3].ToString()))
+                            {
+                                valid = false;
+                                error = "_Tipe Ruangan harus diisi";
+                            }
+                            else if (row[3].ToString() != "Unit Kearsipan" && row[3].ToString() != "Unit Pengolah")
+                            {
+                                valid = false;
+                                error = "_Tipe Ruangan tidak sesuai!";
+                            }
+                            else if (floors.Where(x => x.FloorCode == row[4].ToString()).Count() == 0)
+                            {
+                                valid = false;
+                                error = "_Kode Lantai tidak ditemukan";
+                            }
+
+                            if (valid)
+                            {
+                                room = new();
+                                room.RoomId = Guid.NewGuid();
+                                room.FloorId = floors.Where(x => x.FloorCode.Contains(row[4].ToString())).FirstOrDefault().FloorId;
+                                room.RoomCode = row[1].ToString();
+                                room.RoomName = row[2].ToString();
+                                room.ArchiveRoomType = row[3].ToString();
+                                room.IsActive = true;
+                                room.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                room.CreatedDate = DateTime.Now;
+
+                                rooms.Add(room);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _roomService.InsertBulk(rooms);
+                    }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _roomService.InsertBulk(rooms);
-                return RedirectToIndex();
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
             }
             catch (Exception)
             {
-
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
+        }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
         }
         public async Task<IActionResult> Export()
         {
             try
             {
+                string templateName = nameof(TrxRoom).ToCleanNameOf();
                 string fileName = nameof(TrxRoom).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var rooms = await _roomService.GetAll();
-                var floors = await _floorService.GetAll();
-                var archives = await _archiveUnitService.GetAll();
 
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-                row.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
-                row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomCode));
-                row.CreateCell(4).SetCellValue(nameof(TrxRoom.RoomName));
-                row.CreateCell(5).SetCellValue(nameof(TrxRoom.ArchiveRoomType));
-
-                int no = 1;
-                foreach (var item in rooms)
+                List<DataTable> listData = new List<DataTable>() {
+                rooms.Select(x => new
                 {
-                    row = excelSheet.CreateRow(no);
-
-                    row.CreateCell(0).SetCellValue(no);
-                    row.CreateCell(1).SetCellValue(item.Floor.ArchiveUnit.ArchiveUnitName);
-                    row.CreateCell(2).SetCellValue(item.Floor.FloorName);
-                    row.CreateCell(3).SetCellValue(item.RoomCode);
-                    row.CreateCell(4).SetCellValue(item.RoomName);
-                    row.CreateCell(5).SetCellValue(item.ArchiveRoomType);
-
-                    no += 1;
+                    x.RoomId,
+                    x.RoomCode,
+                    x.RoomName,
+                    x.ArchiveRoomType,
+                    x.Floor.FloorCode,
+                    x.Floor.FloorName,
+                    x.Floor.ArchiveUnit.ArchiveUnitName
                 }
+                ).ToList().ToDataTable()
+            };
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);
@@ -207,42 +265,20 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = $"{GlobalConst.Template}-{nameof(TrxRoom).ToCleanNameOf()}";
-                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
-
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxRoom).ToCleanNameOf());
-                ISheet excelSheetFloors = workbook.CreateSheet(nameof(TrxFloor).ToCleanNameOf());
-
-                IRow row = excelSheet.CreateRow(0);
-                IRow rowFloor = excelSheetFloors.CreateRow(0);
-
-                row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
-                row.CreateCell(2).SetCellValue(nameof(TrxRoom.RoomCode));
-                row.CreateCell(3).SetCellValue(nameof(TrxRoom.RoomName));
-                row.CreateCell(4).SetCellValue(nameof(TrxRoom.ArchiveRoomType));
-
-
-                rowFloor.CreateCell(0).SetCellValue(GlobalConst.No);
-                rowFloor.CreateCell(1).SetCellValue(nameof(TrxFloor.FloorCode));
-                rowFloor.CreateCell(2).SetCellValue(nameof(TrxFloor.FloorName));
-                rowFloor.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-
                 var dataFloors = await _floorService.GetAll();
 
-                int no = 1;
-                foreach (var item in dataFloors)
-                {
-                    rowFloor = excelSheetFloors.CreateRow(no);
+                List<DataTable> listData = new List<DataTable>() {
+                new DataTable(),
+                dataFloors.Select(x => new { x.FloorId, x.FloorCode, x.FloorName, x.ArchiveUnit.ArchiveUnitName }).ToList().ToDataTable(),
+                GlobalConst.dataRoomType()
+            };
 
-                    rowFloor.CreateCell(0).SetCellValue(no);
-                    rowFloor.CreateCell(1).SetCellValue(item.FloorCode);
-                    rowFloor.CreateCell(2).SetCellValue(item.FloorName);
-                    rowFloor.CreateCell(3).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
-                    no += 1;
-                }
+                string templateName = nameof(TrxRoom).ToCleanNameOf();
+                string fileName = $"{GlobalConst.Template}-{templateName}";
+                fileName = fileName.ToFileNameDateTimeStringNow(fileName);
+
+                IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Import.ToLower());
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);
