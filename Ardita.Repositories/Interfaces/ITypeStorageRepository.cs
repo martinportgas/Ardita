@@ -8,7 +8,8 @@ public interface ITypeStorageRepository
     Task<TrxTypeStorage> GetById(Guid id);
     Task<IEnumerable<TrxTypeStorage>> GetAll();
     Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId);
-    Task<IEnumerable<TrxTypeStorage>> GetByFilterModel(DataTableModel model);
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxTypeStorage model, List<TrxTypeStorageDetail> detail);
     Task<bool> InsertBulk(List<TrxTypeStorage> rows);

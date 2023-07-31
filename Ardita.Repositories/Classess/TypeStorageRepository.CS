@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -57,29 +58,30 @@ public class TypeStorageRepository : ITypeStorageRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxTypeStorage>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<TrxTypeStorage> result;
-
-        var propertyInfo = typeof(TrxTypeStorage).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(TrxTypeStorage).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.TrxTypeStorages
+        var result = await _context.TrxTypeStorages
+            .Include(x => x.ArchiveUnit)
             .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderBy(x => EF.Property<TrxTypeStorage>(x, propertyName))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new {
+                x.TypeStorageId,
+                x.TypeStorageCode,
+                x.TypeStorageName,
+                x.ArchiveUnit.ArchiveUnitName,
+                x.ArchiveUnit.Company.CompanyName
+            })
             .ToListAsync();
-        }
-        else
-        {
-            result = await _context.TrxTypeStorages
+
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.TrxTypeStorages
+            .Include(x => x.ArchiveUnit)
             .Where(x => (x.TypeStorageCode + x.TypeStorageName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderByDescending(x => EF.Property<TrxTypeStorage>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
+            .CountAsync();
 
         return result;
     }

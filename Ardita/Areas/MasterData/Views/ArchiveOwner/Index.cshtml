@@ -42,8 +42,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Archive Owner Code</th>
-                                <th>Archive Owner Name</th>
+                                <th>Kode Pemilik</th>
+                                <th>Nama Pemilik</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -75,14 +75,15 @@
                     }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "archiveOwnerId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "archiveOwnerId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "archiveOwnerId",
+                        "data": "archiveOwnerId", "name": "archiveOwnerId",
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveOwner, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveOwnerId);
@@ -97,8 +98,8 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "archiveOwnerCode", "Code": "archiveOwnerCode", "autoWidth": true },
-                    { "data": "archiveOwnerName", "Name": "archiveOwnerName", "autoWidth": true }
+                    { "data": "archiveOwnerCode", "name": "archiveOwnerCode", "autoWidth": true },
+                    { "data": "archiveOwnerName", "name": "archiveOwnerName", "autoWidth": true }
                 ]
             });
         });

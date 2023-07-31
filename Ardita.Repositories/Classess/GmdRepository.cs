@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -35,31 +36,26 @@ public class GmdRepository : IGmdRepository
 
     public async Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id) => await _context.MstGmdDetails.Where(x => x.GmdId == Id).AsNoTracking().ToListAsync();
     
-    public async Task<IEnumerable<MstGmd>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<MstGmd> result;
-
-        var propertyInfo = typeof(MstGmd).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(MstGmd).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.MstGmds
-                .Where(x => (x.GmdCode + x.GmdName)
-                .Contains(model.searchValue) && x.IsActive)
-                .OrderBy(x => EF.Property<MstGmd>(x, propertyName)).ThenBy(x => x.CreatedDate).ThenBy(x => x.UpdatedDate)
+        var result = await _context.MstGmds
+                .Where(x => (x.GmdCode + x.GmdName).Contains(model.searchValue) && x.IsActive)
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
+                .Select(x => new {
+                    x.GmdId,
+                    x.GmdCode,
+                    x.GmdName
+                })
                 .ToListAsync();
-        }
-        else
-        {
-            result = await _context.MstGmds
-                .Where(x => (x.GmdCode + x.GmdName)
-                .Contains(model.searchValue) && x.IsActive)
-                .OrderByDescending(x => EF.Property<MstGmd>(x, propertyName)).ThenBy(x => x.CreatedDate).ThenBy(x => x.UpdatedDate)
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-        }
+
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.MstGmds
+                .Where(x => (x.GmdCode + x.GmdName).Contains(model.searchValue) && x.IsActive)
+                .CountAsync();
 
         return result;
     }

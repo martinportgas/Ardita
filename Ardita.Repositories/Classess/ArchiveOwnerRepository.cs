@@ -2,12 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -36,29 +31,26 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IEnumerable<MstArchiveOwner>> GetAll() => await _context.MstArchiveOwners.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
 
-        public async Task<IEnumerable<MstArchiveOwner>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<MstArchiveOwner> result;
-
-            var propertyInfo = typeof(MstArchiveOwner).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(MstArchiveOwner).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.MstArchiveOwners
+            var result = await _context.MstArchiveOwners
                 .Where(x => (x.ArchiveOwnerCode + x.ArchiveOwnerName).Contains(model.searchValue) && x.IsActive == true)
-                .OrderBy(x => EF.Property<MstArchiveOwner>(x, propertyName))
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
+                .Select(x => new {
+                    x.ArchiveOwnerId,
+                    x.ArchiveOwnerCode,
+                    x.ArchiveOwnerName
+                })
                 .ToListAsync();
-            }
-            else
-            {
-                result = await _context.MstArchiveOwners
+
+            return result;
+        }
+        public async Task<int> GetCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.MstArchiveOwners
                 .Where(x => (x.ArchiveOwnerCode + x.ArchiveOwnerName).Contains(model.searchValue) && x.IsActive == true)
-                .OrderByDescending(x => EF.Property<MstArchiveOwner>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+                .CountAsync();
 
             return result;
         }

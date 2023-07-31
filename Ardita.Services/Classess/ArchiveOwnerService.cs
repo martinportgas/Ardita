@@ -32,15 +32,13 @@ namespace Ardita.Services.Classess
             return result;
         }
 
-        public async Task<DataTableResponseModel<MstArchiveOwner>> GetList(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _archiveOwnerRepository.GetCount();
-
                 var filterData = new DataTableModel
                 {
-                    sortColumn = model.columns[model.order[0].column].data,
+                    sortColumn = model.columns[model.order[0].column].name,
                     sortColumnDirection = model.order[0].dir,
                     searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                     pageSize = model.length,
@@ -48,8 +46,9 @@ namespace Ardita.Services.Classess
                 };
 
                 var results = await _archiveOwnerRepository.GetByFilterModel(filterData);
+                var dataCount = await _archiveOwnerRepository.GetCountByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstArchiveOwner>
+                var responseModel = new DataTableResponseModel<object>
                 {
                     draw = model.draw,
                     recordsTotal = dataCount,

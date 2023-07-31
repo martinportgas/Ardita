@@ -1,0 +1,34 @@
+{
+  "export": {
+    "0": {
+      "name": "Media Penyimpanan",
+      "column": {
+        "0": "No",
+        "1": "Kode Media Penyimpanan",
+        "2": "Nama Media Penyimpaanan",
+        "3": "Lokasi Simpan",
+        "4": "Perusahaan"
+      }
+    }
+  },
+  "import": {
+    "0": {
+      "name": "Media Penyimpanan",
+      "column": {
+        "0": "No",
+        "1": "kode Media Penyimpanan",
+        "2": "Nama Media Penyimpanan",
+        "3": "Kode Lokasi Simpan"
+      }
+    },
+    "1": {
+      "name": "Lokasi Simpan",
+      "column": {
+        "0": "No",
+        "1": "Kode Lokasi Simpan",
+        "2": "Nama Lokasi Simpan",
+        "3": "Perusahaan"
+      }
+    }
+  }
+}

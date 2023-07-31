@@ -71,28 +71,29 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Gmd Header</label>
-                                            <select asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmd" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select GMD --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Gmd Detail</label>
-                                            <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmdDetail" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Gmd Detail --">
-                                                <option value=""></option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Size</label>
-                                            <input type="text" placeholder="" id="txtSize" class="form-control">
-                                        </div>
-                                        @if (form.CurrentAction != GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
+                                        
+                                        @if (form.isInput)
                                         {
+                                            <div class="form-group">
+                                                <label>Gmd Header</label>
+                                                <select asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                        id="txtGmd" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select GMD --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Gmd Detail</label>
+                                                <select (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
+                                                        id="txtGmdDetail" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Select Gmd Detail --">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Size</label>
+                                                <input type="text" placeholder="" id="txtSize" class="form-control">
+                                            </div>
                                             <div class="form-group">
                                                 <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>
                                             </div>
@@ -125,6 +126,7 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        var isInput = @form.isInput.ToString().ToLower();
         $(function () {
             initForms("@form.CurrentAction");
             initDropdown();
@@ -161,7 +163,7 @@
                 alert("Please Input Gmd Header, Detail and Size");
                 return false;
             }
-            $(".detail").append(`<tr><td><i class="fa fa-trash" onclick="remove($(this))"></i></td><td>${name}<input class="gmdDetail" type="hidden" name="detail[]" value="${gmdDetailId}#${size}"></td><td>${size}</td><td>${unit}</td></tr>`);
+            $(".detail").append(`<tr><td>${isInput ? '<i class="fa fa-trash" onclick="deleteRow(this)"></i>' : ''}</td><td>${name}<input class="gmdDetail" type="hidden" name="detail[]" value="${gmdDetailId}#${size}"></td><td>${size}</td><td>${unit}</td></tr>`);
         }
 
         function initDropdown() {

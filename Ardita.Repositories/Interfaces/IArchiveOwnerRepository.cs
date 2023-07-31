@@ -7,7 +7,8 @@ public interface IArchiveOwnerRepository
 {
     Task<IEnumerable<MstArchiveOwner>> GetById(Guid id);
     Task<IEnumerable<MstArchiveOwner>> GetAll();
-    Task<IEnumerable<MstArchiveOwner>> GetByFilterModel(DataTableModel model);
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(MstArchiveOwner model);
     Task<bool> InsertBulk(List<MstArchiveOwner> MstArchiveOwners);
