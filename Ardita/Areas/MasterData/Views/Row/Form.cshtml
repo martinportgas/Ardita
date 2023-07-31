@@ -77,7 +77,18 @@
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.Row, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        <button onclick="onSubmit(this, event);"id="btn-submit" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
+                                        if (form.CurrentAction == GlobalConst.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, '@form.CurrentAction');" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @Html.Raw(form.SaveText)
+                                            </button>
+                                        }
                                     }
                                 </div>
                             </form>
@@ -96,26 +107,25 @@
             initDropdown();
         });
 
-        function onSubmit(ctl, event) {
+        function onSubmit(ctl, event, currentAction) {
             event.preventDefault();
-            
             swal({
-                title: "Do You Want To @form.CurrentAction It?",
+                title: "Do You Want To " + currentAction + " It?",
                 text: "Please check Information before Submiting!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Save",
+                confirmButtonText: "Yes",
                 cancelButtonText: "Cancel",
                 closeOnConfirm: false,
                 closeOnCancel: false
             },
                 function (isConfirm) {
                     if (isConfirm) {
-                         $('.confirm').prop('disabled', true);
-                            $('.cancel').prop('disabled', true);
-                            $('.cancel').hide();
-                            $("#frmRow").submit();
+                        $('.confirm').prop('disabled', true);
+                        $('.cancel').prop('disabled', true);
+                        $('.cancel').hide();
+                        $("#frmRow").submit();
                     } else {
                         swal("Cancelled", "You have Cancelled Form Submission!", "error");
                     }
