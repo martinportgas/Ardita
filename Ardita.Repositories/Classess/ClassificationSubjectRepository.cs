@@ -102,8 +102,15 @@ namespace Ardita.Repositories.Classess
             if (model != null)
             {
                 model.IsActive = true;
-                _context.TrxSubjectClassifications.Add(model);
+
+                foreach (var e in _context.ChangeTracker.Entries())
+                {
+                    e.State = EntityState.Detached;
+                }
+
+                _context.Entry(model).State = EntityState.Added;
                 result = await _context.SaveChangesAsync();
+
             }
             return result;
         }
