@@ -39,13 +39,9 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="frmPosition" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                            <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
                                 <div class="row">
                                     <div class="col-sm-6 b-r">
-                                            @*<div class="form-group">
-                                                <label>Pencipta Arsip</label>
-                                                <select id="txtCreatorId" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="CreatorId" asp-items="ViewBag.ListArchiveCreator" data-placeholder="-- Pilih Pencipta Arsip --"><option value=""></option></select>
-                                            </div>*@
                                         <div class="form-group">
                                             <label>Jenis Klasifikasi</label>
                                             <input type="hidden" asp-for="SubSubjectClassificationId" value="@Model.SubSubjectClassificationId" />
@@ -140,7 +136,20 @@
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ClassificationSubSubject, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)
                                     {
-                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">@Html.Raw(form.SaveText)</button>
+                                        
+
+                                        if (form.CurrentAction == GlobalConst.Remove)
+                                        {
+                                            <button onclick="onSubmit(this, event, '@form.CurrentAction');" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @(form.CurrentAction == GlobalConst.Preview ? Html.Raw(form.SubmitText) : Html.Raw(form.SaveText))
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit">
+                                                @Html.Raw(form.SaveText)
+                                            </button>
+                                        }
                                     }
                                 </div>
                             </form>
@@ -161,6 +170,33 @@
                 $('#listdtl').children("tr:first-child").children('td:first-child').children().hide();
             }
         }
+
+        function onSubmit(ctl, event, currentAction) {
+            event.preventDefault();
+            swal({
+                title: "Do You Want To " + currentAction + " It?",
+                text: "Please check Information before Submiting!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $('.confirm').prop('disabled', true);
+                        $('.cancel').prop('disabled', true);
+                        $('.cancel').hide();
+                        $("#formInput").submit();
+                    } else {
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+
         $(document).ready(function () {
             $('#add').off('click').on('click', function () {
                 $(".pos").select2('destroy');
