@@ -242,7 +242,7 @@
                                 download = row.statusReceived != @((int)GlobalConst.STATUS.ArchiveReceived) ? '' : `<a class="btn btn-sm btn-info" href="${url}"><i class="fa fa-download"></i> </a>`;
                             }
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download).concat(" ", musnah);
+                            var JoinButton = '<div style="width:100px"></div>' + edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download).concat(" ", musnah);
                             return JoinButton;
                         }
                     },

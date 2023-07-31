@@ -218,7 +218,7 @@
                             var download = row.statusReceived != @((int)GlobalConst.STATUS.ArchiveReceived) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveReceived, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
                             download = download.replace("-1", data);
 
-                            var JoinButton = detail.concat(" ", submit).concat(" ", download);
+                            var JoinButton = '<div style="width:100px"></div>' + detail.concat(" ", submit).concat(" ", download);
                             return JoinButton;
                         }
                     },

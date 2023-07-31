@@ -221,13 +221,13 @@
                                 actionSubmit = "@Url.Action(GlobalConst.Destroy, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive, Id = -1 })";
                             }
 
-                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.UsulMusnah) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm ${colorBtnSubmit}" href="${actionSubmit}"><i class="fa fa-paper-plane"></i> </a>`;
+                            var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) || row.statusId == @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm ${colorBtnSubmit}" href="${actionSubmit}"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
-                            var download = row.statusId != @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            var download = row.statusId != @((int)GlobalConst.STATUS.Approved) && row.statusId != @((int)GlobalConst.STATUS.UsulMusnah) && row.statusId != @((int)GlobalConst.STATUS.Musnah) ? '' : `<a class="btn btn-sm btn-primary" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveDestroy, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
                             download = download.replace("-1", data);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);
+                            var JoinButton = '<div style="width:100px"></div>' + edit.concat(" ", detail).concat(" ", remove).concat(" ", submit).concat(" ", download);
                             return JoinButton;
                         }
                     },

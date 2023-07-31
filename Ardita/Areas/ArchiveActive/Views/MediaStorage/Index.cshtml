@@ -239,7 +239,7 @@
                                 isUsed = isUsed.replace("-1", row.mediaStorageId);
                             }
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr).concat(" ", isUsed);
+                            var JoinButton = '<div style="width:100px">' + edit.concat(" ", detail).concat(" ", remove).concat(" ", downloadQr).concat(" ", isUsed);
                             return JoinButton;
                         }
                     },

@@ -132,69 +132,17 @@
                 });
         }
         function initDropdown() {
-            $('#txtArchiveId').on('change', function () {
-                $('#txtFloorId').val('').trigger('change');
-            });
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtCompanyId'));
 
-            $('#txtFloorId').select2({
-                theme: 'bootstrap4',
-                allowClear: true,
-                placeholder: '-- Select Floor --',
-                ajax: {
-                    url: '@Url.Action(GlobalConst.BindFloorsByArchiveUnitId, GlobalConst.Rack, new { Area = GlobalConst.MasterData })',
-                    type: "POST",
-                    data: function (params) {
-                        var query = {
-                            id: $('#txtArchiveUnitId').val(),,
-                            param: params.term
-                        }
-                        return query;
-                    },
-                    processResults: function (data) {
-                        var dataResult = $.map(data, function (item) {
-                            return {
-                                text: item.floorName,
-                                id: item.floorId
-                            }
-                        });
-                        return {
-                            results: dataResult
-                        };
-                    }
-                }
-            });
+            initGlobalDropdown($('#txtFloorId'), '@Url.Action(GlobalConst.BindParamFloorsByArchiveUnitId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtArchiveUnitId'));
 
-            $('#txtFloorId').on('change', function () {
-                $('#txtRoomId').val('').trigger('change');
-            });
-            $('#txtRoomId').select2({
-                theme: 'bootstrap4',
-                allowClear: true,
-                placeholder: '-- Select Floor --',
-                ajax: {
-                    url: '@Url.Action(GlobalConst.BindRoomByFloorId, GlobalConst.Rack, new { Area = GlobalConst.MasterData })',
-                    type: "POST",
-                    data: function (params) {
-                        var query = {
-                            id: $('#txtFloorId').val(),
-                            param: params.term
-                        }
-                        return query;
-                    },
-                    processResults: function (data) {
-                        var dataResult = $.map(data, function (item) {
-                            return {
-                                text: item.roomName,
-                                id: item.roomId
-                            }
-                        });
-                        return {
-                            results: dataResult
-                        };
-                    }
-                }
-            });
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindParamRoomActiveByFloorId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtFloorId'));
 
+            //initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRoomId'));
+
+            //initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRackId'));
+
+            //initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtLevelId'));
         }
 
        

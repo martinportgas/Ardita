@@ -215,7 +215,7 @@
                             var download = row.statusId == @((int)GlobalConst.STATUS.Draft) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
                             download = download.replace("-1", data);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", download);
+                            var JoinButton = '<div style="width:100px"></div>' + edit.concat(" ", detail).concat(" ", remove).concat(" ", download);
                             return JoinButton;
                         }
                     },

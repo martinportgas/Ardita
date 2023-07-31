@@ -217,7 +217,7 @@
                             var submit = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Approved) ? '' : `<a class="btn btn-sm btn-success" href="@Url.Action(GlobalConst.Preview, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-paper-plane"></i> </a>`;
                             submit = submit.replace("-1", data);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove).concat(" ", submit);
+                            var JoinButton = '<div style="width:100px"></div>' + edit.concat(" ", detail).concat(" ", remove).concat(" ", submit);
                             return JoinButton;
                         }
                     },

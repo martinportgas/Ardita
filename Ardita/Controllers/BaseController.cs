@@ -1198,6 +1198,24 @@ public abstract class BaseController<T> : Controller
             }).FirstOrDefault();
         return Json(result);
     }
+    public async Task<JsonResult> BindViewDetailArchive(Guid Id)
+    {
+        var data = await _archiveService.GetAll();
+        var result = data.Where(x => x.ArchiveId == Id)
+            .Select(x => new {
+                title = x.TitleArchive,
+                security = x.SecurityClassification.SecurityClassificationName,
+                classification = x.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
+                subjectClassification = x.SubSubjectClassification.SubjectClassification.SubjectClassificationName,
+                docNo = x.DocumentNo,
+                archiveUnit = x.Creator.ArchiveUnit.ArchiveUnitName,
+                dateArchive = x.CreatedDateArchive.ToString("dd MMMM yyyy"),
+                owner = x.ArchiveOwner.ArchiveOwnerName,
+                creator = x.Creator.CreatorName,
+                file = x.TrxFileArchiveDetails
+            }).FirstOrDefault();
+        return Json(result);
+    }
     #endregion
 
     #endregion

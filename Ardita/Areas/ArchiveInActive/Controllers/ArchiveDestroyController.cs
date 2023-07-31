@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.ArchiveInActive.Controllers
 {
@@ -32,7 +33,9 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         IRackService rackService,
         ILevelService levelService,
         IRowService rowService,
-        IArchiveCreatorService archiveCreatorService)
+        IArchiveCreatorService archiveCreatorService,
+        IUserService userService,
+            IHostingEnvironment hostingEnvironment)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -54,6 +57,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _rackService = rackService;
             _roomService = roomService;
             _floorService = floorService;
+            _userService = userService;
+            _hostingEnvironment = hostingEnvironment;
         }
         #endregion
         #region MAIN ACTION
@@ -421,7 +426,17 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            return File(new byte[] { }, "application/octet-stream", "BeritaAcaraPemusnahan.pdf");
+            TrxArchiveDestroy data = await _archiveDestroyService.GetById(Id);
+
+            var user = await _userService.GetById(data.CreatedBy);
+            var employee = await _employeeService.GetById(user.EmployeeId);
+
+            var detail = await _archiveDestroyService.GetDetailByMainId(Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemusnahan_Arsip.docx");
+            var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
         }
         #endregion
         #region HELPER

@@ -372,6 +372,97 @@
     </div>
 
 </div>
+
+<div class="modal inmodal" id="modalDetailArchive" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated fadeIn">
+            <form id="frmFloorUpload">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Detail Arsip</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card shadow-inset border-light gray-bg" style="border-color: #d1d9e6!important;box-shadow: 2px 2px 5px #b8b9be,inset -3px -3px 7px #fff!important;">
+                                <div class="card-body p-4">
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Judul</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlTitle"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Klasifikasi</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlClassification"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Subjek Klasifikasi</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlSubjectClassification"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Klasifikasi Keamanan</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlSecurity"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Nomor Dokumen</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlDocNo"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Lokasi Arsip</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlArchiveUnit"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Tanggal Arsip</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlDateArchive"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Pemilik</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlOwner"></p></div>
+                                    </div>
+                                    <div style="font-family:Nunito Sans,sans-serif;color: #44476a;display:flex;flex-direction:row">
+                                        <div style="width:200px;"><strong>Pencipta</strong></div>
+                                        <div> : </div>
+                                        <div class="ml-2" style="width: 470px;"><p id="dtlCreator"></p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-12">
+                            <div class="card shadow-inset border-light gray-bg" style="border-color: #d1d9e6!important;box-shadow: 2px 2px 5px #b8b9be,inset -3px -3px 7px #fff!important;">
+                                <div class="card-body p-4">
+                                    <h5>Arsip Digital</h5>
+                                    <hr>
+                                    <div class="row mt-2" id="listFile">
+                                        <div class="col-sm-6">
+                                            <span id="filename"></span><br>
+                                            <a href="@Url.Action("BindFileArchive", GlobalConst.Home, new { Areas = GlobalConst.General, Id = -1, IsDownload = true})" download=""><i class="fa fa-download"></i>Download</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 @section Styles {
     <style>
         #data-table > .sk-spinner {
@@ -496,6 +587,45 @@
             }
         }
 
+        function viewDetail(e){
+            $('#wrapper').toggleClass('sk-loading');
+            var url = '@Url.Action("BindViewDetailArchive", GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive })';
+            var param = new Object();
+            param.Id = e;
+
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                if(result != null){
+
+                    $('#dtlTitle').html(result.title);
+                    $('#dtlSecurity').html(result.security);
+                    $('#dtlClassification').html(result.classification);
+                    $('#dtlSubjectClassification').html(result.subjectClassification);
+                    $('#dtlDocNo').html(result.docNo);
+                    $('#dtlArchiveUnit').html(result.archiveUnit);
+                    $('#dtlDateArchive').html(result.dateArchive);
+                    $('#dtlOwner').html(result.owner);
+                    $('#dtlCreator').html(result.creator);
+
+                    $('#listFile').empty();
+                    if(result.file.length > 0){
+                        var urlFile = '@Url.Action("BindFileArchive", GlobalConst.Home, new { Areas = GlobalConst.General, Id = -1, IsDownload = true})';
+                        $.each(result.file, function (key, value) {
+                            var content = `<div class="col-sm-6">
+                                                <span>${value.filename}</span><br>
+                                                <a href="${urlFile.replace('-1', value.fileArchiveDetailId)}" download="${value.filename}"><i class="fa fa-download"></i>Download</a>
+                                            </div>`
+                            $('#listFile').append(content);
+                        });
+                    }
+
+                    $('#modalDetailArchive').modal('show');
+
+                    $('#wrapper').toggleClass('sk-loading');
+
+                }
+            });
+        }
+
         function initTableArchive(){
             $('#table-archive').hide();
             $('#data-table').toggleClass('sk-loading');
@@ -507,7 +637,6 @@
             param.gmdDetailId = $('#txtGMDDetail').val();
 
             ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
-                console.log(result);
                 var dataRes = [];
                 if(@form.isInput.ToString().ToLower()){
                     dataRes = result;
@@ -559,26 +688,26 @@
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                    var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h2 class="modal-title">Preview</h2>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12">
-                                                                                    <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
-                                                                                        <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
-                                                                            </object>
-                                                                        </div>
-                                                                    </div>
-                                                                    <hr />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                            </div>`.replace('-1AingMaung', data);
-                                    return modal + `<a data-toggle="modal" href="#myModal${data}" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </a>`;
+                                    //var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
+                                    //                    <div class="modal-dialog modal-lg">
+                                    //                        <div class="modal-content">
+                                    //                            <div class="modal-header">
+                                    //                                <h2 class="modal-title">Preview</h2>
+                                    //                            </div>
+                                    //                            <div class="modal-body">
+                                    //                                <div class="row">
+                                    //                                    <div class="col-lg-12">
+                                    //                                                <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
+                                    //                                                    <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
+                                    //                                        </object>
+                                    //                                    </div>
+                                    //                                </div>
+                                    //                                <hr />
+                                    //                            </div>
+                                    //                        </div>
+                                    //                    </div>
+                                    //                        </div>`.replace('-1AingMaung', data);
+                                    return `<button type="button" onclick="viewDetail('${data}')" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </button>`;
                                 }
                             },
                             {
@@ -641,26 +770,26 @@
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
-                                    var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h2 class="modal-title">Preview</h2>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12">
-                                                                                    <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
-                                                                                        <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
-                                                                            </object>
-                                                                        </div>
-                                                                    </div>
-                                                                    <hr />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                            </div>`.replace('-1AingMaung', data);
-                                    return modal + `<a data-toggle="modal" href="#myModal${data}" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </a>`;
+                                    //var modal = `<div id="myModal${data}" class="modal fade" aria-hidden="true">
+                                    //                    <div class="modal-dialog modal-lg">
+                                    //                        <div class="modal-content">
+                                    //                            <div class="modal-header">
+                                    //                                <h2 class="modal-title">Preview</h2>
+                                    //                            </div>
+                                    //                            <div class="modal-body">
+                                    //                                <div class="row">
+                                    //                                    <div class="col-lg-12">
+                                    //                                                <object data="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%; height:500px">
+                                    //                                                    <embed src="@Url.Action(GlobalConst.DetailArchive, GlobalConst.MediaStorage, new { Area = GlobalConst.ArchiveActive, Id = "-1AingMaung" })" style="width:100%;height:500px" />
+                                    //                                        </object>
+                                    //                                    </div>
+                                    //                                </div>
+                                    //                                <hr />
+                                    //                            </div>
+                                    //                        </div>
+                                    //                    </div>
+                                    //                        </div>`.replace('-1AingMaung', data);
+                                    return `<button type="button" onclick="viewDetail('${data}')" class="btn btn-sm btn-warning"><i class="fa fa-eye"></i> </button>`;
                                 }
                             },
                             {

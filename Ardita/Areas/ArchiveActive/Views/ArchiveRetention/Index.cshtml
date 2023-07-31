@@ -225,7 +225,7 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveRetention, new { Area = GlobalConst.ArchiveActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.archiveId);
 
-                            return detail;
+                            return '<div style="width:100px"></div>' + detail;
                         }
                     },
                     { "data": "archiveNumber", "name": "archiveNumber", "autoWidth": true },

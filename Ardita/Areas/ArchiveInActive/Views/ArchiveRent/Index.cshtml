@@ -208,7 +208,7 @@
                             var download = row.statusId == @((int)GlobalConst.STATUS.ApprovalProcess) || row.statusId == @((int)GlobalConst.STATUS.Rejected) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
                             download = download.replace("-1", data);
 
-                            var JoinButton = detail.concat(" ", download);
+                            var JoinButton = '<div style="width:100px"></div>' + detail.concat(" ", download);
                             return JoinButton;
                         }
                     },
