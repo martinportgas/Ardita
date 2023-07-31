@@ -42,8 +42,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Archive Creator Code</th>
-                                <th>Archive Creator Name</th>
+                                <th>Kode Unit Pencipta</th>
+                                <th>Nama Unit Pencipta</th>
+                                <th>Lokasi Simpan</th>
+                                <th>Perusahaan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -77,12 +79,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "archiveCreatorId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "creatorId", "name": "creatorId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "creatorId",
+                        "data": "creatorId", "name": "creatorId",
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveCreator, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.creatorId);
@@ -97,8 +99,10 @@
                             return JoinButton;
                         }
                     },
-                    { "data": "creatorCode", "Code": "creatorCode", "autoWidth": true },
-                    { "data": "creatorName", "Name": "creatorName", "autoWidth": true }
+                    { "data": "creatorCode", "name": "creatorCode", "autoWidth": true },
+                    { "data": "creatorName", "name": "creatorName", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "archiveUnit.archiveUnitName", "autoWidth": true },
+                    { "data": "companyName", "name": "archiveUnit.company.companyName", "autoWidth": true }
                 ]
             });
             $('#btnUpload').on('click', function () {

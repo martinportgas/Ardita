@@ -3,6 +3,8 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
+
 
 namespace Ardita.Repositories.Classess;
 
@@ -39,29 +41,30 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         .Where(x => x.IsActive == true)
         .ToListAsync();
 
-    public async Task<IEnumerable<MstCreator>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<MstCreator> result;
+        var result = await _context.MstCreators
+                .Include(x => x.ArchiveUnit.Company)
+                .Where(x => (x.CreatorCode + x.CreatorName + x.ArchiveUnit.ArchiveUnitName + x.ArchiveUnit.Company.CompanyName).Contains(model.searchValue) && x.IsActive == true)
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                .Skip(model.skip).Take(model.pageSize)
+                .Select(x => new {
+                   x.CreatorId,
+                   x.CreatorCode,
+                   x.CreatorName,
+                   x.ArchiveUnit.ArchiveUnitName,
+                   x.ArchiveUnit.Company.CompanyName
+                })
+                .ToListAsync();
 
-        var propertyInfo = typeof(MstCreator).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(MstCreator).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.MstCreators
-            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderBy(x => EF.Property<MstCreator>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
-        else
-        {
-            result = await _context.MstCreators
-            .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue) && x.IsActive == true)
-            .OrderByDescending(x => EF.Property<MstCreator>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.MstCreators
+                .Include(x => x.ArchiveUnit.Company)
+                .Where(x => (x.CreatorCode + x.CreatorName).Contains(model.searchValue) && x.IsActive == true)
+                .CountAsync();
 
         return result;
     }

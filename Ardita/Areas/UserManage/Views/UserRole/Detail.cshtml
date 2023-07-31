@@ -120,6 +120,7 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
+            initDropdown();
             var table = $('#tblRole').DataTable({
                 searching: false,
                 filter: false,
@@ -135,8 +136,11 @@
                 theme: 'bootstrap4',
             });
 
-            
+
         });
+        function initDropdown() {
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.UserRole, new { Area = GlobalConst.UserManage })', $('#txtArchiveUnitId'));
+        }
 
         //function onSubmit(ctl, event) {
         //    event.preventDefault();
