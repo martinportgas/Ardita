@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -18,15 +19,13 @@ public class TypeStorageService : ITypeStorageService
     public async Task<TrxTypeStorage> GetById(Guid id)
     => await _TypeStorageRepository.GetById(id);
 
-    public async Task<DataTableResponseModel<TrxTypeStorage>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            var dataCount = await _TypeStorageRepository.GetCount();
-
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
@@ -34,8 +33,9 @@ public class TypeStorageService : ITypeStorageService
             };
 
             var results = await _TypeStorageRepository.GetByFilterModel(filterData);
+            var dataCount = await _TypeStorageRepository.GetCountByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<TrxTypeStorage>
+            var responseModel = new DataTableResponseModel<object>
             {
                 draw = model.draw,
                 recordsTotal = dataCount,
