@@ -242,6 +242,17 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 valid = false;
                                 error += "_Subjek Klasifikasi Tidak Valid";
                             }
+                            else
+                            {
+                                if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                                {
+                                    if (subSubjectClassificationData.Creator.ArchiveUnitId != AppUsers.CurrentUser(User).ArchiveUnitId)
+                                    {
+                                        valid = false;
+                                        error += "_Ada tidak memiliki wewenang untuk menggunakan subjek klasifikasi ini";
+                                    }
+                                }
+                            }
                             var securityClassificationData = SecurityClassifications.Where(x => x.SecurityClassificationCode.ToLower() == row[3].ToString().ToLower()).FirstOrDefault();
                             if (securityClassificationData == null)
                             {
@@ -398,6 +409,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             {
                 var dataGMDDetail = await _gmdService.GetAllDetail();
                 var dataSubSubjectClassification = await _classificationSubSubjectService.GetAll();
+                if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                {
+                    dataSubSubjectClassification.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+                }
+                if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                {
+                    dataSubSubjectClassification.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+                }
                 var dataSecurityClassification = await _securityClassificationService.GetAll();
                 var dataArchiveOwner = await _archiveOwnerService.GetAll();
                 var dataArchiveType = await _archiveTypeService.GetAll();
