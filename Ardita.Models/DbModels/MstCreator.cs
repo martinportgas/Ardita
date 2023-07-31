@@ -25,6 +25,8 @@ public partial class MstCreator
 
     public virtual TrxArchiveUnit ArchiveUnit { get; set; } = null!;
 
+    public virtual ICollection<IdxUserRole> IdxUserRoles { get; } = new List<IdxUserRole>();
+
     public virtual ICollection<MstCreatorLog> MstCreatorLogs { get; } = new List<MstCreatorLog>();
 
     public virtual ICollection<MstUser> MstUsers { get; } = new List<MstUser>();

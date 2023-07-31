@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -22,15 +23,13 @@ public class ArchiveUnitService : IArchiveUnitService
         return await _archiveUnitRepository.GetByListArchiveUnit(listArchiveUnitCode);
     }
 
-    public async Task<DataTableResponseModel<TrxArchiveUnit>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            var dataCount = await _archiveUnitRepository.GetCount();
-
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
@@ -38,8 +37,9 @@ public class ArchiveUnitService : IArchiveUnitService
             };
 
             var results = await _archiveUnitRepository.GetByFilterModel(filterData);
+            var dataCount = await _archiveUnitRepository.GetCountByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<TrxArchiveUnit>
+            var responseModel = new DataTableResponseModel<object>
             {
                 draw = model.draw,
                 recordsTotal = dataCount,

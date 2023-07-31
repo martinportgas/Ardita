@@ -1,6 +1,9 @@
 ﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -28,8 +31,9 @@
                     <h5>Subject Classification</h5>
                     <div class="ibox-tools">
                         <a href="@Url.Action("Add", "ClassificationSubject", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action("Export", "ClassificationSubject", new { Area = "MasterData"})" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
-                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                        <a href="@Url.Action("Export", "ClassificationSubject", new { Area = "MasterData"})" class="btn btn-sm btn-info"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(GlobalConst.UploadForm, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-success"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
+
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -38,8 +42,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Action</th>
-                                <th>Subject Classification Code</th>
-                                <th>Subject Classification Name</th>
+                                <th>Kode Subyek Klasifikasi</th>
+                                <th>Nama Subyek Klasifikasi</th>
+                                <th>Kode Klasifikasi</th>
+                                <th>Nama Klasifikasi</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -47,36 +53,7 @@
                 </div>
             </div>
         </div>
-        <!--Modal-->
-        <div class="modal inmodal" id="formUpload" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content animated fadeIn">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Subject Classification Upload</h4>
-                        <small>Pastikan format file anda sudah benar.</small>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="row">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" id="fUpload" name="files" class="custom-file-input" />
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <a id="btnDownloadTemplate" href="@Url.Action("DownloadTemplate", "ClassificationSubject", new { Area="MasterData"})" class="btn btn-sm btn-danger"><i class="fa fa-download"></i><span class="bold"> Template</span></a>
-                        <button id="btnUpload" class="btn btn-sm btn-danger"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      
     </div>
 </div>
 @section Scripts {
@@ -102,12 +79,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "subjectClassificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "subjectClassificationId", "name": "subjectClassificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "subjectClassificationId", "orderable": false, "searchable": false,
+                        "data": "subjectClassificationId", "name": "subjectClassificationId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "ClassificationSubject", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
@@ -118,12 +95,14 @@
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "ClassificationSubject", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", data);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+                            var JoinButton = '<div style="width:100px">' + edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
                     { "data": "subjectClassificationCode", "name": "subjectClassificationCode", "autoWidth": true },
                     { "data": "subjectClassificationName", "name": "subjectClassificationName", "autoWidth": true },
+                    { "data": "classificationCode", "name": "classification.classificationCode", "autoWidth": true },
+                    { "data": "classificationName", "name": "classification.classificationName", "autoWidth": true },
                 ],
                 buttons: [
                     { extend: 'excel', title: 'user-data' },

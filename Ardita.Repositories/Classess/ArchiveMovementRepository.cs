@@ -93,11 +93,18 @@ namespace Ardita.Repositories.Classess
             //        sortDestroy = model.sortColumn;
             //        break;
             //}
+            var User = AppUsers.CurrentUser(model.SessionUser);
             long? statusReceived = (int)GlobalConst.STATUS.ArchiveNotReceived;
             var result = await 
                     _context.TrxArchiveMovements
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitIdFrom == User.ArchiveUnitId))
+                    .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveMovementDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                    .Where(model.advanceSearch!.Search)
                     .Select(x => new {
                         Id = x.ArchiveMovementId,
                         x.DocumentCode,
@@ -113,9 +120,15 @@ namespace Ardita.Repositories.Classess
                     })
                 .Union(
                     _context.TrxArchiveDestroys
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true)
                     .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
+                    .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveDestroyDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                    .Where(model.advanceSearch!.SearchOther)
                     .Select(x => new {
                         Id = x.ArchiveDestroyId,
                         x.DocumentCode,
@@ -160,10 +173,17 @@ namespace Ardita.Repositories.Classess
         }
         public async Task<int> GetCountByFilterModel(DataTableModel model)
         {
+            var User = AppUsers.CurrentUser(model.SessionUser);
             var result = await
                     _context.TrxArchiveMovements
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                    .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true && (x.MovementCode + x.MovementName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitIdFrom == User.ArchiveUnitId))
+                    .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveMovementDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                    .Where(model.advanceSearch!.Search)
                     .Select(x => new {
                         Id = x.ArchiveMovementId,
                         x.DocumentCode,
@@ -178,9 +198,15 @@ namespace Ardita.Repositories.Classess
                     })
                 .Union(
                     _context.TrxArchiveDestroys
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                    .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                     .Include(x => x.Status)
                     .Where(x => x.IsActive == true)
                     .Where(x => x.IsActive == true && (x.DestroyCode + x.DestroyName + x.Note + x.Status.Name).Contains(model.searchValue))
+                    .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
+                    .Where(x => (User.CreatorId == Guid.Empty ? true : x.TrxArchiveDestroyDetails.Any(x => x.Archive.CreatorId == User.CreatorId)))
+                    .Where(model.advanceSearch!.SearchOther)
                     .Select(x => new {
                         Id = x.ArchiveDestroyId,
                         x.DocumentCode,

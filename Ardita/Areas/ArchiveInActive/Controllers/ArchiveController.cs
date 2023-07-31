@@ -24,7 +24,15 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             IArchiveCreatorService archiveCreatorService,
             IFileArchiveDetailService fileArchiveDetailService,
             IArchiveOwnerService archiveOwnerService,
-            IArchiveTypeService archiveTypeService)
+            IArchiveTypeService archiveTypeService,
+            IArchiveUnitService archiveUnitService,
+            IFloorService floorService,
+            IRoomService roomService,
+            IRackService rackService,
+            ILevelService levelService,
+            IRowService rowService,
+            IClassificationService classificationService,
+            IClassificationSubjectService classificationSubjectService)
         {
             _archiveService = archiveService;
             _gmdService = gmdService;
@@ -34,11 +42,23 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _fileArchiveDetailService = fileArchiveDetailService;
             _archiveOwnerService = archiveOwnerService;
             _archiveTypeService = archiveTypeService;
+            _archiveUnitService = archiveUnitService;
+            _floorService = floorService;
+            _roomService = roomService;
+            _rackService = rackService;
+            _levelService = levelService;
+            _rowService = rowService;
+            _classificationService = classificationService;
+            _classificationSubjectService = classificationSubjectService;
         }
         #endregion
 
         #region MAIN ACTION
-        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<ActionResult> Index()
+        {
+            await AllViewBagIndex();
+            return await base.Index();
+        }
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
@@ -422,6 +442,18 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             ViewBag.listSecurityClassification = await BindSecurityClassifications();
             ViewBag.listArchiveOwner = await BindArchiveOwners();
             ViewBag.listArchiveType = await BindArchiveTypes();
+        }
+        public async Task AllViewBagIndex()
+        {
+            ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.ListFloor = await BindFloors();
+            ViewBag.ListRoom = await BindRooms();
+            ViewBag.ListRack = await BindRacks();
+            ViewBag.ListLevel = await BindLevels();
+            ViewBag.ListRow = await BindRows();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListClassification = await BindClasscifications();
+            ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
         [HttpGet]
         public async Task<IActionResult> BindDownload(Guid Id)

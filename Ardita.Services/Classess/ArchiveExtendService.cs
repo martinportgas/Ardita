@@ -76,6 +76,11 @@ namespace Ardita.Services.Classess
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
                 filterData.IsArchiveActive = model.IsArchiveActive;
+                filterData.SessionUser = model.SessionUser;
+                filterData.advanceSearch = new SearchModel
+                {
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                };
 
                 var dataCount = await _archiveExtendRepository.GetCountByFilterModel(filterData);
                 var results = await _archiveExtendRepository.GetByFilterModel(filterData);

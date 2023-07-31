@@ -13,21 +13,45 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
     {
         public ArchiveReturnController(
                IArchiveRentService archiveRentService,
+            IClassificationSubjectService classificationSubjectService,
            IClassificationSubSubjectService classificationSubSubjectService,
            IArchiveService archiveService,
-           IMediaStorageInActiveService mediaStorageInActiveService
+           IMediaStorageInActiveService mediaStorageInActiveService,
+            IArchiveUnitService archiveUnitService,
+        IClassificationService classificationService,
+        IFloorService floorService,
+        IRoomService roomService,
+        IRackService rackService,
+        ILevelService levelService,
+        IRowService rowService,
+        IArchiveCreatorService archiveCreatorService
            )
         {
             _archiveRentService = archiveRentService;
             _classificationSubSubjectService = classificationSubSubjectService;
             _archiveService = archiveService;
             _MediaStorageInActiveService = mediaStorageInActiveService;
+            _archiveUnitService = archiveUnitService;
+            _classificationSubSubjectService = classificationSubSubjectService;
+            _classificationSubjectService = classificationSubjectService;
+            _levelService = levelService;
+            _rowService = rowService;
+            _archiveCreatorService = archiveCreatorService;
+            _classificationService = classificationService;
+            _rackService = rackService;
+            _roomService = roomService;
+            _floorService = floorService;
         }
-        public override async Task<ActionResult> Index() => await base.Index();
+        public override async Task<ActionResult> Index()
+        {
+            await AllViewBagIndex();
+            return await base.Index();
+        }
         public override async Task<JsonResult> GetData(DataTablePostModel model)
         {
             try
             {
+                model.SessionUser = User;
                 var result = await _archiveRentService.GetReturnList(model);
                 return Json(result);
 
@@ -185,6 +209,18 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             {
                 throw;
             }
+        }
+        public async Task AllViewBagIndex()
+        {
+            ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+            ViewBag.ListFloor = await BindFloors();
+            ViewBag.ListRoom = await BindRooms();
+            ViewBag.ListRack = await BindRacks();
+            ViewBag.ListLevel = await BindLevels();
+            ViewBag.ListRow = await BindRows();
+            ViewBag.ListArchiveCreator = await BindArchiveCreators();
+            ViewBag.ListClassification = await BindClasscifications();
+            ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive });
     }

@@ -5,6 +5,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -125,7 +126,12 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         }
         return RedirectToIndex();
     }
-
+    public async Task<IActionResult> UploadForm()
+    {
+        await Task.Delay(0);
+        ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+        return View();
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Upload()
@@ -134,39 +140,79 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         {
             IFormFile file = Request.Form.Files[0];
 
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-            var companies = await _companyService.GetAll();
-
-
-            List<TrxArchiveUnit> trxArchiveUnits = new();
-            TrxArchiveUnit trxArchiveUnit;
-
-            foreach (DataRow row in result.Rows)
+            if (file.Length > 0)
             {
-                trxArchiveUnit = new();
-                trxArchiveUnit.ArchiveUnitId = Guid.NewGuid();
+                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
 
-                trxArchiveUnit.CompanyId = companies.Where(x => x.CompanyCode.Contains(row[1].ToString())).FirstOrDefault().CompanyId;
-                trxArchiveUnit.ArchiveUnitCode = row[2].ToString();
-                trxArchiveUnit.ArchiveUnitName = row[3].ToString();
-                trxArchiveUnit.ArchiveUnitAddress = row[4].ToString();
-                trxArchiveUnit.ArchiveUnitPhone = row[5].ToString();
-                trxArchiveUnit.ArchiveUnitEmail = row[6].ToString();
+                if (result.Rows.Count > 0)
+                {
+                    List<TrxArchiveUnit> trxArchiveUnits = new();
+                    TrxArchiveUnit trxArchiveUnit;
 
+                    bool valid = true;
+                    int errorCount = 0;
 
-                trxArchiveUnit.IsActive = true;
-                trxArchiveUnit.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                trxArchiveUnit.CreatedDate = DateTime.Now;
+                    result.Columns.Add("Keterangan");
 
-                trxArchiveUnits.Add(trxArchiveUnit);
+                    var companies = await _companyService.GetAll();
+                    var archiveUnit = await _archiveUnitService.GetAll();
+
+                    foreach (DataRow row in result.Rows)
+                    {
+                        string error = string.Empty;
+
+                        if (companies.Where(x => x.CompanyCode == row[1].ToString()).Count() == 0)
+                        {
+                            valid = false;
+                            error = "_Kode Perusahaan tidak ditemukan";
+                        }
+                        if (archiveUnit.Where(x => x.ArchiveUnitCode == row[2].ToString()).Count() > 0)
+                        {
+                            valid = false;
+                            error = "_Kode Lokasi Simpan sudah ada, silahkan gunakan kode yang lain";
+                        }
+
+                        if (valid)
+                        {
+                            trxArchiveUnit = new();
+                            trxArchiveUnit.ArchiveUnitId = Guid.NewGuid();
+                            trxArchiveUnit.CompanyId = companies.Where(x => x.CompanyCode == row[1].ToString()).FirstOrDefault()!.CompanyId;
+                            trxArchiveUnit.ArchiveUnitCode = row[2].ToString();
+                            trxArchiveUnit.ArchiveUnitName = row[3].ToString();
+                            trxArchiveUnit.ArchiveUnitAddress = row[4].ToString();
+                            trxArchiveUnit.ArchiveUnitPhone = row[5].ToString();
+                            trxArchiveUnit.ArchiveUnitEmail = row[6].ToString();
+                            trxArchiveUnit.IsActive = true;
+                            trxArchiveUnit.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                            trxArchiveUnit.CreatedDate = DateTime.Now;
+                            trxArchiveUnits.Add(trxArchiveUnit);
+                        }
+                        else
+                        {
+                            errorCount++;
+                        }
+                        row["Keterangan"] = error;
+
+                    }
+                    ViewBag.result = JsonConvert.SerializeObject(result);
+                    ViewBag.errorCount = errorCount;
+
+                    if (valid)
+                        await _archiveUnitService.InsertBulk(trxArchiveUnits);
+
+                }
+                return View(GlobalConst.UploadForm);
             }
-            await _archiveUnitService.InsertBulk(trxArchiveUnits);
-            return RedirectToIndex();
+            else
+            {
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
+            }
         }
         catch (Exception)
         {
-
-            throw new Exception();
+            TempData["errorCount"] = 100000001;
+            return RedirectToAction(GlobalConst.UploadForm);
         }
 
     }

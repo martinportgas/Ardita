@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace Ardita.Services.Interfaces
         Task<TrxSubSubjectClassification> GetById(Guid id);
         Task<IEnumerable<TrxPermissionClassification>> GetDetailByMainId(Guid id);
         Task<IEnumerable<TrxSubSubjectClassification>> GetAll();
-        Task<DataTableResponseModel<TrxSubSubjectClassification>> GetListClassificationSubSubject(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListClassificationSubSubject(DataTablePostModel model);
         Task<IEnumerable<TrxPermissionClassification>> GetListDetailPermissionClassifications(Guid id);
         Task<int> Insert(TrxSubSubjectClassification model);
         Task<bool> InsertBulk(List<TrxSubSubjectClassification> models);

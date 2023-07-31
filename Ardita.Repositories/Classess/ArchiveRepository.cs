@@ -87,6 +87,7 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
         int statusReturn = (int)GlobalConst.STATUS.Return;
+        var User = AppUsers.CurrentUser(model.SessionUser);
         var result = (bool)model.IsArchiveActive! ? await _context.TrxArchives
                 .Include(x => x.Gmd)
                 .Include(x => x.GmdDetail)
@@ -97,11 +98,13 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveType)
                 .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
                 .Where(x => x.IsActive == true && x.IsArchiveActive == true)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
-                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -143,11 +146,12 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveType)
                 .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack)
                 .Where(x => x.IsActive == true && x.IsArchiveActive == false)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
-                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -231,6 +235,7 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<int> GetCountByFilterData(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         model.IsArchiveActive = model.IsArchiveActive == null ? true : model.IsArchiveActive;
         var result = (bool)model.IsArchiveActive! ? await _context.TrxArchives
                 .Include(x => x.Gmd)
@@ -242,11 +247,13 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveType)
                 .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
                 .Where(x => x.IsActive == true && x.IsArchiveActive == true)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
-                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .CountAsync()
                 : await _context.TrxArchives
@@ -259,11 +266,12 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveType)
                 .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack)
                 .Where(x => x.IsActive == true && x.IsArchiveActive == false)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
-                .Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                .Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                .Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
+                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
+                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .CountAsync();
 
@@ -543,7 +551,7 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageDetails)
             .Include(x => x.TrxArchiveOutIndicators.Where(z => z.IsActive == true))
-            .Where(x => x.IsActive == true && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
+            .Where(x => (x.TrxMediaStorageDetails.FirstOrDefault() == null ? x.IsActive == true : true) && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
             .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0 && CreatedDateArchive.Month == @1")}", year, month)
             .Where(x => x.GmdDetailId == gmdDetailId)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)

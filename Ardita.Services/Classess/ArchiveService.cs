@@ -34,7 +34,7 @@ public class ArchiveService : IArchiveService
     public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
 
     public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null) => await _archiveRepository.GetAll(listArchiveUnitCode);
-    public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode) => await _archiveRepository.GetAllInActive(listArchiveUnitCode);
+    public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode = null) => await _archiveRepository.GetAllInActive(listArchiveUnitCode);
 
     public async Task<TrxArchive> GetById(Guid id)
     {
@@ -67,7 +67,8 @@ public class ArchiveService : IArchiveService
                     EndDate = validEnd ? endDate : GlobalConst.MaxDate,
                     Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
                 },
-                IsArchiveActive = model.IsArchiveActive
+                IsArchiveActive = model.IsArchiveActive,
+                SessionUser = model.SessionUser
             };
 
             int dataCount = await _archiveRepository.GetCountByFilterData(filterData);

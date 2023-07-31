@@ -161,6 +161,7 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                     result.Columns.Add("Keterangan");
 
                     var archiveCreatorDetail = await _archiveCreatorService.GetAll();
+                    var archiveUnit = await _archiveUnitService.GetAll();
 
 
                     foreach (DataRow row in result.Rows)
@@ -173,14 +174,20 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                             error = "_Kode Pencipta sudah ada";
                         }
 
+                        if (archiveUnit.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
+                        {
+                            valid = false;
+                            error = "_Kode Lokasi Simpan tidak ditemukabn";
+                        }
+
                         if (valid)
                         {
                             mstCreator = new();
                             mstCreator.CreatorId = Guid.NewGuid();
 
-                            mstCreator.ArchiveUnitId = archiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[1].ToString())).FirstOrDefault().ArchiveUnitId;
-                            mstCreator.CreatorCode = row[2].ToString();
-                            mstCreator.CreatorName = row[3].ToString();
+                            mstCreator.CreatorCode = row[1].ToString();
+                            mstCreator.CreatorName = row[2].ToString();
+                            mstCreator.ArchiveUnitId = archiveUnits.Where(x => x.ArchiveUnitCode.Contains(row[3].ToString())).FirstOrDefault().ArchiveUnitId;
 
 
                             mstCreator.IsActive = true;
@@ -232,20 +239,20 @@ public class ArchiveCreatorController : BaseController<MstCreator>
             IRow row = excelSheet.CreateRow(0);
 
             row.CreateCell(0).SetCellValue(GlobalConst.No);
-            row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyName));
-            row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-            row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorCode));
-            row.CreateCell(4).SetCellValue(nameof(MstCreator.CreatorName));
+            row.CreateCell(3).SetCellValue("Kode Unit Pencipta");
+            row.CreateCell(4).SetCellValue("Nama Unit Pencipta");
+            row.CreateCell(2).SetCellValue("Lokasi Simpan");
+            row.CreateCell(1).SetCellValue("Perusahaan");
 
             int no = 1;
             foreach (var item in archiveCreators)
             {
                 row = excelSheet.CreateRow(no);
                 row.CreateCell(0).SetCellValue(no);
-                row.CreateCell(1).SetCellValue(item.ArchiveUnit.Company.CompanyName);
-                row.CreateCell(2).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
                 row.CreateCell(3).SetCellValue(item.CreatorCode);
                 row.CreateCell(4).SetCellValue(item.CreatorName);
+                row.CreateCell(2).SetCellValue(item.ArchiveUnit.ArchiveUnitName);
+                row.CreateCell(1).SetCellValue(item.ArchiveUnit.Company.CompanyName);
                 no += 1;
             }
             using (var exportData = new MemoryStream())
@@ -277,19 +284,15 @@ public class ArchiveCreatorController : BaseController<MstCreator>
 
             //Archive Creators
             row.CreateCell(0).SetCellValue(GlobalConst.No);
-            row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
-            row.CreateCell(2).SetCellValue(nameof(MstCreator.CreatorCode));
-            row.CreateCell(3).SetCellValue(nameof(MstCreator.CreatorName));
+            row.CreateCell(1).SetCellValue("Kode Unit Pencipta");
+            row.CreateCell(2).SetCellValue("Nama Unit Pencipta");
+            row.CreateCell(3).SetCellValue("kode Lokasi Simpan");
 
             //Archive Units
             rowArchiveUnits.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowArchiveUnits.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyCode));
-            rowArchiveUnits.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
             rowArchiveUnits.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
             rowArchiveUnits.CreateCell(4).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-            rowArchiveUnits.CreateCell(5).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitAddress));
-            rowArchiveUnits.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitPhone));
-            rowArchiveUnits.CreateCell(7).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitEmail));
+            rowArchiveUnits.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
 
             var dataArchiveUnits = await _archiveUnitService.GetAll();
 
@@ -299,13 +302,9 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                 rowArchiveUnits = excelSheetArchiveUnits.CreateRow(no);
 
                 rowArchiveUnits.CreateCell(0).SetCellValue(no);
-                rowArchiveUnits.CreateCell(1).SetCellValue(item.Company.CompanyCode);
-                rowArchiveUnits.CreateCell(2).SetCellValue(item.Company.CompanyName);
                 rowArchiveUnits.CreateCell(3).SetCellValue(item.ArchiveUnitCode);
                 rowArchiveUnits.CreateCell(4).SetCellValue(item.ArchiveUnitName);
-                rowArchiveUnits.CreateCell(5).SetCellValue(item.ArchiveUnitAddress);
-                rowArchiveUnits.CreateCell(6).SetCellValue(item.ArchiveUnitPhone);
-                rowArchiveUnits.CreateCell(7).SetCellValue(item.ArchiveUnitEmail);
+                rowArchiveUnits.CreateCell(2).SetCellValue(item.Company.CompanyName);
                 no += 1;
             }
             using (var exportData = new MemoryStream())

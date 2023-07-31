@@ -36,12 +36,16 @@ namespace Ardita.Repositories.Classess
 
         public async Task<IdxUserRole> GetById(Guid id)
         {
-            var results = await _context.IdxUserRoles.AsNoTracking().FirstOrDefaultAsync(x => x.UserRoleId == id);
+            var results = await _context.IdxUserRoles
+                    .Include(x => x.Role)
+                    .Include(x => x.ArchiveUnit)
+                    .Include(x => x.Creator)
+                    .AsNoTracking().FirstOrDefaultAsync(x => x.UserRoleId == id);
             return results;
         }
-        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role)
+        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role, Guid archiveUnit, Guid creator)
         {
-            var results = await _context.IdxUserRoles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == id && x.RoleId == role);
+            var results = await _context.IdxUserRoles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == id && x.RoleId == role && (archiveUnit == Guid.Empty ? x.ArchiveUnitId == null : x.ArchiveUnitId == archiveUnit) && (creator == Guid.Empty ? x.CreatorId == null : x.CreatorId == creator));
             return results;
         }
         public async Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id)
@@ -49,6 +53,8 @@ namespace Ardita.Repositories.Classess
             var result = await _context.IdxUserRoles
                 .Include(x => x.User)
                 .Include(x => x.Role)
+                .Include(x => x.ArchiveUnit)
+                .Include(x => x.Creator)
                .AsNoTracking().Where(x => x.UserId == id).ToListAsync();
             return result;
         }
@@ -57,6 +63,8 @@ namespace Ardita.Repositories.Classess
             int result = 0;
             model.User = null;
             model.Role = null;
+            model.ArchiveUnit = null;
+            model.Creator = null;
 
             if (model != null)
             {
@@ -64,7 +72,9 @@ namespace Ardita.Repositories.Classess
                 {
                     var data = _context.IdxUserRoles.AsNoTracking().Where(x =>
                             x.UserId == model.UserId &&
-                            x.RoleId == model.RoleId
+                            x.RoleId == model.RoleId &&
+                            x.ArchiveUnitId == model.ArchiveUnitId &&
+                            x.CreatorId == model.CreatorId
                         );
 
                     if (data.Count() == 0)
@@ -88,16 +98,21 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.IdxUserRoles
                     .Include(x => x.Role)
+                    .Include(x => x.ArchiveUnit)
+                    .Include(x => x.Creator)
                     .Where(x => x.UserId == AppUsers.CurrentUser(model.SessionUser!).UserId)
                     .Where(x => (x.Role.Code + x.Role.Name).ToLower().Contains(model.searchValue!))
                     .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                     .Skip(model.skip).Take(model.pageSize)
                     .Select(x => new
                     {
+                        x.UserRoleId,
                         x.RoleId,
                         x.Role.Code,
                         x.Role.Name,
-                        Aktif = x.RoleId == AppUsers.CurrentUser(model.SessionUser!).RoleId
+                        x.ArchiveUnit.ArchiveUnitName,
+                        x.Creator.CreatorName,
+                        Aktif = x.RoleId == AppUsers.CurrentUser(model.SessionUser!).RoleId && x.ArchiveUnitId == (AppUsers.CurrentUser(model.SessionUser!).ArchiveUnitId == Guid.Empty ? null : AppUsers.CurrentUser(model.SessionUser!).ArchiveUnitId) && x.CreatorId == (AppUsers.CurrentUser(model.SessionUser!).CreatorId == Guid.Empty ? null : AppUsers.CurrentUser(model.SessionUser!).CreatorId)
                     })
                     .ToListAsync();
 
@@ -107,6 +122,8 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.IdxUserRoles
                     .Include(x => x.Role)
+                    .Include(x => x.ArchiveUnit)
+                    .Include(x => x.Creator)
                     .Where(x => x.UserId == AppUsers.CurrentUser(model.SessionUser!).UserId)
                     .Where(x => (x.Role.Code + x.Role.Name).ToLower().Contains(model.searchValue!))
                     .CountAsync();

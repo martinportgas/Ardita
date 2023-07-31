@@ -6,6 +6,7 @@ using Ardita.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,23 +65,24 @@ namespace Ardita.Services.Classess
         {
             return await _classificationSubSubjectRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<TrxSubSubjectClassification>> GetListClassificationSubSubject(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListClassificationSubSubject(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _classificationSubSubjectRepository.GetCount();
+                
 
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
 
                 var results = await _classificationSubSubjectRepository.GetByFilterModel(filterData);
+                var dataCount = await _classificationSubSubjectRepository.GetCount(filterData);
 
-                var responseModel = new DataTableResponseModel<TrxSubSubjectClassification>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;

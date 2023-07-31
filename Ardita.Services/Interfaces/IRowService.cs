@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
         /// </summary>
         /// <returns>list row</returns>
         Task<IEnumerable<TrxRow>> GetAvailableRow();
-        Task<DataTableResponseModel<TrxRow>> GetListClassification(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxRow model);
         Task<bool> InsertBulk(List<TrxRow> rows);
         Task<int> Delete(TrxRow model);

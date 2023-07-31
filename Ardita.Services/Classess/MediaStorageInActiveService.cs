@@ -56,6 +56,11 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
             filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
             filterData.pageSize = model.length;
             filterData.skip = model.start;
+            filterData.SessionUser = model.SessionUser;
+            filterData.advanceSearch = new SearchModel
+            {
+                Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+            };
 
             var dataCount = await _mediaStorageInActiveRepository.GetCountByFilterModel(filterData);
             var results = await _mediaStorageInActiveRepository.GetByFilterModel(filterData);

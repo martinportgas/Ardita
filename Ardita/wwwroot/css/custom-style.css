@@ -1085,3 +1085,11 @@ hr {
     border: solid 1px lightgray;
     border-radius: 0px 0px 5px 5px;
 }
+
+.ibox-tools a.btn {
+    color: #fff !important;
+}
+
+.btn {
+    margin-bottom: 3px;
+}

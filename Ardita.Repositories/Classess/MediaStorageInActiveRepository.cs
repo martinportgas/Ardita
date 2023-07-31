@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,14 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         return await _context.TrxMediaStorageInActives
             .Include(x => x.SubSubjectClassification.Creator)
             .Include(x => x.TypeStorage.ArchiveUnit)
             .Include(x => x.Status)
             .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
+            .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TypeStorage.ArchiveUnitId == User.ArchiveUnitId))
+            .Where(model.advanceSearch!.Search)
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
@@ -76,10 +80,14 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
     }
     public async Task<int> GetCountByFilterModel(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         return await _context.TrxMediaStorageInActives
-            .Include(x => x.SubSubjectClassification)
+            .Include(x => x.SubSubjectClassification.Creator)
+            .Include(x => x.TypeStorage.ArchiveUnit)
             .Include(x => x.Status)
             .Where(x => x.IsActive == true && (x.MediaStorageInActiveCode + x.ArchiveYear + x.StatusId + x.SubSubjectClassification.SubSubjectClassificationName).Contains(model.searchValue))
+            .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TypeStorage.ArchiveUnitId == User.ArchiveUnitId))
+            .Where(model.advanceSearch!.Search)
             .CountAsync();
     }
 

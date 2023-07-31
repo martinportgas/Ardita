@@ -13,6 +13,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers;
 public class MediaStorageInActiveController : BaseController<TrxMediaStorageInActive>
 {
     public MediaStorageInActiveController(
+        IArchiveCreatorService archiveCreatorService,
         IMediaStorageInActiveService mediaStorageInActiveService,
         IClassificationSubjectService classificationSubjectService,
         IClassificationSubSubjectService classificationSubSubjectService,
@@ -26,9 +27,11 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         IRowService rowService,
         IGmdService gmdService,
         ISubTypeStorageService subTypeStorageService,
+        IClassificationService classificationService,
         IHostingEnvironment hostingEnvironment
         )
     {
+        _archiveCreatorService = archiveCreatorService;
         _MediaStorageInActiveService = mediaStorageInActiveService;
         _classificationSubjectService = classificationSubjectService;
         _classificationSubSubjectService = classificationSubSubjectService;
@@ -42,14 +45,20 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _rowService = rowService;
         _gmdService = gmdService;
         _subTypeStorageService = subTypeStorageService;
+        _classificationService = classificationService;
         _hostingEnvironment = hostingEnvironment;
     }
-    public override async Task<ActionResult> Index() => await base.Index();
+    public override async Task<ActionResult> Index()
+    {
+        await AllViewBagIndex();
+        return View();
+    }
 
     public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
+            model.SessionUser = User;
             var result = await _MediaStorageInActiveService.GetList(model);
 
             return Json(result);
@@ -138,6 +147,18 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         ViewBag.listSubTypeStorage = await BindSubTypeStorage();
         ViewBag.listGMDDetail = await BindGmdDetail();
         ViewBag.listSubject = await BindAllSubjectClasscifications();
+    }
+    public async Task AllViewBagIndex()
+    {
+        ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+        ViewBag.ListFloor = await BindFloors();
+        ViewBag.ListRoom = await BindRooms();
+        ViewBag.ListRack = await BindRacks();
+        ViewBag.ListLevel = await BindLevels();
+        ViewBag.ListRow = await BindRows();
+        ViewBag.ListArchiveCreator = await BindArchiveCreators();
+        ViewBag.ListClassification = await BindClasscifications();
+        ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
     }
 
     private async Task<IActionResult> InitFormView(Guid Id)

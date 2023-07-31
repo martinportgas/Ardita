@@ -18,12 +18,18 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
 
     public async Task<IEnumerable<object>> GetByFilterModelArchiveMovement(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         var result = await _context.TrxArchiveMovements
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Include(x => x.StatusReceivedNavigation)
                 .Include(x => x.CreatedByNavigation.Creator)
                 .Include(x => x.CreatedByNavigation.Employee)
                 .Include(x => x.ReceivedByNavigation.Employee)
                 .Where(x => x.StatusId == (int)GlobalConst.STATUS.Approved && (x.MovementCode + x.MovementName + x.Note + x.StatusReceivedNavigation!.Name).Contains(model.searchValue!))
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitIdDestination == User.ArchiveUnitId))
+                .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
@@ -47,12 +53,18 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
 
     public async Task<int> GetCountByFilterDataArchiveMovement(DataTableModel model)
     {
+        var User = AppUsers.CurrentUser(model.SessionUser);
         var result = await _context.TrxArchiveMovements
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+                .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.Archive.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
                 .Include(x => x.StatusReceivedNavigation)
                 .Include(x => x.CreatedByNavigation.Creator)
                 .Include(x => x.CreatedByNavigation.Employee)
                 .Include(x => x.ReceivedByNavigation.Employee)
-                 .Where(x => x.StatusId == (int)GlobalConst.STATUS.Approved && (x.MovementCode + x.MovementName + x.StatusReceivedNavigation!.Name).Contains(model.searchValue!))
+                .Where(x => x.StatusId == (int)GlobalConst.STATUS.Approved && (x.MovementCode + x.MovementName + x.Note + x.StatusReceivedNavigation!.Name).Contains(model.searchValue!))
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitIdDestination == User.ArchiveUnitId))
+                .Where(model.advanceSearch!.Search)
                  .CountAsync();
 
         return result;

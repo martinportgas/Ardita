@@ -241,6 +241,8 @@ public static class GlobalConst
     public const string BindGMDDetailVolumeByTypeStorageId = "BindGMDDetailVolumeByTypeStorageId";
     public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
     public const string BindRoomActiveByArchiveUnitId = "BindRoomActiveByArchiveUnitId";
+    public const string BindParamRoomActiveByFloorId = "BindParamRoomActiveByFloorId";
+    public const string BindParamFloorsByArchiveUnitId = "BindParamFloorsByArchiveUnitId";
     public const string BindParamRackByRoomId = "BindParamRackByRoomId";
     public const string BindParamLevelByRackId = "BindParamLevelByRackId";
     public const string BindParamRowByLevelId = "BindParamRowByLevelId";
@@ -325,6 +327,10 @@ public static class GlobalConst
     public const string CompanyId = "CompanyId";
     public const string CompanyName = "CompanyName";
     public const string EmployeeId = "EmployeeId";
+    public const string ArchiveUnitId = "ArchiveUnitId";
+    public const string ArchiveUnitName = "ArchiveUnitName";
+    public const string CreatorId = "CreatorId";
+    public const string CreatorName = "CreatorName";
     public const string ArchiveUnitCode = "ArchiveUnitCode";
 
     //Excel Template Header From Json
@@ -351,6 +357,23 @@ public static class GlobalConst
         dtSender.Rows.Add(dataRow);
         return dtSender;
     }
+
+    public static DataTable dataRoomType()
+    {
+        DataTable dt = new DataTable();
+        dt.Columns.Add("no");
+        dt.Columns.Add("tipeRuangan");
+        DataRow dataRow = dt.NewRow();
+        dataRow[0] = 1;
+        dataRow[1] = "Unit Kearsipan";
+        dt.Rows.Add(dataRow);
+        dataRow = dt.NewRow();
+        dataRow[0] = 2;
+        dataRow[1] = "Unit Pengolah";
+        dt.Rows.Add(dataRow);
+        return dt;
+    }
+
     //Document Code
     public const string RetentionExtendDoc = "PR";
     public const string ArchiveDestroyDoc = "PH";

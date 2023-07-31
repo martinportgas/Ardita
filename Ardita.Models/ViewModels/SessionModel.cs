@@ -21,6 +21,10 @@ namespace Ardita.Models.ViewModels
         public Guid CompanyId { get; set; }
         public string CompanyName { get; set; }
         public Guid EmployeeId { get; set; }
+        public Guid ArchiveUnitId { get; set; }
+        public string ArchiveUnitName { get; set; }
+        public Guid CreatorId { get; set; }
+        public string CreatorName { get; set; }
         public List<string> ListArchiveUnitCode { get; set; }
 
     }

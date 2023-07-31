@@ -40,29 +40,30 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
         .AsNoTracking()
         .ToListAsync();
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<TrxArchiveUnit> result;
-
-        var propertyInfo = typeof(TrxArchiveUnit).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(TrxArchiveUnit).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.TrxArchiveUnits
-                .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName).Contains(model.searchValue) && x.IsActive == true)
-                .OrderBy(x => EF.Property<TrxArchiveUnit>(x, propertyName))
+        var result = await _context.TrxArchiveUnits
+                .Include(x => x.Company)
+                .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName + x.Company.CompanyName).Contains(model.searchValue) && x.IsActive == true)
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-        }
-        else
-        {
-            result = await _context.TrxArchiveUnits
-                .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName).Contains(model.searchValue) && x.IsActive == true)
-                .OrderByDescending(x => EF.Property<TrxArchiveUnit>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-        }
+                .Select(x => new {
+                     x.ArchiveUnitId,
+                     x.ArchiveUnitCode,
+                     x.ArchiveUnitName,
+                     x.Company.CompanyName
+                 })
+                 .ToListAsync();
+
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.TrxArchiveUnits
+                .Include(x => x.Company)
+                .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName + x.Company.CompanyName).Contains(model.searchValue) && x.IsActive == true)
+                .CountAsync();
+
         return result;
     }
 

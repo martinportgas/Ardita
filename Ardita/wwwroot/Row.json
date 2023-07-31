@@ -1,0 +1,43 @@
+{
+  "export": {
+    "0": {
+      "name": "Baris",
+      "column": {
+        "0": "No",
+        "1": "Kode Baris",
+        "2": "Nama Baris",
+        "3": "Nama Tingkat",
+        "4": "Nama Rak",
+        "5": "Nama Ruangan",
+        "6": "Nama Lantai",
+        "7": "Unit Kearsipan"
+      }
+    }
+  },
+  "import": {
+    "0": {
+      "name": "Baris",
+      "column": {
+        "0": "No",
+        "1": "Kode Baris",
+        "2": "Nama Baris",
+        "3": "Kode Tingkat"
+      }
+    },
+    "1": {
+      "name": "Daftar Tingkat",
+      "column": {
+        "0": "No",
+        "1": "Kode Tingkat",
+        "2": "Nama Tingkat",
+        "3": "Kode Rak",
+        "4": "Nama Rak",
+        "5": "Kode Ruangan",
+        "6": "Nama Ruangan",
+        "7": "Tipe Ruangan",
+        "8": "Nama Lantai",
+        "9": "Unit Kearsipan"
+      }
+    }
+  }
+}

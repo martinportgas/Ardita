@@ -8,6 +8,7 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -118,6 +119,12 @@ namespace Ardita.Areas.MasterData.Controllers
             }
             return RedirectToIndex();
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         public async Task<IActionResult> DownloadTemplate()
         {
             try
@@ -131,8 +138,9 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
+                row.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
 
                 using (var exportData = new MemoryStream())
                 {
@@ -161,17 +169,20 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(0).SetCellValue(GlobalConst.No);
+                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
 
                 int no = 1;
                 foreach (var item in data)
                 {
                     row = excelSheet.CreateRow(no);
-                    row.CreateCell(0).SetCellValue(item.TypeClassificationCode);
-                    row.CreateCell(1).SetCellValue(item.TypeClassificationName);
+                    row.CreateCell(0).SetCellValue(no);
+                    row.CreateCell(1).SetCellValue(item.TypeClassificationCode);
+                    row.CreateCell(2).SetCellValue(item.TypeClassificationName);
                     no += 1;
                 }
+
                 using (var exportData = new MemoryStream())
                 {
                     workbook.Write(exportData);
@@ -186,27 +197,76 @@ namespace Ardita.Areas.MasterData.Controllers
         }
         public async Task<IActionResult> Upload()
         {
-            IFormFile file = Request.Form.Files[0];
-            var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+            try
+            { 
+                IFormFile file = Request.Form.Files[0];
+                if (file.Length > 0)
+                {
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+                    if (result.Rows.Count > 0)
+                    {
+                        List<MstTypeClassification> models = new();
+                        MstTypeClassification model;
 
-            List<MstTypeClassification> models = new();
-            MstTypeClassification model;
 
-            foreach (DataRow row in result.Rows)
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+
+                        var classificationTypeDetail = await _classificationTypeService.GetAll();
+
+                        
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+
+                            if (classificationTypeDetail.Where(x => x.TypeClassificationCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Tipe Klasifikasi sudah ada";
+                            }
+
+                            if(valid) 
+                            {
+                                model = new();
+                                model.TypeClassificationId = Guid.NewGuid();
+                                model.TypeClassificationCode = row[1].ToString();
+                                model.TypeClassificationName = row[2].ToString();
+                                model.IsActive = true;
+                                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                model.CreatedDate = DateTime.Now;
+
+                                models.Add(model);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+
+
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _classificationTypeService.InsertBulk(models);
+                    }
+                    return View(GlobalConst.UploadForm);
+                }
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
+                }
+            
+            } 
+            catch (Exception ex) 
             {
-                model = new();
-                model.TypeClassificationId = Guid.NewGuid();
-                model.TypeClassificationCode = row[0].ToString();
-                model.TypeClassificationName = row[1].ToString();
-                model.IsActive = true;
-                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                model.CreatedDate = DateTime.Now;
-
-                models.Add(model);
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
-            await _classificationTypeService.InsertBulk(models);
-
-            return RedirectToIndex();
         }
         #endregion
         #region HELPER

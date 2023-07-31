@@ -247,10 +247,12 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UserRoleId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("user_role_id");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.IsPrimary).HasColumnName("is_primary");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.UpdateBy).HasColumnName("update_by");
@@ -258,6 +260,14 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("update_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.IdxUserRoles)
+                .HasForeignKey(d => d.ArchiveUnitId)
+                .HasConstraintName("FK_IDX_USER_ROLE_TRX_ARCHIVE_UNIT");
+
+            entity.HasOne(d => d.Creator).WithMany(p => p.IdxUserRoles)
+                .HasForeignKey(d => d.CreatorId)
+                .HasConstraintName("FK_IDX_USER_ROLE_MST_CREATOR");
 
             entity.HasOne(d => d.Role).WithMany(p => p.IdxUserRoles)
                 .HasForeignKey(d => d.RoleId)
@@ -1135,8 +1145,6 @@ public partial class BksArditaDevContext : DbContext
             entity.HasKey(e => e.UserId).HasName("PK_USERS");
 
             entity.ToTable("MST_USER");
-
-            entity.HasIndex(e => e.Username, "IX_USERNAME").IsUnique();
 
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
@@ -2742,22 +2750,31 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_type");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
+            entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
             entity.Property(e => e.CreatedDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date_archive");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.CreatorName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("creator_name");
+            entity.Property(e => e.FloorId).HasColumnName("floor_id");
             entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
+            entity.Property(e => e.LevelId).HasColumnName("level_id");
+            entity.Property(e => e.RackId).HasColumnName("rack_id");
             entity.Property(e => e.RetentionDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("retention_date_archive");
+            entity.Property(e => e.RoomId).HasColumnName("room_id");
+            entity.Property(e => e.RowId).HasColumnName("row_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("status");
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
+            entity.Property(e => e.SubjectClassificationId).HasColumnName("subject_classification_id");
             entity.Property(e => e.TitleArchive)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -2783,9 +2800,12 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_type");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
+            entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
             entity.Property(e => e.CreatedDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date_archive");
+            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.CreatorName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -2793,14 +2813,21 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.DateReceived)
                 .HasColumnType("datetime")
                 .HasColumnName("date_received");
+            entity.Property(e => e.FloorId).HasColumnName("floor_id");
+            entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");
+            entity.Property(e => e.LevelId).HasColumnName("level_id");
+            entity.Property(e => e.RackId).HasColumnName("rack_id");
             entity.Property(e => e.RetentionDateArchive)
                 .HasColumnType("datetime")
                 .HasColumnName("retention_date_archive");
+            entity.Property(e => e.RoomId).HasColumnName("room_id");
+            entity.Property(e => e.RowId).HasColumnName("row_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("status");
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
+            entity.Property(e => e.SubjectClassificationId).HasColumnName("subject_classification_id");
             entity.Property(e => e.TitleArchive)
                 .HasMaxLength(200)
                 .IsUnicode(false)

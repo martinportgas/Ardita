@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
+using Newtonsoft.Json;
 using NPOI.HPSF;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -146,12 +147,14 @@ namespace Ardita.Areas.MasterData.Controllers
                 IRow row = excelSheet.CreateRow(0);
                 IRow rowParent = excelSheetParent.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
-                row.CreateCell(2).SetCellValue(nameof(TrxClassification.ClassificationCode));
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(3).SetCellValue(nameof(TrxClassification.ClassificationCode));
 
-                rowParent.CreateCell(0).SetCellValue(nameof(TrxClassification.ClassificationCode));
-                rowParent.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationName));
+                rowParent.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                rowParent.CreateCell(1).SetCellValue(nameof(TrxClassification.ClassificationCode));
+                rowParent.CreateCell(2).SetCellValue(nameof(TrxClassification.ClassificationName));
 
                 var dataClassification = await _classificationService.GetAll();
 
@@ -160,8 +163,9 @@ namespace Ardita.Areas.MasterData.Controllers
                 {
                     rowParent = excelSheetParent.CreateRow(no);
 
-                    rowParent.CreateCell(0).SetCellValue(item.ClassificationCode);
-                    rowParent.CreateCell(1).SetCellValue(item.ClassificationName);
+                    rowParent.CreateCell(0).SetCellValue(no);
+                    rowParent.CreateCell(1).SetCellValue(item.ClassificationCode);
+                    rowParent.CreateCell(2).SetCellValue(item.ClassificationName);
                     no += 1;
                 }
                 using (var exportData = new MemoryStream())
@@ -192,10 +196,11 @@ namespace Ardita.Areas.MasterData.Controllers
 
                 IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
-                row.CreateCell(2).SetCellValue(nameof(TrxClassification.ClassificationCode));
-                row.CreateCell(3).SetCellValue(nameof(TrxClassification.ClassificationName));
+                row.CreateCell(0).SetCellValue(nameof(GlobalConst.No));
+                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(3).SetCellValue(nameof(TrxClassification.ClassificationCode));
+                row.CreateCell(4).SetCellValue(nameof(TrxClassification.ClassificationName));
 
                 int no = 1;
                 foreach (var item in data)
@@ -204,10 +209,11 @@ namespace Ardita.Areas.MasterData.Controllers
                     if(dataClassification != null)
                     {
                         row = excelSheet.CreateRow(no);
-                        row.CreateCell(0).SetCellValue(item.SubjectClassificationCode);
-                        row.CreateCell(1).SetCellValue(item.SubjectClassificationName);
-                        row.CreateCell(2).SetCellValue(dataClassification.ClassificationCode);
-                        row.CreateCell(3).SetCellValue(dataClassification.ClassificationName);
+                        row.CreateCell(0).SetCellValue(no);
+                        row.CreateCell(1).SetCellValue(item.SubjectClassificationCode);
+                        row.CreateCell(2).SetCellValue(item.SubjectClassificationName);
+                        row.CreateCell(3).SetCellValue(dataClassification.ClassificationCode);
+                        row.CreateCell(4).SetCellValue(dataClassification.ClassificationName);
                         no += 1;
                     }
                 }
@@ -223,42 +229,90 @@ namespace Ardita.Areas.MasterData.Controllers
                 throw new Exception();
             }
         }
+        public async Task<IActionResult> UploadForm()
+        {
+            await Task.Delay(0);
+            ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            return View();
+        }
         public async Task<IActionResult> Upload()
         {
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-
-                var dataClassifications = await _classificationService.GetAll();
-
-                List<TrxSubjectClassification> models = new();
-                TrxSubjectClassification model;
-
-                foreach (DataRow row in result.Rows)
+                if (file.Length > 0)
                 {
-                    var dataClassification = dataClassifications.Where(x => x.ClassificationCode == row[2].ToString()).FirstOrDefault();
-                    if (dataClassification != null)
+                    var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
+
+                    if (result.Rows.Count > 0)
                     {
-                        model = new();
-                        model.ClassificationId = Guid.NewGuid();
-                        model.SubjectClassificationCode = row[0].ToString();
-                        model.SubjectClassificationName = row[1].ToString();
-                        model.ClassificationId = dataClassification.ClassificationId;
-                        model.IsActive = true;
-                        model.CreatedBy = AppUsers.CurrentUser(User).UserId;
-                        model.CreatedDate = DateTime.Now;
+                        var dataSubjectClassifications = await _classificationSubjectService.GetAll();
+                        var dataClassifications = await _classificationService.GetAll();
 
-                        models.Add(model);
+                        List<TrxSubjectClassification> models = new();
+                        TrxSubjectClassification model;
+
+                        bool valid = true;
+                        int errorCount = 0;
+
+                        result.Columns.Add("Keterangan");
+                        var classificationDetail = await _classificationService.GetAll();
+
+                        foreach (DataRow row in result.Rows)
+                        {
+                            string error = string.Empty;
+                            var dataClassification = dataClassifications.Where(x => x.ClassificationCode == row[3].ToString()).FirstOrDefault();
+
+                            if (dataClassification == null)
+                            {
+                                valid = false;
+                                error = "_Kode Klasifikasi tidak ditemukan";
+                            }
+                            else if (dataSubjectClassifications.Where(x => x.SubjectClassificationCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Subyek Klasifikasi sudah ada!";
+                            }
+
+
+                            if (valid)
+                            {
+                                model = new();
+                                model.ClassificationId = Guid.NewGuid();
+                                model.SubjectClassificationCode = row[1].ToString();
+                                model.SubjectClassificationName = row[2].ToString();
+                                model.ClassificationId = dataClassification.ClassificationId;
+                                model.IsActive = true;
+                                model.CreatedBy = AppUsers.CurrentUser(User).UserId;
+                                model.CreatedDate = DateTime.Now;
+
+                                models.Add(model);
+                            }
+                            else
+                            {
+                                errorCount++;
+                            }
+                            row["Keterangan"] = error;
+                        }
+                        ViewBag.result = JsonConvert.SerializeObject(result);
+                        ViewBag.errorCount = errorCount;
+
+                        if (valid)
+                            await _classificationSubjectService.InsertBulk(models);
                     }
+                    return View(GlobalConst.UploadForm);
                 }
-                await _classificationSubjectService.InsertBulk(models);
+                else
+                {
+                    TempData["errorCount"] = 100000001;
+                    return RedirectToAction(GlobalConst.UploadForm);
 
-                return RedirectToIndex();
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                TempData["errorCount"] = 100000001;
+                return RedirectToAction(GlobalConst.UploadForm);
             }
         }
         #endregion

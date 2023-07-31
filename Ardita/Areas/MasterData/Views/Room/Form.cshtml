@@ -53,17 +53,17 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Kode Ruangan</label>
-                                        <input type="text" placeholder="" id="txtRoomCode" class="form-control" asp-for="RoomCode">
+                                        <input type="text" placeholder="" id="txtRoomCode" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RoomCode" >
                                     </div>
                                     <div class="form-group">
                                         <label>Nama Ruangan</label>
-                                        <input type="text" placeholder="" id="txtRoomName" class="form-control" asp-for="RoomName">
+                                        <input type="text" placeholder="" id="txtRoomName" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="RoomName">
                                     </div>
                                     <div class="form-group">
                                         <label>Tipe Ruangan</label>
 
                                         <select asp-for="ArchiveRoomType" asp-items="ViewBag.listTypeOfRooms"
-                                                id="txtArchiveRoomType" class="select2_demo_1 form-control"
+                                                id="txtArchiveRoomType" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                 data-placeholder="-- Pilih Tipe Ruangan --">
                                             <option value=""></option>
                                             <option value="@GlobalConst.UnitPengolah">@GlobalConst.UnitPengolah</option>
@@ -136,39 +136,17 @@
         }
 
         function initDropdown() {
-            $('#txtArchiveId').on('change', function () {
-                $('#txtFloorId').val('').trigger('change');
-            });
+            initGlobalDropdown($('#txtArchiveUnitId'), '@Url.Action(GlobalConst.BindArchiveUnitsByCompanyIdAndParam, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtCompanyId'));
 
-            $('#txtFloorId').select2({
-                theme: 'bootstrap4',
-                allowClear: true,
-                placeholder: '-- Select Floor --',
-                ajax: {
-                    url: '@Url.Action(GlobalConst.BindFloorsByArchiveUnitId, GlobalConst.Room, new { Area = GlobalConst.MasterData })',
-                    type: "POST",
-                    data: function (params) {
-                        var query = {
-                            id: $('#txtArchiveUnitId').val(),,
-                            param: params.term
-                        }
-                        return query;
-                    },
-                    processResults: function (data) {
-                        var dataResult = $.map(data, function (item) {
-                            return {
-                                text: item.floorName,
-                                id: item.floorId
-                            }
-                        });
-                        return {
-                            results: dataResult
-                        };
-                    }
-                }
-            });
+            initGlobalDropdown($('#txtFloorId'), '@Url.Action(GlobalConst.BindParamFloorsByArchiveUnitId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtArchiveUnitId'));
 
+            //initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindParamRoomActiveByFloorId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtFloorId'));
 
+            //initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRoomId'));
+
+            //initGlobalDropdown($('#txtLevelId'), '@Url.Action(GlobalConst.BindParamLevelByRackId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRackId'));
+
+            //initGlobalDropdown($('#txtRowId'), '@Url.Action(GlobalConst.BindParamRowByLevelId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtLevelId'));
         }
     </script>
 }

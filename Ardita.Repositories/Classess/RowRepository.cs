@@ -1,8 +1,10 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using System.Linq.Dynamic.Core;
+
 
 namespace Ardita.Repositories.Classess;
 
@@ -56,38 +58,40 @@ public class RowRepository : IRowRepository
         return results;
     }
 
-    public async Task<IEnumerable<TrxRow>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<TrxRow> result;
-
-        var propertyInfo = typeof(TrxLevel).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(TrxLevel).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.TrxRows
-            .Include(x => x.Level.Rack.Room)
-            .Where(
-                x => (x.RowId + x.RowName).Contains(model.searchValue) &&
-                x.IsActive == true
-                )
-            .OrderBy(x => EF.Property<TrxRow>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
-        else
-        {
-            result = await _context.TrxRows
-            .Include(x => x.Level.Rack.Room)
-            .Where(
-                x => (x.RowId + x.RowName).Contains(model.searchValue) &&
-                x.IsActive == true
-                )
-            .OrderByDescending(x => EF.Property<TrxClassification>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
-
+        var result = await _context.TrxRows
+               .Include(x => x.Level.Rack.Room.Floor.ArchiveUnit)
+               .Where(x => x.IsActive == true && (
+                            x.RowId + 
+                            x.RowCode + 
+                            x.RowName + 
+                            x.Level.LevelName +
+                            x.Level.Rack.RackName +
+                            x.Level.Rack.Room.RoomName +
+                            x.Level.Rack.Room.ArchiveRoomType +
+                            x.Level.Rack.Room.Floor.FloorName +
+                            x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+                            ).Contains(model.searchValue))
+                .Where(x => x.Level!.IsActive == true)
+                .Where(x => x.Level!.Rack!.IsActive == true)
+                .Where(x => x.Level!.Rack!.Room!.IsActive == true)
+                .Where(x => x.Level!.Rack!.Room!.Floor!.IsActive == true)
+                .Where(x => x.Level!.Rack!.Room!.Floor!.ArchiveUnit!.IsActive == true)
+               .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+               .Skip(model.skip).Take(model.pageSize)
+               .Select(x => new {
+                   x.RowId,
+                   x.RowCode,
+                   x.RowName,
+                   x.Level.LevelName,
+                   x.Level.Rack.RackName,
+                   x.Level.Rack.Room.RoomName,
+                   x.Level.Rack.Room.ArchiveRoomType,
+                   x.Level.Rack.Room.Floor.FloorName,
+                   x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+               })
+               .ToListAsync();
         return result;
     }
 
@@ -100,10 +104,28 @@ public class RowRepository : IRowRepository
         return result;
     }
 
-    public async Task<int> GetCount()
+    public async Task<int> GetCount(DataTableModel model)
     {
-        var results = await _context.TrxRows.AsNoTracking().Where(x => x.IsActive == true).CountAsync();
-        return results;
+        var result = await _context.TrxRows
+               .Include(x => x.Level.Rack.Room.Floor.ArchiveUnit)
+               .Where(x => x.IsActive == true && (
+                            x.RowId +
+                            x.RowCode +
+                            x.RowName +
+                            x.Level.LevelName +
+                            x.Level.Rack.RackName +
+                            x.Level.Rack.Room.RoomName +
+                            x.Level.Rack.Room.ArchiveRoomType +
+                            x.Level.Rack.Room.Floor.FloorName +
+                            x.Level.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName
+                            ).Contains(model.searchValue))
+                 .Where(x => x.Level!.IsActive == true)
+            .Where(x => x.Level!.Rack!.IsActive == true)
+            .Where(x => x.Level!.Rack!.Room!.IsActive == true)
+            .Where(x => x.Level!.Rack!.Room!.Floor!.IsActive == true)
+            .Where(x => x.Level!.Rack!.Room!.Floor!.ArchiveUnit!.IsActive == true)
+               .CountAsync();
+        return result;
     }
 
     public async Task<IEnumerable<TrxRow>> GetRowAvailable(IEnumerable<TrxRow> listRowNotAvailable)

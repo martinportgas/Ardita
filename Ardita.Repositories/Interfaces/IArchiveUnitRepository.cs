@@ -7,7 +7,8 @@ public interface IArchiveUnitRepository
 {
     Task<TrxArchiveUnit> GetById(Guid id);
     Task<IEnumerable<TrxArchiveUnit>> GetAll();
-    Task<IEnumerable<TrxArchiveUnit>> GetByFilterModel(DataTableModel model);
+    Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(TrxArchiveUnit model);
     Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits);

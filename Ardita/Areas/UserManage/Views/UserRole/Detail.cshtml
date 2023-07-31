@@ -40,7 +40,15 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select name="RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control"></select>
+                                    <select name="RoleId" id="txtRoleId" asp-items="ViewBag.listRoles" class="select2_demo_1 form-control" data-placeholder=" -- Pilih Role -- " required><option value=""></option></></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Lokasi Kearsipan</label>
+                                    <select name="ArchiveUnitId" id="txtArchiveUnitId" asp-items="ViewBag.listArchiveUnit" class="select2_demo_1 form-control" data-placeholder=" -- Semua -- "><option value=""></option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Unit Pencipta</label>
+                                    <select name="CreatorId" id="txtCreatorId" asp-items="ViewBag.listCreator" class="select2_demo_1 form-control" data-placeholder=" -- Semua -- "><option value=""></option></select>
                                 </div>
                                 <div class="form-group">
                                     <label>Role Utama ?</label>
@@ -50,7 +58,7 @@
                                 </div>
                                 <div class="form-group">
                                     <a href="@Url.Action("Index", "UserRole", new { Area = "UserManage" })" class="btn btn-sm btn-danger float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
-                                    <button onclick="onSubmit(this, event);" class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit"><i class="fa fa-pencil">Add</i></button>
+                                    <button class="btn btn-sm btn-primary float-right m-t-n-xs mr-1" type="submit"><i class="fa fa-pencil">Add</i></button>
                                 </div>
                             </form>
                         </div>
@@ -61,6 +69,8 @@
                                         <th></th>
                                         <th>Kode Role</th>
                                         <th>Nama Role</th>
+                                        <th>Lokasi Kearsipan</th>
+                                        <th>Unit Pencipta</th>
                                         <th style="text-align:center">Role Utama</th>
                                     </tr>
                                 </thead>
@@ -73,6 +83,26 @@
                                                 <td><a class="btn btn-danger btn-sm" href="@Url.Action("Remove", "UserRole", new { Area="UserManage", id = item.UserRoleId})"><i class="fa fa-trash"></i></a></td>
                                                 <td>@item.Role.Code</td>
                                                 <td>@item.Role.Name</td>
+                                                <td>
+                                                    @if(item.ArchiveUnit != null)
+                                                    {
+                                                        <span>@item.ArchiveUnit.ArchiveUnitName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Semua</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.Creator != null)
+                                                    {
+                                                        <span>@item.Creator.CreatorName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Semua</span>
+                                                    }
+                                                </td>
                                                 <td align="center"><input type="checkbox" style="pointer-events:none" @Html.Raw(item.IsPrimary ? "checked" : "") /> </td>
                                             </tr>
                                         }
@@ -90,6 +120,7 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
+            initDropdown();
             var table = $('#tblRole').DataTable({
                 searching: false,
                 filter: false,
@@ -105,29 +136,32 @@
                 theme: 'bootstrap4',
             });
 
-            
-        });
 
-        function onSubmit(ctl, event) {
-            event.preventDefault();
-            swal({
-                title: "Do you want to save it?",
-                text: "Please check Information before Submiting!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Save",
-                cancelButtonText: "Cancel",
-                closeOnConfirm: false,
-                closeOnCancel: false
-            },
-                function (isConfirm) {
-                    if (isConfirm) {
-                        $("#frmRole").submit();
-                    } else {
-                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
-                    }
-                });
+        });
+        function initDropdown() {
+            initGlobalDropdown($('#txtCreatorId'), '@Url.Action(GlobalConst.BindParamCreatorByArchiveUnitId, GlobalConst.UserRole, new { Area = GlobalConst.UserManage })', $('#txtArchiveUnitId'));
         }
+
+        //function onSubmit(ctl, event) {
+        //    event.preventDefault();
+        //    swal({
+        //        title: "Do you want to save it?",
+        //        text: "Please check Information before Submiting!",
+        //        type: "warning",
+        //        showCancelButton: true,
+        //        confirmButtonColor: "#DD6B55",
+        //        confirmButtonText: "Save",
+        //        cancelButtonText: "Cancel",
+        //        closeOnConfirm: false,
+        //        closeOnCancel: false
+        //    },
+        //        function (isConfirm) {
+        //            if (isConfirm) {
+        //                $("#frmRole").submit();
+        //            } else {
+        //                swal("Cancelled", "You have Cancelled Form Submission!", "error");
+        //            }
+        //        });
+        //}
     </script>
 }

@@ -33,6 +33,8 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ISecurityClassificationService securityClassificationService,
         IArchiveOwnerService archiveOwnerService,
         IArchiveTypeService archiveTypeService,
+        IArchiveCreatorService archiveCreatorService,
+        IClassificationService classificationService,
         IArchiveOutIndicatorService archiveOutIndicatorService)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
@@ -52,16 +54,23 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _securityClassificationService = securityClassificationService;
         _archiveOwnerService = archiveOwnerService;
         _archiveTypeService = archiveTypeService;
+        _archiveCreatorService = archiveCreatorService;
+        _classificationService = classificationService;
         _archiveOutIndicatorService = archiveOutIndicatorService;
     }
     #endregion
 
     #region MAIN ACTION
-    public override async Task<ActionResult> Index() => await base.Index();
+    public override async Task<ActionResult> Index()
+    {
+        await AllViewBagIndex();
+        return await base.Index();
+    }
     public override async Task<JsonResult> GetData(DataTablePostModel model)
     {
         try
         {
+            model.SessionUser = User;
             var result = await _mediaStorageService.GetList(model);
 
             return Json(result);
@@ -232,6 +241,18 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         ViewBag.listSecurityClassification = await BindSecurityClassifications();
         ViewBag.listArchiveOwner = await BindArchiveOwners();
         ViewBag.listArchiveType = await BindArchiveTypes();
+    }
+    public async Task AllViewBagIndex()
+    {
+        ViewBag.ListArchiveUnit = await BindAllArchiveUnits();
+        ViewBag.ListFloor = await BindFloors();
+        ViewBag.ListRoom = await BindRooms();
+        ViewBag.ListRack = await BindRacks();
+        ViewBag.ListLevel = await BindLevels();
+        ViewBag.ListRow = await BindRows();
+        ViewBag.ListArchiveCreator = await BindArchiveCreators();
+        ViewBag.ListClassification = await BindClasscifications();
+        ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
     }
     public async Task<FileResult> BindQrCode(string text)
     {

@@ -45,9 +45,9 @@ namespace Ardita.Services.Classess
         {
             return await _userRoleRepository.GetById(id);
         }
-        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role)
+        public async Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role, Guid archiveUnit, Guid creator)
         {
-            return await _userRoleRepository.GetByUserAndRoleId(id, role);
+            return await _userRoleRepository.GetByUserAndRoleId(id, role, archiveUnit, creator);
         }
 
         public async Task<UserRoleListViewModel> GetListUserRoles(Guid Id)

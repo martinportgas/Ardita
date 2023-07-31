@@ -1,7 +1,9 @@
 ﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -29,8 +31,8 @@
                     <h5>Row</h5>
                     <div class="ibox-tools">
                         <a href="@Url.Action(GlobalConst.Add, GlobalConst.Row, new { Area = GlobalConst.MasterData})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
-                        <a href="@Url.Action(GlobalConst.Export, GlobalConst.Row, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-primary"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
-                        <button id="btnShowUpload" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formUpload"><i class="fa fa-upload"></i><span class="bold"> Upload</span></button>
+                        <a href="@Url.Action(GlobalConst.Export, GlobalConst.Row, new { Area = GlobalConst.MasterData })" class="btn btn-sm btn-info"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
+                        <a href="@Url.Action(GlobalConst.UploadForm, @form.CurrentController, new { Area = @form.CurrentArea})" class="btn btn-sm btn-success"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -41,9 +43,12 @@
                                 <th>Action</th>
                                 <th>Kode Baris</th>
                                 <th>Nama Baris</th>
-                                <th>Tingkat</th>
-                                <th>Rak</th>
-                                <th>Ruangan</th>
+                                <th>Nama Tingkat</th>
+                                <th>Nama Rak</th>
+                                <th>Nama Ruangan</th>
+                                <th>Tipe Ruangan</th>
+                                <th>Nama Lantai</th>
+                                <th>Nama Unit Kearsipan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -110,12 +115,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "rowId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "rowId", "name": "rowId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "rowId", "orderable": false, "searchable": false,
+                        "data": "rowId", "name":"rowId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action("Detail", "Row", new { Area = "MasterData", Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.rowId);
@@ -126,15 +131,18 @@
                             var remove = `<a class="btn btn-sm btn-danger" href="@Url.Action("Remove", "Row", new { Area = "MasterData", Id = -1 })"><i class="fa fa-trash"></i> </a>`;
                             remove = remove.replace("-1", row.rowId);
 
-                            var JoinButton = edit.concat(" ", detail).concat(" ", remove);
+                            var JoinButton = '<div style="width:100px">' + edit.concat(" ", detail).concat(" ", remove);
                             return JoinButton;
                         }
                     },
                     { "data": "rowCode", "name": "rowCode", "autoWidth": true },
                     { "data": "rowName", "name": "rowName", "autoWidth": true },
-                    { "data": "level.levelName", "name": "level.levelName", "autoWidth": true },
-                    { "data": "level.rack.rackName", "name": "level.rack.rackName", "autoWidth": true },
-                    { "data": "level.rack.room.roomName", "name": "level.rack.room.roomName", "autoWidth": true },
+                    { "data": "levelName", "name": "level.levelName", "autoWidth": true },
+                    { "data": "rackName", "name": "level.rack.rackName", "autoWidth": true },
+                    { "data": "roomName", "name": "level.rack.room.roomName", "autoWidth": true },
+                    { "data": "archiveRoomType", "name": "level.rack.room.archiveRoomType", "autoWidth": true },
+                    { "data": "floorName", "name": "level.rack.room.floor.floorName", "autoWidth": true },
+                    { "data": "archiveUnitName", "name": "level.rack.room.floor.archiveUnit.archiveUnitName", "autoWidth": true },
                 ]
             });
 
