@@ -95,11 +95,23 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
-                var dataCreator = await _context.TrxSubjectClassifications.Include(x => x.Classification).AsNoTracking().FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubSubjectClassificationId);
+                var dataCreator = await _context.TrxSubjectClassifications
+                    .Include(x => x.Classification)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.SubjectClassificationId == model.SubjectClassificationId);
 
                 model.IsActive = true;
                 model.CreatorId = dataCreator!.Classification.CreatorId;
-                _context.TrxSubSubjectClassifications.Add(model);
+            
+
+                foreach (var e in _context.ChangeTracker.Entries())
+                {
+                    e.State = EntityState.Detached;
+                }
+
+                model.IsActive = true;
+
+                _context.Entry(model).State = EntityState.Added;
                 result = await _context.SaveChangesAsync();
             }
             return result;
