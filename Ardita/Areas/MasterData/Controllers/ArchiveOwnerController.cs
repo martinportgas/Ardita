@@ -153,6 +153,14 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Pemilik sudah ada";
                             }
+                            else
+                            {
+                                if (mstArchiveOwners.Where(x => x.ArchiveOwnerCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Pemilik sudah ada";
+                                }
+                            }
 
                             if (valid)
                             {

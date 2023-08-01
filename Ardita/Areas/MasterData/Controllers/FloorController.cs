@@ -159,7 +159,15 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Lantai sudah ada";
                             }
-                            else if (ArchiveUnits.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
+                            else
+                            {
+                                if (floors.Where(x => x.FloorCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Lantai sudah ada";
+                                }
+                            }
+                            if (ArchiveUnits.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
                             {
                                 valid = false;
                                 error = "_Kode Unit Kearsipan tidak ditemukan";

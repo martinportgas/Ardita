@@ -158,20 +158,20 @@ namespace Ardita.Areas.MasterData.Controllers
         {
             try
             {
-                string fileName = nameof(TrxSubjectClassification).ToCleanNameOf();
+                string fileName = nameof(MstTypeClassification).ToCleanNameOf();
                 fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
                 var data = await _classificationTypeService.GetAll();
 
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet(nameof(TrxSubjectClassification).ToCleanNameOf());
+                ISheet excelSheet = workbook.CreateSheet(nameof(MstTypeClassification).ToCleanNameOf());
 
                 IRow row = excelSheet.CreateRow(0);
 
                 row.CreateCell(0).SetCellValue(GlobalConst.No);
-                row.CreateCell(1).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationCode));
-                row.CreateCell(2).SetCellValue(nameof(TrxSubjectClassification.SubjectClassificationName));
+                row.CreateCell(1).SetCellValue(nameof(MstTypeClassification.TypeClassificationCode));
+                row.CreateCell(2).SetCellValue(nameof(MstTypeClassification.TypeClassificationName));
 
                 int no = 1;
                 foreach (var item in data)
@@ -226,8 +226,16 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Tipe Klasifikasi sudah ada";
                             }
+                            else
+                            {
+                                if (models.Where(x => x.TypeClassificationCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Tipe Klasifikasi sudah ada";
+                                }
+                            }
 
-                            if(valid) 
+                            if (valid) 
                             {
                                 model = new();
                                 model.TypeClassificationId = Guid.NewGuid();

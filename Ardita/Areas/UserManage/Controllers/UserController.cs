@@ -103,7 +103,8 @@ namespace Ardita.Areas.UserManage.Controllers
             if (model != null)
             {
                 model.Password = Global.Encode(model.Password);
-                string[] archiveUnitIds = Request.Form["archiveUnitIds[]"].ToArray();
+                //string[] archiveUnitIds = Request.Form["archiveUnitIds[]"].ToArray();
+                string[] archiveUnitIds = new string[] { };
 
                 if (model.UserId != Guid.Empty)
                 {

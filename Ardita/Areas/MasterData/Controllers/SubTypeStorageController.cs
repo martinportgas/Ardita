@@ -291,15 +291,23 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Sub Media Penyimpanan harus diisi";
                             }
-                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            if (string.IsNullOrEmpty(row[2].ToString()))
                             {
                                 valid = false;
                                 error = "_Nama Sub Media Penyimpanan harus diisi";
                             }
-                            else if (typeStorages.Where(x => x.SubTypeStorageCode == row[1].ToString()).Count() > 0)
+                            if (typeStorages.Where(x => x.SubTypeStorageCode == row[1].ToString()).Count() > 0)
                             {
                                 valid = false;
                                 error = "_Kode Sub Media Penyimpanan sudah ada";
+                            }
+                            else
+                            {
+                                if (models.Where(x => x.SubTypeStorageCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Sub Media Penyimpanan sudah ada";
+                                }
                             }
 
 

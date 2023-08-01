@@ -204,17 +204,25 @@ public class TypeStorageController : BaseController<TrxTypeStorage>
                             valid = false;
                             error = "_Kode Media Penyimpanan harus diisi";
                         }
-                        else if (string.IsNullOrEmpty(row[2].ToString()))
+                        if (string.IsNullOrEmpty(row[2].ToString()))
                         {
                             valid = false;
                             error = "_Nama Media Penyimpanan harus diisi";
                         }
-                        else if (typeStorages.Where(x => x.TypeStorageCode == row[1].ToString()).Count() > 0)
+                        if (typeStorages.Where(x => x.TypeStorageCode == row[1].ToString()).Count() > 0)
                         {
                             valid = false;
                             error = "_Kode Media Penyimpanan sudah ada";
                         }
-                        else if (archiveUnits.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
+                        else
+                        {
+                            if (models.Where(x => x.TypeStorageCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Media Penyimpanan sudah ada";
+                            }
+                        }
+                        if (archiveUnits.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
                         {
                             valid = false;
                             error = "_Kode Lokasi Simpan tidak ditemukan";

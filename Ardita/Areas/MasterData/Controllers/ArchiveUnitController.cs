@@ -166,10 +166,19 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
                             valid = false;
                             error = "_Kode Perusahaan tidak ditemukan";
                         }
+                        
                         if (archiveUnit.Where(x => x.ArchiveUnitCode == row[2].ToString()).Count() > 0)
                         {
                             valid = false;
                             error = "_Kode Lokasi Simpan sudah ada, silahkan gunakan kode yang lain";
+                        }
+                        else
+                        {
+                            if (trxArchiveUnits.Where(x => x.ArchiveUnitCode == row[2].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Lokasi Simpan sudah ada, silahkan gunakan kode yang lain";
+                            }
                         }
 
                         if (valid)

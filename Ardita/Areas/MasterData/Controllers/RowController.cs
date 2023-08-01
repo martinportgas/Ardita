@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -178,17 +179,25 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Baris harus diisi";
                             }
-                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            if (string.IsNullOrEmpty(row[2].ToString()))
                             {
                                 valid = false;
                                 error = "_Nama Baris harus diisi";
                             }
-                            else if (rowDetails.Where(x => x.RowCode == row[1].ToString()).Count() > 0)
+                            if (rowDetails.Where(x => x.RowCode == row[1].ToString()).Count() > 0)
                             {
                                 valid = false;
                                 error = "_Kode Baris sudah ada";
                             }
-                            else if (levels.Where(x => x.LevelCode == row[3].ToString()).Count() == 0)
+                            else
+                            {
+                                if (trxRows.Where(x => x.RowCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Baris sudah ada";
+                                }
+                            }
+                            if (levels.Where(x => x.LevelCode == row[3].ToString()).Count() == 0)
                             {
                                 valid = false;
                                 error = "_Kode Tingkat tidak ditemukan";

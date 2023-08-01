@@ -268,10 +268,18 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Klasifikasi tidak ditemukan";
                             }
-                            else if (dataSubjectClassifications.Where(x => x.SubjectClassificationCode == row[1].ToString()).Count() > 0)
+                            if (dataSubjectClassifications.Where(x => x.SubjectClassificationCode == row[1].ToString()).Count() > 0)
                             {
                                 valid = false;
                                 error = "_Kode Subyek Klasifikasi sudah ada!";
+                            }
+                            else
+                            {
+                                if (models.Where(x => x.SubjectClassificationCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Subyek Klasifikasi sudah ada!";
+                                }
                             }
 
 

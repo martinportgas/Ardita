@@ -158,6 +158,14 @@ public class SecurityClassificationController : BaseController<MstSecurityClassi
                             valid = false;
                             error = "_Kode Klasifikasi Keamanan sudah ada";
                         }
+                        else
+                        {
+                            if (securityClassifications.Where(x => x.SecurityClassificationCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Klasifikasi Keamanan sudah ada";
+                            }
+                        }
 
                         if (valid)
                         {

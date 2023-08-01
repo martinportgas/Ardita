@@ -165,8 +165,9 @@ public class ClassificationController : BaseController<TrxClassification>
             {
                 rowParent = excelSheetParent.CreateRow(no);
 
-                rowParent.CreateCell(0).SetCellValue(item.TypeClassificationCode);
-                rowParent.CreateCell(1).SetCellValue(item.TypeClassificationName);
+                rowParent.CreateCell(0).SetCellValue(no);
+                rowParent.CreateCell(1).SetCellValue(item.TypeClassificationCode);
+                rowParent.CreateCell(2).SetCellValue(item.TypeClassificationName);
                 no += 1;
             }
 
@@ -288,12 +289,20 @@ public class ClassificationController : BaseController<TrxClassification>
                             valid = false;
                             error = "_Kode Klasifikasi sudah ada";
                         }
-                        else if (dataType == null)
+                        else
+                        {
+                            if (models.Where(x => x.ClassificationCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Klasifikasi sudah ada";
+                            }
+                        }
+                        if (dataType == null)
                         {
                             valid = false;
                             error = "_Tipe Klasifikasi tidak ditemukan!";
                         }
-                        else if (dataCreator == null)
+                        if (dataCreator == null)
                         {
                             valid = false;
                             error = "_Pencipta tidak ditemukan!";

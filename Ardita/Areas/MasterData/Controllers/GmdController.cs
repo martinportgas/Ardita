@@ -6,6 +6,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
@@ -136,6 +137,14 @@ public class GmdController : BaseController<MstGmd>
                         {
                             valid = false;
                             error = "_Kode GMD sudah ada";
+                        }
+                        else
+                        {
+                            if (gmds.Where(x => x.GmdCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode GMD sudah ada";
+                            }
                         }
 
                         if (valid)

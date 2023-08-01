@@ -174,17 +174,25 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Tingkat sudah ada";
                             }
-                            else if (string.IsNullOrEmpty(row[1].ToString()))
+                            else
+                            {
+                                if (levels.Where(x => x.LevelCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Tingkat sudah ada";
+                                }
+                            }
+                            if (string.IsNullOrEmpty(row[1].ToString()))
                             {
                                 valid = false;
                                 error = "_Kode Tingkat harus diisi";
                             }
-                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            if (string.IsNullOrEmpty(row[2].ToString()))
                             {
                                 valid = false;
                                 error = "_Nama Tingkat harus diisi";
                             }
-                            else if (rackDetails.Where(x=>x.RackCode == row[3].ToString()).ToList().Count == 0)
+                            if (rackDetails.Where(x=>x.RackCode == row[3].ToString()).ToList().Count == 0)
                             {
                                 valid = false;
                                 error = "_Kode Rak tidak ditemukan";
@@ -254,6 +262,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     x.LevelCode,
                     x.LevelName,
                     x.Rack.RackName,
+                    x.Rack.Room.RoomName,
                     x.Rack.Room.ArchiveRoomType,
                     x.Rack.Room.Floor.FloorName,
                     x.Rack.Room.Floor.ArchiveUnit.ArchiveUnitName

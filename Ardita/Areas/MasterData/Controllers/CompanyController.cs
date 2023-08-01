@@ -166,6 +166,14 @@ public class CompanyController : BaseController<MstCompany>
                             valid = false;
                             error = "_Kode Perusahaan sudah ada";
                         }
+                        else
+                        {
+                            if (companies.Where(x => x.CompanyCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Perusahaan sudah ada";
+                            }
+                        }
 
                         if (valid)
                         {

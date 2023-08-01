@@ -168,22 +168,30 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Rak sudah ada";
                             }
-                            else if (rooms.Where(x => x.RoomCode == row[4].ToString()).Count() == 0)
+                            else
+                            {
+                                if (racks.Where(x => x.RackCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Rak sudah ada";
+                                }
+                            }
+                            if (rooms.Where(x => x.RoomCode == row[4].ToString()).Count() == 0)
                             {
                                 valid = false;
                                 error = "_Kode Ruangan tidak ditemukan";
                             }
-                            else if (!int.TryParse(row[3].ToString(), out int n))
+                            if (!int.TryParse(row[3].ToString(), out int n))
                             {
                                 valid = false;
                                 error = "_Kolom Panjang harus angka!";
                             }
-                            else if (string.IsNullOrEmpty(row[1].ToString()))
+                            if (string.IsNullOrEmpty(row[1].ToString()))
                             {
                                 valid = false;
                                 error = "_Kode Rak harus diisi!";
                             }
-                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            if (string.IsNullOrEmpty(row[2].ToString()))
                             {
                                 valid = false;
                                 error = "_Nama Rak harus diisi!";

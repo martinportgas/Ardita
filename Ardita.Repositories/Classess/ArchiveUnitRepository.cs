@@ -44,6 +44,7 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
     {
         var result = await _context.TrxArchiveUnits
                 .Include(x => x.Company)
+                .Where(x => x.Company.IsActive == true)
                 .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName + x.Company.CompanyName).Contains(model.searchValue) && x.IsActive == true)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -61,6 +62,7 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
     {
         var result = await _context.TrxArchiveUnits
                 .Include(x => x.Company)
+                .Where(x => x.Company.IsActive == true)
                 .Where(x => (x.ArchiveUnitCode + x.ArchiveUnitName + x.Company.CompanyName).Contains(model.searchValue) && x.IsActive == true)
                 .CountAsync();
 

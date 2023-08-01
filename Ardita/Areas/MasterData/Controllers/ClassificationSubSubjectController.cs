@@ -366,22 +366,30 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Subjek Klasifikasi tidak ditemukan";
                             }
-                            else if (dataSubSubjects.Where(x => x.SubSubjectClassificationCode == row[1].ToString()).Count() > 0)
+                            if (dataSubSubjects.Where(x => x.SubSubjectClassificationCode == row[1].ToString()).Count() > 0)
                             {
                                 valid = false;
                                 error = "_Kode Sub Subyek Klasifikasi sudah ada!";
                             }
-                            else if (dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).Count() == 0)
+                            else
+                            {
+                                if (models.Where(x => x.SubSubjectClassificationCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Sub Subyek Klasifikasi sudah ada!";
+                                }
+                            }
+                            if (dataSecuritys.Where(x => x.SecurityClassificationCode == row[4].ToString()).Count() == 0)
                             {
                                 valid = false;
                                 error = "_Kode Keamanan Klasifikasi tidak ditemukan!";
                             }
-                            else if (!int.TryParse(row[5].ToString(), out int n))
+                            if (!int.TryParse(row[5].ToString(), out int n))
                             {
                                 valid = false;
                                 error = "_Retensi Aktif harus angka!";
                             }
-                            else if (!int.TryParse(row[6].ToString(), out int m))
+                            if (!int.TryParse(row[6].ToString(), out int m))
                             {
                                 valid = false;
                                 error = "_Retensi In Aktif harus angka!";

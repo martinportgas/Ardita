@@ -156,6 +156,14 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Tingkat Perkembangan sudah ada";
                             }
+                            else
+                            {
+                                if (mstArchiveTypes.Where(x => x.ArchiveTypeCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Tingkat Perkembangan sudah ada";
+                                }
+                            }
 
                             if (valid)
                             {

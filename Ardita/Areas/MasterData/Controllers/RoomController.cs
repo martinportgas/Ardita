@@ -150,27 +150,35 @@ namespace Ardita.Areas.MasterData.Controllers
                                 valid = false;
                                 error = "_Kode Ruangan sudah ada";
                             }
-                            else if (string.IsNullOrEmpty(row[1].ToString()))
+                            else
+                            {
+                                if (rooms.Where(x => x.RoomCode == row[1].ToString()).Count() > 0)
+                                {
+                                    valid = false;
+                                    error = "_Kode Ruangan sudah ada";
+                                }
+                            }
+                            if (string.IsNullOrEmpty(row[1].ToString()))
                             {
                                 valid = false;
                                 error = "_Kode Ruangan harus diisi";
                             }
-                            else if (string.IsNullOrEmpty(row[2].ToString()))
+                            if (string.IsNullOrEmpty(row[2].ToString()))
                             {
                                 valid = false;
                                 error = "_Nama Ruangan harus diisi";
                             }
-                            else if (string.IsNullOrEmpty(row[3].ToString()))
+                            if (string.IsNullOrEmpty(row[3].ToString()))
                             {
                                 valid = false;
                                 error = "_Tipe Ruangan harus diisi";
                             }
-                            else if (row[3].ToString() != "Unit Kearsipan" && row[3].ToString() != "Unit Pengolah")
+                            if (row[3].ToString() != "Unit Kearsipan" && row[3].ToString() != "Unit Pengolah")
                             {
                                 valid = false;
                                 error = "_Tipe Ruangan tidak sesuai!";
                             }
-                            else if (floors.Where(x => x.FloorCode == row[4].ToString()).Count() == 0)
+                            if (floors.Where(x => x.FloorCode == row[4].ToString()).Count() == 0)
                             {
                                 valid = false;
                                 error = "_Kode Lantai tidak ditemukan";

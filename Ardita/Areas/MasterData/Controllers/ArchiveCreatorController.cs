@@ -168,10 +168,18 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                     {
                         string error = string.Empty;
 
-                        if (archiveCreatorDetail.Where(x => x.CreatorCode == row[2].ToString()).Count() > 0)
+                        if (archiveCreatorDetail.Where(x => x.CreatorCode == row[1].ToString()).Count() > 0)
                         {
                             valid = false;
                             error = "_Kode Pencipta sudah ada";
+                        }
+                        else
+                        {
+                            if (mstCreators.Where(x => x.CreatorCode == row[1].ToString()).Count() > 0)
+                            {
+                                valid = false;
+                                error = "_Kode Pencipta sudah ada";
+                            }
                         }
 
                         if (archiveUnit.Where(x => x.ArchiveUnitCode == row[3].ToString()).Count() == 0)
@@ -290,9 +298,9 @@ public class ArchiveCreatorController : BaseController<MstCreator>
 
             //Archive Units
             rowArchiveUnits.CreateCell(0).SetCellValue(GlobalConst.No);
-            rowArchiveUnits.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
-            rowArchiveUnits.CreateCell(4).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-            rowArchiveUnits.CreateCell(2).SetCellValue(nameof(MstCompany.CompanyName));
+            rowArchiveUnits.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
+            rowArchiveUnits.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
+            rowArchiveUnits.CreateCell(3).SetCellValue(nameof(MstCompany.CompanyName));
 
             var dataArchiveUnits = await _archiveUnitService.GetAll();
 
@@ -302,9 +310,9 @@ public class ArchiveCreatorController : BaseController<MstCreator>
                 rowArchiveUnits = excelSheetArchiveUnits.CreateRow(no);
 
                 rowArchiveUnits.CreateCell(0).SetCellValue(no);
-                rowArchiveUnits.CreateCell(3).SetCellValue(item.ArchiveUnitCode);
-                rowArchiveUnits.CreateCell(4).SetCellValue(item.ArchiveUnitName);
-                rowArchiveUnits.CreateCell(2).SetCellValue(item.Company.CompanyName);
+                rowArchiveUnits.CreateCell(1).SetCellValue(item.ArchiveUnitCode);
+                rowArchiveUnits.CreateCell(2).SetCellValue(item.ArchiveUnitName);
+                rowArchiveUnits.CreateCell(3).SetCellValue(item.Company.CompanyName);
                 no += 1;
             }
             using (var exportData = new MemoryStream())
