@@ -78,12 +78,12 @@
                 fixedColumns: true,
                 columns: [
                     {
-                        "data": "securityClassificationId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "securityClassificationId", "name": "createdDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
                     {
-                        "data": "securityClassificationId", "orderable": false, "searchable": false,
+                        "data": "securityClassificationId", "name": "securityClassificationId", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.SecurityClassification, new { Area = GlobalConst.MasterData, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.securityClassificationId);

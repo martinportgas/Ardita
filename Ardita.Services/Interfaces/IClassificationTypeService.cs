@@ -12,7 +12,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<MstTypeClassification> GetById(Guid id);
         Task<IEnumerable<MstTypeClassification>> GetAll();
-        Task<DataTableResponseModel<MstTypeClassification>> GetListClassificationType(DataTablePostModel model);
+        Task<DataTableResponseModel<object>> GetListClassificationType(DataTablePostModel model);
         Task<int> Insert(MstTypeClassification model);
         Task<bool> InsertBulk(List<MstTypeClassification> models);
         Task<int> Delete(MstTypeClassification model);

@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
 
@@ -18,15 +19,13 @@ public class SecurityClassificationService : ISecurityClassificationService
     public async Task<IEnumerable<MstSecurityClassification>> GetById(Guid id)
     => await _SecurityClassificationRepository.GetById(id);
 
-    public async Task<DataTableResponseModel<MstSecurityClassification>> GetList(DataTablePostModel model)
+    public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)
     {
         try
         {
-            var dataCount = await _SecurityClassificationRepository.GetCount();
-
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,
@@ -34,8 +33,9 @@ public class SecurityClassificationService : ISecurityClassificationService
             };
 
             var results = await _SecurityClassificationRepository.GetByFilterModel(filterData);
+            var dataCount = await _SecurityClassificationRepository.GetCountByFilterModel(filterData);
 
-            var responseModel = new DataTableResponseModel<MstSecurityClassification>
+            var responseModel = new DataTableResponseModel<object>
             {
                 draw = model.draw,
                 recordsTotal = dataCount,

@@ -5,9 +5,7 @@
       "column": {
         "0": "No",
         "1": "Kode Sub Media Penyimpanan",
-        "2": "Nama Sub Media Penyimpaanan",
-        "3": "Lokasi Simpan",
-        "4": "Perusahaan"
+        "2": "Nama Sub Media Penyimpaanan"
       }
     }
   },
@@ -17,17 +15,7 @@
       "column": {
         "0": "No",
         "1": "kode Sub Media Penyimpanan",
-        "2": "Nama Sub Media Penyimpanan",
-        "3": "Kode Lokasi Simpan"
-      }
-    },
-    "1": {
-      "name": "Lokasi Simpan",
-      "column": {
-        "0": "No",
-        "1": "Kode Lokasi Simpan",
-        "2": "Nama Lokasi Simpan",
-        "3": "Perusahaan"
+        "2": "Nama Sub Media Penyimpanan"
       }
     }
   }

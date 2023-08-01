@@ -3,6 +3,7 @@ using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -31,29 +32,26 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
     public async Task<IEnumerable<MstSecurityClassification>> GetAll() => await _context.MstSecurityClassifications.Where(x => x.IsActive == true).ToListAsync();
     
 
-    public async Task<IEnumerable<MstSecurityClassification>> GetByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        IEnumerable<MstSecurityClassification> result;
-
-        var propertyInfo = typeof(MstSecurityClassification).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-        var propertyName = propertyInfo == null ? typeof(MstSecurityClassification).GetProperties()[0].Name : propertyInfo.Name;
-
-        if (model.sortColumnDirection.ToLower() == "asc")
-        {
-            result = await _context.MstSecurityClassifications
+        var result = await _context.MstSecurityClassifications
             .Where(x => (x.SecurityClassificationCode + x.SecurityClassificationName).Contains(model.searchValue) && x.IsActive)
-            .OrderBy(x => EF.Property<MstSecurityClassification>(x, propertyName))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new {
+                x.SecurityClassificationId,
+                x.SecurityClassificationCode,
+                x.SecurityClassificationName
+            })
             .ToListAsync();
-        }
-        else
-        {
-            result = await _context.MstSecurityClassifications
+
+        return result;
+    }
+    public async Task<int> GetCountByFilterModel(DataTableModel model)
+    {
+        var result = await _context.MstSecurityClassifications
             .Where(x => (x.SecurityClassificationCode + x.SecurityClassificationName).Contains(model.searchValue) && x.IsActive)
-            .OrderByDescending(x => EF.Property<MstSecurityClassification>(x, propertyName))
-            .Skip(model.skip).Take(model.pageSize)
-            .ToListAsync();
-        }
+            .CountAsync();
 
         return result;
     }

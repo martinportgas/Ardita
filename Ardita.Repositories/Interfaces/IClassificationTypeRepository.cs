@@ -12,7 +12,8 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<MstTypeClassification> GetById(Guid id);
         Task<IEnumerable<MstTypeClassification>> GetAll();
-        Task<IEnumerable<MstTypeClassification>> GetByFilterModel(DataTableModel model);
+        Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+        Task<int> GetCountByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(MstTypeClassification model);
         Task<bool> InsertBulk(List<MstTypeClassification> models);

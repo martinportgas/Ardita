@@ -38,7 +38,7 @@ public class SubTypeStorageService : ISubTypeStorageService
         {
             var filterData = new DataTableModel
             {
-                sortColumn = model.columns[model.order[0].column].data,
+                sortColumn = model.columns[model.order[0].column].name,
                 sortColumnDirection = model.order[0].dir,
                 searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
                 pageSize = model.length,

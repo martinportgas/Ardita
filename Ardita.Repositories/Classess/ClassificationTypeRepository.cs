@@ -2,12 +2,7 @@
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -56,29 +51,26 @@ namespace Ardita.Repositories.Classess
             var result = await _context.MstTypeClassifications.AsNoTracking().FirstOrDefaultAsync(x => x.TypeClassificationId == id && x.IsActive == true);
             return result;
         }
-        public async Task<IEnumerable<MstTypeClassification>> GetByFilterModel(DataTableModel model)
+        public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
-            IEnumerable<MstTypeClassification> result;
+            var result = await _context.MstTypeClassifications
+            .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
+            .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+            .Skip(model.skip).Take(model.pageSize)
+            .Select(x => new {
+                x.TypeClassificationId,
+                x.TypeClassificationCode,
+                x.TypeClassificationName
+            })
+            .ToListAsync();
 
-            var propertyInfo = typeof(MstTypeClassification).GetProperty(model.sortColumn, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyName = propertyInfo == null ? typeof(MstTypeClassification).GetProperties()[0].Name : propertyInfo.Name;
-
-            if (model.sortColumnDirection.ToLower() == "asc")
-            {
-                result = await _context.MstTypeClassifications
-                .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
-                .OrderBy(x => EF.Property<MstTypeClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
-            else
-            {
-                result = await _context.MstTypeClassifications
-                .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
-                .OrderByDescending(x => EF.Property<MstTypeClassification>(x, propertyName))
-                .Skip(model.skip).Take(model.pageSize)
-                .ToListAsync();
-            }
+            return result;
+        }
+        public async Task<int> GetCountByFilterModel(DataTableModel model)
+        {
+            var result = await _context.MstTypeClassifications
+            .Where(x => x.IsActive == true && x.TypeClassificationName.Contains(model.searchValue))
+            .CountAsync();
 
             return result;
         }

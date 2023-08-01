@@ -7,7 +7,7 @@ public interface ISecurityClassificationService
 {
     Task<IEnumerable<MstSecurityClassification>> GetById(Guid id);
     Task<IEnumerable<MstSecurityClassification>> GetAll();
-    Task<DataTableResponseModel<MstSecurityClassification>> GetList(DataTablePostModel model);
+    Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstSecurityClassification model);
     Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications);
     Task<int> Delete(MstSecurityClassification model);

@@ -46,23 +46,22 @@ namespace Ardita.Services.Classess
         {
             return await _classificationTypeRepository.Update(model);
         }
-        public async Task<DataTableResponseModel<MstTypeClassification>> GetListClassificationType(DataTablePostModel model)
+        public async Task<DataTableResponseModel<object>> GetListClassificationType(DataTablePostModel model)
         {
             try
             {
-                var dataCount = await _classificationTypeRepository.GetCount();
-
                 var filterData = new DataTableModel();
 
-                filterData.sortColumn = model.columns[model.order[0].column].data;
+                filterData.sortColumn = model.columns[model.order[0].column].name;
                 filterData.sortColumnDirection = model.order[0].dir;
                 filterData.searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value;
                 filterData.pageSize = model.length;
                 filterData.skip = model.start;
 
                 var results = await _classificationTypeRepository.GetByFilterModel(filterData);
+                var dataCount = await _classificationTypeRepository.GetCountByFilterModel(filterData);
 
-                var responseModel = new DataTableResponseModel<MstTypeClassification>();
+                var responseModel = new DataTableResponseModel<object>();
 
                 responseModel.draw = model.draw;
                 responseModel.recordsTotal = dataCount;
