@@ -74,11 +74,11 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Latitude</label>
-                                            <input type="number" placeholder="" id="txtLat" class="form-control" asp-for="Latitude">
+                                            <input type="number" pattern="[0-9]+([\,][0-9]+)?" placeholder="" id="txtLat" class="form-control" value="@ViewBag.Lat" name="Lat">
                                         </div>
                                         <div class="form-group">
                                             <label>Longitude</label>
-                                            <input type="number" placeholder="" id="txtLong" class="form-control" asp-for="Longitude">
+                                            <input type="number" pattern="[0-9]+([\,][0-9]+)?" placeholder="" id="txtLong" class="form-control" value="@ViewBag.Long" name="Long">
                                         </div>
                                     </div>
                                 </div>

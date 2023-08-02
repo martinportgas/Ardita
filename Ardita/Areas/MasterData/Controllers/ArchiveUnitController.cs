@@ -53,6 +53,10 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         var data = await _archiveUnitService.GetById(Id);
         if (data != null)
         {
+            if(data.Latitude != null)
+                ViewBag.Lat = data.Latitude.ToString()!.Contains(",") ? data.Latitude.ToString()!.Replace(",", ".") : data.Latitude.ToString();
+            if (data.Longitude != null)
+                ViewBag.Long = data.Longitude.ToString()!.Contains(",") ? data.Longitude.ToString()!.Replace(",", ".") : data.Longitude.ToString();
             ViewBag.listCompany = await BindCompanies();
 
             return View(GlobalConst.Form, data);
@@ -68,6 +72,10 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         var data = await _archiveUnitService.GetById(Id);
         if (data != null)
         {
+            if (data.Latitude != null)
+                ViewBag.Lat = data.Latitude.ToString()!.Contains(",") ? data.Latitude.ToString()!.Replace(",", ".") : data.Latitude.ToString();
+            if (data.Longitude != null)
+                ViewBag.Long = data.Longitude.ToString()!.Contains(",") ? data.Longitude.ToString()!.Replace(",", ".") : data.Longitude.ToString();
             ViewBag.listCompany = await BindCompanies();
 
             return View(GlobalConst.Form, data);
@@ -83,6 +91,10 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
         var data = await _archiveUnitService.GetById(Id);
         if (data != null)
         {
+            if (data.Latitude != null)
+                ViewBag.Lat = data.Latitude.ToString()!.Contains(",") ? data.Latitude.ToString()!.Replace(",", ".") : data.Latitude.ToString();
+            if (data.Longitude != null)
+                ViewBag.Long = data.Longitude.ToString()!.Contains(",") ? data.Longitude.ToString()!.Replace(",", ".") : data.Longitude.ToString();
             ViewBag.listCompany = await BindCompanies();
 
             return View(GlobalConst.Form, data);
@@ -99,6 +111,11 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
     {
         if (model != null)
         {
+            var cultureInfo = System.Globalization.CultureInfo.CurrentCulture;
+            var Lat = Request.Form["Lat"].ToString();
+            var Long = Request.Form["Long"].ToString();
+            model.Latitude = cultureInfo.ToString().Contains("ID") ? decimal.Parse(Lat.Replace(".", ",")) : decimal.Parse(Lat);
+            model.Longitude = cultureInfo.ToString().Contains("ID") ? decimal.Parse(Long.Replace(".", ",")) : decimal.Parse(Long);
             if (model.ArchiveUnitId != Guid.Empty)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
@@ -180,6 +197,16 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
                                 error = "_Kode Lokasi Simpan sudah ada, silahkan gunakan kode yang lain";
                             }
                         }
+                        if (!decimal.TryParse(row[7].ToString(), out decimal Lat))
+                        {
+                            valid = false;
+                            error = "_Latitude Harus Desimal";
+                        }
+                        if (!decimal.TryParse(row[8].ToString(), out decimal Long))
+                        {
+                            valid = false;
+                            error = "_Longitude Harus Desimal";
+                        }
 
                         if (valid)
                         {
@@ -191,6 +218,8 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
                             trxArchiveUnit.ArchiveUnitAddress = row[4].ToString();
                             trxArchiveUnit.ArchiveUnitPhone = row[5].ToString();
                             trxArchiveUnit.ArchiveUnitEmail = row[6].ToString();
+                            trxArchiveUnit.Latitude = Lat; 
+                            trxArchiveUnit.Longitude = Long;
                             trxArchiveUnit.IsActive = true;
                             trxArchiveUnit.CreatedBy = AppUsers.CurrentUser(User).UserId;
                             trxArchiveUnit.CreatedDate = DateTime.Now;
@@ -242,11 +271,13 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
 
             row.CreateCell(0).SetCellValue(GlobalConst.No);
             row.CreateCell(1).SetCellValue(nameof(MstCompany.CompanyName));
-            row.CreateCell(1).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
-            row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
-            row.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitAddress));
-            row.CreateCell(4).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitPhone));
-            row.CreateCell(5).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitEmail));
+            row.CreateCell(2).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitCode));
+            row.CreateCell(3).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitName));
+            row.CreateCell(4).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitAddress));
+            row.CreateCell(5).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitPhone));
+            row.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitEmail));
+            row.CreateCell(7).SetCellValue(nameof(TrxArchiveUnit.Latitude));
+            row.CreateCell(8).SetCellValue(nameof(TrxArchiveUnit.Longitude));
 
             int no = 1;
             foreach (var item in archiveUnits)
@@ -254,11 +285,13 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
                 row = excelSheet.CreateRow(no);
                 row.CreateCell(0).SetCellValue(no);
                 row.CreateCell(1).SetCellValue(item.Company.CompanyName);
-                row.CreateCell(1).SetCellValue(item.ArchiveUnitCode);
-                row.CreateCell(2).SetCellValue(item.ArchiveUnitName);
-                row.CreateCell(3).SetCellValue(item.ArchiveUnitAddress);
-                row.CreateCell(4).SetCellValue(item.ArchiveUnitPhone);
-                row.CreateCell(5).SetCellValue(item.ArchiveUnitEmail);
+                row.CreateCell(2).SetCellValue(item.ArchiveUnitCode);
+                row.CreateCell(3).SetCellValue(item.ArchiveUnitName);
+                row.CreateCell(4).SetCellValue(item.ArchiveUnitAddress);
+                row.CreateCell(5).SetCellValue(item.ArchiveUnitPhone);
+                row.CreateCell(6).SetCellValue(item.ArchiveUnitEmail);
+                row.CreateCell(7).SetCellValue(item.Latitude.ToString());
+                row.CreateCell(8).SetCellValue(item.Longitude.ToString());
 
                 no += 1;
             }
@@ -297,6 +330,8 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
             row.CreateCell(4).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitAddress));
             row.CreateCell(5).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitPhone));
             row.CreateCell(6).SetCellValue(nameof(TrxArchiveUnit.ArchiveUnitEmail));
+            row.CreateCell(7).SetCellValue(nameof(TrxArchiveUnit.Latitude));
+            row.CreateCell(8).SetCellValue(nameof(TrxArchiveUnit.Longitude));
 
             //Companies
             rowCompanies.CreateCell(0).SetCellValue(GlobalConst.No);

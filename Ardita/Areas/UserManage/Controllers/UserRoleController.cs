@@ -105,8 +105,10 @@ namespace Ardita.Areas.UserManage.Controllers
                     model.UserRoleId = Guid.NewGuid();
                     model.UserId = UserId;
                     model.RoleId = RoleId;
-                    model.ArchiveUnitId = ArchiveUnitId;
-                    model.CreatorId = CreatorId;
+                    if(ArchiveUnitId != Guid.Empty)
+                        model.ArchiveUnitId = ArchiveUnitId;
+                    if (CreatorId != Guid.Empty) 
+                        model.CreatorId = CreatorId;
                     model.IsPrimary = IsPrimary || countPrimary == 0;
                     model.CreatedBy = AppUsers.CurrentUser(User).UserId;
                     model.CreatedDate = DateTime.Now;

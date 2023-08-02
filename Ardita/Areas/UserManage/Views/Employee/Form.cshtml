@@ -53,54 +53,70 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-6 b-r">
+                        <div class="col-sm-12">
                             <form role="form" id="frmEmployee" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
-                                <div class="form-group">
-                                    <div class="form-group">
-                                        <label>Employee NIK</label>
-                                        <input type="hidden" asp-for="EmployeeId" />
-                                        <input type="text" placeholder="" id="txtEmployeeNIK" class="form-control" asp-for="Nik">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Employee Name</label>
-                                        <input type="text" placeholder="" id="txtEmployeeName" class="form-control" asp-for="Name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Employee Email</label>
-                                        <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Email">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Employee Phone</label>
-                                        <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Phone">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Employee Gender</label>
-                                        <select asp-for="Gender" id="txtEmployeeGender" id="employeeGender" class="select2_demo_1 form-control">
-                                            <option value=""></option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Employee Place Of Birth</label>
-                                        <input type="text" placeholder="" id="txtEmployeePlaceOfBirth" class="form-control" asp-for="PlaceOfBirth">
-                                    </div>
-                                    <div class="form-group" id="employeeDateOfBirth">
-                                        <label>Employee Date Of Birth</label>
-                                        <div class="input-group date">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                            <input type="text" id="txtEmployeeDateOfBirth" class="form-control" asp-for="DateOfBirth">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>NIK</label>
+                                            <input type="hidden" asp-for="EmployeeId" />
+                                            <input type="text" placeholder="" id="txtEmployeeNIK" class="form-control" asp-for="Nik">
                                         </div>
-
+                                        <div class="form-group">
+                                            <label>Nama</label>
+                                            <input type="text" placeholder="" id="txtEmployeeName" class="form-control" asp-for="Name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Telepon</label>
+                                            <input type="text" placeholder="" id="txtEmployeeEmail" class="form-control" asp-for="Phone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Jenis Kelamin</label>
+                                            <select asp-for="Gender" id="txtEmployeeGender" data-placeholder="-- Pilih Jenis Kelamin --" id="employeeGender" class="select2_demo_1 form-control">
+                                                <option value=""></option>
+                                                <option value="Pria">Pria</option>
+                                                <option value="Wanita">Wanita</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <select asp-for="PositionId" asp-items="ViewBag.listPositions"
-                                            id="txtPositionId" class="select2_demo_1 form-control"
-                                            data-placeholder="-- Pilih Posisi --">
-                                        <option value=""></option>
-                                    </select>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Tempat Lahir</label>
+                                            <input type="text" placeholder="" id="txtEmployeePlaceOfBirth" class="form-control" asp-for="PlaceOfBirth">
+                                        </div>
+                                        <div class="form-group" id="employeeDateOfBirth">
+                                            <label>Tanggal Lahir</label>
+                                            <div class="input-group date">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                                <input type="text" id="txtEmployeeDateOfBirth" class="form-control" asp-for="DateOfBirth">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Posisi</label>
+                                            <select asp-for="PositionId" asp-items="ViewBag.listPositions"
+                                                    id="txtPositionId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Pilih Posisi --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Perusahaan</label>
+                                            <select asp-for="CompanyId" asp-items="ViewBag.listCompany"
+                                                    id="txtPCompanyId" class="select2_demo_1 form-control"
+                                                    data-placeholder="-- Pilih Perusahaan --">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+                           
+                                
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.Employee, new { Area = GlobalConst.UserManage })" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
                                     @if (form.isSubmitForm)

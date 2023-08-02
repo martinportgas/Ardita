@@ -29,12 +29,14 @@ namespace Ardita.Areas.UserManage.Controllers
         public EmployeeController(
             IHostingEnvironment hostingEnvironment,
             IEmployeeService employeeService,
-            IPositionService positionService
+            IPositionService positionService,
+            ICompanyService companyService
             )
         {
             _hostingEnvironment = hostingEnvironment;
             _employeeService = employeeService;
             _positionService = positionService;
+            _companyService = companyService;
         }
         public override async Task<ActionResult> Index() => await base.Index();
         public override async Task<JsonResult> GetData(DataTablePostModel model)
@@ -53,6 +55,7 @@ namespace Ardita.Areas.UserManage.Controllers
         public override async Task<IActionResult> Add()
         {
             ViewBag.listPositions = await BindPositions();
+            ViewBag.listCompany = await BindCompanies();
 
             return View(GlobalConst.Form, new MstEmployee());
         }
@@ -64,6 +67,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
+                ViewBag.listCompany = await BindCompanies();
                 return View(GlobalConst.Form, data);
             }
             else
@@ -79,6 +83,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
+                ViewBag.listCompany = await BindCompanies();
                 return View(GlobalConst.Form, data);
             }
             else
@@ -93,6 +98,7 @@ namespace Ardita.Areas.UserManage.Controllers
             if (data != null)
             {
                 ViewBag.listPositions = await BindPositions();
+                ViewBag.listCompany = await BindCompanies();
                 return View(GlobalConst.Form, data);
             }
             else
