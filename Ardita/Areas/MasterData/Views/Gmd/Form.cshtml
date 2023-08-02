@@ -132,7 +132,7 @@
                 alert("Please Input Detail Name and Unit");
                 return false;
             }
-            $(".detail").append(`<tr><td>${isInput ? '<i class="fa fa-trash" onclick="deleteRow(this)"></i>' : ''}</td><td>${name}</td><td>${unit}</td></tr><input type="hidden" name="detail[]" value="${name}#${unit}">`);
+            $(".detail").append(`<tr><td>${isInput ? '<i class="fa fa-trash" onclick="deleteRow(this)"></i>' : ''}</td><td>${name}</td><td>${unit}<input type="hidden" name="detail[]" value="${name}#${unit}"></td></tr>`);
 
             $("#txtDetailName").val("");
             $("#txtDetailUnit").val("");

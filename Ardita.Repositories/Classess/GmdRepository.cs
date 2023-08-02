@@ -127,7 +127,7 @@ public class GmdRepository : IGmdRepository
                 result = await _context.SaveChangesAsync();
 
                 //Insert Detail
-                oldGmdDetails = await _context.MstGmdDetails.AsNoTracking().Where(x => x.GmdId == model.GmdId).ToListAsync();
+                oldGmdDetails = await _context.MstGmdDetails.AsNoTracking().Where(x => x.GmdId == model.GmdId && x.TrxTypeStorageDetails.FirstOrDefault() == null && x.MstSubTypeStorageDetails.FirstOrDefault() == null).ToListAsync();
                 if (oldGmdDetails.Any())
                 {
                     _context.MstGmdDetails.RemoveRange(oldGmdDetails);
@@ -137,11 +137,15 @@ public class GmdRepository : IGmdRepository
 
                 foreach (var item in details)
                 {
-                    item.CreatedDate = model.CreatedDate;
-                    item.CreatedBy = model.CreatedBy;
-                    item.GmdId = model.GmdId;
+                    var count = await _context.MstGmdDetails.AsNoTracking().Where(x => x.GmdId == model.GmdId && x.Name == item.Name && x.Unit == item.Unit).CountAsync();
+                    if (count == 0)
+                    {
+                        item.CreatedDate = model.CreatedDate;
+                        item.CreatedBy = model.CreatedBy;
+                        item.GmdId = model.GmdId;
 
-                    gmdDetails.Add(item);
+                        gmdDetails.Add(item);
+                    }
                 }
 
                 _context.MstGmdDetails.AddRange(gmdDetails);
