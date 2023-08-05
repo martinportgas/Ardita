@@ -16,7 +16,7 @@ public interface IArchiveRepository
     Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);
     Task<int> Update(TrxArchive model, List<FileModel> files, List<Guid> filesDeletedId, string path = "");
-    Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid());
+    Task<IEnumerable<object>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid());
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
     Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
     Task<string> GetPathArchive(Guid SubSubjectClassificationId, DateTime CreatedDateArchive);

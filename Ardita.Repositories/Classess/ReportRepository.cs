@@ -1,6 +1,7 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models.DbModels;
 using Ardita.Models.ReportModels;
+using Ardita.Models.ViewModels;
 using Ardita.Report;
 using Ardita.Repositories.Interfaces;
 using Castle.Components.DictionaryAdapter.Xml;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -98,7 +100,7 @@ namespace Ardita.Repositories.Classess
             return parameters;
         }
 
-        public async Task<IEnumerable<ReportArchiveLoansInActive>> GetReportArchiveLoansInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportArchiveLoansInActive>> GetReportArchiveLoansInActive(ReportGlobalParams param, SessionModel User)
         {
             var query = await _context.TrxArchiveRentDetails
                 .Include(x => x.TrxArchiveRent.TrxRentHistories)
@@ -108,8 +110,10 @@ namespace Ardita.Repositories.Classess
                 .Include(x => x.Archive.ArchiveType)
                 .Include(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
                 .AsNoTracking()
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Archive.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId : x.Archive.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.Archive.CreatorId == User.CreatorId))
                 .Where(x => (param.companyId == Guid.Empty ? true : x.Archive.Creator.ArchiveUnit.CompanyId == param.companyId))
-                .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Archive.Creator.ArchiveUnitId == param.archiveUnitId))
+                .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Archive.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Archive.Creator.ArchiveUnitId == param.archiveUnitId : x.Archive.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == param.archiveUnitId))
                 .Where(x => (param.roomId == Guid.Empty ? true : x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == param.roomId))
                 .Where(x => (param.rackId == Guid.Empty ? true : x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.RackId == param.rackId))
                 .Where(x => (param.levelId == Guid.Empty ? true : x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.LevelId == param.levelId))
@@ -147,7 +151,7 @@ namespace Ardita.Repositories.Classess
             return query;
         }
 
-        public async Task<IEnumerable<ReportArchiveProcessingInActive>> GetReportArchiveProcessingInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportArchiveProcessingInActive>> GetReportArchiveProcessingInActive(ReportGlobalParams param, SessionModel User)
         {
             var statusWaiting = (int)GlobalConst.STATUS.ArchiveNotReceived;
             var statusReceived = (int)GlobalConst.STATUS.ArchiveReceived;
@@ -164,6 +168,8 @@ namespace Ardita.Repositories.Classess
                 .Include(y => y.TrxArchiveMovementDetails)
                     .ThenInclude(y => y.ArchiveMovement.ArchiveUnitIdFromNavigation)
                 .AsNoTracking()
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == User.ArchiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
                 .Where(x => x.IsActive == true && x.IsArchiveActive == false)
                 .Where(x => x.TrxMediaStorageInActiveDetails.FirstOrDefault() == null)
                 .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
@@ -202,7 +208,7 @@ namespace Ardita.Repositories.Classess
             return query;
         }
 
-        public async Task<IEnumerable<ReportArchiveReceivedInActive>> GetReportArchiveReceivedInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportArchiveReceivedInActive>> GetReportArchiveReceivedInActive(ReportGlobalParams param, SessionModel User)
         {
             var statusWaiting = (int)GlobalConst.STATUS.ArchiveNotReceived;
             var statusReceived = (int)GlobalConst.STATUS.ArchiveReceived;
@@ -216,6 +222,8 @@ namespace Ardita.Repositories.Classess
                 .Include(p => p.TrxArchiveMovementDetails).
                     ThenInclude(p => p.ArchiveMovement.ReceivedByNavigation.Employee)
                 .AsNoTracking()
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == User.ArchiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
                 .Where(x => x.IsActive == true)
                 .Where(x => (x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.IsArchiveActive == false : true))
                 .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
@@ -244,16 +252,18 @@ namespace Ardita.Repositories.Classess
             return query;
         }
 
-        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives(ReportGlobalParams param)
+        public async Task<IEnumerable<ArchiveActive>> GetArchiveActives(ReportGlobalParams param, SessionModel User)
         {
             var statusSubmit = (int)GlobalConst.STATUS.Submit;
-            var result = await _context.TrxArchives.AsNoTracking()
+            var result = await _context.TrxArchives
               .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
               .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room)
               .Include(x => x.Creator.ArchiveUnit.Company)
               .Include(x => x.Gmd)
               .Include(x => x.ArchiveOwner)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.IsActive == true && x.IsArchiveActive == true)
               .Where(x => x.StatusId == statusSubmit)
               .Where(x => x.SubSubjectClassification != null)
@@ -287,7 +297,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ArchiveDestroy>> GetArchiveDestroys(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ArchiveDestroy>> GetArchiveDestroys(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -298,6 +308,8 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.TrxArchiveDestroyDetails).ThenInclude(x => x.ArchiveDestroy)
               .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.TrxArchiveDestroyDetails.FirstOrDefault() != null && x.TrxArchiveDestroyDetails.FirstOrDefault().ArchiveDestroy.IsArchiveActive == true)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
               .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
@@ -335,7 +347,7 @@ namespace Ardita.Repositories.Classess
               .ToListAsync();
             return result;
         }
-        public async Task<IEnumerable<ArchiveDestroy>> GetArchiveInActiveDestroys(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ArchiveDestroy>> GetArchiveInActiveDestroys(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -346,6 +358,8 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room)
               .Include(p => p.TrxArchiveMovementDetails).ThenInclude(p => p.ArchiveMovement.ArchiveUnitIdDestinationNavigation)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == User.ArchiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.TrxArchiveDestroyDetails.FirstOrDefault() != null && x.TrxArchiveDestroyDetails.FirstOrDefault().ArchiveDestroy.IsArchiveActive == false)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
               .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == param.archiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == param.archiveUnitId))
@@ -383,7 +397,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ArchiveMovement>> GetArchiveMovements(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ArchiveMovement>> GetArchiveMovements(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -394,6 +408,8 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.TrxArchiveMovementDetails).ThenInclude(x => x.ArchiveMovement)
               .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.TrxArchiveMovementDetails.FirstOrDefault() != null)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
               .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
@@ -432,7 +448,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ArchiveUsed>> GetArchiveUseds(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ArchiveUsed>> GetArchiveUseds(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchiveOutIndicators
             .Include(x => x.Archive.SubSubjectClassification.SubjectClassification.Classification)
@@ -441,6 +457,8 @@ namespace Ardita.Repositories.Classess
             .Include(x => x.Archive.ArchiveOwner)
             .Include(x => x.Archive.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage)
             .AsNoTracking()
+            .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Archive.Creator.ArchiveUnitId == User.ArchiveUnitId))
+            .Where(x => (User.CreatorId == Guid.Empty ? true : x.Archive.CreatorId == User.CreatorId))
             .Where(x => (param.companyId == Guid.Empty ? true : x.Archive.Creator.ArchiveUnit.CompanyId == param.companyId))
             .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Archive.Creator.ArchiveUnitId == param.archiveUnitId))
             .Where(x => (param.roomId == Guid.Empty ? true : x.Archive.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RoomId == param.roomId))
@@ -474,7 +492,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ReportDocument>> GetReportDocument(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportDocument>> GetReportDocument(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
                 .Include(x => x.Creator.ArchiveUnit)
@@ -498,10 +516,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ReportListArchiveInActive>> GetReportListArchiveInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportListArchiveInActive>> GetReportListArchiveInActive(ReportGlobalParams param, SessionModel User)
         {
             var statusSubmit = (int)GlobalConst.STATUS.Submit;
-            var result = await _context.TrxArchives.AsNoTracking()
+            var result = await _context.TrxArchives
               .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
               .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room)
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -509,11 +527,13 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.ArchiveOwner)
               .Include(y => y.TrxArchiveMovementDetails).ThenInclude(y => y.ArchiveMovement.ArchiveUnitIdFromNavigation)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == User.ArchiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.IsActive == true && x.IsArchiveActive == false)
               .Where(x => x.StatusId == statusSubmit)
               .Where(x => x.SubSubjectClassification != null)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
-              .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
+              .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == param.archiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == param.archiveUnitId))
               .Where(x => (param.roomId == Guid.Empty ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RoomId == param.roomId))
               .Where(x => (param.rackId == Guid.Empty ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.RackId == param.rackId))
               .Where(x => (param.levelId == Guid.Empty ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.LevelId == param.levelId))
@@ -547,7 +567,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<ReportListOfPurposeDestructionInActive>> GetReportListOfPurposeDestructionInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportListOfPurposeDestructionInActive>> GetReportListOfPurposeDestructionInActive(ReportGlobalParams param, SessionModel User)
         {
             var query = await _context.TrxArchives
                 .Include(x => x.Creator)
@@ -586,7 +606,7 @@ namespace Ardita.Repositories.Classess
             return query;
         }
 
-        public async Task<IEnumerable<ReportTransferMediaArchiveInActive>> GetReportTransferMediaArchiveInActive(ReportGlobalParams param = null)
+        public async Task<IEnumerable<ReportTransferMediaArchiveInActive>> GetReportTransferMediaArchiveInActive(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -599,6 +619,8 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room)
               .Include(p => p.TrxArchiveMovementDetails).ThenInclude(p => p.ArchiveMovement.ArchiveUnitIdDestinationNavigation)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.TrxArchiveMovementDetails.FirstOrDefault() == null ? x.Creator.ArchiveUnitId == User.ArchiveUnitId : x.TrxArchiveMovementDetails.FirstOrDefault().ArchiveMovement.ArchiveUnitIdDestination == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.IsActive == true && x.IsArchiveActive == false)
               .Where(x => x.TrxFileArchiveDetails.FirstOrDefault() != null)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
@@ -634,7 +656,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TransferMedia>> GetTransferMedias(ReportGlobalParams param)
+        public async Task<IEnumerable<TransferMedia>> GetTransferMedias(ReportGlobalParams param, SessionModel User)
         {
             var result = await _context.TrxArchives
               .Include(x => x.Creator.ArchiveUnit.Company)
@@ -646,6 +668,8 @@ namespace Ardita.Repositories.Classess
               .Include(x => x.Gmd)
               .Include(x => x.ArchiveOwner)
               .AsNoTracking()
+              .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+              .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.IsActive == true && x.IsArchiveActive == true)
               .Where(x => x.TrxFileArchiveDetails.FirstOrDefault() != null)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))

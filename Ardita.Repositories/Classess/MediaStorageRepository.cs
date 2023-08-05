@@ -39,8 +39,8 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(d => d.TrxMediaStorageDetails)
                 .ThenInclude(a => a.Archive)
                 .ThenInclude(c => c.Creator)
-            .Include(s => s.SubjectClassification)
-            .Include(t => t.TypeStorage).ThenInclude(a => a.ArchiveUnit)
+            .Include(s => s.SubjectClassification.Classification)
+            .Include(t => t.TypeStorage.ArchiveUnit)
             .Include(t => t.TypeStorage.TrxTypeStorageDetails)
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor).AsNoTracking()
             .ToListAsync();

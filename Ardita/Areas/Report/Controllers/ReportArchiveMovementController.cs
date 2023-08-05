@@ -51,7 +51,7 @@ namespace Ardita.Areas.Report.Controllers
         public async Task<IActionResult> GenerateReport(ReportGlobalParams param)
         {
             var reportName = "RptReportArchiveMovement";
-            var returnString = await _reportService.GenerateReportArchiveMovementAsync(reportName, param);
+            var returnString = await _reportService.GenerateReportArchiveMovementAsync(reportName, param, AppUsers.CurrentUser(User));
             ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
             ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
 

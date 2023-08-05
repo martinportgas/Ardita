@@ -266,7 +266,7 @@
                 var SearchDestroy = '';
 
                 var and = ' && ';
-                var title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveMovementDetails.Any(x => x.Archive.TitleArchive.Contains(\"${$('#txtTitle').val()}\"))`;
+                var title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveMovementDetails.Any(x => x.Archive.TitleArchive.ToLower().Contains(\"${$('#txtTitle').val().toLowerCase()}\"))`;
                 var creator = $('#txtCreatorId').val() == '' ? '1=1' : `TrxArchiveMovementDetails.Any(x => x.Archive.CreatorId == \"${$('#txtCreatorId').val()}\")`;
                 var year = $('#txtYear').val() == '' ? '1=1' : `TrxArchiveMovementDetails.Any(x => x.Archive.ArchiveYear.Contains(\"${$('#txtYear').val()}\"))`;
                 var classification = $('#txtClassificationId').val() == '' ? '1=1' : `TrxArchiveMovementDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassification.ClassificationId == \"${$('#txtClassificationId').val()}\")`;
@@ -281,7 +281,7 @@
 
                 searchMove = search;
 
-                title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TitleArchive.Contains(\"${$('#txtTitle').val()}\"))`;
+                title = $('#txtTitle').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.TitleArchive.ToLower().Contains(\"${$('#txtTitle').val().toLowerCase()}\"))`;
                 creator = $('#txtCreatorId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.CreatorId == \"${$('#txtCreatorId').val()}\")`;
                 year = $('#txtYear').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.ArchiveYear.Contains(\"${$('#txtYear').val()}\"))`;
                 classification = $('#txtClassificationId').val() == '' ? '1=1' : `TrxArchiveDestroyDetails.Any(x => x.Archive.SubSubjectClassification.SubjectClassification.ClassificationId == \"${$('#txtClassificationId').val()}\")`;

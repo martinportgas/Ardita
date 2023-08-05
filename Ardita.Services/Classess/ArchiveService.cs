@@ -225,7 +225,7 @@ public class ArchiveService : IArchiveService
         Directory.Delete(sourceDirName, true);
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) => await _archiveRepository.GetAvailableArchiveBySubSubjectId(subSubjectId, mediaStorageId, year, gmdDetailId);
+    public async Task<IEnumerable<object>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) => await _archiveRepository.GetAvailableArchiveBySubSubjectId(subSubjectId, mediaStorageId, year, gmdDetailId);
     public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "") => await _archiveRepository.GetAvailableArchiveInActiveBySubSubjectId(subSubjectId, mediaStorageId, year);
 
     public async Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId)
