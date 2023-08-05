@@ -5,6 +5,7 @@ using Ardita.Models.ViewModels.Archive;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using NPOI.SS.Formula.Functions;
 using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
@@ -342,7 +343,13 @@ public class ArchiveRepository : IArchiveRepository
                 model.IsUsed = false;
                 model.IsActive = true;
                 model.IsArchiveActive = true;
-                model.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{model.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}.{(_context.TrxArchives.Count() + 1).ToString("D4")}";
+
+                var Code = $"{model.CreatedDateArchive.Year.ToString()}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == model.CreatorId)!.CreatorCode}";
+                var lastCount = _context.TrxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+                var fixCount = ++lastCount;
+                var initCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == model.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
+                var fixCode = initCode + fixCount.ToString("D5");
+                model.ArchiveCode = fixCode;
 
                 foreach (var e in _context.ChangeTracker.Entries())
                 {
@@ -398,20 +405,27 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
     {
         bool result = false;
-        var lastCOunt = _context.TrxArchives.Count();
-        if (trxArchives.Count() > 0)
+        foreach (var item in trxArchives)
         {
-            foreach (var item in trxArchives)
+            var Code = $"{item.CreatedDateArchive.Year.ToString()}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}";
+            var lastCount = _context.TrxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+            var lastListCount = trxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+            var fixCount = ( lastCount + lastListCount ) + 1;
+            var initCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
+            var fixCode = initCode + fixCount.ToString("D5");
+            while (_context.TrxArchives.Where(x => x.ArchiveCode == fixCode).Count() > 0)
             {
-                lastCOunt = lastCOunt + 1;
-                item.IsUsed = false;
-                item.ArchiveCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{item.CreatedDateArchive.Year}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}{lastCOunt.ToString("D4")}";
+                fixCount++;
+                fixCode = initCode + fixCount.ToString("D5");
             }
-
-            await _context.AddRangeAsync(trxArchives);
-            await _context.SaveChangesAsync();
-            result = true;
+            
+            item.ArchiveCode = fixCode;
+            item.IsUsed = false;
         }
+
+        await _context.AddRangeAsync(trxArchives);
+        await _context.SaveChangesAsync();
+        result = true;
         return result;
     }
 
@@ -526,18 +540,18 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "", Guid gmdDetailId = new Guid())
     {
-        string year = DateTime.Now.Year.ToString();
-        string month = DateTime.Now.Month.ToString();
-        if (!string.IsNullOrEmpty(monthYear))
-        {
-            string[] arrMonthYear = monthYear.Split('-');
-            if(arrMonthYear.Length > 1)
-            {
-                year = arrMonthYear[0];
-                month = arrMonthYear[1];
-            }
+        //string year = DateTime.Now.Year.ToString();
+        //string month = DateTime.Now.Month.ToString();
+        //if (!string.IsNullOrEmpty(monthYear))
+        //{
+        //    string[] arrMonthYear = monthYear.Split('-');
+        //    if(arrMonthYear.Length > 1)
+        //    {
+        //        year = arrMonthYear[0];
+        //        month = arrMonthYear[1];
+        //    }
 
-        }
+        //}
         var listNotAvailableArchive = from archive in _context.TrxArchives
                                       join mediaDetail in _context.TrxMediaStorageDetails on archive.ArchiveId equals mediaDetail.ArchiveId
                                       join media in _context.TrxMediaStorages on mediaDetail.MediaStorageId equals media.MediaStorageId
@@ -552,7 +566,7 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.TrxMediaStorageDetails)
             .Include(x => x.TrxArchiveOutIndicators.Where(z => z.IsActive == true))
             .Where(x => (x.TrxMediaStorageDetails.FirstOrDefault() == null ? x.IsActive == true : true) && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
-            .Where($"{(string.IsNullOrEmpty(year) ? "1=1" : "CreatedDateArchive.Year == @0 && CreatedDateArchive.Month == @1")}", year, month)
+            .Where(x => (string.IsNullOrEmpty(monthYear) ? true : x.CreatedDateArchive.Year.ToString() == monthYear))
             .Where(x => x.GmdDetailId == gmdDetailId)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .ToListAsync();

@@ -331,6 +331,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                             trxArchive.CreatedDate = DateTime.Now;
                             trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
+                            trxArchive.ArchiveDescription = row[14].ToString()!;
 
                             trxArchives.Add(trxArchive);
                         }
@@ -388,7 +389,8 @@ public class ArchiveController : BaseController<TrxArchive>
                     x.CreatedDateArchive,
                     x.ActiveRetention,
                     x.InactiveRetention,
-                    x.Volume
+                    x.Volume,
+                    x.ArchiveDescription
                 }
                 ).ToList().ToDataTable()
             };

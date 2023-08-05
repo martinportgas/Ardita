@@ -343,6 +343,12 @@
             });
 
             $('.modal').find('.table').DataTable();
+
+            $('#Search').on('keypress', function (e) {
+                if (e.which == 13) {
+                    window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Areas = GlobalConst.General, keyword = "-1"})'.replace('-1', $(this).val());
+                }
+            });
         });
 
         function initTotalRowUse() {
