@@ -23,6 +23,12 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<IdxUserRole> IdxUserRoles { get; set; }
 
+    public virtual DbSet<LogActivity> LogActivities { get; set; }
+
+    public virtual DbSet<LogChange> LogChanges { get; set; }
+
+    public virtual DbSet<LogLogin> LogLogins { get; set; }
+
     public virtual DbSet<MstArchiveOwner> MstArchiveOwners { get; set; }
 
     public virtual DbSet<MstArchiveType> MstArchiveTypes { get; set; }
@@ -31,19 +37,13 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstCompany> MstCompanies { get; set; }
 
-    public virtual DbSet<MstCompanyLog> MstCompanyLogs { get; set; }
-
     public virtual DbSet<MstCreator> MstCreators { get; set; }
-
-    public virtual DbSet<MstCreatorLog> MstCreatorLogs { get; set; }
 
     public virtual DbSet<MstEmployee> MstEmployees { get; set; }
 
     public virtual DbSet<MstGmd> MstGmds { get; set; }
 
     public virtual DbSet<MstGmdDetail> MstGmdDetails { get; set; }
-
-    public virtual DbSet<MstGmdLog> MstGmdLogs { get; set; }
 
     public virtual DbSet<MstMenu> MstMenus { get; set; }
 
@@ -280,6 +280,78 @@ public partial class BksArditaDevContext : DbContext
                 .HasConstraintName("FK_USER_ROLE_USERS");
         });
 
+        modelBuilder.Entity<LogActivity>(entity =>
+        {
+            entity.ToTable("LOG_ACTIVITIES");
+
+            entity.Property(e => e.LogActivityId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("log_activity_id");
+            entity.Property(e => e.ActivityDate)
+                .HasColumnType("datetime")
+                .HasColumnName("activity_date");
+            entity.Property(e => e.PageId).HasColumnName("page_id");
+            entity.Property(e => e.PageName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("page_name");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("username");
+        });
+
+        modelBuilder.Entity<LogChange>(entity =>
+        {
+            entity.ToTable("LOG_CHANGES");
+
+            entity.Property(e => e.LogChangeId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("log_change_id");
+            entity.Property(e => e.ChangeDate)
+                .HasColumnType("datetime")
+                .HasColumnName("change_date");
+            entity.Property(e => e.NewValue)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("new_value");
+            entity.Property(e => e.OldValue)
+                .HasMaxLength(2500)
+                .IsUnicode(false)
+                .HasColumnName("old_value");
+            entity.Property(e => e.TableReference)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("table_reference");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("username");
+        });
+
+        modelBuilder.Entity<LogLogin>(entity =>
+        {
+            entity.ToTable("LOG_LOGIN");
+
+            entity.Property(e => e.LogLoginId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("log_login_id");
+            entity.Property(e => e.Ipaddress)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ipaddress");
+            entity.Property(e => e.LoginDate)
+                .HasColumnType("datetime")
+                .HasColumnName("login_date");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("username");
+        });
+
         modelBuilder.Entity<MstArchiveOwner>(entity =>
         {
             entity.HasKey(e => e.ArchiveOwnerId);
@@ -429,56 +501,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("updated_date");
         });
 
-        modelBuilder.Entity<MstCompanyLog>(entity =>
-        {
-            entity.HasKey(e => e.CompanyIdLog);
-
-            entity.ToTable("MST_COMPANY_LOG");
-
-            entity.Property(e => e.CompanyIdLog)
-                .ValueGeneratedNever()
-                .HasColumnName("company_id_log");
-            entity.Property(e => e.Action)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("action");
-            entity.Property(e => e.Address)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("address");
-            entity.Property(e => e.CompanyCode)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("company_code");
-            entity.Property(e => e.CompanyId).HasColumnName("company_id");
-            entity.Property(e => e.CompanyName)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("company_name");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("created_date");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("email");
-            entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.Telepone)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("telepone");
-            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
-            entity.Property(e => e.UpdatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.Company).WithMany(p => p.MstCompanyLogs)
-                .HasForeignKey(d => d.CompanyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_COMPANY_ID_COMPANY_LOG");
-        });
-
         modelBuilder.Entity<MstCreator>(entity =>
         {
             entity.HasKey(e => e.CreatorId);
@@ -511,48 +533,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.ArchiveUnitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MST_CREATOR_TRX_ARCHIVE_UNIT");
-        });
-
-        modelBuilder.Entity<MstCreatorLog>(entity =>
-        {
-            entity.HasKey(e => e.CreatorIdLog);
-
-            entity.ToTable("MST_CREATOR_LOG");
-
-            entity.Property(e => e.CreatorIdLog)
-                .ValueGeneratedNever()
-                .HasColumnName("creator_id_log");
-            entity.Property(e => e.Action)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("action");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("created_date");
-            entity.Property(e => e.CreatorCode)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("creator_code");
-            entity.Property(e => e.CreatorId).HasColumnName("creator_id");
-            entity.Property(e => e.CreatorName)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("creator_name");
-            entity.Property(e => e.CreatorType)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("creator_type");
-            entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
-            entity.Property(e => e.UpdatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.Creator).WithMany(p => p.MstCreatorLogs)
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CREATOR_ID_CREATOR_LOG");
         });
 
         modelBuilder.Entity<MstEmployee>(entity =>
@@ -685,44 +665,6 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.GmdId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MST_GMD_DETAIL_MST_GMD");
-        });
-
-        modelBuilder.Entity<MstGmdLog>(entity =>
-        {
-            entity.HasKey(e => e.GmdIdLog);
-
-            entity.ToTable("MST_GMD_LOG");
-
-            entity.Property(e => e.GmdIdLog)
-                .ValueGeneratedNever()
-                .HasColumnName("gmd_id_log");
-            entity.Property(e => e.Action)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("action");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("created_date");
-            entity.Property(e => e.GmdCode)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("gmd_code");
-            entity.Property(e => e.GmdId).HasColumnName("gmd_id");
-            entity.Property(e => e.GmdName)
-                .HasMaxLength(200)
-                .IsUnicode(false)
-                .HasColumnName("gmd_name");
-            entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
-            entity.Property(e => e.UpdatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("updated_date");
-
-            entity.HasOne(d => d.Gmd).WithMany(p => p.MstGmdLogs)
-                .HasForeignKey(d => d.GmdId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_GMD_ID_GMD_LOG");
         });
 
         modelBuilder.Entity<MstMenu>(entity =>
