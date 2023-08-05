@@ -8,7 +8,6 @@ using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.HPSF;
-using System.Text.Json;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Controllers;
@@ -913,21 +912,11 @@ public abstract class BaseController<T> : Controller
         };
         return Json(result);
     }
-    public async Task<JsonResult> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) 
+    public async Task<object> BindArchivesBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid()) 
     {
         var data = await _archiveService.GetAvailableArchiveBySubSubjectId(Id, mediaStorageId, year, gmdDetailId);
-        // Create JsonSerializerOptions with custom settings
-        var jsonOptions = new JsonSerializerOptions
-        {
-            MaxDepth = 0, // Set to 0 for unlimited depth
-            IgnoreNullValues = true, // Ignore null values during serialization
-            WriteIndented = true // Write indented JSON for readability (optional)
-                                 // You can configure other options as needed
-        };
-
-        // Serialize the data using the JsonSerializerOptions
-        var jsonResult = new JsonResult(data, jsonOptions);
-        return jsonResult;
+        var result = Json(data);
+        return result;
     } 
     public async Task<JsonResult> BindArchivesInActiveBySubSubjectClassificationId(Guid Id, Guid mediaStorageId = new Guid(), string year = "") => Json(await _archiveService.GetAvailableArchiveInActiveBySubSubjectId(Id, mediaStorageId, year));
     public async Task<JsonResult> BindTypeStorageByArchiveUnitId(Guid Id, string param = "")

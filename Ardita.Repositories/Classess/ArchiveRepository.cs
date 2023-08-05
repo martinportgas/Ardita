@@ -538,7 +538,7 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "", Guid gmdDetailId = new Guid())
+    public async Task<IEnumerable<object>> GetAvailableArchiveBySubSubjectId(Guid subjectId, Guid mediaStorageId = new Guid(), string monthYear = "", Guid gmdDetailId = new Guid())
     {
         //string year = DateTime.Now.Year.ToString();
         //string month = DateTime.Now.Month.ToString();
@@ -569,6 +569,19 @@ public class ArchiveRepository : IArchiveRepository
             .Where(x => (string.IsNullOrEmpty(monthYear) ? true : x.CreatedDateArchive.Year.ToString() == monthYear))
             .Where(x => x.GmdDetailId == gmdDetailId)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
+            .Select(x => new
+            {
+                archiveId = x.ArchiveId,
+                subSubjectClassificationName = x.SubSubjectClassification.SubSubjectClassificationName,
+                archiveCode = x.ArchiveCode,
+                titleArchive = x.TitleArchive,
+                archiveDescription = x.ArchiveDescription,
+                archiveTypeName = x.ArchiveType.ArchiveTypeName,
+                creatorName = x.Creator.CreatorName,
+                volume = x.Volume,
+                trxArchiveOutIndicators = x.TrxArchiveOutIndicators,
+                trxMediaStorageDetails = x.TrxMediaStorageDetails
+            })
             .ToListAsync();
 
         return result;

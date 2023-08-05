@@ -651,18 +651,12 @@
 
             ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
                 var dataRes = [];
-                console.log('1.  ', result);
                 if(@form.isInput.ToString().ToLower()){
-                console.log('2.  ', result);
                     dataRes = result;
 
-                    console.log(dataRes);
-
-                    var dataChecked = result.filter(function (i, n) {
-                        return n.trxMediaStorageDetails.length > 0;
-                    })
-
-                    console.log(dataChecked);
+                    var dataChecked = $.grep(result, function (item) {
+                        return item.trxMediaStorageDetails.length > 0;
+                    });
 
                     if(dataChecked.length > 0){
                         $('#checkAll').prop('required', false);
@@ -677,9 +671,9 @@
                         $('#checkAll').prop('required', false);
                     }
 
-                    dataRes = result.filter(function (i, n) {
-                        return n.trxMediaStorageDetails.length > 0;
-                    })
+                    dataRes = $.grep(result, function (item) {
+                        return item.trxMediaStorageDetails.length > 0;
+                    });
                     //$.each(result, function (key, value) {
                     //    if (value.trxMediaStorageDetails.length > 0) {
                     //        dataRes.push(value);
@@ -696,11 +690,11 @@
                         lengthMenu: [100],
                         columnDefs: [
                             {
-                                targets: [8],
+                                targets: [9],
                                 className: 'd-none'
                             },
                             {
-                                targets: [8],
+                                targets: [9],
                                 orderDataType: 'dom-checkbox'
                             }
                         ],
@@ -710,12 +704,12 @@
                                     return meta.row + meta.settings._iDisplayStart + 1;
                                 }
                             },
-                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
                             { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                             { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
                             { "data": "archiveDescription", "name": "archiveDescription", "autoWidth": true },
-                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
-                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "archiveTypeName", "name": "archiveTypeName", "autoWidth": true },
+                            { "data": "creatorName", "name": "creatorName", "autoWidth": true },
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
@@ -779,11 +773,11 @@
                         lengthMenu: [100],
                         columnDefs: [
                             {
-                                targets: [8],
+                                targets: [9],
                                 className: `text-center ${@form.isInput.ToString().ToLower() ? '' : 'd-none'}`
                             },
                             {
-                                targets: [8],
+                                targets: [9],
                                 orderDataType: 'dom-checkbox'
                             }
                         ],
@@ -793,12 +787,12 @@
                                     return meta.row + meta.settings._iDisplayStart + 1;
                                 }
                             },
-                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
                             { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                             { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
                             { "data": "archiveDescription", "name": "archiveDescription", "autoWidth": true },
-                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
-                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "archiveTypeName", "name": "archiveTypeName", "autoWidth": true },
+                            { "data": "creatorName", "name": "creatorName", "autoWidth": true },
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {

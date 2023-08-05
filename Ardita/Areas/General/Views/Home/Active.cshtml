@@ -26,7 +26,7 @@
         <div class="col-lg-12">
             <div class="input-group">
                 <input type="text" placeholder="Pencarian Arsip" class="form-control" id="Search" style="border-radius: 5px 0px 0px 5px !important" /> <span class="input-group-append">
-                    <button class="btn btn-sm btn-warning" onclick="window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Areas = GlobalConst.General, keyword = "-1"})'.replace('-1', $('#Search').val())">Cari</button>
+                    <button class="btn btn-sm btn-warning" onclick="window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Area = GlobalConst.General, keyword = "-1"})'.replace('-1', $('#Search').val())">Cari</button>
                 </span>
             </div>
         </div>
@@ -340,7 +340,7 @@
 
             $('#Search').on('keypress', function(e){
                 if (e.which == 13) {
-                    window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Areas = GlobalConst.General, keyword = "-1"})'.replace('-1', $(this).val());
+                    window.location.href = '@Url.Action("SearchActive", GlobalConst.Home, new { Area = GlobalConst.General, keyword = "-1"})'.replace('-1', $(this).val());
                 }
             });
         });
@@ -379,7 +379,7 @@
                     labels: ["Digunakan", "Tersedia"],
                     datasets: [{
                         data: [result.totalUse, result.totalAvailable],
-                        backgroundColor: ["#a3e1d4", "#dedede"]
+                        backgroundColor: ["#f8ac59", "#1c84c6"]
                     }]
                 };
 
@@ -436,7 +436,7 @@
                     labels: ["Active", "Retensi", "Dipindahkan"],
                     datasets: [{
                         data: [result.active, result.retensi, result.move],
-                        backgroundColor: ["#a3e1d4", "#dedede", "#4a4b4c"]
+                        backgroundColor: ["#1c84c6", "#f8ac59", "#dedede"]
                     }]
                 };
 

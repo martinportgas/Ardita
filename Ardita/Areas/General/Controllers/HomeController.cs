@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Ardita.Services.Interfaces;
 using Ardita.Extensions;
 using Ardita.Services.Classess;
+using Ardita.Report;
 
 namespace Ardita.Areas.General.Controllers
 {
@@ -112,6 +113,10 @@ namespace Ardita.Areas.General.Controllers
             ViewBag.userPengolah = userRole.Where(x => x.Role.Code == GlobalConst.ROLE.UPL.ToString()).ToList();
             ViewBag.totalRoom = room.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah).ToList();
             ViewBag.totalCreator = creator.ToList();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                storage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                storage.Where(x => x.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             ViewBag.totalStorage = storage.Where(x => x.StatusId == statusSubmit).Count();
 
             return View(GlobalConst.Active);
@@ -122,7 +127,15 @@ namespace Ardita.Areas.General.Controllers
             var userRole = await _userRoleService.GetAll();
             var room = await _roomService.GetAll();
             var storage = await _mediaStorageInActiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                storage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                storage.Where(x => x.SubSubjectClassification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var archive = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                archive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                archive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
             ViewBag.totalLokasi = location.ToList();
             ViewBag.totalArsip = archive.Where(x => x.TrxMediaStorageInActiveDetails.FirstOrDefault() != null).ToList().Where(x => x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.StatusId == statusSubmit).ToList();
@@ -196,6 +209,10 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataArchives = await _archiveService.GetAll();
             var dataArchive = dataArchives.Where(x => x.StatusId == statusSubmit).ToList();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArchive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArchive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var data = await _gmdService.GetAll();
             var result = data
                 .Select(x => new {
@@ -209,6 +226,10 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataArchives = await _archiveService.GetAll();
             var dataArchive = dataArchives.Where(x => x.StatusId == statusSubmit).ToList();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArchive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArchive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var data = await _gmdService.GetAll();
             var result = data
                 .Select(x => new {
@@ -221,21 +242,14 @@ namespace Ardita.Areas.General.Controllers
         public async Task<JsonResult> BindTotalStorageUse()
         {
             var dataStorage = await _mediaStorageService.GetAll();
-            int use = 0;
-            int total = 0;
-            dataStorage = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).ToList();
-            foreach(var row in dataStorage)
-            {
-                if (row.GmdDetailId != null)
-                {
-                    total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
-                    use += row.TrxMediaStorageDetails.Sum(i => i.Archive.Volume);
-                } 
-            }
+            var dataRow = await _rowService.GetAll();
+            int use = dataStorage == null ? 0 : dataStorage.Count();
+            int total = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count();
+
             var result = new
             {
                 totalUse = use,
-                totalAvailable = total - use,
+                totalAvailable =  total - use,
             };
             return Json(result);
         }
@@ -243,17 +257,10 @@ namespace Ardita.Areas.General.Controllers
         public async Task<JsonResult> BindTotalStorageUseInActive()
         {
             var dataStorage = await _mediaStorageInActiveService.GetAll();
-            int use = 0;
-            int total = 0;
-            dataStorage = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).ToList();
-            foreach (var row in dataStorage)
-            {
-                if(row.GmdDetailId != null)
-                {
-                    total += row.TypeStorage.TrxTypeStorageDetails.Where(x => x.GmdDetailId == row.GmdDetailId).FirstOrDefault().Size;
-                    use += row.TrxMediaStorageInActiveDetails.Sum(i => i.Archive.Volume);
-                }
-            }
+            var dataRow = await _rowService.GetAll();
+            int use = dataStorage == null ? 0 : dataStorage.Count();
+            int total = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count();
+
             var result = new
             {
                 totalUse = use,
@@ -266,6 +273,10 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataRoom = await _roomService.GetAll();
             var dataStorage = await _mediaStorageService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataStorage.Where(x => x.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah)
                 .Select(x => new {
                     name = x.RoomName,
@@ -278,6 +289,10 @@ namespace Ardita.Areas.General.Controllers
         {
             var dataRoom = await _roomService.GetAll();
             var dataStorage = await _mediaStorageInActiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataStorage.Where(x => x.SubSubjectClassification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitKearsipan)
                 .Select(x => new {
                     name = x.RoomName,
@@ -291,6 +306,10 @@ namespace Ardita.Areas.General.Controllers
             var dataRooms = await _roomService.GetAll();
             var dataRoom = dataRooms.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah).ToList();
             var dataArhives = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArhives.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArhives.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var dataArhive = dataArhives.Where(x => x.TrxMediaStorageDetails.FirstOrDefault() != null).ToList();
             var results = dataRoom
                 .Select(x => new {
@@ -313,6 +332,10 @@ namespace Ardita.Areas.General.Controllers
             var dataRooms = await _roomService.GetAll();
             var dataRoom = dataRooms.Where(x => x.ArchiveRoomType == GlobalConst.UnitKearsipan).ToList();
             var dataArhives = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArhives.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArhives.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var dataArhive = dataArhives.Where(x => x.TrxMediaStorageInActiveDetails.FirstOrDefault() != null).ToList();
             var results = dataRoom
                 .Select(x => new {
@@ -334,7 +357,15 @@ namespace Ardita.Areas.General.Controllers
         {
             var statusReceived = (int)GlobalConst.STATUS.ArchiveReceived;
             var dataArchive = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArchive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArchive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var dataRetensi = await _archiveRetentionService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataRetensi.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataRetensi.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var result = new
             {
                 active = dataArchive.Where(x => x.IsArchiveActive == true && x.IsActive == true).Count(),
@@ -348,7 +379,15 @@ namespace Ardita.Areas.General.Controllers
         {
             var statusMusnah = (int)GlobalConst.STATUS.Musnah;
             var dataArchive = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArchive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArchive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var dataRetensi = await _archiveRetentionService.GetInActiveAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataRetensi.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataRetensi.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var result = new
             {
                 active = dataArchive.Where(x => x.IsArchiveActive == false).Count() - dataRetensi.Count(),
@@ -363,7 +402,15 @@ namespace Ardita.Areas.General.Controllers
             var statusMusnah = (int)GlobalConst.STATUS.Musnah;
             int statusReturn = (int)GlobalConst.STATUS.Return;
             var dataArchive = await _archiveService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataArchive.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataArchive.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
             var dataRent = await _archiveRentService.GetAll();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                dataRent.Where(x => x.TrxArchiveRentDetails.Any(x => x.Archive.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId)).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                dataRent.Where(x => x.TrxArchiveRentDetails.Any(x => x.Archive.CreatorId == AppUsers.CurrentUser(User).CreatorId)).ToList();
             if (period != 0)
             {
                 dataArchive = dataArchive.Where(x => ((DateTime)x.CreatedDateArchive).Year == period).ToList();
