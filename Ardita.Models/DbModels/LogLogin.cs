@@ -13,5 +13,13 @@ public partial class LogLogin
 
     public DateTime? LoginDate { get; set; }
 
-    public string? Ipaddress { get; set; }
+    public string? ComputerName { get; set; }
+
+    public string? IpAddress { get; set; }
+
+    public string? MacAddress { get; set; }
+
+    public string? OsName { get; set; }
+
+    public string? BrowserName { get; set; }
 }

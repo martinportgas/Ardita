@@ -4,12 +4,17 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
+using Ardita.Models.LogModels;
+using System.Text.Json;
+using Ardita.Extensions;
+using Newtonsoft.Json;
 
 namespace Ardita.Repositories.Classess;
 
 public class TypeStorageRepository : ITypeStorageRepository
 {
     private readonly BksArditaDevContext _context;
+    
     
     public TypeStorageRepository(BksArditaDevContext context) => _context = context;
     
@@ -94,6 +99,7 @@ public class TypeStorageRepository : ITypeStorageRepository
 
         if (model != null)
         {
+            model.TypeStorageId = Guid.NewGuid();
             model.IsActive = true;
             _context.TrxTypeStorages.Add(model);
             result = await _context.SaveChangesAsync();
@@ -109,6 +115,38 @@ public class TypeStorageRepository : ITypeStorageRepository
 
             _context.TrxTypeStorageDetails.AddRange(details);
             result += await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0) 
+            {
+                try 
+                {
+                    var objLog = new LogRequestModel();
+                    objLog.TableName = $"{nameof(TrxTypeStorage)}, {nameof(TrxTypeStorageDetail)}";
+
+                    var header = await _context.TrxTypeStorages.Include(x => x.ArchiveUnit).AsNoTracking().Where(x => x.TypeStorageId == model.TypeStorageId).ToListAsync();
+                    var child = await _context.TrxTypeStorageDetails.Include(x => x.TypeStorage).AsNoTracking().Where(x => x.TypeStorageId == model.TypeStorageId).ToListAsync();
+                    var users = await _context.MstUsers.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == model.CreatedBy);
+
+                    var objDetail = new LogRequestDetailModel();
+                    objDetail.Header = header.ToList();
+                    objDetail.Child = child.ToList();
+                    objLog.data = objDetail;
+
+                    var objLogDB = new LogChange();
+                    objLogDB.UserId = users.UserId;
+                    objLogDB.Username = users.Username;
+                    objLogDB.TableReference = $"{nameof(TrxTypeStorage)}, {nameof(TrxTypeStorageDetail)}";
+                    objLogDB.ChangeDate = DateTime.Now;
+                    objLogDB.NewValue = JsonConvert.SerializeObject(objDetail, Formatting.Indented, new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
+
+                    _context.LogChanges.Add(objLogDB);
+                    await _context.SaveChangesAsync();
+                } catch (Exception ex) { }
+            }
         }
         return result;
     }

@@ -1,4 +1,5 @@
 ﻿using Ardita.Models.DbModels;
+using Ardita.Models.LogModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
@@ -54,9 +55,12 @@ public class TypeStorageService : ITypeStorageService
 
     public async Task<int> Insert(TrxTypeStorage model, string[] detail)
     {
+
+        int result = 0;
         List<TrxTypeStorageDetail> details = await GetDetail(detail);
 
-        return await _TypeStorageRepository.Insert(model, details);
+        result = await _TypeStorageRepository.Insert(model, details);
+        return result;
     }
     public async Task<bool> InsertBulk(List<TrxTypeStorage> model) => await _TypeStorageRepository.InsertBulk(model);
 

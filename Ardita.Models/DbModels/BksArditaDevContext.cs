@@ -338,13 +338,29 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.LogLoginId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("log_login_id");
-            entity.Property(e => e.Ipaddress)
+            entity.Property(e => e.BrowserName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasColumnName("ipaddress");
+                .HasColumnName("browser_name");
+            entity.Property(e => e.ComputerName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("computer_name");
+            entity.Property(e => e.IpAddress)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ip_address");
             entity.Property(e => e.LoginDate)
                 .HasColumnType("datetime")
                 .HasColumnName("login_date");
+            entity.Property(e => e.MacAddress)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("mac_address");
+            entity.Property(e => e.OsName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("os_name");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Username)
                 .HasMaxLength(100)

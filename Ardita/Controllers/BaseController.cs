@@ -63,6 +63,13 @@ public abstract class BaseController<T> : Controller
     protected IArchiveOutIndicatorService _archiveOutIndicatorService { get; set; } = null!;
 
     protected ISubTypeStorageService SubTypeStorageService { get; set; } = null!;
+
+    //Log
+
+    protected ILogLoginService _logLoginService { get; set; } = null;
+    protected ILogChangesService _logChangesService { get; set; } = null;
+    protected ILogActivityService _logActivityService { get; set; } = null;
+
     #endregion
 
     #region Main Action

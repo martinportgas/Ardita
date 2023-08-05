@@ -68,8 +68,43 @@ namespace Ardita
                     Maka Jika Actionnya GetData Then Action Name di Set jadi Index
              */
 
+            try 
+            {
+                if (actionName.ToString() == GlobalConst.Index)
+                {
+
+                    var activity = new LogActivity();
+                    activity.UserId = new Guid(user.Identities.FirstOrDefault().FindFirst(GlobalConst.UserId).Value);
+                    activity.Username = user.Identities.FirstOrDefault().FindFirst(GlobalConst.Username).Value;
+                    activity.ActivityDate = DateTime.Now;
+
+                    if (controllerName.ToString() == GlobalConst.Home)
+                    {
+                        activity.PageName = GlobalConst.Home;
+                    }
+                    else
+                    {
+                        activity.PageId = subMenus.FirstOrDefault(x => x.Path == controllerName.ToString()).SubmenuId;
+                        activity.PageName = subMenus.FirstOrDefault(x => x.Path == controllerName.ToString()).Name;
+                    }
+
+
+                    using (var dbContext = new BksArditaDevContext())
+                    {
+                        dbContext.Add(activity);
+                        dbContext.SaveChanges();
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            { }
+
+          
+
             if (actionName.ToString() == "GetData")
-                actionName = "Index";
+                actionName = GlobalConst.Index;
             else if (actionName.ToString().Contains("Bind"))
                 actionName = "Index";
             else if (actionName.ToString() == "GetPageData")

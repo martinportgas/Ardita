@@ -9,6 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Log\Data\**" />
+    <Compile Remove="Areas\Log\Models\**" />
+    <Content Remove="Areas\Log\Data\**" />
+    <Content Remove="Areas\Log\Models\**" />
+    <EmbeddedResource Remove="Areas\Log\Data\**" />
+    <EmbeddedResource Remove="Areas\Log\Models\**" />
+    <None Remove="Areas\Log\Data\**" />
+    <None Remove="Areas\Log\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\Report\RptArchiveActive.rdlc" />
   </ItemGroup>
 
@@ -98,7 +109,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
     <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />

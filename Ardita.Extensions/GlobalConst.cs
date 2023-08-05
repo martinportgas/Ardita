@@ -52,6 +52,7 @@ public static class GlobalConst
     public const string ArchiveActive = "ArchiveActive";
     public const string ArchiveInActive = "ArchiveInActive";
     public const string Report = "Report";
+    public const string Log = "Log";
 
     //Controller
     public const string Company = "Company";
@@ -99,6 +100,9 @@ public static class GlobalConst
     public const string ReportArchiveLoansInActive = "ReportArchiveLoansInActive";
     public const string ReportListArchiveInActive = "ReportListArchiveInActive";
     public const string ReportArchiveReceivedInActive = "ReportArchiveReceivedInActive";
+    public const string LogLogin = "LogLogin";
+    public const string LogChanges = "LogChanges";
+    public const string LogActivity = "LogActivity";
 
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -394,3 +398,4 @@ public static class GlobalConst
     + creator.creatorName + subSubjectClassification.subSubjectClassificationName";
 
 }
+
