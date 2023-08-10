@@ -371,8 +371,7 @@ public class ArchiveRepository : IArchiveRepository
                 _context.Entry(model).State = EntityState.Added;
                 result = await _context.SaveChangesAsync();
 
-                TrxFileArchiveDetail temp;
-
+                List<TrxFileArchiveDetail> listFileInsert = new();
                 if (result != 0 && files.Any())
                 {
                     path = $"{path}\\{model.ArchiveCode}\\";
@@ -381,7 +380,7 @@ public class ArchiveRepository : IArchiveRepository
                         Guid newId = Guid.NewGuid();
                         string ext = Path.GetExtension(file.FileName!);
 
-                        temp = new()
+                        TrxFileArchiveDetail temp = new()
                         {
                             FileArchiveDetailId = newId,
                             ArchiveId = model.ArchiveId,
@@ -394,7 +393,7 @@ public class ArchiveRepository : IArchiveRepository
                             IsActive = true
                         };
 
-                        _context.TrxFileArchiveDetails.Add(temp);
+                        listFileInsert.Add(temp);
 
                         if (!Directory.Exists(path))
                         {
@@ -404,6 +403,7 @@ public class ArchiveRepository : IArchiveRepository
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath + temp.FileNameEncrypt, bytes);
                     }
+                    await _context.TrxFileArchiveDetails.AddRangeAsync(listFileInsert);
                     await _context.SaveChangesAsync();
                 }
 
@@ -413,7 +413,7 @@ public class ArchiveRepository : IArchiveRepository
                     try
                     {
                         await _logChangesRepository.CreateLog<TrxArchive>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxArchive> {  }, new List<TrxArchive> { model });
-                        await _logChangesRepository.CreateLog<TrxFileArchiveDetail>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxFileArchiveDetail> { }, new List<TrxFileArchiveDetail> { temp });
+                        await _logChangesRepository.CreateLog<TrxFileArchiveDetail>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxFileArchiveDetail> { }, listFileInsert);
                     }
                     catch (Exception ex) { }
                 }
