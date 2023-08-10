@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,9 +13,11 @@ namespace Ardita.Repositories.Classess
     public class ClassificationPermissionRepository : IClassificationPermissionRepository
     {
         private readonly BksArditaDevContext _context;
-        public ClassificationPermissionRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public ClassificationPermissionRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxPermissionClassification model)
         {
@@ -24,6 +27,16 @@ namespace Ardita.Repositories.Classess
             {
                 _context.TrxPermissionClassifications.Remove(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxPermissionClassification>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxPermissionClassification> { model }, new List<TrxPermissionClassification> {  });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -73,6 +86,16 @@ namespace Ardita.Repositories.Classess
                     _context.TrxPermissionClassifications.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxPermissionClassification>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxPermissionClassification> {  }, new List<TrxPermissionClassification> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -84,6 +107,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxPermissionClassification>(GlobalConst.New, (Guid)models.FirstOrDefault()!.CreatedBy!, new List<TrxPermissionClassification> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -93,11 +126,21 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.PermissionClassificationId != Guid.Empty)
             {
-                var data = await _context.TrxPermissionClassifications.AsNoTracking().Where(x => x.PermissionClassificationId == model.PermissionClassificationId).ToListAsync();
+                var data = await _context.TrxPermissionClassifications.AsNoTracking().Where(x => x.PermissionClassificationId == model.PermissionClassificationId).FirstOrDefaultAsync();
                 if (data != null)
                 {
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxPermissionClassification>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxPermissionClassification> { data }, new List<TrxPermissionClassification> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

@@ -14,14 +14,16 @@ public class ArchiveRepository : IArchiveRepository
 {
     private readonly BksArditaDevContext _context;
     private readonly IConfiguration _configuration;
+    private readonly ILogChangesRepository _logChangesRepository;
     //private readonly string _whereClause = @"TitleArchive+TypeSender+Keyword+ActiveRetention.ToString()+CreatedDateArchive.ToString()
     //                                        +InactiveRetention.ToString()+Volume.ToString()+Gmd.GmdName+SubSubjectClassification.SubSubjectClassificationName
     //                                        +Creator.CreatorName+ArchiveType.ArchiveTypeName";
 
-    public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration)
+    public ArchiveRepository(BksArditaDevContext context, IConfiguration configuration, ILogChangesRepository logChangesRepository)
     {
         _context = context;
         _configuration = configuration;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<int> Delete(TrxArchive model)
@@ -38,6 +40,16 @@ public class ArchiveRepository : IArchiveRepository
                 data.UpdatedBy = model.UpdatedBy;
                 _context.TrxArchives.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchive>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxArchive> { data }, new List<TrxArchive> { });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -359,6 +371,8 @@ public class ArchiveRepository : IArchiveRepository
                 _context.Entry(model).State = EntityState.Added;
                 result = await _context.SaveChangesAsync();
 
+                TrxFileArchiveDetail temp;
+
                 if (result != 0 && files.Any())
                 {
                     path = $"{path}\\{model.ArchiveCode}\\";
@@ -367,7 +381,7 @@ public class ArchiveRepository : IArchiveRepository
                         Guid newId = Guid.NewGuid();
                         string ext = Path.GetExtension(file.FileName!);
 
-                        TrxFileArchiveDetail temp = new()
+                        temp = new()
                         {
                             FileArchiveDetailId = newId,
                             ArchiveId = model.ArchiveId,
@@ -392,6 +406,18 @@ public class ArchiveRepository : IArchiveRepository
                     }
                     await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchive>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxArchive> {  }, new List<TrxArchive> { model });
+                        await _logChangesRepository.CreateLog<TrxFileArchiveDetail>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxFileArchiveDetail> { }, new List<TrxFileArchiveDetail> { temp });
+                    }
+                    catch (Exception ex) { }
+                }
+
                 await transaction.CommitAsync();
             }
             catch (Exception)
@@ -405,27 +431,39 @@ public class ArchiveRepository : IArchiveRepository
     public async Task<bool> InsertBulk(List<TrxArchive> trxArchives)
     {
         bool result = false;
-        foreach (var item in trxArchives)
-        {
-            var Code = $"{item.CreatedDateArchive.Year.ToString()}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}";
-            var lastCount = _context.TrxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
-            var lastListCount = trxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
-            var fixCount = ( lastCount + lastListCount ) + 1;
-            var initCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
-            var fixCode = initCode + fixCount.ToString("D5");
-            while (_context.TrxArchives.Where(x => x.ArchiveCode == fixCode).Count() > 0)
-            {
-                fixCount++;
-                fixCode = initCode + fixCount.ToString("D5");
-            }
-            
-            item.ArchiveCode = fixCode;
-            item.IsUsed = false;
-        }
+        //foreach (var item in trxArchives)
+        //{
+        //    var Code = $"{item.CreatedDateArchive.Year.ToString()}.{_context.MstCreators.FirstOrDefault(x => x.CreatorId == item.CreatorId)!.CreatorCode}";
+        //    var lastCount = _context.TrxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+        //    var lastListCount = trxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+        //    var fixCount = (lastCount + lastListCount) + 1;
+        //    var initCode = $"{_context.MstSecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == item.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
+        //    var fixCode = initCode + fixCount.ToString("D5");
+        //    while (_context.TrxArchives.Where(x => x.ArchiveCode == fixCode).Count() > 0)
+        //    {
+        //        fixCount++;
+        //        fixCode = initCode + fixCount.ToString("D5");
+        //    }
+
+        //    item.ArchiveCode = fixCode;
+        //    item.IsUsed = false;
+        //}
+
 
         await _context.AddRangeAsync(trxArchives);
         await _context.SaveChangesAsync();
         result = true;
+
+        //Log
+        if (result)
+        {
+            try
+            {
+                await _logChangesRepository.CreateLog<TrxArchive>(GlobalConst.New, (Guid)trxArchives.FirstOrDefault()!.CreatedBy!, new List<TrxArchive> { }, trxArchives);
+            }
+            catch (Exception ex) { }
+        }
+
         return result;
     }
 
@@ -442,6 +480,11 @@ public class ArchiveRepository : IArchiveRepository
                 model.IsActive = data.IsActive;
                 model.CreatedBy = data.CreatedBy;
                 model.CreatedDate = data.CreatedDate;
+                model.IsArchiveActive = data.IsArchiveActive;
+                model.IsUsed = data.IsUsed;
+                model.IsUsedBy = data.IsUsedBy;
+                model.InactiveBy = data.InactiveBy;
+                model.InactiveDate = data.InactiveDate;
 
                 var TrxSubSubjectClassifications = _context.TrxSubSubjectClassifications.FirstOrDefault(r => r.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 var MstSecurityClassifications = _context.MstSecurityClassifications.FirstOrDefault(r => r.SecurityClassificationId == model.SecurityClassificationId);
@@ -461,6 +504,8 @@ public class ArchiveRepository : IArchiveRepository
 
                 //Update Detail
                 path = $"{path}\\{model.ArchiveCode}\\";
+
+                List<TrxFileArchiveDetail> listFileInsert = new();
                 if (result != 0 && files.Any())
                 {
                     foreach (FileModel file in files)
@@ -479,7 +524,7 @@ public class ArchiveRepository : IArchiveRepository
                             IsActive = true
                         };
 
-                        _context.TrxFileArchiveDetails.Add(temp);
+                        listFileInsert.Add(temp);
 
                         if (!Directory.Exists(path))
                         {
@@ -489,7 +534,8 @@ public class ArchiveRepository : IArchiveRepository
                         Byte[] bytes = Convert.FromBase64String(file.Base64!);
                         File.WriteAllBytes(temp.FilePath + temp.FileNameEncrypt, bytes);
                     }
-                    await _context.SaveChangesAsync();
+                    await _context.TrxFileArchiveDetails.AddRangeAsync(listFileInsert);
+                    result += await _context.SaveChangesAsync();
                 }
 
                 //Delete Files
@@ -521,7 +567,7 @@ public class ArchiveRepository : IArchiveRepository
 
                                     item.FilePath = path;
                                     _context.Update(item);
-                                    await _context.SaveChangesAsync();
+                                    result += await _context.SaveChangesAsync();
                                 }
                             }
                         }
@@ -529,7 +575,18 @@ public class ArchiveRepository : IArchiveRepository
                 }
 
                 _context.TrxFileArchiveDetails.RemoveRange(listFileDeleted);
-                await _context.SaveChangesAsync();
+                result += await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchive>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxArchive> { data }, new List<TrxArchive> { model });
+                        await _logChangesRepository.CreateLog<TrxFileArchiveDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, listFileDeleted, listFileInsert);
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
 

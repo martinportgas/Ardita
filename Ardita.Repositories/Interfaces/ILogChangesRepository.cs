@@ -15,5 +15,6 @@ namespace Ardita.Repositories.Interfaces
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(LogChange model);
+        Task<int> CreateLog<T>(string type, Guid userId, List<T> oldValue, List<T> newValue);
     }
 }

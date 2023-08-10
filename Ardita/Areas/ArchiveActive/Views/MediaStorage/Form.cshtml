@@ -187,7 +187,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Tahun Arsip</label>
-                                            <select id="txtYear" class="select2_demo_1 form-control"
+                                            <select id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pillih Tahun Arsip --" asp-for="ArchiveYear">
                                                 <option value=""></option>
                                                 @for (int x = 0; x > -30; x--)
@@ -687,7 +687,7 @@
 
                     $('#table-archive').DataTable({
                         data: dataRes,
-                        lengthMenu: [100],
+                        lengthMenu: [500],
                         columnDefs: [
                             {
                                 targets: [9],
@@ -770,7 +770,7 @@
                 }else{
                     $('#table-archive').DataTable({
                         data: dataRes,
-                        lengthMenu: [100],
+                        lengthMenu: [500],
                         columnDefs: [
                             {
                                 targets: [9],

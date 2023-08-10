@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,11 @@ namespace Ardita.Repositories.Classess
     public class FloorRepository : IFloorRepository
     {
         private readonly BksArditaDevContext _context;
-        public FloorRepository(BksArditaDevContext context )
+        private readonly ILogChangesRepository _logChangesRepository;
+        public FloorRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<int> Delete(TrxFloor model)
@@ -38,6 +41,15 @@ namespace Ardita.Repositories.Classess
                         model.ArchiveUnit = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
+                        //Log
+                        if (result > 0)
+                        {
+                            try
+                            {
+                                await _logChangesRepository.CreateLog<TrxFloor>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxFloor> { data }, new List<TrxFloor> {  });
+                            }
+                            catch (Exception ex) { }
+                        }
                     }
                 }
                 
@@ -104,6 +116,15 @@ namespace Ardita.Repositories.Classess
                 model.ArchiveUnit = null;
                 _context.TrxFloors.Add(model);
                 result = await _context.SaveChangesAsync();
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxFloor>(GlobalConst.New, model.CreatedBy, new List<TrxFloor> {  }, new List<TrxFloor> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -116,6 +137,15 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(floors);
                 await _context.SaveChangesAsync();
                 result = true;
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxFloor>(GlobalConst.New, floors.FirstOrDefault()!.CreatedBy, new List<TrxFloor> { }, floors);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -138,6 +168,16 @@ namespace Ardita.Repositories.Classess
                         model.ArchiveUnit = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
+
+                        //Log
+                        if (result > 0)
+                        {
+                            try
+                            {
+                                await _logChangesRepository.CreateLog<TrxFloor>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxFloor> { data }, new List<TrxFloor> { model });
+                            }
+                            catch (Exception ex) { }
+                        }
                     }
                 }
                

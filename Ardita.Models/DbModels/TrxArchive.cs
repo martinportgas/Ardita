@@ -23,7 +23,7 @@ public partial class TrxArchive
 
     public string TypeSender { get; set; } = null!;
 
-    public string Keyword { get; set; } = null!;
+    public string? Keyword { get; set; }
 
     public string? ArchiveCode { get; set; }
 

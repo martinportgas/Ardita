@@ -11,9 +11,11 @@ namespace Ardita.Repositories.Classess
     public class UserRoleRepository : IUserRoleRepository
     {
         private readonly BksArditaDevContext _context;
-        public UserRoleRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public UserRoleRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<int> Delete(IdxUserRole model)
@@ -82,6 +84,15 @@ namespace Ardita.Repositories.Classess
                         _context.IdxUserRoles.Add(model);
                         result = await _context.SaveChangesAsync();
                     }
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<IdxUserRole>(GlobalConst.New, model.CreatedBy, new List<IdxUserRole> {  }, new List<IdxUserRole> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -89,10 +100,24 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> Update(IdxUserRole model)
         {
+            var result = 0;
+            var dataOld = await _context.IdxUserRoles.FirstOrDefaultAsync(x => x.UserRoleId == model.UserId);
             model.User = null;
             model.Role = null;
             _context.IdxUserRoles.Update(model);
-            return await _context.SaveChangesAsync();
+            result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<IdxUserRole>(GlobalConst.Update, model.CreatedBy, new List<IdxUserRole> { dataOld }, new List<IdxUserRole> { model });
+                }
+                catch (Exception ex) { }
+            }
+
+            return result;
         }
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {

@@ -4,8 +4,17 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.RulesetToEditorconfig;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
+using System;
+using System.Data;
+using System.Reflection;
 using System.Text.Json.Nodes;
+using System.Web.Helpers;
 
 namespace Ardita.Areas.Log.Controllers
 {
@@ -35,12 +44,8 @@ namespace Ardita.Areas.Log.Controllers
             var data = await _logChangesService.GetById(Id);
             if (data != null)
             {
-                if (!string.IsNullOrEmpty(data.NewValue))
-                {
-                    JsonNode header = JsonConvert.DeserializeObject<JsonNode>(data.NewValue);
-
-                   // ViewBag.DtNewHeader = Global.JsonToDataTable(header.header);
-                }
+                ViewBag.dtNew = data.NewValue == null ? new DataTable() : JsonConvert.DeserializeObject<DataTable>(data.NewValue);
+                ViewBag.dtOld = data.OldValue == null ? new DataTable() : JsonConvert.DeserializeObject<DataTable>(data.OldValue);
 
                 return View(GlobalConst.Detail);
             }

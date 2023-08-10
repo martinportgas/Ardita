@@ -12,8 +12,12 @@ namespace Ardita.Repositories.Classess;
 public class MediaStorageRepository : IMediaStorageRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public MediaStorageRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+    public MediaStorageRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
     public async Task<int> Delete(TrxMediaStorage model)
     {
         int result = 0;
@@ -28,6 +32,16 @@ public class MediaStorageRepository : IMediaStorageRepository
                 data.UpdatedDate = model.UpdatedDate;
                 _context.TrxMediaStorages.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxMediaStorage>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxMediaStorage> { data }, new List<TrxMediaStorage> {  });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -177,6 +191,17 @@ public class MediaStorageRepository : IMediaStorageRepository
                     result += await _context.SaveChangesAsync();
                 }
             }
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxMediaStorage>(GlobalConst.New, model.CreatedBy, new List<TrxMediaStorage> {  }, new List<TrxMediaStorage> { model });
+                    await _logChangesRepository.CreateLog<TrxMediaStorageDetail>(GlobalConst.New, model.CreatedBy, new List<TrxMediaStorageDetail> {  }, detail);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -220,6 +245,17 @@ public class MediaStorageRepository : IMediaStorageRepository
                         result += await _context.SaveChangesAsync();
                     }
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxMediaStorage>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxMediaStorage> { data }, new List<TrxMediaStorage> { model });
+                        await _logChangesRepository.CreateLog<TrxMediaStorageDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, dataDetail, detail);
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -247,6 +283,16 @@ public class MediaStorageRepository : IMediaStorageRepository
                 }
 
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxMediaStorageDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxMediaStorageDetail> { data }, new List<TrxMediaStorageDetail> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

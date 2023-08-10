@@ -10,9 +10,12 @@ namespace Ardita.Repositories.Classess
     public class ArchiveExtendRepository : IArchiveExtendRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveExtendRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+
+        public ArchiveExtendRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxArchiveExtend model)
         {
@@ -28,6 +31,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedDate = DateTime.Now;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveExtend>(GlobalConst.Delete, (Guid)model!.UpdatedBy!, new List<TrxArchiveExtend> { data }, new List<TrxArchiveExtend> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -49,6 +62,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveExtend>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveExtend> { data }, new List<TrxArchiveExtend> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -131,6 +154,16 @@ namespace Ardita.Repositories.Classess
                 model.DocumentCode = $"PR.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.CreatedDate.Year}";
                 _context.TrxArchiveExtends.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveExtend>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<TrxArchiveExtend> {  }, new List<TrxArchiveExtend> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -142,6 +175,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveExtend>(GlobalConst.New, (Guid)models.FirstOrDefault()!.UpdatedBy!, new List<TrxArchiveExtend> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -156,6 +199,16 @@ namespace Ardita.Repositories.Classess
                 {
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveExtend>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveExtend> { data }, new List<TrxArchiveExtend> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

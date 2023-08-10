@@ -11,9 +11,12 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
 {
     private readonly BksArditaDevContext _context;
 
-    public ArchiveReceivedRepository(BksArditaDevContext context)
+    private readonly ILogChangesRepository _logChangesRepository;
+
+    public ArchiveReceivedRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
     {
         _context = context;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<IEnumerable<object>> GetByFilterModelArchiveMovement(DataTableModel model)
@@ -108,6 +111,16 @@ public class ArchiveReceivedRepository : IArchiveReceivedRepository
                 data.DateReceived = model.DateReceived;
                 _context.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.Update, (Guid)model.ReceivedBy!, new List<TrxArchiveMovement> { data }, new List<TrxArchiveMovement> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

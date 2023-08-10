@@ -11,10 +11,11 @@ namespace Ardita.Repositories.Classess;
 public class RowRepository : IRowRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public RowRepository(BksArditaDevContext context)
+    private readonly ILogChangesRepository _logChangesRepository;
+    public RowRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
     {
         _context = context;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<int> Delete(TrxRow model)
@@ -35,6 +36,16 @@ public class RowRepository : IRowRepository
                     model.Level = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxRow>(GlobalConst.Delete, model.CreatedBy, new List<TrxRow> { data }, new List<TrxRow> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
 
@@ -167,6 +178,16 @@ public class RowRepository : IRowRepository
             model.Level = null;
             _context.TrxRows.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxRow>(GlobalConst.New, model.CreatedBy, new List<TrxRow> {  }, new List<TrxRow> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -179,6 +200,16 @@ public class RowRepository : IRowRepository
             await _context.AddRangeAsync(rows);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxRow>(GlobalConst.New, rows.FirstOrDefault()!.CreatedBy, new List<TrxRow> { }, rows);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -201,6 +232,16 @@ public class RowRepository : IRowRepository
                     model.Level = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxRow>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxRow> { data }, new List<TrxRow> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
 

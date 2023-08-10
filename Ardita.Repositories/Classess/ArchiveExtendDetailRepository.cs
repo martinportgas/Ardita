@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,12 @@ namespace Ardita.Repositories.Classess
     public class ArchiveExtendDetailRepository : IArchiveExtendDetailRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveExtendDetailRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+
+        public ArchiveExtendDetailRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxArchiveExtendDetail model)
         {
@@ -30,6 +34,16 @@ namespace Ardita.Repositories.Classess
                     data.IsActive = false;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveExtendDetail>(GlobalConst.Delete, (Guid)model!.CreatedBy!, new List<TrxArchiveExtendDetail> { data }, new List<TrxArchiveExtendDetail> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -83,6 +97,16 @@ namespace Ardita.Repositories.Classess
                 model.IsActive = true;
                 _context.TrxArchiveExtendDetails.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveExtendDetail>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<TrxArchiveExtendDetail> {  }, new List<TrxArchiveExtendDetail> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -94,6 +118,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveExtendDetail>(GlobalConst.New, (Guid)models.FirstOrDefault()!.CreatedBy!, new List<TrxArchiveExtendDetail> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -103,14 +137,24 @@ namespace Ardita.Repositories.Classess
 
             if (model != null && model.ArchiveExtendDetailId != Guid.Empty)
             {
-                var data = await _context.TrxArchiveExtendDetails.AsNoTracking().Where(x => x.ArchiveExtendDetailId == model.ArchiveExtendDetailId).ToListAsync();
+                var data = await _context.TrxArchiveExtendDetails.AsNoTracking().Where(x => x.ArchiveExtendDetailId == model.ArchiveExtendDetailId).FirstOrDefaultAsync();
                 if (data != null)
                 {
                     model.IsActive = true;
-                    model.CreatedBy = data.FirstOrDefault().CreatedBy;
-                    model.CreatedDate = data.FirstOrDefault().CreatedDate;
+                    model.CreatedBy = data.CreatedBy;
+                    model.CreatedDate = data.CreatedDate;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveExtendDetail>(GlobalConst.Update, (Guid)model!.CreatedBy!, new List<TrxArchiveExtendDetail> { data }, new List<TrxArchiveExtendDetail> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

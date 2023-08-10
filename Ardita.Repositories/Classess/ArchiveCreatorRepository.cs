@@ -4,7 +4,7 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
-
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess;
 
@@ -12,7 +12,13 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
 {
     private readonly BksArditaDevContext _context;
 
-    public ArchiveCreatorRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+
+    public ArchiveCreatorRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
 
     public async Task<int> Delete(MstCreator model)
     {
@@ -28,6 +34,16 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
                 data.UpdatedBy = model.UpdatedBy;
                 _context.MstCreators.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstCreator>(GlobalConst.Delete, (Guid)model!.UpdatedBy!, new List<MstCreator> { data }, new List<MstCreator> { });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -82,6 +98,16 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
             model.IsActive = true;
             _context.MstCreators.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstCreator>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<MstCreator> {  }, new List<MstCreator> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -94,6 +120,16 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
             await _context.AddRangeAsync(mstCreators);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstCreator>(GlobalConst.New, (Guid)mstCreators.FirstOrDefault()!.CreatedBy!, new List<MstCreator> {  }, mstCreators);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -112,6 +148,16 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.MstCreators.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstCreator>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<MstCreator> { data }, new List<MstCreator> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

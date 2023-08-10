@@ -10,9 +10,12 @@ namespace Ardita.Repositories.Classess
     public class ArchiveDestroyRepository : IArchiveDestroyRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveDestroyRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+
+        public ArchiveDestroyRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxArchiveDestroy model)
         {
@@ -28,6 +31,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedDate = DateTime.Now;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveDestroy>(GlobalConst.Delete, (Guid)model!.UpdatedBy!, new List<TrxArchiveDestroy> { data }, new List<TrxArchiveDestroy> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -50,6 +63,16 @@ namespace Ardita.Repositories.Classess
                     data.DestroySchedule = model.DestroySchedule;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveDestroy>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveDestroy> { data }, new List<TrxArchiveDestroy> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -130,6 +153,16 @@ namespace Ardita.Repositories.Classess
                 model.DocumentCode = $"PH.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.CreatedDate.Year}";
                 _context.TrxArchiveDestroys.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveDestroy>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<TrxArchiveDestroy> {  }, new List<TrxArchiveDestroy> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -141,6 +174,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveDestroy>(GlobalConst.New, (Guid)models.FirstOrDefault()!.CreatedBy!, new List<TrxArchiveDestroy> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -156,6 +199,16 @@ namespace Ardita.Repositories.Classess
                     model.ArchiveUnit = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveDestroy>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveDestroy> { data }, new List<TrxArchiveDestroy> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

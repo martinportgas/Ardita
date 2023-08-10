@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,11 @@ namespace Ardita.Repositories.Classess
     public class PageRepository : IPageRepository
     {
         private readonly BksArditaDevContext _context;
-        public PageRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public PageRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(MstPage model)
         {
@@ -38,6 +41,16 @@ namespace Ardita.Repositories.Classess
 
                     _context.MstPages.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstPage>(GlobalConst.Delete, (Guid)model.UpdateBy!, new List<MstPage> { data }, new List<MstPage> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -141,6 +154,16 @@ namespace Ardita.Repositories.Classess
                     _context.MstPages.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstPage>(GlobalConst.New, model.CreatedBy, new List<MstPage> {  }, new List<MstPage> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
 
             return result;
@@ -159,6 +182,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstPages.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstPage>(GlobalConst.Update, (Guid)model.UpdateBy!, new List<MstPage> { data }, new List<MstPage> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

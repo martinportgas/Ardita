@@ -63,37 +63,37 @@
                                         </div>
                                         <div class="form-group">
                                             <label>GMD</label>
-                                            <select asp-for="GmdId" asp-items="ViewBag.listGmd" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmdId" class="select2_demo_1 form-control"
+                                            <select asp-for="GmdId" asp-items="ViewBag.listGmd"
+                                                    id="txtGmdId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Select GMD --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label>GMD Detail</label>
-                                            <select asp-for="GmdDetailId" asp-items="ViewBag.listGmdDetail" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtGmdDetailId" class="select2_demo_1 form-control"
+                                            <select asp-for="GmdDetailId" asp-items="ViewBag.listGmdDetail"
+                                                    id="txtGmdDetailId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Select GMD Detail--">
                                                 <option value=""></option>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Satuan</label>
-                                            <input type="text" placeholder="" id="txtGmdDetailUnit" class="form-control" asp-for="GmdDetail!.Unit" disabled>
+                                            <input type="text" placeholder="" id="txtGmdDetailUnit" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="GmdDetail!.Unit" disabled>
                                         </div>
                                         <div class="form-group">
                                             <label>Tipe Pengirim</label>
                                             <br />
                                             <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
                                             <label>Internal</label>
-                                            <input type="radio" placeholder="" id="txtExternal" value="External" asp-for="TypeSender">
-                                            <label>External</label>
+                                            <input type="radio" placeholder="" id="txtExternal" value="Eksternal" asp-for="TypeSender">
+                                            <label>Eksternal</label>
                                         </div>
                                         <div class="form-group">
                                             <label>Sub Subjek Klasifikasi</label>
-                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Sub Subject Classification --">
+                                            <select asp-for="SubSubjectClassificationId" asp-items="ViewBag.listSubSubjectClasscification"
+                                                    id="txtSubSubjectClassificationId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pilih Sub Subjek Klasifikasi --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
@@ -108,7 +108,7 @@
                                         <div class="form-group">
                                             <label>Judul Arsip</label>
                                             <input type="hidden" asp-for="ArchiveId" value="@Model.ArchiveId">
-                                            <input type="text" placeholder="" id="txtTitleArchive" class="form-control" asp-for="TitleArchive">
+                                            <input type="text" placeholder="" id="txtTitleArchive" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="TitleArchive">
                                         </div>
                                         <div class="form-group">
                                             <label>Deskripsi Arsip</label>
@@ -116,9 +116,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Klasifikasi Keamanan</label>
-                                            <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtSecurityClassificationId" class="select2_demo_1 form-control"
-                                                    data-placeholder="-- Select Security Classification --">
+                                            <select asp-for="SecurityClassificationId" asp-items="ViewBag.listSecurityClassification"
+                                                    id="txtSecurityClassificationId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pilih Klasifikasi Keamanan --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
@@ -132,16 +132,16 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Asal Arsip</label>
-                                            <select asp-for="ArchiveOwnerId" asp-items="ViewBag.listArchiveOwner" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtSArchiveOwnerId" class="select2_demo_1 form-control"
+                                            <select asp-for="ArchiveOwnerId" asp-items="ViewBag.listArchiveOwner"
+                                                    id="txtSArchiveOwnerId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pilih Asal Arsip --">
                                                 <option value=""></option>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Tipe Arsip</label>
-                                            <select asp-for="ArchiveTypeId" asp-items="ViewBag.listArchiveType" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
-                                                    id="txtArchiveTypeId" class="select2_demo_1 form-control"
+                                            <select asp-for="ArchiveTypeId" asp-items="ViewBag.listArchiveType"
+                                                    id="txtArchiveTypeId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- -- Pilih Tipe Arsip --">
                                                 <option value=""></option>
                                             </select>
@@ -202,19 +202,19 @@
 
                                         <div class="form-group" id="created_date">
                                             <label class="font-normal">Tanggal Arsip</label>
-                                            <input type="date" class="form-control" asp-for="CreatedDateArchive" id="txtCreatedDateArchive" max="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                            <input type="date" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="CreatedDateArchive" id="txtCreatedDateArchive" max="@DateTime.Now.ToString("yyyy-MM-dd")">
                                         </div>
                                         <div class="form-group">
                                             <label>Retensi Aktif</label>
-                                            <input type="number" placeholder="" id="txtActiveRetention" class="form-control" asp-for="ActiveRetention">
+                                            <input type="number" placeholder="" id="txtActiveRetention" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ActiveRetention">
                                         </div>
                                         <div class="form-group">
                                             <label>Retensi In Aktif</label>
-                                            <input type="number" placeholder="" id="txtInactiveRetention" class="form-control" asp-for="InactiveRetention">
+                                            <input type="number" placeholder="" id="txtInactiveRetention" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="InactiveRetention">
                                         </div>
                                         <div class="form-group">
                                             <label>Jumlah</label>
-                                            <input type="number" placeholder="" id="txtVolume" class="form-control" asp-for="Volume">
+                                            <input type="number" placeholder="" id="txtVolume" class="form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="Volume">
                                         </div>
                                         <div class="form-group">
                                             <label>Keterangan</label>

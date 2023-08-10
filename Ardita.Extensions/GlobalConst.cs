@@ -116,6 +116,7 @@ public static class GlobalConst
     public const string ArchiveReturn = "ArchiveReturn";
 
     //Action
+    public const string New = "New";
     public const string Index = "Index";
     public const string Update = "Update";
     public const string Delete = "Delete";
@@ -317,6 +318,8 @@ public static class GlobalConst
     public static string Base64FormatExcel = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}";
     public static string RenderPDF = "PDF";
     public static string RenderExcel = "EXCELOPENXML";
+    public static string ModelNameSpace = "Ardita.Models.DbModels.";
+    public static string ListPrefix = "mst,trx,idx,log";
 
     //ClaimTypes
     public const string Username = "Username";

@@ -4,14 +4,19 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess;
 
 public class SecurityClassificationRepository : ISecurityClassificationRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public SecurityClassificationRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+    public SecurityClassificationRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
 
     public async Task<int> Delete(MstSecurityClassification model)
     {
@@ -25,6 +30,16 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
             model.CreatedDate = data.CreatedDate;
             _context.MstSecurityClassifications.Remove(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSecurityClassification>(GlobalConst.Delete, model.CreatedBy, new List<MstSecurityClassification> { data }, new List<MstSecurityClassification> {  });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -69,6 +84,16 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
             model.IsActive = true;
             _context.MstSecurityClassifications.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSecurityClassification>(GlobalConst.New, model.CreatedBy, new List<MstSecurityClassification> {  }, new List<MstSecurityClassification> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -81,6 +106,16 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
             await _context.AddRangeAsync(mstSecurityClassifications);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSecurityClassification>(GlobalConst.New, mstSecurityClassifications.FirstOrDefault()!.CreatedBy, new List<MstSecurityClassification> { }, mstSecurityClassifications);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -99,6 +134,16 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
                 model.IsActive = data.IsActive;
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstSecurityClassification>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<MstSecurityClassification> { data }, new List<MstSecurityClassification> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
