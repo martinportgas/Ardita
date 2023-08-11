@@ -38,8 +38,9 @@
                                 <th></th>
                                 <th>No</th>
                                 <th>Username</th>
-                                <th>Table Referensi</th>
+                                <th>Nama Tabel</th>
                                 <th>Tanggal Perubahan</th>
+                                <th>Jenis Perubahan</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -71,9 +72,10 @@
                     }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "logChangeId", "name": "logChangeId", "orderable": false, "searchable": false,
+                        "data": "logChangeId", "name": "changeDate", "orderable": false, "searchable": false,
                         "render": function (data, type, row, meta) {
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.LogChanges, new { Area = GlobalConst.Log, Id = -1})"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", row.logChangeId);
@@ -87,8 +89,13 @@
                         }
                     },
                     { "data": "username", "name": "username", "autoWidth": true },
-                    { "data": "tableReference", "name": "loginDate", "autoWidth": true },
-                    { "data": "changeDate", "name": "computerName", "autoWidth": true }
+                    { "data": "tableReference", "name": "tableReference", "autoWidth": true },
+                    { "data": "changeDate", "name": "changeDate", "autoWidth": true },
+                    {
+                        "data": "changeType", "name": "changeType", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                            return `<span class="badge badge-pill badge-${data == '@GlobalConst.New' ? "primary" : data == '@GlobalConst.Update' ? "success" : "danger"}">${data}</span>`;
+                        }
+                    },
                 ]
             });
 

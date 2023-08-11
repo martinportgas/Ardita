@@ -44,7 +44,8 @@ namespace Ardita.Repositories.Classess
                x.UserId,
                x.Username,
                x.TableReference,
-               x.ChangeDate,
+               ChangeDate = x.ChangeDate.ToString(),
+               x.ChangeType,
                x.OldValue,
                x.NewValue
            }).ToListAsync();
@@ -109,7 +110,7 @@ namespace Ardita.Repositories.Classess
                 
             if (oldValue.Count > 0)
             {
-                DataTable dtOld = newValue.ToDataTable();
+                DataTable dtOld = oldValue.ToDataTable();
                 var listRemove = new List<DataColumn>();
                 foreach (DataColumn c in dtOld.Columns)
                 {

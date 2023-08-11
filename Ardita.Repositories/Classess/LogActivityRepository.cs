@@ -38,7 +38,7 @@ namespace Ardita.Repositories.Classess
                  x.LogActivityId,
                  x.UserId,
                  x.Username,
-                 x.ActivityDate,
+                 ActivityDate = x.ActivityDate.ToString(),
                  x.PageId,
                  x.PageName
              }).ToListAsync();

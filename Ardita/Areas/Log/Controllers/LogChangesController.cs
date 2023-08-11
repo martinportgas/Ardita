@@ -44,10 +44,7 @@ namespace Ardita.Areas.Log.Controllers
             var data = await _logChangesService.GetById(Id);
             if (data != null)
             {
-                ViewBag.dtNew = data.NewValue == null ? new DataTable() : JsonConvert.DeserializeObject<DataTable>(data.NewValue);
-                ViewBag.dtOld = data.OldValue == null ? new DataTable() : JsonConvert.DeserializeObject<DataTable>(data.OldValue);
-
-                return View(GlobalConst.Detail);
+                return View(GlobalConst.Detail, data);
             }
             else
             {

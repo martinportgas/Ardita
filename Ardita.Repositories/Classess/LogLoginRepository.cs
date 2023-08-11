@@ -37,7 +37,7 @@ namespace Ardita.Repositories.Classess
                  x.LogLoginId,
                  x.UserId,
                  x.Username,
-                 x.LoginDate,
+                 LoginDate = x.LoginDate.ToString(),
                  x.ComputerName,
                  x.IpAddress,
                  x.MacAddress,

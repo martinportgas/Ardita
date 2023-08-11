@@ -74,9 +74,10 @@
                     }
                 ],
                 fixedColumns: true,
+                order: [[0, 'desc']],
                 columns: [
                     {
-                        "data": "logLoginId", "name": "logLoginId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
+                        "data": "logLoginId", "name": "loginDate", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
