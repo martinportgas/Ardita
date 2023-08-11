@@ -315,10 +315,24 @@
 
             if (!duplicate) {
                 var arsipId = $('#txtArchive').val();
-                var arsipDesc = $('#txtArchive').select2('data')[0].text;
                 var retentionBefore = $('#txtRetentionBefore').val();
                 var retentionAfter = $('#txtRetentionAfter').val();
                 var reason = $('#txtReason').val();
+
+                if (arsipId == '' || arsipId == null) {
+                    swal({ title: "Failed!", text: 'Arsip Harus diisi!', type: "info" });
+                    return;
+                }
+                if (retentionBefore == '') {
+                    swal({ title: "Failed!", text: 'Retensi Sebelumnya Harus diisi!', type: "info" });
+                    return;
+                }
+                if (retentionAfter == '') {
+                    swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus diisi!', type: "info" });
+                    return;
+                }
+
+                var arsipDesc = $('#txtArchive').select2('data')[0].text;
 
                 $('#listdtlArs').append(`<tr name="detailRow[]">
                                                      <td class="text-center"></td>
@@ -359,7 +373,7 @@
         }
 
         function checkBefore(e) {
-            var retentionBefore = e.parent().prev().children('.before').val() == '' ? 0 : parseInt(e.parent().prev().children('.before').val());
+            var retentionBefore = $('#txtRetentionBefore').val() == '' ? 0 : $('#txtRetentionBefore').val();
             var retentionAfter = e.val() == '' ? 0 : parseInt(e.val());
             if (retentionBefore >= retentionAfter) {
                 swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus Lebih Besar Dari Retensi Sebelumnya!', type: "info" }, function () {
@@ -403,6 +417,10 @@
         }
 
         function bindingRetention(e) {
+            if (e.val() == '' || e.val() == null) {
+                $('#txtRetentionBefore').val('');
+                return;
+            }
             var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveInActive })';
             var param = new Object();
             param.Id = e.val();

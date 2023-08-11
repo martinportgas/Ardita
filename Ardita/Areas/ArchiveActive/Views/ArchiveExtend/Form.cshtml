@@ -280,5 +280,256 @@
 
 </div>
 @section Scripts {
-    
+    <script type="text/javascript">
+
+        function showReason(e) {
+            if (e.toLowerCase() == 'btnreason') {
+                $('#txtNote').show().prop('required', true).next().show();;
+                $('#btnReject').show();
+                $('#btnApprove').hide();
+                $('#btnReason').hide();
+                $('#btnRefresh').show();
+            } else {
+                $('#txtNote').hide().val('').prop('required', false).next().hide();;
+                $('#btnReject').hide();
+                $('#btnApprove').show();
+                $('#btnReason').show();
+                $('#btnRefresh').hide();
+            }
+        }
+
+        function addRow(e, name) {
+            var duplicate = false;
+
+            $('.arc-row').each(function () {
+                if ($(this).val() == $('#txtArchive').val()) {
+                    swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                        $('#txtArchive').val('').trigger('change');
+                        $('#txtRetentionBefore').val('');
+                        $('#txtRetentionAfter').val('');
+                        $('#txtReason').val('');
+                    });
+                    duplicate = true;
+                    return;
+                }
+            });
+
+            if (!duplicate) {
+                var arsipId = $('#txtArchive').val();
+                var retentionBefore = $('#txtRetentionBefore').val();
+                var retentionAfter = $('#txtRetentionAfter').val();
+                var reason = $('#txtReason').val();
+
+                if (arsipId == '' || arsipId == null) {
+                    swal({ title: "Failed!", text: 'Arsip Harus diisi!', type: "info" });
+                    return;
+                }
+                if (retentionBefore == '') {
+                    swal({ title: "Failed!", text: 'Retensi Sebelumnya Harus diisi!', type: "info" });
+                    return;
+                }
+                if (retentionAfter == '') {
+                    swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus diisi!', type: "info" });
+                    return;
+                }
+
+                var arsipDesc = $('#txtArchive').select2('data')[0].text;
+
+                $('#listdtlArs').append(`<tr name="detailRow[]">
+                                                             <td class="text-center"></td>
+                                                             <td class="text-left">
+                                                                 <input type="text" class="form-control" style="border: none !important;" value="${arsipDesc}" readonly />
+                                                                         <input type="hidden" class="form-control arc-row" style="border: none !important;" name="archive[]" value="${arsipId}" />
+                                                             </td>
+                                                              <td class="text-left">
+                                                                    <input class="form-control" style="border: none !important;" name="retentionBefore[]" value="${retentionBefore}" readonly />
+                                                              </td>
+                                                              <td class="text-left">
+                                                                 <input class="form-control" style="border: none !important;" name="retentionAfter[]" value="${retentionAfter}" readonly />
+                                                              </td>
+                                                              <td class="text-left">
+                                                                 <input class="form-control" style="border: none !important;" name="reasonExtend[]" value="${reason}" readonly />
+                                                              </td>
+                                                              <td>
+                                                                         <button class="btn btn-danger remove" type="button">Remove</button>
+                                                              </td>
+                                            </tr>`);
+            }
+
+
+
+
+
+        }
+
+        function removeRow(e, name) {
+            e.parent().parent().remove();
+            var countClass = $(`.min${name}`).length;
+            if (countClass < 2) {
+                $(`#Add${name}`).children("tr:first-child").children('td:first-child').children().hide();
+            }
+            if (countClass == 1) {
+                $('.minArs').hide();
+            }
+        }
+
+        function checkBefore(e) {
+            var retentionBefore = $('#txtRetentionBefore').val() == '' ? 0 : $('#txtRetentionBefore').val();
+            var retentionAfter = e.val() == '' ? 0 : parseInt(e.val());
+            if (retentionBefore >= retentionAfter) {
+                swal({ title: "Failed!", text: 'Retensi Selanjutnya Harus Lebih Besar Dari Retensi Sebelumnya!', type: "info" }, function () {
+                    e.val('');
+                });
+            }
+        }
+
+        function checkDuplicate(e, name) {
+            var data = e.val();
+            if (!e.hasClass('current')) {
+
+                e.addClass('current');
+
+                if (e.hasClass(name)) {
+                    $(`.${name}`).each(function () {
+                        if (!$(this).hasClass('current')) {
+                            if (data == $(this).val()) {
+                                swal({ title: "Failed!", text: 'Terdapat input duplikat', type: "info" }, function () {
+                                    e.val('').trigger('change');
+                                    e.parent().next().children('.before').val('');
+                                });
+                                return;
+                            }
+                        }
+                    });
+                }
+
+                if (name == 'ars') {
+                    var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })';
+                    var param = new Object();
+                    param.Id = data;
+
+                    ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                        $('#txtRetentionBefore').val(result.activeRetention)
+                    });
+                }
+
+            }
+            e.removeClass('current');
+        }
+
+        function bindingRetention(e) {
+            if(e.val() == '' || e.val() == null){
+                $('#txtRetentionBefore').val('');
+                return;
+            }
+            var url = '@Url.Action("GetDetailArchive", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })';
+            var param = new Object();
+            param.Id = e.val();
+
+            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                $('#txtRetentionBefore').val(result.activeRetention)
+            });
+        }
+
+        function initSelect2(name, act) {
+            $(`.${name}`).each(function () {
+                $(this).select2({
+                    minimumInputLength: 0,
+                    theme: 'bootstrap4',
+                    allowClear: true,
+                    ajax: {
+                        url: '@Url.Action("action", GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })'.replace('action', act),
+                        type: "POST",
+                        data: function (params) {
+                            var query = {
+                                param: act == '@GlobalConst.BindArchiveRetentionByParam' ? `${params.term == undefined ? '' : params.term},${'@Model.ArchiveExtendId'},${'@GlobalConst.ArchiveExtend'},${$('#txtSubSubjectClassificationId').val()},${$('#txtYear').val()}` : `${params.term == undefined ? '' : params.term},${$('#txtArchiveUnitId').val()}`
+                            }
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            });
+        }
+
+        function onApprove(ctl, event) {
+            event.preventDefault();
+            var valSubmit = ctl.value;
+            if (valSubmit == '@GlobalConst.Reject' && $('#txtNote').val() == '') {
+                swal("Failed", "Harap isi alasan reject!", "error");
+            } else {
+                swal({
+                    title: "Do You Want To Approve It?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Approve",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#valueSubmit').val(valSubmit);
+                            $("#frmExtend").submit();
+                        } else {
+                            swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                        }
+                    });
+            }
+        }
+        $(document).ready(function () {
+            $('#txtNote').hide().next().hide();
+
+            if ('@form.CurrentAction' == '@GlobalConst.Approval' && '@ViewBag.level' != '@Model.ApproveLevel') {
+                swal({ title: "Attention!", text: 'Approval Sudah Ditindaklanjuti!', type: "info" });
+            }
+
+            if ('@form.CurrentAction' == '@GlobalConst.Detail' || '@form.CurrentAction' == '@GlobalConst.Preview' || '@form.CurrentAction' == '@GlobalConst.Remove') {
+                $('.archive-div').hide();
+            }
+
+            initSelect2('ars', '@GlobalConst.BindArchiveRetentionByParam');
+            initSelect2('apr', '@GlobalConst.BindApprovalByParam');
+
+            $('#txtSubSubjectClassificationId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Select Sub-Subject Classification --',
+                ajax: {
+                    url: '@Url.Action(GlobalConst.BindSubSubjectClassificationByArchiveUnitId, GlobalConst.ArchiveExtend, new { Area = GlobalConst.ArchiveActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            id: $('#txtArchiveUnitId').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        var dataResult = $.map(data, function (item) {
+
+                            return {
+                                text: item.subSubjectClassificationName,
+                                id: item.subSubjectClassificationId
+                            }
+                        });
+                        return {
+                            results: dataResult
+                        };
+                    }
+                }
+            });
+
+            $('#listdtlArs').on('click', '.remove', function () {
+                var child = $(this).closest('tr').nextAll();
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
 }
