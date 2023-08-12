@@ -9,6 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Log\Data\**" />
+    <Compile Remove="Areas\Log\Models\**" />
+    <Content Remove="Areas\Log\Data\**" />
+    <Content Remove="Areas\Log\Models\**" />
+    <EmbeddedResource Remove="Areas\Log\Data\**" />
+    <EmbeddedResource Remove="Areas\Log\Models\**" />
+    <None Remove="Areas\Log\Data\**" />
+    <None Remove="Areas\Log\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\Report\RptArchiveActive.rdlc" />
   </ItemGroup>
 

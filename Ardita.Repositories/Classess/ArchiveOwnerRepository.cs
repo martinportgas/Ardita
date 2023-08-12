@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,13 @@ namespace Ardita.Repositories.Classess
     public class ArchiveOwnerRepository : IArchiveOwnerRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveOwnerRepository(BksArditaDevContext context) => _context = context;
+        private readonly ILogChangesRepository _logChangesRepository;
+
+        public ArchiveOwnerRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+        {
+            _context = context;
+            _logChangesRepository = logChangesRepository;
+        }
         public async Task<int> Delete(MstArchiveOwner model)
         {
             int result = 0;
@@ -24,6 +31,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedBy = model.UpdatedBy;
                     _context.MstArchiveOwners.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstArchiveOwner>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<MstArchiveOwner> { data }, new List<MstArchiveOwner> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -68,6 +85,16 @@ namespace Ardita.Repositories.Classess
                 model.IsActive = true;
                 _context.MstArchiveOwners.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstArchiveOwner>(GlobalConst.New, (Guid)model.CreatedBy!, new List<MstArchiveOwner> {  }, new List<MstArchiveOwner> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -80,6 +107,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(MstArchiveOwners);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstArchiveOwner>(GlobalConst.New, (Guid)MstArchiveOwners.FirstOrDefault()!.CreatedBy!, new List<MstArchiveOwner> {  }, MstArchiveOwners);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -98,6 +135,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstArchiveOwners.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstArchiveOwner>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<MstArchiveOwner> { data }, new List<MstArchiveOwner> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

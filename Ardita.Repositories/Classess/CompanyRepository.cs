@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,11 @@ namespace Ardita.Repositories.Classess;
 public class CompanyRepository : ICompanyRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public CompanyRepository(BksArditaDevContext context)
+    private readonly ILogChangesRepository _logChangesRepository;
+    public CompanyRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
     {
         _context = context;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<int> Delete(MstCompany model)
@@ -29,6 +31,16 @@ public class CompanyRepository : ICompanyRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.MstCompanies.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstCompany>(GlobalConst.Delete, (Guid)data.UpdatedBy!, new List<MstCompany> { data }, new List<MstCompany> {  });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -82,6 +94,16 @@ public class CompanyRepository : ICompanyRepository
             model.IsActive = true;
             _context.MstCompanies.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstCompany>(GlobalConst.New, model.CreatedBy, new List<MstCompany> {  }, new List<MstCompany> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -100,6 +122,16 @@ public class CompanyRepository : ICompanyRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstCompany>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<MstCompany> { data }, new List<MstCompany> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -119,6 +151,16 @@ public class CompanyRepository : ICompanyRepository
             await _context.AddRangeAsync(companies);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstCompany>(GlobalConst.New, companies.FirstOrDefault()!.CreatedBy, new List<MstCompany> {  }, companies);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }

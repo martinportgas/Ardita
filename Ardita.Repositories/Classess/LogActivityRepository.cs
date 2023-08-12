@@ -15,9 +15,11 @@ namespace Ardita.Repositories.Classess
     public class LogActivityRepository : ILogActivityRepository
     {
         private readonly BksArditaDevContext _context;
-        public LogActivityRepository(BksArditaDevContext context) 
-        { 
+        private readonly ILogChangesRepository _logChangesRepository;
+        public LogActivityRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+        {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<IEnumerable<LogActivity>> GetAll()
@@ -36,7 +38,7 @@ namespace Ardita.Repositories.Classess
                  x.LogActivityId,
                  x.UserId,
                  x.Username,
-                 x.ActivityDate,
+                 ActivityDate = x.ActivityDate.ToString(),
                  x.PageId,
                  x.PageName
              }).ToListAsync();

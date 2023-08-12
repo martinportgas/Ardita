@@ -11,15 +11,19 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ardita.Extensions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using NPOI.SS.Formula.Functions;
 
 namespace Ardita.Repositories.Classess
 {
     public class UserRepository : IUserRepository
     {
         private readonly BksArditaDevContext _context;
-        public UserRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public UserRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(MstUser model)
         {
@@ -37,6 +41,16 @@ namespace Ardita.Repositories.Classess
                     model.EmployeeId = data.EmployeeId;
                     _context.MstUsers.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstUser>(GlobalConst.Delete, model.CreatedBy, new List<MstUser> { data }, new List<MstUser> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -123,6 +137,16 @@ namespace Ardita.Repositories.Classess
                     _context.MstUsers.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstUser>(GlobalConst.New, model.CreatedBy, new List<MstUser> { data }, new List<MstUser> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
 
             return result;
@@ -136,6 +160,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(users);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstUser>(GlobalConst.New, users.FirstOrDefault().CreatedBy, new List<MstUser> {  }, users);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -154,6 +188,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstUsers.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstUser>(GlobalConst.Update, (Guid)model.UpdateBy!, new List<MstUser> { data }, new List<MstUser> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -176,6 +220,16 @@ namespace Ardita.Repositories.Classess
                     
                     _context.MstUsers.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstUser>(GlobalConst.Update, (Guid)model.UpdateBy!, new List<MstUser> { data }, new List<MstUser> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

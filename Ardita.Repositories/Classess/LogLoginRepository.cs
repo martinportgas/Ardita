@@ -30,15 +30,19 @@ namespace Ardita.Repositories.Classess
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {
             var result = await _context.LogLogins
-             .Where(x => (x.Username + x.LoginDate + x.IpAddress).Contains(model.searchValue))
+             .Where(x => (x.Username + x.LoginDate + x.ComputerName + x.IpAddress + x.MacAddress).Contains(model.searchValue))
              .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
              .Skip(model.skip).Take(model.pageSize)
              .Select(x => new {
                  x.LogLoginId,
                  x.UserId,
                  x.Username,
-                 x.LoginDate,
-                 x.IpAddress
+                 LoginDate = x.LoginDate.ToString(),
+                 x.ComputerName,
+                 x.IpAddress,
+                 x.MacAddress,
+                 x.OsName,
+                 x.BrowserName
              })
              .ToListAsync();
             return result;
@@ -52,7 +56,8 @@ namespace Ardita.Repositories.Classess
 
         public async Task<int> GetCount(DataTableModel model)
         {
-            return await _context.LogLogins.AsNoTracking().Where(x => (x.Username + x.LoginDate + x.IpAddress).Contains(model.searchValue)).CountAsync();
+            return await _context.LogLogins.AsNoTracking().Where(x => (x.Username + x.LoginDate + x.ComputerName + x.IpAddress + x.MacAddress)
+            .Contains(model.searchValue)).CountAsync();
         }
 
         public async Task<int> Insert(LogLogin model)

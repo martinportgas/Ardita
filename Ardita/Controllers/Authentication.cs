@@ -12,13 +12,15 @@ namespace Ardita.Controllers
     public class Authentication : Controller
     {
         private readonly IUserService _userService;
-
+        private readonly ILogLoginService _logLoginService;
 
         public Authentication(
-            IUserService userService
+            IUserService userService,
+            ILogLoginService logLoginService
             )
         {
             _userService = userService;
+            _logLoginService = logLoginService;
         }
         public async Task<IActionResult> Index()
         {
@@ -66,7 +68,29 @@ namespace Ardita.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity), authenticationProperties);
 
+
+                try
+                {
+                    //Log Login
+                    Guid userId = new Guid(claims.FirstOrDefault(x => x.Type == GlobalConst.UserId).Value);
+
+                    var log = new LogLogin();
+                    log.UserId = userId;
+                    log.Username = username;
+                    log.LoginDate = DateTime.Now;
+                    log.ComputerName = Global.GetComputerName();
+                    log.IpAddress = Global.GetIPAddress();
+                    log.MacAddress = string.Empty;
+                    log.OsName = Global.GetOSName(HttpContext);
+                    log.BrowserName = Global.GetBrowser(HttpContext);
+                    await _logLoginService.Insert(log);
+                }
+                catch (Exception ex)
+                {
+                }
+
                 return RedirectToAction("Index", "Home", new { area = "General" });
+
             }
             TempData["ValidateErrorMessage"] = "User Not Found";
             return RedirectToAction("Login", "Authentication");

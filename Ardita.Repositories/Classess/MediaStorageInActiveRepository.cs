@@ -11,9 +11,11 @@ namespace Ardita.Repositories.Classess;
 public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
 {
     private readonly BksArditaDevContext _context;
-    public MediaStorageInActiveRepository(BksArditaDevContext context)
+    private readonly ILogChangesRepository _logChangesRepository;
+    public MediaStorageInActiveRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
     {
         _context = context;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
@@ -152,6 +154,17 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                     result += await _context.SaveChangesAsync();
                 }
             }
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActive>(GlobalConst.New, model.CreatedBy, new List<TrxMediaStorageInActive> {  }, new List<TrxMediaStorageInActive> { model });
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActiveDetail>(GlobalConst.New, model.CreatedBy, new List<TrxMediaStorageInActiveDetail> {  }, detail);
+                }
+                catch (Exception ex) { }
+            }
         }
 
         return result;
@@ -163,21 +176,41 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
         if (detail.Any())
         {
             _context.TrxMediaStorageInActiveDetails.RemoveRange(detail);
-            await _context.SaveChangesAsync();
+            result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActiveDetail>(GlobalConst.Delete, (Guid)detail.FirstOrDefault()!.UpdatedBy!, detail, new List<TrxMediaStorageInActiveDetail> { });
+                }
+                catch (Exception ex) { }
+            }
         }
         var main = await _context.TrxMediaStorageInActives.FirstOrDefaultAsync(x => x.MediaStorageInActiveId == ID);
         if(main != null)
         {
             _context.TrxMediaStorageInActives.Remove(main);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActive>(GlobalConst.Delete, (Guid)main!.UpdatedBy!, new List<TrxMediaStorageInActive> { main }, new List<TrxMediaStorageInActive> {  });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
     public async Task<int> Update(TrxMediaStorageInActive model, List<TrxMediaStorageInActiveDetail> detail)
     {
         int result = 0;
-
-        if (model is not null)
+        var data = await _context.TrxMediaStorageInActives.AsNoTracking().FirstOrDefaultAsync(x => x.MediaStorageInActiveId == model.MediaStorageInActiveId);
+        if (data != null)
         {
             foreach (var e in _context.ChangeTracker.Entries())
             {
@@ -202,6 +235,17 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
                     _context.TrxMediaStorageInActiveDetails.Add(item);
                     result += await _context.SaveChangesAsync();
                 }
+            }
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActive>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxMediaStorageInActive> { data }, new List<TrxMediaStorageInActive> { model });
+                    await _logChangesRepository.CreateLog<TrxMediaStorageInActiveDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, oldDetail, detail);
+                }
+                catch (Exception ex) { }
             }
         }
 

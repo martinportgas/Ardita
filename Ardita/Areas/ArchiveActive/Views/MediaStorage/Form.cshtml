@@ -187,7 +187,16 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Tahun Arsip</label>
-                                            <input type="month" id="txtYear" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ArchiveYear" />
+                                            <select id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    data-placeholder="-- Pillih Tahun Arsip --" asp-for="ArchiveYear">
+                                                <option value=""></option>
+                                                @for (int x = 0; x > -30; x--)
+                                                {
+                                                    <option value="@DateTime.Now.AddYears(x).ToString("yyyy")">@DateTime.Now.AddYears(x).ToString("yyyy")</option>
+                                                }
+                                            </select>
+
+                                            @*<input type="month" id="txtYear" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-for="ArchiveYear" />*@
                                             @*<select asp-for="ArchiveYear"
                                                     id="txtYear" class="select2_demo_1 form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pilih Tahun Arsip --">
@@ -233,6 +242,7 @@
                                                         <th>Sub-subjek Klasifikasi</th>
                                                         <th>Nomor Arsip</th>
                                                         <th>Judul Arsip</th>
+                                                        <th>Deskripsi</th>
                                                         <th>Tingkat Perkembangan</th>
                                                         <th>Unit Pencipta</th>
                                                         <th>Jumlah</th>
@@ -261,6 +271,7 @@
                                                                         <th>Sub-subjek Klasifikasi</th>
                                                                         <th>Nomor Arsip</th>
                                                                         <th>Judul Arsip</th>
+                                                                        <th>Deskripsi</th>
                                                                         <th>Tingkat Perkembangan</th>
                                                                         <th>Unit Pencipta</th>
                                                                         <th>Jumlah</th>
@@ -285,6 +296,7 @@
                                                                         <th>No</th>
                                                                         <th>Nomor Dokumen</th>
                                                                         <th>Judul Arsip</th>
+                                                                        <th>Deskripsi</th>
                                                                         <th>Tingkat Perkembangan</th>
                                                                         <th>Unit Pencipta</th>
                                                                         <th>Jumlah</th>
@@ -304,6 +316,7 @@
                                                                                     <td>@(++i)</td>
                                                                                     <td>@item.Archive.DocumentNo</td>
                                                                                     <td>@item.Archive.TitleArchive</td>
+                                                                                    <td>@item.Archive.ArchiveDescription</td>
                                                                                     <td>@item.Archive.ArchiveType.ArchiveTypeName</td>
                                                                                     <td>@item.Archive.Creator.CreatorName</td>
                                                                                     <td>@item.Archive.Volume</td>
@@ -640,21 +653,32 @@
                 var dataRes = [];
                 if(@form.isInput.ToString().ToLower()){
                     dataRes = result;
-                    $.each(result, function (key, value) {
-                        if (value.trxMediaStorageDetails.length > 0) {
-                             $('#checkAll').prop('required', false);
-                        }
+
+                    var dataChecked = $.grep(result, function (item) {
+                        return item.trxMediaStorageDetails.length > 0;
                     });
+
+                    if(dataChecked.length > 0){
+                        $('#checkAll').prop('required', false);
+                    }
+                    //$.each(result, function (key, value) {
+                    //    if (value.trxMediaStorageDetails.length > 0) {
+                    //         $('#checkAll').prop('required', false);
+                    //    }
+                    //});
                 }else{
                     if('@form.CurrentAction' == 'IsUsed'){
                         $('#checkAll').prop('required', false);
                     }
 
-                    $.each(result, function (key, value) {
-                        if (value.trxMediaStorageDetails.length > 0) {
-                            dataRes.push(value);
-                        }
+                    dataRes = $.grep(result, function (item) {
+                        return item.trxMediaStorageDetails.length > 0;
                     });
+                    //$.each(result, function (key, value) {
+                    //    if (value.trxMediaStorageDetails.length > 0) {
+                    //        dataRes.push(value);
+                    //    }
+                    //});
                 }
                 $('#table-archive').show();
                 $('#table-archive').DataTable().destroy();
@@ -663,14 +687,14 @@
 
                     $('#table-archive').DataTable({
                         data: dataRes,
-                        lengthMenu: [100],
+                        lengthMenu: [500],
                         columnDefs: [
                             {
-                                targets: [8],
+                                targets: [9],
                                 className: 'd-none'
                             },
                             {
-                                targets: [8],
+                                targets: [9],
                                 orderDataType: 'dom-checkbox'
                             }
                         ],
@@ -680,11 +704,12 @@
                                     return meta.row + meta.settings._iDisplayStart + 1;
                                 }
                             },
-                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
                             { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                             { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
-                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
-                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "archiveDescription", "name": "archiveDescription", "autoWidth": true },
+                            { "data": "archiveTypeName", "name": "archiveTypeName", "autoWidth": true },
+                            { "data": "creatorName", "name": "creatorName", "autoWidth": true },
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {
@@ -745,14 +770,14 @@
                 }else{
                     $('#table-archive').DataTable({
                         data: dataRes,
-                        lengthMenu: [100],
+                        lengthMenu: [500],
                         columnDefs: [
                             {
-                                targets: [8],
+                                targets: [9],
                                 className: `text-center ${@form.isInput.ToString().ToLower() ? '' : 'd-none'}`
                             },
                             {
-                                targets: [8],
+                                targets: [9],
                                 orderDataType: 'dom-checkbox'
                             }
                         ],
@@ -762,11 +787,12 @@
                                     return meta.row + meta.settings._iDisplayStart + 1;
                                 }
                             },
-                            { "data": "subSubjectClassification.subSubjectClassificationName", "name": "subSubjectClassification.subSubjectClassificationName", "autoWidth": true },
+                            { "data": "subSubjectClassificationName", "name": "subSubjectClassificationName", "autoWidth": true },
                             { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                             { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
-                            { "data": "archiveType.archiveTypeName", "name": "archiveType.archiveTypeName", "autoWidth": true },
-                            { "data": "creator.creatorName", "name": "creator.creatorName", "autoWidth": true },
+                            { "data": "archiveDescription", "name": "archiveDescription", "autoWidth": true },
+                            { "data": "archiveTypeName", "name": "archiveTypeName", "autoWidth": true },
+                            { "data": "creatorName", "name": "creatorName", "autoWidth": true },
                             { "data": "volume", "name": "volume", "autoWidth": true },
                             {
                                 "data": "archiveId", "orderable": false, "searchable": false, "render": function (data, type, row, meta) {

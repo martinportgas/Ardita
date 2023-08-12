@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Ardita.Models.DbModels;
 
@@ -152,8 +153,14 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<VwArchiveRetentionInActive> VwArchiveRetentionInActives { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
+        //optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -339,12 +346,14 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.ChangeDate)
                 .HasColumnType("datetime")
                 .HasColumnName("change_date");
+            entity.Property(e => e.ChangeType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("change_type");
             entity.Property(e => e.NewValue)
-                .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("new_value");
             entity.Property(e => e.OldValue)
-                .HasMaxLength(2500)
                 .IsUnicode(false)
                 .HasColumnName("old_value");
             entity.Property(e => e.TableReference)
@@ -1274,7 +1283,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("archive_id");
             entity.Property(e => e.ActiveRetention).HasColumnName("active_retention");
             entity.Property(e => e.ArchiveCode)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
             entity.Property(e => e.ArchiveDescription)
@@ -1296,7 +1305,7 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("description");
             entity.Property(e => e.DocumentNo)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("document_no");
             entity.Property(e => e.GmdDetailId).HasColumnName("gmd_detail_id");

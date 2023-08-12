@@ -52,6 +52,7 @@ public static class GlobalConst
     public const string ArchiveActive = "ArchiveActive";
     public const string ArchiveInActive = "ArchiveInActive";
     public const string Report = "Report";
+    public const string Log = "Log";
     public const string Configuration = "Configuration";
 
     //Controller
@@ -100,6 +101,10 @@ public static class GlobalConst
     public const string ReportArchiveLoansInActive = "ReportArchiveLoansInActive";
     public const string ReportListArchiveInActive = "ReportListArchiveInActive";
     public const string ReportArchiveReceivedInActive = "ReportArchiveReceivedInActive";
+    public const string LogLogin = "LogLogin";
+    public const string LogChanges = "LogChanges";
+    public const string LogActivity = "LogActivity";
+
     public const string GeneralSettings = "GeneralSettings";
     public const string ArchiveRetention = "ArchiveRetention";
     public const string ArchiveExtend = "ArchiveExtend";
@@ -113,6 +118,7 @@ public static class GlobalConst
     public const string ArchiveReturn = "ArchiveReturn";
 
     //Action
+    public const string New = "New";
     public const string Index = "Index";
     public const string Update = "Update";
     public const string Delete = "Delete";
@@ -314,6 +320,8 @@ public static class GlobalConst
     public static string Base64FormatExcel = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}";
     public static string RenderPDF = "PDF";
     public static string RenderExcel = "EXCELOPENXML";
+    public static string ModelNameSpace = "Ardita.Models.DbModels.";
+    public static string ListPrefix = "mst,trx,idx,log";
 
     //ClaimTypes
     public const string Username = "Username";
@@ -395,3 +403,4 @@ public static class GlobalConst
     + creator.creatorName + subSubjectClassification.subSubjectClassificationName";
 
 }
+

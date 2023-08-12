@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Data;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Ardita.Extensions
@@ -316,5 +321,88 @@ namespace Ardita.Extensions
             string result = new String(decoded_char);
             return result;
         }
+        public static string GetComputerName()
+        {
+            string netBiosName = System.Environment.MachineName;
+
+            string dnsName = System.Net.Dns.GetHostName();
+            return dnsName;
+        }
+        public  static string GetMacAddress(HttpContext context)
+        {
+            string address = string.Empty;
+            
+            address = context.Request.Headers["X-Forwarded-For"];
+
+            return address;
+        }
+
+        public static string GetIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return string.Empty;
+        }
+
+        public static string GetOSName(HttpContext context)
+        {
+            return context.Request.Headers["Sec-Ch-Ua-Platform"].ToString();
+        }
+        public static string GetBrowser(HttpContext context)
+        {
+            string WebBrowserName = string.Empty;
+            string result = string.Empty;
+            try
+            {
+                WebBrowserName = context.Request.Headers["Sec-Ch-Ua"].ToString();
+
+                foreach (string item in WebBrowserName.Split(",")) 
+                {
+                    if (item.Contains("Edge"))
+                    {
+                        result = item.ToString();
+                    }
+                    else if (item.Contains("Chrome"))
+                    {
+                        result = item.ToString();
+                    }
+                    else if (item.Contains("Firefox"))
+                    {
+                        result = item.ToString();
+                    }
+                    else if (item.Contains("Safari"))
+                    {
+                        result = item.ToString();
+                    }
+                    else
+                    {
+                        result = "Browser Not Registered";
+                    }
+                }
+              
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return WebBrowserName;
+        }
+        public static DataTable? JsonToDataTable(string json)
+        {
+            DataTable? dataTable = new();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return dataTable;
+            }
+            dataTable = JsonConvert.DeserializeObject<DataTable>(json);
+            return dataTable;
+        }
     }
+   
 }

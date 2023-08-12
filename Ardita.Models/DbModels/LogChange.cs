@@ -13,6 +13,8 @@ public partial class LogChange
 
     public string? TableReference { get; set; }
 
+    public string? ChangeType { get; set; }
+
     public DateTime? ChangeDate { get; set; }
 
     public string? OldValue { get; set; }

@@ -4,15 +4,19 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess;
 
 public class GmdRepository : IGmdRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public GmdRepository(BksArditaDevContext context) => _context = context;
-
+    private readonly ILogChangesRepository _logChangesRepository;
+    public GmdRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
     public async Task<int> Delete(MstGmd model)
     {
         int result = 0;
@@ -27,6 +31,16 @@ public class GmdRepository : IGmdRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstGmd>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<MstGmd> { data }, new List<MstGmd> {  });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -92,6 +106,17 @@ public class GmdRepository : IGmdRepository
 
             _context.MstGmdDetails.AddRange(gmdDetails);
             result += await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstGmd>(GlobalConst.New, model.CreatedBy, new List<MstGmd> {  }, new List<MstGmd> { model });
+                    await _logChangesRepository.CreateLog<MstGmdDetail>(GlobalConst.New, model.CreatedBy, new List<MstGmdDetail> {  }, details);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -104,6 +129,16 @@ public class GmdRepository : IGmdRepository
             await _context.AddRangeAsync(mstGmds);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstGmd>(GlobalConst.New, mstGmds.FirstOrDefault()!.CreatedBy, new List<MstGmd> { }, mstGmds);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -150,6 +185,17 @@ public class GmdRepository : IGmdRepository
 
                 _context.MstGmdDetails.AddRange(gmdDetails);
                 result += await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstGmd>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<MstGmd> { data }, new List<MstGmd> { model });
+                        await _logChangesRepository.CreateLog<MstGmdDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, oldGmdDetails, details);
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

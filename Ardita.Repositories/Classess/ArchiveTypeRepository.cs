@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,12 @@ namespace Ardita.Repositories.Classess
     public class ArchiveTypeRepository : IArchiveTypeRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveTypeRepository(BksArditaDevContext context) => _context = context;
+        private readonly ILogChangesRepository _logChangesRepository;
+        public ArchiveTypeRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+        {
+            _context = context;
+            _logChangesRepository = logChangesRepository;
+        }
         public async Task<int> Delete(MstArchiveType model)
         {
             int result = 0;
@@ -29,6 +35,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedBy = model.UpdatedBy;
                     _context.MstArchiveTypes.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstArchiveType>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<MstArchiveType> { data }, new List<MstArchiveType> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -81,6 +97,16 @@ namespace Ardita.Repositories.Classess
                     model.IsActive = true;
                     _context.MstArchiveTypes.Add(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstArchiveType>(GlobalConst.New, (Guid)model.CreatedBy!, new List<MstArchiveType> {  }, new List<MstArchiveType> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -94,6 +120,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(MstArchiveTypes);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstArchiveType>(GlobalConst.New, (Guid)MstArchiveTypes.FirstOrDefault()!.CreatedBy!, new List<MstArchiveType> {  }, MstArchiveTypes);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -112,6 +148,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstArchiveTypes.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstArchiveType>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<MstArchiveType> { data }, new List<MstArchiveType> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

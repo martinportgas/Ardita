@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,11 @@ namespace Ardita.Repositories.Classess
     public class ClassificationRepository : IClassificationRepository
     {
         private readonly BksArditaDevContext _context;
-        public ClassificationRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public ClassificationRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxClassification model)
         {
@@ -35,6 +38,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedDate = DateTime.Now;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxClassification>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxClassification> { data }, new List<TrxClassification> { });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -89,6 +102,16 @@ namespace Ardita.Repositories.Classess
                 model.IsActive = true;
                 _context.TrxClassifications.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxClassification>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxClassification> {  }, new List<TrxClassification> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -100,6 +123,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxClassification>(GlobalConst.New, (Guid)models.FirstOrDefault()!.UpdatedBy!, new List<TrxClassification> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -115,6 +148,16 @@ namespace Ardita.Repositories.Classess
                 {
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxClassification>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxClassification> { data }, new List<TrxClassification> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

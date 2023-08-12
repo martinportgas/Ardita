@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,11 @@ namespace Ardita.Repositories.Classess
     public class MenuRepository : IMenuRepository
     {
         private readonly BksArditaDevContext _context;
-        public MenuRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public MenuRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public Task<int> Delete(MstMenu model)
         {
@@ -90,6 +93,16 @@ namespace Ardita.Repositories.Classess
             {
                 _context.MstMenus.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstMenu>(GlobalConst.New, model.CreatedBy, new List<MstMenu> { }, new List<MstMenu> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -108,6 +121,16 @@ namespace Ardita.Repositories.Classess
 
                 _context.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstMenu>(GlobalConst.Update, (Guid)model.UpdateBy!, new List<MstMenu> { data }, new List<MstMenu> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }

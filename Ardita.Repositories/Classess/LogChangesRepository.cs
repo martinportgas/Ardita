@@ -1,13 +1,19 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -38,7 +44,8 @@ namespace Ardita.Repositories.Classess
                x.UserId,
                x.Username,
                x.TableReference,
-               x.ChangeDate,
+               ChangeDate = x.ChangeDate.ToString(),
+               x.ChangeType,
                x.OldValue,
                x.NewValue
            }).ToListAsync();
@@ -67,6 +74,62 @@ namespace Ardita.Repositories.Classess
                 _context.Add(model);
                 result = await _context.SaveChangesAsync();
             }
+            return result;
+        }
+        public async Task<int> CreateLog<T>(string type, Guid userId, List<T> oldValue, List<T> newValue)
+        {
+            int result = 0;
+            var users = await _context.MstUsers.FirstOrDefaultAsync(x => x.UserId == userId);
+
+            var objLogDB = new LogChange();
+            objLogDB.UserId = users.UserId;
+            objLogDB.Username = users.Username;
+            objLogDB.ChangeType = type;
+            objLogDB.TableReference = typeof(T).Name;
+            objLogDB.ChangeDate = DateTime.Now;
+            if (newValue.Count > 0)
+            {
+                DataTable dtNew = newValue.ToDataTable();
+                var listRemove = new List<DataColumn>();
+                foreach (DataColumn c in dtNew.Columns)
+                {
+                    if (c.DataType.ToString().Contains("Models"))
+                    {
+                        listRemove.Add(c);
+                    }
+                }
+                if(listRemove.Count > 0)
+                {
+                    foreach(DataColumn dc in listRemove)
+                    {
+                        dtNew.Columns.Remove(dc);
+                    }
+                }
+                objLogDB.NewValue = JsonConvert.SerializeObject(dtNew);
+            }
+                
+            if (oldValue.Count > 0)
+            {
+                DataTable dtOld = oldValue.ToDataTable();
+                var listRemove = new List<DataColumn>();
+                foreach (DataColumn c in dtOld.Columns)
+                {
+                    if (c.DataType.ToString().Contains("Models"))
+                    {
+                        listRemove.Add(c);
+                    }  
+                }
+                if (listRemove.Count > 0)
+                {
+                    foreach (DataColumn dc in listRemove)
+                    {
+                        dtOld.Columns.Remove(dc);
+                    }
+                }
+                objLogDB.OldValue = JsonConvert.SerializeObject(dtOld);
+            }
+
+            result = await Insert(objLogDB);
             return result;
         }
     }

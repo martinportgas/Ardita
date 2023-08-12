@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,13 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
 {
     private readonly BksArditaDevContext _context;
 
-    public ArchiveApprovalRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+
+    public ArchiveApprovalRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
 
     public Task<int> Delete(TrxApproval model)
     {
@@ -123,6 +130,16 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
         {
             _context.TrxApprovals.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxApproval>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<TrxApproval> {  }, new List<TrxApproval> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -134,6 +151,16 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
             await _context.AddRangeAsync(models);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxApproval>(GlobalConst.New, (Guid)models.FirstOrDefault()!.CreatedBy!, new List<TrxApproval> { }, models);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }

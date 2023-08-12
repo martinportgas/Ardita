@@ -10,8 +10,12 @@ namespace Ardita.Repositories.Classess;
 public class ArchiveRetentionRepository : IArchiveRetentionRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public ArchiveRetentionRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+    public ArchiveRetentionRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
     public async Task<IEnumerable<VwArchiveRetention>> GetAll()
     {
         var results = await _context.VwArchiveRetentions.ToListAsync();

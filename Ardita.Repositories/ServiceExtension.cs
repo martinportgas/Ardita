@@ -55,6 +55,9 @@ public static class ServiceExtension
         services.AddScoped<ISubTypeStorageRepository, SubTypeStorageRepository>();
         services.AddScoped<IArchiveOutIndicatorRepository, ArchiveOutIndicatorRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<ILogLoginRepository, LogLoginRepository>();
+        services.AddScoped<ILogChangesRepository, LogChangesRepository>();
+        services.AddScoped<ILogActivityRepository, LogActivityRepository>();
 
         return services;
     }

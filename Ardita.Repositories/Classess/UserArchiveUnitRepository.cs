@@ -12,9 +12,11 @@ namespace Ardita.Repositories.Classess
     public class UserArchiveUnitRepository : IUserArchiveUnitRepository
     {
         private readonly BksArditaDevContext _context;
-        public UserArchiveUnitRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public UserArchiveUnitRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public Task<int> Delete(IdxUserArchiveUnit model)
         {

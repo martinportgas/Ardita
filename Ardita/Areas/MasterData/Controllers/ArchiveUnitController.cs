@@ -116,6 +116,7 @@ public class ArchiveUnitController : BaseController<TrxArchiveUnit>
             var Long = Request.Form["Long"].ToString();
             model.Latitude = cultureInfo.ToString().Contains("ID") ? decimal.Parse(Lat.Replace(".", ",")) : decimal.Parse(Lat);
             model.Longitude = cultureInfo.ToString().Contains("ID") ? decimal.Parse(Long.Replace(".", ",")) : decimal.Parse(Long);
+
             if (model.ArchiveUnitId != Guid.Empty)
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;

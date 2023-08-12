@@ -12,10 +12,11 @@ namespace Ardita.Repositories.Classess
     public class ArchiveRentRepository : IArchiveRentRepository
     {
         private readonly BksArditaDevContext _context;
-       
-        public ArchiveRentRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public ArchiveRentRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<int> Approval(Guid id, string description, int status, Guid User)
@@ -228,13 +229,13 @@ namespace Ardita.Repositories.Classess
                 model.StatusId = (int)GlobalConst.STATUS.ApprovalProcess;
 
                 _context.TrxArchiveRents.Add(model);
-                await _context.SaveChangesAsync();
+                result += await _context.SaveChangesAsync();
 
                 _context.TrxArchiveRentDetails.AddRange(listDetail);
-                await _context.SaveChangesAsync();
+                result += await _context.SaveChangesAsync();
 
                 _context.MstBorrowers.Add(borrower);
-                await _context.SaveChangesAsync();
+                result += await _context.SaveChangesAsync();
 
                 var history = new TrxRentHistory();
                 history.RentHistoryId = new Guid();
@@ -244,7 +245,19 @@ namespace Ardita.Repositories.Classess
                 history.CreatedDate = DateTime.Now;
 
                 _context.TrxRentHistories.Add(history);
-                await _context.SaveChangesAsync();
+                result += await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveRent>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxArchiveRent> { }, new List<TrxArchiveRent> { model });
+                        await _logChangesRepository.CreateLog<MstBorrower>(GlobalConst.New, (Guid)model.CreatedBy!, new List<MstBorrower> { }, new List<MstBorrower> { borrower });
+                        await _logChangesRepository.CreateLog<TrxArchiveRentDetail>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxArchiveRentDetail> {  }, listDetail);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -305,7 +318,18 @@ namespace Ardita.Repositories.Classess
                     _context.TrxRentHistories.Add(history);
                     await _context.SaveChangesAsync();
                 }
-            
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveRent>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxArchiveRent> { }, new List<TrxArchiveRent> { model });
+                        await _logChangesRepository.CreateLog<MstBorrower>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<MstBorrower> { borrowerResult }, new List<MstBorrower> { borrower });
+                        await _logChangesRepository.CreateLog<TrxArchiveRentDetail>(GlobalConst.Update, (Guid)model.UpdatedBy!, listDetail, listDetail);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }

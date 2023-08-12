@@ -1,4 +1,5 @@
-﻿using Ardita.Repositories.Classess;
+﻿using Ardita.Models.DbModels;
+using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
@@ -52,6 +53,11 @@ public static class ServiceExtension
         services.AddScoped<ISubTypeStorageService, SubTypeStorageService>();
         services.AddScoped<IArchiveOutIndicatorService, ArchiveOutIndicatorService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<ILogLoginService, LogLoginService>();
+        services.AddScoped<ILogChangesService, LogChangesService>();
+        services.AddScoped<ILogActivityService, LogActivityService>();
+
+
         return services;
     }
 }

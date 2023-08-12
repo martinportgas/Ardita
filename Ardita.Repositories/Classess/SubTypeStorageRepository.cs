@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,11 @@ namespace Ardita.Repositories.Classess;
 public class SubTypeStorageRepository : ISubTypeStorageRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public SubTypeStorageRepository(BksArditaDevContext context)
+    private readonly ILogChangesRepository _logChangesRepository;
+    public SubTypeStorageRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
     {
         _context = context;
+        _logChangesRepository = logChangesRepository;
     }
 
     public async Task<int> Delete(MstSubTypeStorage model)
@@ -31,6 +33,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
             data.UpdatedBy = model.UpdatedBy;
             _context.MstSubTypeStorages.Update(data);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSubTypeStorage>(GlobalConst.Delete, (Guid)model.CreatedBy!, new List<MstSubTypeStorage> { data }, new List<MstSubTypeStorage> {  });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -47,6 +59,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         {
             _context.IdxSubTypeStorages.RemoveRange(data);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<IdxSubTypeStorage>(GlobalConst.Delete, data.FirstOrDefault().CreatedBy!, data, new List<IdxSubTypeStorage> { });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -63,6 +85,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         {
             _context.MstSubTypeStorageDetails.RemoveRange(data);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSubTypeStorageDetail>(GlobalConst.Delete, (Guid)data.FirstOrDefault().CreatedBy!, data, new List<MstSubTypeStorageDetail> { });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -194,6 +226,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
                 model.IsActive = true;
                 _context.MstSubTypeStorages.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstSubTypeStorage>(GlobalConst.New, model.CreatedBy!, new List<MstSubTypeStorage> { }, new List<MstSubTypeStorage> { model});
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -207,6 +249,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
             await _context.AddRangeAsync(mstSubTypeStorages);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSubTypeStorage>(GlobalConst.New, mstSubTypeStorages.FirstOrDefault()!.CreatedBy, new List<MstSubTypeStorage> { }, mstSubTypeStorages);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -219,6 +271,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
             await _context.AddRangeAsync(idxSubTypeStorages);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<IdxSubTypeStorage>(GlobalConst.New, idxSubTypeStorages.FirstOrDefault()!.CreatedBy, new List<IdxSubTypeStorage> { }, idxSubTypeStorages);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -230,6 +292,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
             await _context.AddRangeAsync(MstSubTypeStorageDetail);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSubTypeStorageDetail>(GlobalConst.New, (Guid)MstSubTypeStorageDetail.FirstOrDefault().CreatedBy!, new List<MstSubTypeStorageDetail> { }, MstSubTypeStorageDetail);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -242,6 +314,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         {
             _context.IdxSubTypeStorages.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<IdxSubTypeStorage>(GlobalConst.New, model.CreatedBy, new List<IdxSubTypeStorage> { }, new List<IdxSubTypeStorage> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -253,6 +335,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         {
             _context.MstSubTypeStorageDetails.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<MstSubTypeStorageDetail>(GlobalConst.New, (Guid)model.CreatedBy!, new List<MstSubTypeStorageDetail> { }, new List<MstSubTypeStorageDetail> { model });
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -271,6 +363,16 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.MstSubTypeStorages.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstSubTypeStorage>(GlobalConst.Update, (Guid)model.CreatedBy!, new List<MstSubTypeStorage> { data }, new List<MstSubTypeStorage> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

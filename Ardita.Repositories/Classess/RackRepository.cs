@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,11 @@ namespace Ardita.Repositories.Classess
     public class RackRepository : IRackRepository
     {
         private readonly BksArditaDevContext _context;
-        public RackRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public RackRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxRack model)
         {
@@ -36,6 +39,16 @@ namespace Ardita.Repositories.Classess
 
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
+
+                        //Log
+                        if (result > 0)
+                        {
+                            try
+                            {
+                                await _logChangesRepository.CreateLog<TrxRack>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxRack> { data }, new List<TrxRack> {  });
+                            }
+                            catch (Exception ex) { }
+                        }
                     }
                 }
 
@@ -115,6 +128,16 @@ namespace Ardita.Repositories.Classess
                 model.Room = null;
                 _context.TrxRacks.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxRack>(GlobalConst.New, model.CreatedBy, new List<TrxRack> {  }, new List<TrxRack> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -127,6 +150,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(racks);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxRack>(GlobalConst.New, racks.FirstOrDefault()!.CreatedBy, new List<TrxRack> { }, racks);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -149,6 +182,16 @@ namespace Ardita.Repositories.Classess
                         model.Room = null;
                         _context.Update(model);
                         result = await _context.SaveChangesAsync();
+
+                        //Log
+                        if (result > 0)
+                        {
+                            try
+                            {
+                                await _logChangesRepository.CreateLog<TrxRack>(GlobalConst.Update, model.CreatedBy, new List<TrxRack> { data }, new List<TrxRack> { model });
+                            }
+                            catch (Exception ex) { }
+                        }
                     }
                 }
             }

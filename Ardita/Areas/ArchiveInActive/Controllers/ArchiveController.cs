@@ -249,7 +249,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                     if (subSubjectClassificationData.Creator.ArchiveUnitId != AppUsers.CurrentUser(User).ArchiveUnitId)
                                     {
                                         valid = false;
-                                        error += "_Ada tidak memiliki wewenang untuk menggunakan subjek klasifikasi ini";
+                                        error += "_Ada tidak memiliki wewenang untuk menggunakan sub subjek klasifikasi ini";
                                     }
                                 }
                             }
@@ -262,7 +262,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                             if (row[4].ToString()!.ToLower() != "internal" && row[4].ToString()!.ToLower() != "eksternal")
                             {
                                 valid = false;
-                                error += "_Tipe Pengirim Tidak Valid";
+                                error += "_Tipe Pengirim Tidak Valid ( pastikan tipe pengirim adalah internal atau eksternal )";
                             }
                             var archiveOwnerData = ArchiveOwners.Where(x => x.ArchiveOwnerCode.ToLower() == row[5].ToString().ToLower()).FirstOrDefault();
                             if (archiveOwnerData == null)
@@ -281,6 +281,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                             {
                                 valid = false;
                                 error += "_Tanggal Arsip Tidak Valid";
+                            }
+                            else
+                            {
+                                if (dateArchive < GlobalConst.MinDate)
+                                {
+                                    valid = false;
+                                    error += "_Tanggal Arsip Tidak Valid";
+                                }
                             }
                             int activeRetention = 0;
                             if (!int.TryParse(row[11].ToString(), out activeRetention))
@@ -312,7 +320,6 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 trxArchive.TypeSender = row[4].ToString()!;
                                 trxArchive.ArchiveOwnerId = archiveOwnerData!.ArchiveOwnerId;
                                 trxArchive.Keyword = row[6].ToString()!;
-                                trxArchive.ArchiveCode = string.Empty;
                                 trxArchive.DocumentNo = row[7].ToString()!;
                                 trxArchive.TitleArchive = row[8].ToString()!;
                                 trxArchive.ArchiveTypeId = archiveTypeData!.ArchiveTypeId;
@@ -327,6 +334,24 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 trxArchive.CreatedBy = AppUsers.CurrentUser(User).UserId;
                                 trxArchive.CreatedDate = DateTime.Now;
                                 trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
+                                trxArchive.ArchiveDescription = row[14].ToString()!;
+                                trxArchive.IsUsed = false;
+
+                                var Code = $"{trxArchive.CreatedDateArchive.Year.ToString()}.{Creators.FirstOrDefault(x => x.CreatorId == trxArchive.CreatorId)!.CreatorCode}";
+                                var lastCount = archiveAll.Where(x => x.ArchiveCode.Contains(Code)).Count();
+                                var lastListCount = 0;
+                                if (trxArchives.Count > 0)
+                                    lastListCount = trxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
+                                var fixCount = (lastCount + lastListCount) + 1;
+                                var initCode = $"{SecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == trxArchive.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
+                                var fixCode = initCode + fixCount.ToString("D5");
+                                while (archiveAll.Where(x => x.ArchiveCode == fixCode).Count() > 0)
+                                {
+                                    fixCount++;
+                                    fixCode = initCode + fixCount.ToString("D5");
+                                }
+
+                                trxArchive.ArchiveCode = fixCode;
 
                                 trxArchives.Add(trxArchive);
                             }
@@ -339,7 +364,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                         ViewBag.result = JsonConvert.SerializeObject(result);
                         ViewBag.errorCount = errorCount;
 
-                        if (valid)
+                        if (errorCount == 0)
                             await _archiveService.InsertBulk(trxArchives);
                     }
                     return View(GlobalConst.UploadForm);
@@ -384,7 +409,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                     x.CreatedDateArchive,
                     x.ActiveRetention,
                     x.InactiveRetention,
-                    x.Volume
+                    x.Volume,
+                    x.ArchiveDescription
                 }
                 ).ToList().ToDataTable()
             };

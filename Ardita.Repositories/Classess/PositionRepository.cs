@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Extensions;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,11 @@ namespace Ardita.Repositories.Classess
     public class PositionRepository : IPositionRepository
     {
         private readonly BksArditaDevContext _context;
-        public PositionRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public PositionRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<int> Delete(MstPosition model)
@@ -33,6 +36,16 @@ namespace Ardita.Repositories.Classess
                     model.IsActive = false;
                     _context.MstPositions.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstPosition>(GlobalConst.Delete, new Guid(model.UpdateBy!), new List<MstPosition> { data }, new List<MstPosition> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -90,6 +103,16 @@ namespace Ardita.Repositories.Classess
                     _context.MstPositions.Add(model);
                 }
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstPosition>(GlobalConst.New, new Guid(model.CreatedBy!), new List<MstPosition> {  }, new List<MstPosition> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -108,6 +131,16 @@ namespace Ardita.Repositories.Classess
                     model.IsActive = true;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstPosition>(GlobalConst.Update, new Guid(model.UpdateBy!), new List<MstPosition> { data }, new List<MstPosition> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

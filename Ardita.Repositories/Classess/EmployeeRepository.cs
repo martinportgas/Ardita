@@ -10,16 +10,19 @@ using System.Threading.Tasks;
 using Ardita.Models.ViewModels;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Ardita.Extensions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ardita.Repositories.Classess
 {
     public class EmployeeRepository : IEmployeeRepository
     {
         private readonly BksArditaDevContext _context;
-
-        public EmployeeRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public EmployeeRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
 
         public async Task<int> Delete(MstEmployee model)
@@ -36,6 +39,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdateDate = data.UpdateDate;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstEmployee>(GlobalConst.Delete, (Guid)data.UpdateBy!, new List<MstEmployee> { data }, new List<MstEmployee> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -120,6 +133,16 @@ namespace Ardita.Repositories.Classess
                     _context.MstEmployees.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstEmployee>(GlobalConst.New, data.CreatedBy, new List<MstEmployee> {  }, new List<MstEmployee> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
                 
             return result;
@@ -133,6 +156,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(employees);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstEmployee>(GlobalConst.New, employees.FirstOrDefault()!.CreatedBy, new List<MstEmployee> { }, employees);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -152,6 +185,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstEmployees.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstEmployee>(GlobalConst.Update, (Guid)data.UpdateBy!, new List<MstEmployee> { data }, new List<MstEmployee> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

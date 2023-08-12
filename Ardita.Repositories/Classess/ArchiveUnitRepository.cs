@@ -4,14 +4,19 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess;
 
 public class ArchiveUnitRepository : IArchiveUnitRepository
 {
     private readonly BksArditaDevContext _context;
-
-    public ArchiveUnitRepository(BksArditaDevContext context) => _context = context;
+    private readonly ILogChangesRepository _logChangesRepository;
+    public ArchiveUnitRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
+    {
+        _context = context;
+        _logChangesRepository = logChangesRepository;
+    }
 
     public async Task<int> Delete(TrxArchiveUnit model)
     {
@@ -27,6 +32,16 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
                 data.UpdatedBy = model.UpdatedBy;
                 _context.TrxArchiveUnits.Update(data);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveUnit>(GlobalConst.Delete, (Guid)model.UpdatedBy!, new List<TrxArchiveUnit> { data }, new List<TrxArchiveUnit> { });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;
@@ -82,6 +97,16 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
             model.IsActive = true;
             _context.TrxArchiveUnits.Add(model);
             result = await _context.SaveChangesAsync();
+
+            //Log
+            if (result > 0)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxArchiveUnit>(GlobalConst.New, (Guid)model.CreatedBy!, new List<TrxArchiveUnit> {  }, new List<TrxArchiveUnit> { model});
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -94,6 +119,16 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
             await _context.AddRangeAsync(trxArchiveUnits);
             await _context.SaveChangesAsync();
             result = true;
+
+            //Log
+            if (result)
+            {
+                try
+                {
+                    await _logChangesRepository.CreateLog<TrxArchiveUnit>(GlobalConst.New, (Guid)trxArchiveUnits.FirstOrDefault()!.CreatedBy!, new List<TrxArchiveUnit> {  }, trxArchiveUnits);
+                }
+                catch (Exception ex) { }
+            }
         }
         return result;
     }
@@ -112,6 +147,16 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
                 model.CreatedDate = data.CreatedDate;
                 _context.TrxArchiveUnits.Update(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveUnit>(GlobalConst.Update, (Guid)model.UpdatedBy!, new List<TrxArchiveUnit> { data }, new List<TrxArchiveUnit> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
         }
         return result;

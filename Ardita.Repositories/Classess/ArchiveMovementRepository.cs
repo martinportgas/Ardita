@@ -12,9 +12,12 @@ namespace Ardita.Repositories.Classess
     public class ArchiveMovementRepository : IArchiveMovementRepository
     {
         private readonly BksArditaDevContext _context;
-        public ArchiveMovementRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+
+        public ArchiveMovementRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(TrxArchiveMovement model)
         {
@@ -27,6 +30,16 @@ namespace Ardita.Repositories.Classess
                 {
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.Delete, (Guid)model!.UpdatedBy!, new List<TrxArchiveMovement> { data }, new List<TrxArchiveMovement> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -49,6 +62,16 @@ namespace Ardita.Repositories.Classess
                     data.UpdatedDate = model.UpdatedDate;
                     _context.Update(data);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveMovement> { data }, new List<TrxArchiveMovement> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -241,6 +264,16 @@ namespace Ardita.Repositories.Classess
                 model.DocumentCode = $"PD.{count.ToString("D3")}-{company!.CompanyCode}/{archiveUnit!.ArchiveUnitCode}/{DateTime.Now.Month.ToString("D2")}/{model.CreatedDate.Year}";
                 _context.TrxArchiveMovements.Add(model);
                 result = await _context.SaveChangesAsync();
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.New, (Guid)model!.CreatedBy!, new List<TrxArchiveMovement> {  }, new List<TrxArchiveMovement> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -252,6 +285,16 @@ namespace Ardita.Repositories.Classess
                 await _context.AddRangeAsync(models);
                 await _context.SaveChangesAsync();
                 result = true;
+
+                //Log
+                if (result)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.New, (Guid)models.FirstOrDefault()!.CreatedBy!, new List<TrxArchiveMovement> {  }, models);
+                    }
+                    catch (Exception ex) { }
+                }
             }
             return result;
         }
@@ -269,6 +312,16 @@ namespace Ardita.Repositories.Classess
                     model.ArchiveUnitIdDestinationNavigation = null;
                     _context.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<TrxArchiveMovement>(GlobalConst.Update, (Guid)model!.UpdatedBy!, new List<TrxArchiveMovement> { data }, new List<TrxArchiveMovement> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;

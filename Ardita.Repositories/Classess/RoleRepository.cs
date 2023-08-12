@@ -9,15 +9,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ardita.Extensions;
 
 namespace Ardita.Repositories.Classess
 {
     public class RoleRepository : IRoleRepository
     {
         private readonly BksArditaDevContext _context;
-        public RoleRepository(BksArditaDevContext context)
+        private readonly ILogChangesRepository _logChangesRepository;
+        public RoleRepository(BksArditaDevContext context, ILogChangesRepository logChangesRepository)
         {
             _context = context;
+            _logChangesRepository = logChangesRepository;
         }
         public async Task<int> Delete(MstRole model)
         {
@@ -33,6 +36,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstRoles.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstRole>(GlobalConst.Delete, (Guid)model.UpdateBy!, new List<MstRole> { data }, new List<MstRole> {  });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
@@ -102,6 +115,16 @@ namespace Ardita.Repositories.Classess
                     _context.MstRoles.Add(model);
                     result = await _context.SaveChangesAsync();
                 }
+
+                //Log
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _logChangesRepository.CreateLog<MstRole>(GlobalConst.New, model.CreatedBy, new List<MstRole> {  }, new List<MstRole> { model });
+                    }
+                    catch (Exception ex) { }
+                }
             }
 
             return result;
@@ -121,6 +144,16 @@ namespace Ardita.Repositories.Classess
                     model.CreatedDate = data.CreatedDate;
                     _context.MstRoles.Update(model);
                     result = await _context.SaveChangesAsync();
+
+                    //Log
+                    if (result > 0)
+                    {
+                        try
+                        {
+                            await _logChangesRepository.CreateLog<MstRole>(GlobalConst.Update, (Guid)model.UpdateBy!, new List<MstRole> { data }, new List<MstRole> { model });
+                        }
+                        catch (Exception ex) { }
+                    }
                 }
             }
             return result;
