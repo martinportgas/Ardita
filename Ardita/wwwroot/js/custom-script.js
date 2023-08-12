@@ -249,6 +249,8 @@ function initFormReadOnly(condition){
     $("input.readonly").attr('readonly', true);
 }
 
-
+function remove(e) {
+    e.parent().parent().remove();
+}
 
 

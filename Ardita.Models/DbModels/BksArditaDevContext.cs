@@ -15,6 +15,8 @@ public partial class BksArditaDevContext : DbContext
     {
     }
 
+    public virtual DbSet<IdxGeneralSettingsFormatFile> IdxGeneralSettingsFormatFiles { get; set; }
+
     public virtual DbSet<IdxRolePage> IdxRolePages { get; set; }
 
     public virtual DbSet<IdxSubTypeStorage> IdxSubTypeStorages { get; set; }
@@ -40,6 +42,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstCreator> MstCreators { get; set; }
 
     public virtual DbSet<MstEmployee> MstEmployees { get; set; }
+
+    public virtual DbSet<MstGeneralSetting> MstGeneralSettings { get; set; }
 
     public virtual DbSet<MstGmd> MstGmds { get; set; }
 
@@ -153,6 +157,29 @@ public partial class BksArditaDevContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<IdxGeneralSettingsFormatFile>(entity =>
+        {
+            entity.HasKey(e => e.GeneralSettingsFormatFileId);
+
+            entity.ToTable("IDX_GENERAL_SETTINGS_FORMAT_FILE");
+
+            entity.Property(e => e.GeneralSettingsFormatFileId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("general_settings_format_file_id");
+            entity.Property(e => e.FormatFileName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("format_file_name");
+            entity.Property(e => e.GeneralSettingsId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("general_settings_id");
+
+            entity.HasOne(d => d.GeneralSettings).WithMany(p => p.IdxGeneralSettingsFormatFiles)
+                .HasForeignKey(d => d.GeneralSettingsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IDX_GENERAL_SETTINGS_FORMAT_FILE_MST_GENERAL_SETTINGS");
+        });
+
         modelBuilder.Entity<IdxRolePage>(entity =>
         {
             entity.HasKey(e => e.RolePageId).HasName("PK_ROLE_PAGE");
@@ -338,13 +365,29 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.LogLoginId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("log_login_id");
-            entity.Property(e => e.Ipaddress)
+            entity.Property(e => e.BrowserName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasColumnName("ipaddress");
+                .HasColumnName("browser_name");
+            entity.Property(e => e.ComputerName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("computer_name");
+            entity.Property(e => e.IpAddress)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ip_address");
             entity.Property(e => e.LoginDate)
                 .HasColumnType("datetime")
                 .HasColumnName("login_date");
+            entity.Property(e => e.MacAddress)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("mac_address");
+            entity.Property(e => e.OsName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("os_name");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
@@ -606,6 +649,54 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.PositionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_POSITION_ID_MST_EMPLOYEE");
+        });
+
+        modelBuilder.Entity<MstGeneralSetting>(entity =>
+        {
+            entity.HasKey(e => e.GeneralSettingsId);
+
+            entity.ToTable("MST_GENERAL_SETTINGS");
+
+            entity.Property(e => e.GeneralSettingsId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("general_settings_id");
+            entity.Property(e => e.AplicationTitle)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("aplication_title");
+            entity.Property(e => e.CompanyLogo)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("company_logo");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.FavIcon)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("fav_icon");
+            entity.Property(e => e.Footer)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("footer");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.LicenseKey)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("license_key");
+            entity.Property(e => e.SiteLogo)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("site_logo");
+            entity.Property(e => e.TimeAndZone)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("time_and_zone");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
         });
 
         modelBuilder.Entity<MstGmd>(entity =>

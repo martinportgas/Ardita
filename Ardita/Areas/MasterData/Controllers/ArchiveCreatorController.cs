@@ -1,12 +1,9 @@
 ﻿using Ardita.Controllers;
 using Ardita.Extensions;
-
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
-using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
