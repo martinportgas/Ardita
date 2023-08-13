@@ -63,6 +63,7 @@ public abstract class BaseController<T> : Controller
     protected IArchiveOutIndicatorService _archiveOutIndicatorService { get; set; } = null!;
 
     protected ISubTypeStorageService SubTypeStorageService { get; set; } = null!;
+    protected IGeneralSettingsService GeneralSettingsService { get; set; } = null!;
 
     //Log
 

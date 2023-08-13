@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ardita.Repositories;
+
 public static class ServiceExtension
 {
     public static IServiceCollection AddDIRepositories(this IServiceCollection services, IConfiguration configuration)
@@ -58,6 +59,7 @@ public static class ServiceExtension
         services.AddScoped<ILogLoginRepository, LogLoginRepository>();
         services.AddScoped<ILogChangesRepository, LogChangesRepository>();
         services.AddScoped<ILogActivityRepository, LogActivityRepository>();
+        services.AddScoped<IGeneralSettingsRepository, GeneralSettingsRepository>();
 
         return services;
     }

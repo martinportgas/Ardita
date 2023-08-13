@@ -1,8 +1,6 @@
 ﻿using Ardita.Models.DbModels;
-using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
 
@@ -11,24 +9,49 @@ public class GeneralSettingsRepository : IGeneralSettingsRepository
     private readonly BksArditaDevContext _context;
     public GeneralSettingsRepository(BksArditaDevContext context) => _context = context;
 
-    public Task<int> Delete(MstGeneralSetting model)
+    public async Task<MstGeneralSetting> GetExistingSettings()
     {
-        throw new NotImplementedException();
+        var data = await _context.MstGeneralSettings.Where(x => x.IsActive == true).AsNoTracking().OrderBy(x => x.GeneralSettingsId).LastOrDefaultAsync();
+
+        return data ?? new MstGeneralSetting();
     }
 
-    public Task<IEnumerable<MstGeneralSetting>> GetAll()
+    public async Task<int> Insert(MstGeneralSetting model, List<IdxGeneralSettingsFormatFile> details)
     {
-        throw new NotImplementedException();
+        int result = 0;
+        List<IdxGeneralSettingsFormatFile> list = new();
+
+        if (model is not null)
+        {
+            model.IsActive = true;
+            _context.Add(model);
+            result = await _context.SaveChangesAsync();
+
+            foreach (var item in details)
+            {
+                item.GeneralSettingsId = model.GeneralSettingsId;
+                list.Add(item);
+            }
+
+            _context.AddRange(list);
+            result += await _context.SaveChangesAsync();
+        }
+
+        return result;
     }
 
-    public Task<IEnumerable<MstGeneralSetting>> GetById(Guid id)
+    public async Task<bool> IsExist()
     {
-        throw new NotImplementedException();
-    }
+        bool result = false;
 
-    public Task<int> Insert(MstGeneralSetting model, List<IdxGeneralSettingsFormatFile> details)
-    {
-        throw new NotImplementedException();
+        var data = await _context.MstGeneralSettings.Where(x => x.IsActive == true).ToListAsync();
+
+        if (data.Any())
+        {
+            result = true;
+        }
+
+        return result;
     }
 
     public Task<int> Update(MstGeneralSetting model, List<IdxGeneralSettingsFormatFile> details)

@@ -1,7 +1,4 @@
-﻿using Ardita.Models.DbModels;
-using Ardita.Repositories.Classess;
-using Ardita.Repositories.Interfaces;
-using Ardita.Services.Classess;
+﻿using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +53,7 @@ public static class ServiceExtension
         services.AddScoped<ILogLoginService, LogLoginService>();
         services.AddScoped<ILogChangesService, LogChangesService>();
         services.AddScoped<ILogActivityService, LogActivityService>();
-
+        services.AddScoped<IGeneralSettingsService, GeneralSettingsService>();
 
         return services;
     }

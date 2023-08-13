@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Ardita.Models.DbModels;
 
@@ -21,6 +20,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<IdxRolePage> IdxRolePages { get; set; }
 
     public virtual DbSet<IdxSubTypeStorage> IdxSubTypeStorages { get; set; }
+
+    public virtual DbSet<IdxTemplateSetting> IdxTemplateSettings { get; set; }
 
     public virtual DbSet<IdxUserArchiveUnit> IdxUserArchiveUnits { get; set; }
 
@@ -71,6 +72,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstSubTypeStorageDetail> MstSubTypeStorageDetails { get; set; }
 
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
+
+    public virtual DbSet<MstTemplateSetting> MstTemplateSettings { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
 
@@ -153,14 +156,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<VwArchiveRetentionInActive> VwArchiveRetentionInActives { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json")
-            .Build();
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
-        //optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -243,6 +240,39 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.TypeStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IDX_SUB_TYPE_STORAGE_TRX_TYPE_STORAGE");
+        });
+
+        modelBuilder.Entity<IdxTemplateSetting>(entity =>
+        {
+            entity.ToTable("IDX_TEMPLATE_SETTING");
+
+            entity.Property(e => e.IdxTemplateSettingId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("idx_template_setting_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Path)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("path");
+            entity.Property(e => e.SourceData)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("source_data");
+            entity.Property(e => e.TemplateName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("template_name");
+            entity.Property(e => e.TemplateType)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("template_type");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
         });
 
         modelBuilder.Entity<IdxUserArchiveUnit>(entity =>
@@ -673,18 +703,32 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("aplication_title");
-            entity.Property(e => e.CompanyLogo)
+            entity.Property(e => e.CompanyLogoContent)
+                .IsUnicode(false)
+                .HasColumnName("company_logo_content");
+            entity.Property(e => e.CompanyLogoFileName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasColumnName("company_logo");
+                .HasColumnName("company_logo_file_name");
+            entity.Property(e => e.CompanyLogoFileType)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("company_logo_file_type");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
-            entity.Property(e => e.FavIcon)
+            entity.Property(e => e.FavIconContent)
+                .IsUnicode(false)
+                .HasColumnName("fav_icon_content");
+            entity.Property(e => e.FavIconFileName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasColumnName("fav_icon");
+                .HasColumnName("fav_icon_file_name");
+            entity.Property(e => e.FavIconFileType)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("fav_icon_file_type");
             entity.Property(e => e.Footer)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -694,10 +738,17 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("license_key");
-            entity.Property(e => e.SiteLogo)
+            entity.Property(e => e.SiteLogoContent)
+                .IsUnicode(false)
+                .HasColumnName("site_logo_content");
+            entity.Property(e => e.SiteLogoFileName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasColumnName("site_logo");
+                .HasColumnName("site_logo_file_name");
+            entity.Property(e => e.SiteLogoFileType)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("site_logo_file_type");
             entity.Property(e => e.TimeAndZone)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -1116,6 +1167,41 @@ public partial class BksArditaDevContext : DbContext
                 .HasForeignKey(d => d.MenuId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SUBMENU_SUBMENU");
+        });
+
+        modelBuilder.Entity<MstTemplateSetting>(entity =>
+        {
+            entity.HasKey(e => e.TemplateSettingId).HasName("PK_TEMPLATE_SETTING");
+
+            entity.ToTable("MST_TEMPLATE_SETTING");
+
+            entity.Property(e => e.TemplateSettingId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("template_setting_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Path)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("path");
+            entity.Property(e => e.SourceData)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("source_data");
+            entity.Property(e => e.TemplateName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("template_name");
+            entity.Property(e => e.TemplateType)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("template_type");
+            entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_date");
         });
 
         modelBuilder.Entity<MstTypeClassification>(entity =>
@@ -2780,12 +2866,12 @@ public partial class BksArditaDevContext : DbContext
                 .ToView("VW_ARCHIVE_RETENTION");
 
             entity.Property(e => e.ArchiveCode)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.ArchiveNumber)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_number");
             entity.Property(e => e.ArchiveType)
@@ -2830,12 +2916,12 @@ public partial class BksArditaDevContext : DbContext
                 .ToView("VW_ARCHIVE_RETENTION_IN_ACTIVE");
 
             entity.Property(e => e.ArchiveCode)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_code");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
             entity.Property(e => e.ArchiveNumber)
-                .HasMaxLength(50)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("archive_number");
             entity.Property(e => e.ArchiveType)
