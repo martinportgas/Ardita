@@ -11,7 +11,12 @@ public class GeneralSettingsRepository : IGeneralSettingsRepository
 
     public async Task<MstGeneralSetting> GetExistingSettings()
     {
-        var data = await _context.MstGeneralSettings.Where(x => x.IsActive == true).AsNoTracking().OrderBy(x => x.GeneralSettingsId).LastOrDefaultAsync();
+        var data = await _context.MstGeneralSettings
+            .Include(x => x.IdxGeneralSettingsFormatFiles)
+            .Where(x => x.IsActive == true)
+            .AsNoTracking()
+            .OrderBy(x => x.GeneralSettingsId)
+            .LastOrDefaultAsync();
 
         return data ?? new MstGeneralSetting();
     }
@@ -54,8 +59,66 @@ public class GeneralSettingsRepository : IGeneralSettingsRepository
         return result;
     }
 
-    public Task<int> Update(MstGeneralSetting model, List<IdxGeneralSettingsFormatFile> details)
+    public async Task<int> Update(MstGeneralSetting model, List<IdxGeneralSettingsFormatFile> details)
     {
-        throw new NotImplementedException();
+        int result = 0;
+        List<IdxGeneralSettingsFormatFile> oldDetails = new();
+        List<IdxGeneralSettingsFormatFile> newDetails = new();
+
+
+        if (model != null && model.GeneralSettingsId != Guid.Empty) 
+        {
+            //update header process
+            var data = await _context.MstGeneralSettings.AsNoTracking().FirstOrDefaultAsync(x => x.GeneralSettingsId == model.GeneralSettingsId);
+
+            if (model.SiteLogoContent is null) 
+            {
+                model.SiteLogoContent = data!.SiteLogoContent;
+                model.SiteLogoFileName = data.SiteLogoFileName;
+                model.SiteLogoFileType = data.SiteLogoFileType;
+            }
+
+            if (model.FavIconContent is null)
+            {
+                model.FavIconContent = data!.FavIconContent;
+                model.FavIconFileName = data.FavIconFileName;
+                model.FavIconFileType = data.FavIconFileType;
+
+            }
+
+            if (model.CompanyLogoContent is null)
+            {
+                model.CompanyLogoContent = data!.CompanyLogoContent;
+                model.CompanyLogoFileName = data.CompanyLogoFileName;
+                model.CompanyLogoFileType = data.CompanyLogoFileType;
+            }
+
+            model.CreatedBy = data!.CreatedBy;
+            model.CreatedDate = data.CreatedDate;
+            model.IsActive = data.IsActive;
+
+            _context.Update(model);
+            result = await _context.SaveChangesAsync();
+
+            //update detail process
+            oldDetails = await _context.IdxGeneralSettingsFormatFiles.AsNoTracking().Where(x => x.GeneralSettingsId == model.GeneralSettingsId).ToListAsync();
+
+            if (oldDetails.Any())
+            {
+                _context.RemoveRange(oldDetails);
+                result += await _context.SaveChangesAsync();
+            }
+
+            foreach (var item in details)
+            {
+                item.GeneralSettingsId = model.GeneralSettingsId;
+                newDetails.Add(item);
+            }
+
+            _context.AddRange(newDetails);
+            result += await _context.SaveChangesAsync();
+        }
+
+        return result;
     }
 }

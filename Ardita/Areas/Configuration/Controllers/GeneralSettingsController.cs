@@ -24,11 +24,19 @@ public class GeneralSettingsController : BaseController<MstGeneralSetting>
     public override async Task<IActionResult> Add()
     {
         bool isExists = await GeneralSettingsService.IsExist();
+        ViewBag.IsExists = false;
 
         if (isExists)
         {
             var data = await GeneralSettingsService.GetExistingSettings();
-            ViewBag.SiteLogo = Convert.FromBase64String(data.SiteLogoContent);
+            ViewBag.SiteLogoContent = Convert.FromBase64String(data.SiteLogoContent);
+            ViewBag.SiteLogoFileName = data.SiteLogoFileName;
+            ViewBag.CompanyLogoContent = Convert.FromBase64String(data.CompanyLogoContent);
+            ViewBag.CompanyLogoFileName = data.CompanyLogoFileName;
+            ViewBag.FavIconContent = Convert.FromBase64String(data.FavIconContent);
+            ViewBag.FavIconFileName = data.FavIconFileName;
+            ViewBag.IsExists = true;
+
             return View(GlobalConst.Form, data);
 
         }
@@ -50,7 +58,8 @@ public class GeneralSettingsController : BaseController<MstGeneralSetting>
             {
                 model.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                 model.UpdatedDate = DateTime.Now;
-                //await GeneralSettingsService.Update(model, listDetail!);
+                await GeneralSettingsService.Update(model, listDetail!, SiteLogoContent, CompanyLogoContent, FavIconContent);
+
             }
 
             else
@@ -60,11 +69,7 @@ public class GeneralSettingsController : BaseController<MstGeneralSetting>
                 await GeneralSettingsService.Insert(model, listDetail!, SiteLogoContent, CompanyLogoContent, FavIconContent);
             }
         }
-        return RedirectToIndex();
+        return RedirectToAction(GlobalConst.Add, GlobalConst.GeneralSettings, new { Area = GlobalConst.Configuration });
     }
-
-
-    #region HELPER
-    private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.Gmd, new { Area = GlobalConst.MasterData });
-    #endregion
+   
 }

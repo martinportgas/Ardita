@@ -17,14 +17,42 @@ public class GeneralSettingsService : IGeneralSettingsService
 
     public async Task<int> Insert(MstGeneralSetting model, string[] listDetail, IFormFile SiteLogo, IFormFile CompanyLogo, IFormFile FavIcon)
     {
-        MstGeneralSetting data = new();
         List<IdxGeneralSettingsFormatFile> details = await SetDetail(listDetail);
 
-        data = await SetSiteLogo(model, SiteLogo);
-        data = await SetCompanyLogo(model, CompanyLogo);
-        data = await SetFavIconLogo(model, FavIcon);
+        if (SiteLogo is not null)
+        {
+            SetSiteLogo(model, SiteLogo);
+        }
+        if (CompanyLogo is not null)
+        {
+            SetCompanyLogo(model, CompanyLogo);
+        }
+        if (FavIcon is not null)
+        {
+            SetFavIconLogo(model, FavIcon);
+        }
 
-        return await _repository.Insert(data, details);
+        return await _repository.Insert(model, details);
+    }
+
+    public async Task<int> Update(MstGeneralSetting model, string[] listDetail, IFormFile SiteLogo, IFormFile CompanyLogo, IFormFile FavIcon)
+    {
+        List<IdxGeneralSettingsFormatFile> details = await SetDetail(listDetail);
+
+        if (SiteLogo is not null)
+        {
+            SetSiteLogo(model, SiteLogo);
+        }
+        if (CompanyLogo is not null)
+        {
+            SetCompanyLogo(model, CompanyLogo);
+        }
+        if (FavIcon is not null)
+        {
+            SetFavIconLogo(model, FavIcon);
+        }
+
+        return await _repository.Update(model, details);
     }
 
     public Task<bool> IsExist()=> _repository.IsExist();
@@ -54,10 +82,9 @@ public class GeneralSettingsService : IGeneralSettingsService
         return details;
     }
 
-    private static async Task<MstGeneralSetting> SetSiteLogo(MstGeneralSetting model, IFormFile SiteLogo)
+    private static void SetSiteLogo(MstGeneralSetting model, IFormFile SiteLogo)
     {
         FileModel file = new();
-        await Task.Delay(0);
 
         using (var memoryStream = new MemoryStream())
         {
@@ -71,14 +98,11 @@ public class GeneralSettingsService : IGeneralSettingsService
         model.SiteLogoContent = Convert.ToBase64String(file.Content!);
         model.SiteLogoFileName = file.FileName!;
         model.SiteLogoFileType = file.FileType!;
-
-        return model;
     }
 
-    private static async Task<MstGeneralSetting> SetCompanyLogo(MstGeneralSetting model, IFormFile CompanyLogo)
+    private static void SetCompanyLogo(MstGeneralSetting model, IFormFile CompanyLogo)
     {
         FileModel file = new();
-        await Task.Delay(0);
 
         using (var memoryStream = new MemoryStream())
         {
@@ -92,14 +116,11 @@ public class GeneralSettingsService : IGeneralSettingsService
         model.CompanyLogoContent = Convert.ToBase64String(file.Content!);
         model.CompanyLogoFileName = file.FileName!;
         model.CompanyLogoFileType = file.FileType!;
-
-        return model;
     }
 
-    private static async Task<MstGeneralSetting> SetFavIconLogo(MstGeneralSetting model, IFormFile FavIcon)
+    private static void SetFavIconLogo(MstGeneralSetting model, IFormFile FavIcon)
     {
         FileModel file = new();
-        await Task.Delay(0);
 
         using (var memoryStream = new MemoryStream())
         {
@@ -113,8 +134,6 @@ public class GeneralSettingsService : IGeneralSettingsService
         model.FavIconContent = Convert.ToBase64String(file.Content!);
         model.FavIconFileName = file.FileName!;
         model.FavIconFileType = file.FileType!;
-
-        return model;
     }
     #endregion
 }

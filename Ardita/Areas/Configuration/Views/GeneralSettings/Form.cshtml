@@ -6,12 +6,8 @@
     Layout = GlobalConst.ViewStart;
     FormModel form = Html.Form();
 
-    bool isViewOnly = false;
+    bool isExists = ViewBag.IsExists;
 
-    if (form.CurrentAction == GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
-    {
-        isViewOnly = true;
-    }
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -51,17 +47,25 @@
                                     <div class="col-sm-6 b-r">
                                         <div class="">
                                             <div class="form-group">
-                                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.SiteLogo)" alt="Image" />
                                                 <label>Logo Website</label>
+                                                @if(isExists)
+                                                {
+                                                    <img class="img-thumbnail" src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.SiteLogoContent)" alt="Image" />
+                                                }
                                                 <div class="input-group">
                                                     <div class="custom-file">
                                                         <input id="site-logo" type="file" class="custom-file-input" asp-for="SiteLogoContent">
                                                         <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                                        <input type="hidden" placeholder="" id="txtGeneralSettingsId" class="form-control" asp-for="@Model.GeneralSettingsId">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label>Logo Perusahaan</label>
+                                                @if (isExists)
+                                                {
+                                                    <img class="img-thumbnail" src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.CompanyLogoContent)" alt="Image" />
+                                                }
                                                 <div class="input-group">
                                                     <div class="custom-file">
                                                         <input id="company-logo" type="file" class="custom-file-input" asp-for="CompanyLogoContent">
@@ -71,6 +75,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Favicon (32x32)</label>
+                                                @if (isExists)
+                                                {
+                                                    <img class="img-thumbnail" src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.FavIconContent)" alt="Image" />
+                                                }
                                                 <div class="input-group">
                                                     <div class="custom-file">
                                                         <input id="favicon" type="file" class="custom-file-input" asp-for="FavIconContent">
@@ -183,17 +191,13 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        @if (!isViewOnly)
-                                        {
-                                            <div class="form-group">
-                                                <label>Format File Upload</label>
-                                                <input type="text" placeholder="" id="txtFormatFile" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>
-                                            </div>
-
-                                        }
+                                        <div class="form-group">
+                                            <label>Format File Upload</label>
+                                            <input type="text" placeholder="" id="txtFormatFile" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Add Detail</button>
+                                        </div>
                                         <table class="table table-striped table-hover dataTables-example mt-5" style="width:100%">
                                             <thead>
                                                 <tr>
@@ -235,9 +239,13 @@
             $("#btn-add-detail").click(function () {
                 initDetail($("#txtFormatFile").val());
             });
-
-            if ("@isViewOnly" === "True") {
-                $(".fa-trash").hide();
+            
+            if ("@isExists" === "True") 
+            {
+                @foreach (var d in Model.IdxGeneralSettingsFormatFiles)
+                {
+                    @:initDetail("@d.FormatFileName");
+                }
             }
         });
 
