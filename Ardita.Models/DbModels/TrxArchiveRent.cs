@@ -15,6 +15,8 @@ public partial class TrxArchiveRent
 
     public int? Sort { get; set; }
 
+    public Guid? ArchiveUnitId { get; set; }
+
     public DateTime? RequestedDate { get; set; }
 
     public DateTime? ApprovalDate { get; set; }
@@ -46,6 +48,8 @@ public partial class TrxArchiveRent
     public Guid? UpdatedBy { get; set; }
 
     public virtual MstUser? ApprovedByNavigation { get; set; }
+
+    public virtual TrxArchiveUnit? ArchiveUnit { get; set; }
 
     public virtual MstStatus? Status { get; set; }
 

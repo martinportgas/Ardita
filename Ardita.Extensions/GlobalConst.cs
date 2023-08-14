@@ -206,6 +206,13 @@ public static class GlobalConst
     public const string ArsipPemusnahan = "Pemusnahan Arsip";
     public const string ArsipPemindahan = "Pemindahan Arsip";
     public const string TemplatePemusnahanAktif = "Pemusnahan Arsip Aktif";
+    public const string TemplatePemusnahanInAktif = "Pemusnahan Arsip Inaktif";
+    public const string TemplatePemindahanArsip = "Pemindahan Arsip";
+    public const string TemplateMediaPenyimpananArsipAktif = "Media Penyimpanan Arsip Aktif";
+    public const string TemplateMediaPenyimpananArsipInAktif = "Media Penyimpanan Arsip Inaktif";
+    public const string TemplatePeminjamanArsip = "Peminjaman Arsip";
+    public const string TemplatePengembalianArsip = "Pengembalian Arsip";
+    public const string TemplatePenerimaanArsip = "Penerimaan Arsip";
 
     //Prefix
     public const string Trx = "Trx";

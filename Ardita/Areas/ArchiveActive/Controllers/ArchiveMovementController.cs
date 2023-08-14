@@ -314,6 +314,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
                     {
                         model.StatusId = (int)GlobalConst.STATUS.Approved;
                         model.StatusReceived = (int)GlobalConst.STATUS.ArchiveNotReceived;
+                        model.DateSchedule = DateTime.Now;
+                        model.DateSend = DateTime.Now;
                     }
                     else
                         model.ApproveLevel += 1;
@@ -331,20 +333,30 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            TrxArchiveMovement data = await _archiveMovementService.GetById(Id);
+            //TrxArchiveMovement data = await _archiveMovementService.GetById(Id);
 
-            var user = await _userService.GetById(data.CreatedBy);
-            var employee = await _employeeService.GetById(user.EmployeeId);
+            //var user = await _userService.GetById(data.CreatedBy);
+            //var employee = await _employeeService.GetById(user.EmployeeId);
 
-            var userReceived = await _userService.GetById((Guid)data.ReceivedBy);
-            var employeeReceived = await _employeeService.GetById(userReceived.EmployeeId);
+            //var userReceived = await _userService.GetById((Guid)data.ReceivedBy);
+            //var employeeReceived = await _employeeService.GetById(userReceived.EmployeeId);
 
-            var detail = await _archiveMovementService.GetDetailByMainId(Id);
+            //var detail = await _archiveMovementService.GetDetailByMainId(Id);
 
-            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemindahan_Arsip.docx");
-            var file = Label.GenerateBAMovement(FilePath, data, detail, employee, employeeReceived);
+            //string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemindahan_Arsip.docx");
+            //var file = Label.GenerateBAMovement(FilePath, data, detail, employee, employeeReceived);
 
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+            //return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+
+            var settings = await _templateSettingService.GetAll();
+            var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplatePemindahanArsip).FirstOrDefault();
+
+            var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+            var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePemindahanArsip.Replace(" ", "")}.pdf");
         }
         #endregion
         #region HELPER

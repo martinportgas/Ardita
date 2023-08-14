@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Ardita.Models.DbModels;
 
@@ -157,15 +158,33 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<VwArchiveRetentionInActive> VwArchiveRetentionInActives { get; set; }
 
+    public virtual DbSet<VwBaArchiveRent> VwBaArchiveRents { get; set; }
+
     public virtual DbSet<VwBaDestroyActive> VwBaDestroyActives { get; set; }
 
     public virtual DbSet<VwBaDestroyInactive> VwBaDestroyInactives { get; set; }
 
+    public virtual DbSet<VwBaMovement> VwBaMovements { get; set; }
+
     public virtual DbSet<VwDetailArchiveDestroy> VwDetailArchiveDestroys { get; set; }
 
+    public virtual DbSet<VwDetailArchiveMovement> VwDetailArchiveMovements { get; set; }
+
+    public virtual DbSet<VwDetailArchiveRent> VwDetailArchiveRents { get; set; }
+
+    public virtual DbSet<VwLabelMediaStorageActive> VwLabelMediaStorageActives { get; set; }
+
+    public virtual DbSet<VwLabelMediaStorageInactive> VwLabelMediaStorageInactives { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
+        //optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1926,6 +1945,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("approval_return_date");
             entity.Property(e => e.ApprovedBy).HasColumnName("approved_by");
             entity.Property(e => e.ArchiveId).HasColumnName("archive_id");
+            entity.Property(e => e.ArchiveUnitId).HasColumnName("archive_unit_id");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -1962,6 +1982,10 @@ public partial class BksArditaDevContext : DbContext
             entity.HasOne(d => d.ApprovedByNavigation).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.ApprovedBy)
                 .HasConstraintName("FK_TRX_ARCHIVE_RENT_MST_USER");
+
+            entity.HasOne(d => d.ArchiveUnit).WithMany(p => p.TrxArchiveRents)
+                .HasForeignKey(d => d.ArchiveUnitId)
+                .HasConstraintName("FK_TRX_ARCHIVE_RENT_TRX_ARCHIVE_UNIT");
 
             entity.HasOne(d => d.Status).WithMany(p => p.TrxArchiveRents)
                 .HasForeignKey(d => d.StatusId)
@@ -3006,6 +3030,90 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("title_archive");
         });
 
+        modelBuilder.Entity<VwBaArchiveRent>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_BA_ARCHIVE_RENT");
+
+            entity.Property(e => e.ApproverName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ApproverNik)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("ApproverNIK");
+            entity.Property(e => e.ApproverPosition)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ArchiveUnit)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.BorrowerCompany)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.BorrowerName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.BorrowerNik)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("BorrowerNIK");
+            entity.Property(e => e.BorrowerPosition)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.BorrowerUnit)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyAddress)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyCity)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField1)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField2)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField3)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField4)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField5)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.Dd)
+                .HasMaxLength(4000)
+                .HasColumnName("dd");
+            entity.Property(e => e.DdMmmmyyyy)
+                .HasMaxLength(4000)
+                .HasColumnName("ddMMMMyyyy");
+            entity.Property(e => e.DdString)
+                .HasMaxLength(4000)
+                .HasColumnName("ddString");
+            entity.Property(e => e.Dddd)
+                .HasMaxLength(4000)
+                .HasColumnName("dddd");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2500)
+                .IsUnicode(false);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Mmstring)
+                .HasMaxLength(4000)
+                .HasColumnName("MMString");
+            entity.Property(e => e.NoBa)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("no_ba");
+        });
+
         modelBuilder.Entity<VwBaDestroyActive>(entity =>
         {
             entity
@@ -3104,6 +3212,57 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<VwBaMovement>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_BA_MOVEMENT");
+
+            entity.Property(e => e.ApproveDate).HasMaxLength(4000);
+            entity.Property(e => e.ArchiveUnitDes)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.ArchiveUnitFrom)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField1)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField2)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField3)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField4)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField5)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.DayName).HasMaxLength(4000);
+            entity.Property(e => e.DocumentNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.MonthName).HasMaxLength(4000);
+            entity.Property(e => e.PositionName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ReceivedBy)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ReceivedPositionName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<VwDetailArchiveDestroy>(entity =>
         {
             entity
@@ -3132,6 +3291,141 @@ public partial class BksArditaDevContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("Unit_Pencipta");
+        });
+
+        modelBuilder.Entity<VwDetailArchiveMovement>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_DETAIL_ARCHIVE_MOVEMENT");
+
+            entity.Property(e => e.ArchiveId).HasColumnName("ArchiveID");
+            entity.Property(e => e.AsalArsip)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Asal_Arsip");
+            entity.Property(e => e.DetailId).HasColumnName("DetailID");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.JudulArsip)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Judul_Arsip");
+            entity.Property(e => e.NoDokumen)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("No_Dokumen");
+            entity.Property(e => e.TanggalPenciptaan)
+                .HasMaxLength(4000)
+                .HasColumnName("Tanggal_Penciptaan");
+            entity.Property(e => e.UnitPencipta)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("Unit_Pencipta");
+        });
+
+        modelBuilder.Entity<VwDetailArchiveRent>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_DETAIL_ARCHIVE_RENT");
+
+            entity.Property(e => e.ArchiveId).HasColumnName("ArchiveID");
+            entity.Property(e => e.AsalArsip)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Asal_Arsip");
+            entity.Property(e => e.DetailId).HasColumnName("DetailID");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.JudulArsip)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("Judul_Arsip");
+            entity.Property(e => e.NoDokumen)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("No_Dokumen");
+            entity.Property(e => e.TanggalPenciptaan)
+                .HasMaxLength(4000)
+                .HasColumnName("Tanggal_Penciptaan");
+            entity.Property(e => e.UnitPencipta)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("Unit_Pencipta");
+        });
+
+        modelBuilder.Entity<VwLabelMediaStorageActive>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_LABEL_MEDIA_STORAGE_ACTIVE");
+
+            entity.Property(e => e.CustomField1)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField2)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField3)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField4)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField5)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Level)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.Rack)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.Row)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.SubjectClassificationCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Year)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VwLabelMediaStorageInactive>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_LABEL_MEDIA_STORAGE_INACTIVE");
+
+            entity.Property(e => e.CreatorCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField1)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField2)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField3)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField4)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomField5)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.DocumentNumber)
+                .HasMaxLength(14)
+                .IsUnicode(false);
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.StorageCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.StorageLoc)
+                .HasMaxLength(301)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);
