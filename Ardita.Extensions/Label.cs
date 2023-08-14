@@ -1,18 +1,24 @@
 ﻿using Ardita.Models.DbModels;
 using Azure;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using NPOI.HSSF.Record;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Doc.Interface;
+using System;
 using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Security.Claims;
+using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Ardita.Extensions;
 
 public static class Label
 {
+    private static readonly BksArditaDevContext _context = new BksArditaDevContext();
     public static byte[] GenerateLabelArchive(string template, TrxMediaStorage data)
     {
         byte[] toArray;
@@ -60,6 +66,195 @@ public static class Label
         }
 
         return toArray;
+    }
+    public static byte[] GenerateFromTemplate(List<MstTemplateSettingDetail> settingDetails, DataTable data, string path)
+    {
+        byte[] toArray;
+        Document document = new();
+        document.LoadFromFile(path);
+        if (settingDetails.Count > 0)
+        {
+            foreach (var item in settingDetails)
+            {
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Text.ToString())
+                    document = ReplaceText(document, item.VariableName, item.VariableData);
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Data.ToString())
+                    document = ReplaceText(document, item.VariableName, data.Rows.Count > 0 ? data.Rows[0][item.VariableData].ToString()! : "");
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.QRText.ToString())
+                    document = ReplaceQR(document, item.VariableName, item.VariableData);
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.QRData.ToString())
+                    document = ReplaceQR(document, item.VariableName, data.Rows.Count > 0 ? data.Rows[0][item.VariableData].ToString()! : "");
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Gambar.ToString())
+                    document = ReplaceImage(document, item.VariableName, item.VariableData);
+                if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.DataTable.ToString())
+                    document = ReplaceDataTable(document, item.VariableName, item.VariableData, data.Rows.Count > 0 ? data.Rows[0]["MainID"].ToString()! : "");
+            }
+        }
+        using (MemoryStream memoryStream = new())
+        {
+            document.SaveToStream(memoryStream, FileFormat.PDF);
+            toArray = memoryStream.ToArray();
+        }
+
+        return toArray;
+    }
+    private static Document ReplaceText(Document document, string text, string replaceText)
+    {
+        document.Replace(text, replaceText, false, true);
+        return document;
+    }
+    private static Document ReplaceQR(Document document, string text, string replaceText)
+    {
+        var file = QRCodeExtension.Generate(replaceText, 3);
+        int index = 0;
+        TextRange range = null;
+
+        using (Image image = Image.FromFile(file))
+        {
+            TextSelection[] selections = document.FindAllString(text, true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+
+            }
+        }
+
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+        return document;
+    }
+    private static Document ReplaceImage(Document document, string text, string base64string)
+    {
+        int index = 0;
+        TextRange range = null;
+        byte[] bytes = Convert.FromBase64String(base64string);
+
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            Image image = Image.FromStream(ms);
+
+            TextSelection[] selections = document.FindAllString(text, true, true);
+            index = 0;
+            range = null;
+
+            foreach (TextSelection selection in selections)
+            {
+                DocPicture pic = new DocPicture(document);
+                pic.LoadImage(image);
+
+                range = selection.GetAsOneRange();
+                index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+
+            }
+        }
+
+        return document;
+    }
+    private static Document ReplaceDataTable(Document document, string text, string viewName, string Id)
+    {
+        DataTable data = new();
+        using (SqlConnection connection = new SqlConnection(_context.Database.GetConnectionString()))
+        {
+            using (SqlCommand cmd = new SqlCommand($"Select * from {viewName} where ID='{Id}'", connection))
+            {
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(data);
+            }
+        }
+
+        if (data.Rows.Count > 0)
+        {
+            data = data.ToCleanDataTable();
+
+            int index = 0;
+            TextRange range = null;
+            Section section = document.Sections[0];
+            TextSelection selection2 = document.FindString(text, true, true);
+            range = selection2.GetAsOneRange();
+            Paragraph paragraph = range.OwnerParagraph;
+            Body body = paragraph.OwnerTextBody;
+            index = body.ChildObjects.IndexOf(paragraph);
+
+            string[] Header = data.Columns.Cast<DataColumn>()
+                                 .Select(x => x.ColumnName.Replace("_", " "))
+                                 .ToArray();
+
+            Table table = section.AddTable(true);
+            table.ResetCells(data.Rows.Count + 1, Header.Length);
+
+            TableRow FRow = table.Rows[0];
+            FRow.IsHeader = true;
+
+            FRow.Height = 23;
+            FRow.RowFormat.BackColor = Color.LightGray;
+            for (int i = 0; i < Header.Length; i++)
+            {
+                Paragraph p = FRow.Cells[i].AddParagraph();
+                FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+
+                TextRange TR = p.AppendText(Header[i]);
+                TR.CharacterFormat.FontName = "Calibri";
+                TR.CharacterFormat.FontSize = 10;
+                TR.CharacterFormat.Bold = true;
+            }
+
+            for (int r = 0; r < data.Rows.Count; r++)
+            {
+                TableRow DataRow = table.Rows[r + 1];
+                DataRow.Height = 20;
+                for (int c = 0; c < data.Columns.Count + 1; c++)
+                {
+                    if (c == 0)
+                    {
+                        SetRowData(c, DataRow, (r + 1).ToString());
+                    }
+                    else
+                    {
+                        SetRowData(c, DataRow, data.Rows[r][c].ToString()!);
+                    }
+                }
+            }
+
+            table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+
+            body.ChildObjects.Remove(paragraph);
+            body.ChildObjects.Insert(index, table);
+
+        }
+        return document;
+    }
+    private static DataTable ToCleanDataTable(this DataTable data)
+    {
+        var listRemove = new List<DataColumn>();
+        foreach (DataColumn c in data.Columns)
+        {
+            if (c.ColumnName.Contains("ID"))
+            {
+                listRemove.Add(c);
+            }
+        }
+        if (listRemove.Count > 0)
+        {
+            foreach (DataColumn dc in listRemove)
+            {
+                data.Columns.Remove(dc);
+            }
+        }
+        return data;
     }
     public static byte[] GenerateBADestroy(string template, TrxArchiveDestroy data, IEnumerable<TrxArchiveDestroyDetail> detail, dynamic additionalData)
     {
@@ -138,7 +333,7 @@ public static class Label
         }
 
         int x = 1;
-        foreach(TrxArchiveDestroyDetail item in detail)
+        foreach (TrxArchiveDestroyDetail item in detail)
         {
             TableRow DataRow = table.Rows[x];
             DataRow.Height = 20;
@@ -333,9 +528,9 @@ public static class Label
 
         string QR1 = data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerIdentityNumber + " - " + data.TrxRentHistories.FirstOrDefault().Borrower.BorrowerName;
         string QR2 = data.ApprovedByNavigation.Employee.Nik + " - " + data.ApprovedByNavigation.Employee.Name;
-        if(QR1.Length > QR2.Length)
+        if (QR1.Length > QR2.Length)
         {
-            for(int i = 0; i < QR1.Length - QR2.Length; i++)
+            for (int i = 0; i < QR1.Length - QR2.Length; i++)
             {
                 QR2 += " ";
             }

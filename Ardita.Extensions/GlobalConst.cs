@@ -25,6 +25,15 @@ public static class GlobalConst
         UsulMusnah = 11,
         Musnah = 12
     }
+    public enum VariableType
+    {
+        Text,
+        Data,
+        QRText,
+        QRData,
+        Gambar,
+        DataTable
+    }
     public enum ROLE
     {
         ADM = 1,
@@ -104,6 +113,7 @@ public static class GlobalConst
     public const string LogLogin = "LogLogin";
     public const string LogChanges = "LogChanges";
     public const string LogActivity = "LogActivity";
+    public const string NewsEventTemplate = "NewsEventTemplate";
 
     public const string GeneralSettings = "GeneralSettings";
     public const string ArchiveRetention = "ArchiveRetention";
@@ -194,6 +204,7 @@ public static class GlobalConst
     public const string Eksternal = "Eksternal";
     public const string ArsipPemusnahan = "Pemusnahan Arsip";
     public const string ArsipPemindahan = "Pemindahan Arsip";
+    public const string TemplatePemusnahanAktif = "Pemusnahan Arsip Aktif";
 
     //Prefix
     public const string Trx = "Trx";
@@ -255,6 +266,7 @@ public static class GlobalConst
     public const string BindParamRowByLevelId = "BindParamRowByLevelId";
     public const string BindParamCreatorByArchiveUnitId = "BindParamCreatorByArchiveUnitId";
     public const string BindParamClassificationSubjectIdByClassificationId = "BindParamClassificationSubjectIdByClassificationId";
+    public const string BindColumnByTableName = "BindColumnByTableName";
 
     //Report
     public const string RptArchiveActive = "RptArchiveActive";

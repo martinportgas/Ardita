@@ -103,10 +103,10 @@
                                         <div class="form-group">
                                             <label>Tipe Pengirim</label>
                                             <br />
-                                            <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender">
-                                            <label>Internal</label>
-                                            <input type="radio" placeholder="" id="txtExternal" value="Eksternal" asp-for="TypeSender">
-                                            <label>Eksternal</label>
+                                            <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="TypeSender" onchange="$('#txtArchiveOwnerId').val('').trigger('change')" checked>
+                                            <label for="txtInternal">Internal</label>
+                                            <input type="radio" placeholder="" id="txtExternal" value="Eksternal" asp-for="TypeSender" onchange="$('#txtArchiveOwnerId').val('').trigger('change')">
+                                            <label for="txtExternal">Eksternal</label>
                                         </div>
                                         <div class="form-group">
                                             <label>Sub Subjek Klasifikasi</label>
@@ -144,7 +144,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>Unit Pencipta</label>
+                                            <label>Unit Pengolah</label>
                                             <input asp-for="Creator.CreatorName" type="text" placeholder="" id="txtCreatorName" class="form-control" disabled>
                                             <input type="hidden" placeholder="" id="txtCreatorId" class="form-control" asp-for="CreatorId">
                                             <input type="hidden" asp-for="StatusId" id="txtStatusId" />
@@ -152,7 +152,7 @@
                                         <div class="form-group">
                                             <label>Asal Arsip</label>
                                             <select asp-for="ArchiveOwnerId" asp-items="ViewBag.listArchiveOwner"
-                                                    id="txtSArchiveOwnerId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
+                                                    id="txtArchiveOwnerId" class="select2_demo_1 form-control @(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)"
                                                     data-placeholder="-- Pilih Asal Arsip --">
                                                 <option value=""></option>
                                             </select>
@@ -469,6 +469,27 @@
         }
 
         function initDropdown() {
+            $('#txtArchiveOwnerId').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                placeholder: '-- Pilih Asal Arsip --',
+                ajax: {
+                    url: '@Url.Action("BindArchiveOwnerByType", GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive })',
+                    type: "POST",
+                    data: function (params) {
+                        var query = {
+                            type: $('input[name="TypeSender"]:checked').val(),
+                            param: params.term
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
             $('#txtGmdId').on('change', function () {
                 $('#txtGmdDetailId').val('').trigger('change');
             });

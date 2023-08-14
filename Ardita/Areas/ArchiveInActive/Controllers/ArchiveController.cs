@@ -101,6 +101,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             }
         }
         [HttpPost]
+        [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
         public override async Task<IActionResult> Save(TrxArchive model)
         {
@@ -168,6 +169,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         public override async Task<IActionResult> Submit(TrxArchive model)
         {
             var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
+            var submitType = Request.Form["submitType"].ToString();
             if (listArchive.Length > 0)
             {
                 for (int i = 0; i < listArchive.Length; i++)
@@ -177,7 +179,10 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                     var data = await _archiveService.GetById(archiveId);
                     if (data != null)
                     {
-                        data.StatusId = (int)GlobalConst.STATUS.Submit;
+                        if (submitType.ToLower() == "submit")
+                            data.StatusId = (int)GlobalConst.STATUS.Submit;
+                        if (submitType.ToLower() == "delete")
+                            data.IsActive = false;
                         data.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                         data.UpdatedDate = DateTime.Now;
 
@@ -335,6 +340,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 trxArchive.CreatedDate = DateTime.Now;
                                 trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
                                 trxArchive.ArchiveDescription = row[14].ToString()!;
+                                trxArchive.Description = row[15].ToString()!;
                                 trxArchive.IsUsed = false;
 
                                 var Code = $"{trxArchive.CreatedDateArchive.Year.ToString()}.{Creators.FirstOrDefault(x => x.CreatorId == trxArchive.CreatorId)!.CreatorCode}";

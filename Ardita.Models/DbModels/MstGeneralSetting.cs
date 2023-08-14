@@ -7,11 +7,23 @@ public partial class MstGeneralSetting
 {
     public Guid GeneralSettingsId { get; set; }
 
-    public string SiteLogo { get; set; } = null!;
+    public string SiteLogoContent { get; set; } = null!;
 
-    public string CompanyLogo { get; set; } = null!;
+    public string SiteLogoFileType { get; set; } = null!;
 
-    public string FavIcon { get; set; } = null!;
+    public string SiteLogoFileName { get; set; } = null!;
+
+    public string CompanyLogoContent { get; set; } = null!;
+
+    public string CompanyLogoFileType { get; set; } = null!;
+
+    public string CompanyLogoFileName { get; set; } = null!;
+
+    public string FavIconContent { get; set; } = null!;
+
+    public string FavIconFileName { get; set; } = null!;
+
+    public string FavIconFileType { get; set; } = null!;
 
     public string AplicationTitle { get; set; } = null!;
 

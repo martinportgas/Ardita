@@ -58,6 +58,12 @@ namespace Ardita.Areas.General.Controllers
             _mediaStorageService = mediaStorageService;
             _mediaStorageInActiveService = mediaStorageInActiveService;
         }
+        public async Task<IActionResult> SearchAll(string keyword)
+        {
+            var dataArchive = await _archiveService.GetAll();
+            ViewBag.Data = dataArchive.Where(x => x.TitleArchive.ToLower().Contains(keyword.ToLower())).ToList();
+            return View("Search");
+        }
         public async Task<IActionResult> SearchActive(string keyword)
         {
             var dataArchive = await _archiveService.GetAll();
@@ -280,34 +286,40 @@ namespace Ardita.Areas.General.Controllers
         [HttpGet]
         public async Task<JsonResult> BindTotalRoomUseDetail()
         {
-            var dataRoom = await _roomService.GetAll();
+            var dataRow = await _rowService.GetAll();
             var dataStorage = await _mediaStorageService.GetAll();
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
-            var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah)
+            var result = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah)
                 .Select(x => new {
-                    name = x.RoomName,
-                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.RoomId == x.RoomId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count(),
+                    name = x.RowName,
+                    level = x.Level.LevelName,
+                    rack = x.Level.Rack.RackName,
+                    room = x.Level.Rack.Room.RoomName,
+                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.RowId == x.RowId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count(),
                 }).OrderByDescending(x => x.totalUse).ToList();
-            return Json(result);
+            return Json(result.Where(x => x.totalUse > 0).ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalRoomUseDetailInActive()
         {
-            var dataRoom = await _roomService.GetAll();
+            var dataRow = await _rowService.GetAll();
             var dataStorage = await _mediaStorageInActiveService.GetAll();
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-                dataStorage = dataStorage.Where(x => x.SubSubjectClassification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
-            var result = dataRoom.Where(x => x.ArchiveRoomType == GlobalConst.UnitKearsipan)
+                dataStorage = dataStorage.Where(x => x.SubSubjectClassification.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            var result = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan)
                 .Select(x => new {
-                    name = x.RoomName,
-                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.Rack.RoomId == x.RoomId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count(),
+                    name = x.RowName,
+                    level = x.Level.LevelName,
+                    rack = x.Level.Rack.RackName,
+                    room = x.Level.Rack.Room.RoomName,
+                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.RowId == x.RowId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count(),
                 }).OrderByDescending(x => x.totalUse).ToList();
-            return Json(result);
+            return Json(result.Where(x => x.totalUse > 0).ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalArchiveType()

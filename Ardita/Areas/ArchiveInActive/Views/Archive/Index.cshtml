@@ -83,6 +83,18 @@
                                     <select id="txtSubjectClassificationId" class="form-control" asp-items="ViewBag.ListSubjectClassification" data-placeholder="-- Semua --"><option value=""></option></select>
                                 </div>
                             </div>
+                            <div class="form-group row rowreport">
+                                <label class="col-lg-3 col-form-label">Periode Register Arsip</label>
+                                <div class="col-lg-4">
+                                    <input type="date" id="txtStartDate" class="form-control" />
+                                </div>
+                                <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                    <strong>s/d</strong>
+                                </div>
+                                <div class="col-lg-4">
+                                    <input type="date" id="txtEndDate" class="form-control" />
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group row rowreport">
@@ -137,33 +149,33 @@
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
     @*<div class="row">
-    <div class="col-lg-12">
-    <div class="ibox ">
-    <div class="ibox-title">
-    <h4>Pencarian</h4>
-    </div>
-    <div class="ibox-content">
-    <div class="col-sm-8">
-    <div class="form-group row">
-    <label class="col-lg-3 col-form-label">Periode Arsip</label>
-    <div class="col-lg-4">
-    <input type="date" id="txtStartDate" class="form-control" />
-    </div>
-    <div class="col-lg-1" style="text-align: center;padding: 6px;">
-    <strong>s/d</strong>
-    </div>
-    <div class="col-lg-4">
-    <input type="date" id="txtEndDate" class="form-control" />
-    </div>
-    </div>
-    <div class="form-group">
-    <button class="btn btn-sm btn-success float-right m-t-n-xs" id="btnSearch"><i class="fa fa-filter"></i> Cari</button>
-    </div>
-    </div>
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h4>Pencarian</h4>
+                </div>
+                <div class="ibox-content">
+                    <div class="col-sm-8">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label">Periode Arsip</label>
+                            <div class="col-lg-4">
+                                <input type="date" id="txtStartDate" class="form-control" />
+                            </div>
+                            <div class="col-lg-1" style="text-align: center;padding: 6px;">
+                                <strong>s/d</strong>
+                            </div>
+                            <div class="col-lg-4">
+                                <input type="date" id="txtEndDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-success float-right m-t-n-xs" id="btnSearch"><i class="fa fa-filter"></i> Cari</button>
+                        </div>
+                    </div>
 
-    </div>
-    </div>
-    </div>
+                </div>
+            </div>
+        </div>
     </div>*@
     <div class="row">
         <div class="col-lg-12">
@@ -175,7 +187,9 @@
                             <a href="@Url.Action(GlobalConst.Add, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i><span class="bold"> New</span></a>
                             <a href="@Url.Action(GlobalConst.Export, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-info" style="color:white !important"><i class="fa fa-download"></i><span class="bold"> Export</span></a>
                             <a href="@Url.Action(GlobalConst.UploadForm, GlobalConst.Archive, new { Area = GlobalConst.ArchiveInActive })" class="btn btn-sm btn-success" style="color:white !important"><i class="fa fa-upload"></i><span class="bold"> Upload</span></a>
-                            <a onclick="submitAll()" class="btn btn-sm btn-warning" style="color:white !important"><i class="fa fa-paper-plane"></i><span class="bold"> Submit Selected</span></a>
+                            <a onclick="submitAll('submit')" class="btn btn-sm btn-warning" style="color:white !important"><i class="fa fa-paper-plane"></i><span class="bold"> Submit Selected</span></a>
+                            <a onclick="submitAll('delete')" class="btn btn-sm btn-danger" style="color:white !important"><i class="fa fa-trash"></i><span class="bold"> Delete Selected</span></a>
+                            <input type="hidden" id="hfSubmitType" name="submitType" />
                             @*<a href="@Url.Action(GlobalConst.Submit, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })" class="btn btn-sm btn-default" style="color:black !important"><i class="fa fa-filter"></i><span class="bold"> Advance Filter</span></a>*@
                         </div>
                     </div>
@@ -188,6 +202,8 @@
                                     <th>Nomor Arsip</th>
                                     <th>Nomor Dokumen</th>
                                     <th>Judul Arsip</th>
+                                    <th>Tanggal Penciptaan</th>
+                                    <th>Deskripsi Arsip</th>
                                     <th>Bentuk Media Arsip</th>
                                     <th>Klasifikasi Keamanan</th>
                                     <th>Unit Pencipta</th>
@@ -210,7 +226,7 @@
 @section Scripts {
     <script type="text/javascript">
 
-        function submitAll() {
+        function submitAll(par) {
             swal({
                 title: "Anda yakin ingin submit?",
                 text: "Mohon periksa kembali sebelum submit!",
@@ -224,6 +240,7 @@
             },
                 function (isConfirm) {
                     if (isConfirm) {
+                        $('#hfSubmitType').val(par);
                         $("#formSubmit").submit();
                     } else {
                         swal("Dibatalkan", "Anda telah membatalkan submit!", "error");
@@ -329,6 +346,8 @@
                     { "data": "archiveCode", "name": "archiveCode", "autoWidth": true },
                     { "data": "documentNo", "name": "documentNo", "autoWidth": true },
                     { "data": "titleArchive", "name": "titleArchive", "autoWidth": true },
+                    { "data": "createdDateArchive", "name": "createdDateArchive", "autoWidth": true },
+                    { "data": "archiveDescription", "name": "archiveDescription", "autoWidth": true },
                     { "data": "gmdName", "name": "gmd.gmdName", "autoWidth": true },
                     { "data": "securityClassificationName", "name": "securityClassification.securityClassificationName", "autoWidth": true },
                     { "data": "creatorName", "name": "creator.creatorName", "autoWidth": true },
@@ -366,8 +385,8 @@
                 var search = `${defaultSearch}${and}${no}${and}${title}${and}${creator}${and}${year}${and}${classification}${and}${subclassification}${and}${archiveUnit}${and}${floor}${and}${room}${and}${rack}${and}${level}${and}${row}`;
 
                 table
-                    //.column(0).search($('#txtStartDate').val())
-                    //.column(1).search($('#txtEndDate').val())
+                    .column(0).search($('#txtStartDate').val())
+                    .column(1).search($('#txtEndDate').val())
                     .column(2).search(search)
                     .draw();
             });

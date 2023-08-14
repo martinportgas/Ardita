@@ -169,6 +169,7 @@ namespace Ardita.Areas.MasterData.Controllers
 
                                 mstArchiveOwner.ArchiveOwnerCode = row[1].ToString();
                                 mstArchiveOwner.ArchiveOwnerName = row[2].ToString();
+                                mstArchiveOwner.ArchiveOwnerType = row[3].ToString();
 
                                 mstArchiveOwner.IsActive = true;
                                 mstArchiveOwner.CreatedBy = AppUsers.CurrentUser(User).UserId;
@@ -222,6 +223,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerCode));
                 row.CreateCell(2).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerName));
+                row.CreateCell(3).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerType));
 
                 int no = 1;
                 foreach (var item in archiveOwners)
@@ -230,6 +232,7 @@ namespace Ardita.Areas.MasterData.Controllers
                     row.CreateCell(0).SetCellValue(no);
                     row.CreateCell(1).SetCellValue(item.ArchiveOwnerCode);
                     row.CreateCell(2).SetCellValue(item.ArchiveOwnerName);
+                    row.CreateCell(3).SetCellValue(item.ArchiveOwnerType);
                     no += 1;
                 }
 
@@ -262,6 +265,7 @@ namespace Ardita.Areas.MasterData.Controllers
                 row.CreateCell(0).SetCellValue(GlobalConst.No);
                 row.CreateCell(1).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerCode));
                 row.CreateCell(2).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerName));
+                row.CreateCell(3).SetCellValue(nameof(MstArchiveOwner.ArchiveOwnerType));
 
                 using (var exportData = new MemoryStream())
                 {

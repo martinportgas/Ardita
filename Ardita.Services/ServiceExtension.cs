@@ -56,6 +56,7 @@ public static class ServiceExtension
         services.AddScoped<ILogLoginService, LogLoginService>();
         services.AddScoped<ILogChangesService, LogChangesService>();
         services.AddScoped<ILogActivityService, LogActivityService>();
+        services.AddScoped<ITemplateSettingService, TemplateSettingService>();
 
 
         return services;

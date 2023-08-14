@@ -6,7 +6,9 @@ using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Spire.Doc;
 using System.Data;
+using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -16,6 +18,38 @@ namespace Ardita.Extensions
 {
     public static class Global
     {
+        public static byte[] WordToPdf(string path)
+        {
+            byte[] toArray;
+            Document document = new();
+            document.LoadFromFile(path);
+            using (MemoryStream memoryStream = new())
+            {
+                document.SaveToStream(memoryStream, FileFormat.PDF);
+                toArray = memoryStream.ToArray();
+            }
+            return toArray;
+        }
+        public static byte[] ConvertToPdf(byte[] data)
+        {
+            byte[] toArray;
+            Document document = new();
+            using (MemoryStream dataStream = new())
+            {
+                dataStream.Write(data, 0, data.Length);
+                dataStream.Seek(0, SeekOrigin.Begin);
+
+                document.LoadFromStream(dataStream, FileFormat.Docx2013);
+
+                using (MemoryStream memoryStream = new())
+                {
+                    document.SaveToStream(memoryStream, FileFormat.PDF);
+                    toArray = memoryStream.ToArray();
+                }
+            }
+           
+            return toArray;
+        }
         public static string Terbilang(long a)
         {
             string[] bilangan = new string[] { "", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas" };

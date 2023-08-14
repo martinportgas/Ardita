@@ -116,8 +116,8 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -128,6 +128,7 @@ public class ArchiveRepository : IArchiveRepository
                     x.Keyword,
                     x.TitleArchive,
                     CreatedDateArchive = x.CreatedDateArchive.ToString(),
+                    x.ArchiveDescription,
                     x.ActiveRetention,
                     x.InactiveRetention,
                     x.Volume,
@@ -163,8 +164,8 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
@@ -175,6 +176,7 @@ public class ArchiveRepository : IArchiveRepository
                     x.Keyword,
                     x.TitleArchive,
                     CreatedDateArchive = x.CreatedDateArchive.ToString(),
+                    x.ArchiveDescription,
                     x.ActiveRetention,
                     x.InactiveRetention,
                     x.Volume,
