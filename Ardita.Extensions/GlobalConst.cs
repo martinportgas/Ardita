@@ -114,6 +114,7 @@ public static class GlobalConst
     public const string LogChanges = "LogChanges";
     public const string LogActivity = "LogActivity";
     public const string NewsEventTemplate = "NewsEventTemplate";
+    public const string LabelTemplate = "LabelTemplate";
 
     public const string GeneralSettings = "GeneralSettings";
     public const string ArchiveRetention = "ArchiveRetention";

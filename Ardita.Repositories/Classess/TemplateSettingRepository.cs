@@ -89,7 +89,7 @@ namespace Ardita.Repositories.Classess
         {
             var result = await _context.MstTemplateSettings
                 .Where(x => x.TemplateName.ToLower().Contains(model.searchValue.ToLower()))
-                .Where(x => (bool)model.IsArchiveActive! ? x.TemplateType == "Berita Acara" : true)
+                .Where(x => (bool)model.IsArchiveActive! ? x.TemplateType == "Berita Acara" : x.TemplateType == "Label")
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
                 .Skip(model.skip).Take(model.pageSize)
                 .Select(x => new {
