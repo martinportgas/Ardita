@@ -6,6 +6,8 @@ using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NPOI.SS.Formula.Functions;
+using NPOI.SS.UserModel;
+using System.Data;
 using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess;
@@ -99,6 +101,8 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
+        var dataExport = await GetExportByFilterModel(model);
+
         int statusReturn = (int)GlobalConst.STATUS.Return;
         var User = AppUsers.CurrentUser(model.SessionUser);
         var result = (bool)model.IsArchiveActive! ? await _context.TrxArchives
@@ -147,7 +151,8 @@ public class ArchiveRepository : IArchiveRepository
                     x.ArchiveOwner.ArchiveOwnerName,
                     MediaStorage = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName,
                     LabelCode = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName,
-                    StatusUse = x.IsUsed == true ? GlobalConst.Used : GlobalConst.Available
+                    StatusUse = x.IsUsed == true ? GlobalConst.Used : GlobalConst.Available,
+                    Export = dataExport
                 })
                 .ToListAsync()
                 : await _context.TrxArchives
@@ -195,13 +200,119 @@ public class ArchiveRepository : IArchiveRepository
                     x.ArchiveOwner.ArchiveOwnerName,
                     MediaStorage = x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.TypeStorage.TypeStorageName,
                     LabelCode = x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName + "-" + x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName + "-" + x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
-                    StatusUse = x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? GlobalConst.Rent : GlobalConst.Available
+                    StatusUse = x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? GlobalConst.Rent : GlobalConst.Available,
+                    Export = dataExport
                 })
                 .ToListAsync();
 
         return result;
     }
+    public async Task<string> GetExportByFilterModel(DataTableModel model)
+    {
+        try
+        {
+            string templateName = nameof(TrxArchive).ToCleanNameOf();
+            string fileName = nameof(TrxArchive).ToCleanNameOf();
+            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
+            var User = AppUsers.CurrentUser(model.SessionUser);
+            var archives = (bool)model.IsArchiveActive! ? await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.GmdDetail)
+                .Include(x => x.SecurityClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
+                .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
+                .Include(x => x.ArchiveOwner)
+                .Include(x => x.ArchiveType)
+                .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
+                .Where(x => x.IsActive == true && x.IsArchiveActive == true)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+                .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
+                .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
+                .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(model.advanceSearch!.Search)
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                .Select(x => new
+                {
+                    x.ArchiveId,
+                    x.ArchiveCode,
+                    x.Gmd.GmdName,
+                    x.SubSubjectClassification.SubSubjectClassificationName,
+                    x.SecurityClassification.SecurityClassificationName,
+                    x.TypeSender,
+                    x.ArchiveOwner.ArchiveOwnerName,
+                    x.Keyword,
+                    x.DocumentNo,
+                    x.TitleArchive,
+                    x.ArchiveType.ArchiveTypeName,
+                    x.CreatedDateArchive,
+                    x.ActiveRetention,
+                    x.InactiveRetention,
+                    x.Volume,
+                    x.ArchiveDescription,
+                    x.Description
+                })
+                .ToListAsync()
+                : await _context.TrxArchives
+                .Include(x => x.Gmd)
+                .Include(x => x.GmdDetail)
+                .Include(x => x.SecurityClassification)
+                .Include(x => x.SubSubjectClassification).ThenInclude(x => x.TrxPermissionClassifications)
+                .Include(x => x.Creator).ThenInclude(x => x.ArchiveUnit)
+                .Include(x => x.ArchiveOwner)
+                .Include(x => x.ArchiveType)
+                .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack)
+                .Where(x => x.IsActive == true && x.IsArchiveActive == false)
+                .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
+                .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
+                .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(model.advanceSearch!.Search)
+                .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
+                .Select(x => new
+                {
+                    x.ArchiveId,
+                    x.ArchiveCode,
+                    x.Gmd.GmdName,
+                    x.SubSubjectClassification.SubSubjectClassificationName,
+                    x.SecurityClassification.SecurityClassificationName,
+                    x.TypeSender,
+                    x.ArchiveOwner.ArchiveOwnerName,
+                    x.Keyword,
+                    x.DocumentNo,
+                    x.TitleArchive,
+                    x.ArchiveType.ArchiveTypeName,
+                    x.CreatedDateArchive,
+                    x.ActiveRetention,
+                    x.InactiveRetention,
+                    x.Volume,
+                    x.ArchiveDescription,
+                    x.Description
+                })
+                .ToListAsync();
+
+            List<DataTable> listData = new List<DataTable>() {
+                archives.ToList().ToDataTable()
+            };
+
+            IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
+
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                byte[] bytes = exportData.ToArray();
+                //var file = File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
+                return String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(bytes));
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+    }
     public async Task<TrxArchive> GetById(Guid id)
     {
         var result = await _context.TrxArchives.AsNoTracking()
@@ -267,8 +378,8 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .CountAsync()
                 : await _context.TrxArchives
@@ -285,8 +396,8 @@ public class ArchiveRepository : IArchiveRepository
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
-                //.Where(x => x.CreatedDateArchive.Date >= model.advanceSearch!.StartDate.Date)
-                //.Where(x => x.CreatedDateArchive.Date <= model.advanceSearch!.EndDate.Date)
+                .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
+                .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .CountAsync();
 

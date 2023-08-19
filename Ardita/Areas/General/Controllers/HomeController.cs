@@ -14,6 +14,7 @@ namespace Ardita.Areas.General.Controllers
     public class HomeController : Controller
     {
         private IArchiveUnitService _archiveUnitService;
+        private IRackService _rackService;
         private IRoomService _roomService;
         private IArchiveService _archiveService;
         private IFileArchiveDetailService _fileArchiveDetailService;
@@ -41,7 +42,8 @@ namespace Ardita.Areas.General.Controllers
             IArchiveRetentionService archiveRetentionService,
             IArchiveRentService archiveRentService,
             IMediaStorageService mediaStorageService,
-            IMediaStorageInActiveService mediaStorageInActiveService)
+            IMediaStorageInActiveService mediaStorageInActiveService,
+            IRackService rackService)
         {
             _archiveUnitService = archiveUnitService;
             _roomService = roomService;
@@ -57,6 +59,7 @@ namespace Ardita.Areas.General.Controllers
             _archiveRentService = archiveRentService;
             _mediaStorageService = mediaStorageService;
             _mediaStorageInActiveService = mediaStorageInActiveService;
+            _rackService = rackService;
         }
         public async Task<IActionResult> SearchAll(string keyword)
         {
@@ -286,38 +289,34 @@ namespace Ardita.Areas.General.Controllers
         [HttpGet]
         public async Task<JsonResult> BindTotalRoomUseDetail()
         {
-            var dataRow = await _rowService.GetAll();
+            var dataRack = await _rackService.GetAll();
             var dataStorage = await _mediaStorageService.GetAll();
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
-            var result = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah)
+            var result = dataRack.Where(x => x.Room.ArchiveRoomType == GlobalConst.UnitPengolah)
                 .Select(x => new {
-                    name = x.RowName,
-                    level = x.Level.LevelName,
-                    rack = x.Level.Rack.RackName,
-                    room = x.Level.Rack.Room.RoomName,
-                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.RowId == x.RowId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count(),
+                    name = x.RackName,
+                    room = x.Room.RoomName,
+                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.RackId == x.RackId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count(),
                 }).OrderByDescending(x => x.totalUse).ToList();
             return Json(result.Where(x => x.totalUse > 0).ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalRoomUseDetailInActive()
         {
-            var dataRow = await _rowService.GetAll();
-            var dataStorage = await _mediaStorageInActiveService.GetAll();
+            var dataRack = await _rackService.GetAll();
+            var dataStorage = await _mediaStorageService.GetAll();
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
                 dataStorage = dataStorage.Where(x => x.TypeStorage.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-                dataStorage = dataStorage.Where(x => x.SubSubjectClassification.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
-            var result = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan)
+                dataStorage = dataStorage.Where(x => x.SubjectClassification.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            var result = dataRack.Where(x => x.Room.ArchiveRoomType == GlobalConst.UnitKearsipan)
                 .Select(x => new {
-                    name = x.RowName,
-                    level = x.Level.LevelName,
-                    rack = x.Level.Rack.RackName,
-                    room = x.Level.Rack.Room.RoomName,
-                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.RowId == x.RowId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count(),
+                    name = x.RackName,
+                    room = x.Room.RoomName,
+                    totalUse = dataStorage.Where(y => y.StatusId == statusSubmit && y.Row.Level.RackId == x.RackId && y.Row.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count(),
                 }).OrderByDescending(x => x.totalUse).ToList();
             return Json(result.Where(x => x.totalUse > 0).ToList());
         }

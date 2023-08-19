@@ -249,10 +249,8 @@
                                 <thead>
                                     <tr>
                                         <td>No.</td>
-                                        <td>Baris</td>
-                                        <td>Tingkat</td>
-                                        <td>Rak</td>
                                         <td>Ruangan</td>
+                                        <td>Rak</td>
                                         <td>Jumlah Media Arsip</td>
                                     </tr>
                                 </thead>
@@ -403,7 +401,7 @@
             ajaxcallreturn(url, 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
                 var no = 0;
                 $.each(result, function (key, value) {
-                    $('#totalRoom').append(`<tr><td>${++no}</td><td>${value.name}</td><td>${value.level}</td><td>${value.rack}</td><td>${value.room}</td><td><span class="badge badge-primary" style="width:30%;">${value.totalUse}</span></td></tr>`)
+                    $('#totalRoom').append(`<tr><td>${++no}</td><td>${value.room}</td><td>${value.name}</td><td><span class="badge badge-primary" style="width:30%;">${value.totalUse}</span></td></tr>`)
                 });
             });
         }

@@ -1484,7 +1484,7 @@ public partial class BksArditaDevContext : DbContext
                 .HasColumnName("status_id");
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.TitleArchive)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("title_archive");
             entity.Property(e => e.TypeSender)
