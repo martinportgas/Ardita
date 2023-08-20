@@ -172,7 +172,10 @@
                                     <a href="@ViewBag.Data" class="btn btn-sm btn-info float-left m-t-n-xs" id="btnSearch" download="reportArsipAktif.pdf"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
                                 </div>
                                 <div class="form-group" style="margin-top: 30px">
-                                    <embed src="@ViewBag.Data#view=FitH" style="width:100%;min-height:500px" />
+                                    @*<embed src="@ViewBag.Data#view=FitH" style="width:100%;min-height:500px" />*@
+                                    <div id="cover" style="border: 1px solid black;direction: ltr;width: 100%;max-height: 500px;overflow: scroll;">
+                                        <div id="pdf_container" style="width:100%;min-height:500px;text-align: center; padding: 5px; overflow: auto;"></div>
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -183,7 +186,66 @@
     </div>
 </div>
 @section Scripts {
+    <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script type="text/javascript">
+        var pdfDoc = null;
+        var scale = 2; //Set Scale for zooming PDF.
+        var dataBase64 = '@Html.Raw(ViewBag.Data)';
+        if(dataBase64 != ''){
+
+            function RenderPage(pdf_container, num) {
+            pdfDoc.getPage(num).then(function (page) {
+                //Create Canvas element and append to the Container DIV.
+                var canvas = document.createElement('canvas');
+                canvas.style.width = "100%";
+                canvas.id = 'pdf-' + num;
+                var ctx = canvas.getContext('2d');
+                pdf_container.appendChild(canvas);
+ 
+                //Create and add empty DIV to add SPACE between pages.
+                var spacer = document.createElement("div");
+                spacer.style.height = "2px";
+                pdf_container.appendChild(spacer);
+ 
+                //Set the Canvas dimensions using ViewPort and Scale.
+                var viewport = page.getViewport({ scale: scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+ 
+                //Render the PDF page.
+                var renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport,
+                    //transform: [resolution, 0, 0, resolution, 0, 0]
+                };
+ 
+               page.render(renderContext);
+            });
+        };
+
+            var pdfData = atob(dataBase64.split(',')[1]);
+
+            // Loaded via <script> tag, create shortcut to access PDF.js exports.
+            var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+            // The workerSrc property shall be specified.
+            pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+            // Using DocumentInitParameters object to load binary data.
+            var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+            loadingTask.promise.then(function (pdf) {
+
+                pdfDoc = pdf;
+                var pdf_container = document.getElementById("pdf_container");
+                for (var i = 1; i <= pdfDoc.numPages; i++) {
+                    RenderPage(pdf_container, i);
+                }
+            }, function (reason) {
+                // PDF loading error
+                console.error(reason);
+            });
+        }
+
         $(function(){
             initDropdown();
         });

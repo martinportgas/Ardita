@@ -7,6 +7,7 @@ using Ardita.Repositories.Classess;
 using Ardita.Repositories;
 using System.Configuration;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Server.IIS;
 
 var builder = WebApplication.CreateBuilder(args);
 //From Repositories
@@ -40,6 +41,11 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<BksArditaDevContext>(opts => opts.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 2147483648; // Set the desired maximum size in bytes
+});
 
 
 var app = builder.Build();

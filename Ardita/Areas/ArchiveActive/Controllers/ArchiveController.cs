@@ -101,9 +101,9 @@ public class ArchiveController : BaseController<TrxArchive>
             return RedirectToIndex();
         }
     }
-    [RequestSizeLimit(2000000000)]
     [DisableRequestSizeLimit]
     [HttpPost]
+    [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)]
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Save(TrxArchive model)
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Ardita.Models.DbModels;
 
@@ -74,6 +75,8 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<MstSubmenu> MstSubmenus { get; set; }
 
     public virtual DbSet<MstTemplateSetting> MstTemplateSettings { get; set; }
+
+    public virtual DbSet<MstTemplateSettingDetail> MstTemplateSettingDetails { get; set; }
 
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
 
@@ -174,8 +177,14 @@ public partial class BksArditaDevContext : DbContext
     public virtual DbSet<VwLabelMediaStorageInactive> VwLabelMediaStorageInactives { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
+        //optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1224,6 +1233,38 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+        });
+
+        modelBuilder.Entity<MstTemplateSettingDetail>(entity =>
+        {
+            entity.HasKey(e => e.TemplateSettingDetailId);
+
+            entity.ToTable("MST_TEMPLATE_SETTING_DETAIL");
+
+            entity.Property(e => e.TemplateSettingDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("template_setting_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.TemplateSettingId).HasColumnName("template_setting_id");
+            entity.Property(e => e.VariableData)
+                .IsUnicode(false)
+                .HasColumnName("variable_data");
+            entity.Property(e => e.VariableName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("variable_name");
+            entity.Property(e => e.VariableType)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("variable_type");
+
+            entity.HasOne(d => d.TemplateSetting).WithMany(p => p.MstTemplateSettingDetails)
+                .HasForeignKey(d => d.TemplateSettingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_TEMPLATE_SETTING_DETAIL_MST_TEMPLATE_SETTING");
         });
 
         modelBuilder.Entity<MstTypeClassification>(entity =>
