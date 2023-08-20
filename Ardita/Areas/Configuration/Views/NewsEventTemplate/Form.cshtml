@@ -1,0 +1,371 @@
+﻿@using Ardita.Extensions;
+@using Ardita.Models.ViewModels;
+@model Ardita.Models.DbModels.MstTemplateSetting;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = GlobalConst.ViewStart;
+    FormModel form = Html.Form();
+
+    bool isViewOnly = false;
+
+    if (form.CurrentAction == GlobalConst.Detail || form.CurrentAction == GlobalConst.Remove)
+    {
+        isViewOnly = true;
+    }
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Pengaturan Umum</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.Home, new {Area = GlobalConst.General})"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">
+                Konfigurasi
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action(GlobalConst.Index, GlobalConst.GeneralSettings, new {Area = GlobalConst.Configuration})">Konfigurasi</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@form.LastBreadcrumb</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Archive Creator</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form id="formInput" role="form" enctype="multipart/form-data" asp-controller="@form.CurrentController" asp-area="@form.CurrentArea" asp-action="@form.FormAction">
+                                <div class="row">
+                                    <div class="col-sm-6 b-r">
+                                        <div class="form-group">
+                                            <label>Jenis Template</label>
+                                            <input type="text" class="form-control" asp-for="TemplateType" readonly>
+                                            <input type="hidden" class="form-control" asp-for="TemplateSettingId">
+                                            <input type="hidden" class="form-control" asp-for="CreatedBy">
+                                            <input type="hidden" class="form-control" asp-for="CreatedDate">
+                                            <input type="hidden" class="form-control" asp-for="UpdatedBy">
+                                            <input type="hidden" class="form-control" asp-for="UpdatedDate">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Sumber Data</label>
+                                            <select id="txtSource" class="form-control @Html.Raw(form.isInput ? GlobalConst.Required : GlobalConst.Disabled)" asp-items="ViewBag.ListViews" data-placeholder="-- Pilih Sumber Data --" asp-for="SourceData"><option value=""></option></select>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Nama Template</label>
+                                            <input type="text" class="form-control" asp-for="TemplateName" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row border-top pt-3">
+                                    <div class="col-sm-6 b-r">
+                                        @if (form.isInput)
+                                        {
+                                            <div class="form-group">
+                                                <label>Nama Variabel</label>
+                                                <input type="text" class="form-control" id="txtVariable" placeholder="Input Nama Variabel">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Jenis Variabel</label>
+                                                <select id="txtType" class="select2_demo_1 form-control"
+                                                        data-placeholder="-- Pilih Jenis Variabel --">
+                                                    <option value=""></option>
+                                                    <option value="Text">Text</option>
+                                                    <option value="Data">Data</option>
+                                                    <option value="QR Text">QR Text</option>
+                                                    <option value="QR Data">QR Data</option>
+                                                    <option value="Gambar">Gambar</option>
+                                                    <option value="Data Table">Data Table</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Data Variabel</label>
+                                                <select id="txtTable" class="form-control" asp-items="ViewBag.ListViews" data-placeholder="-- Pilih Sumber Data --"><option value=""></option></select>
+                                                <select id="txtData" class="select2_demo_1 form-control" style="display:none"
+                                                        data-placeholder="-- Pilih Kolom --">
+                                                    <option value=""></option>
+                                                </select>
+                                                <input type="text" class="form-control" id="txtText" style="display:none" placeholder="Input Data Variabel">
+                                                <div class="input-group" id="divImage" style="display:none">
+                                                    <div class="custom-file">
+                                                        <input type="file" class="form-control" id="txtImage" accept="image/*">
+                                                        <label class="custom-file-label" for="txtImage">Choose file</label>
+                                                        <img id="blah" src="#" alt="your image" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button" class="btn float-right m-t-n-xs btn-primary" id="btn-add-detail"><i class="fa fa-plus"></i> Tambah</button>
+                                            </div>
+                                        }
+                                        <table class="table table-striped table-hover dataTables-example mt-5" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10%">Action</th>
+                                                    <th>Nama Variabel</th>
+                                                    <th>Jenis Variabel</th>
+                                                    <th>Data Variabel</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="detail">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        @if (form.isInput)
+                                        {
+                                            <div class="form-group">
+                                                <label>Upload Template</label>
+                                                <div class="input-group">
+                                                    <div class="custom-file">
+                                                        <input type="file" id="fUpload" name="files" class="custom-file-input" asp-for="Path" accept=".docx" />
+                                                        <label class="custom-file-label" for="fUpload">Choose file</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="form-group">
+                                            <label>Preview</label>
+                                            <embed id="mbdPrev" src="@(ViewBag.Data == null ? "" : ViewBag.Data + "#view=FitH")" style="width:100%;min-height:500px" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action(GlobalConst.Index, GlobalConst.NewsEventTemplate, new {Area = GlobalConst.Configuration})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>
+                                    @if (form.isInput)
+                                    {
+                                        <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="submit" id="btn-submit">@Html.Raw(form.SaveText)</button>
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var isInput = @form.isInput.ToString().ToLower()
+        var dataPreview = '@ViewBag.Data';
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        $(function () {
+            bsCustomFileInput.init();
+            allVariableDataHide();
+
+            $("#btn-add-detail").click(function () {
+                var type = $("#txtType").val();
+                var variable = $("#txtVariable").val();
+
+                if ($('#txtSource').val() == '' || $('#txtSource').val() == null) {
+                    swal("Perhatian", "Sumber Data Tidak Boleh Kosong!", "warning");
+                    return false;
+                }
+
+                if (variable == '' || variable == null) {
+                    swal("Perhatian", "Nama Variabel Tidak Boleh Kosong!", "warning");
+                    return false;
+                }
+
+                if (type == '' || type == null) {
+                    swal("Perhatian", "Jenis Variabel Tidak Boleh Kosong!", "warning");
+                    return false;
+                }
+
+                var data = '';
+                if (type == 'Text') {
+                    if ($('#txtText').val() == '' || $('#txtText').val() == null) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    data = $('#txtText').val();
+                }
+                if (type == 'Data') {
+                    if ($('#txtData').val() == '' || $('#txtData').val() == null) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    data = $('#txtData').val();
+                }
+                if (type == 'QR Text') {
+                    if ($('#txtText').val() == '' || $('#txtText').val() == null) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    data = $('#txtText').val();
+                }
+                if (type == 'QR Data') {
+                    if ($('#txtData').val() == '' || $('#txtData').val() == null) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    data = $('#txtData').val();
+                }
+                if (type == 'Data Table') {
+                    if ($('#txtTable').val() == '' || $('#txtTable').val() == null) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    data = $('#txtTable').val();
+                }
+                if (type == 'Gambar') {
+                    var file = $('#txtImage')[0].files[0];
+                    if (file == undefined) {
+                        swal("Perhatian", "Data Variabel Tidak Boleh Kosong!", "warning");
+                        return false;
+                    }
+                    getBase64(file).then(
+                        function (value) {
+                            data = value.replace('data:image/png;base64,', '');
+                            initDetail($("#txtVariable").val(), type, data);
+                    });
+                }
+                if (type != 'Gambar'){
+                    initDetail($("#txtVariable").val(), type, data);
+                }
+            });
+
+            if ("@isViewOnly" === "True") {
+                $(".fa-trash").hide();
+            }
+
+            $('#fUpload').on('change', function () {
+                var file = $(this)[0].files[0];
+                if (file == undefined) {
+                    $('#mbdPrev').attr('src', '');
+                }else{
+                    getBase64(file).then(
+                        function (value) {
+                            var url = '@Url.Action("BindPreview", GlobalConst.NewsEventTemplate, new { Area = GlobalConst.Configuration })';
+                            var param = new Object();
+                            param.data = value;
+
+                            ajaxcallreturn(url, 'POST', param, '', 'application/json; charset=UTF-8').then(function (result) {
+                                $('#mbdPrev').attr('src', result.data + '#view=FitH');
+                            });
+                        });
+                }
+            });
+
+            $("#txtType").on('change', function () {
+                clearVariableData();
+                allVariableDataHide();
+
+                if($(this).val() == 'Text'){
+                    textShow();
+                }
+                if ($(this).val() == 'Data') {
+                    dataShow();
+                }
+                if ($(this).val() == 'QR Text') {
+                    textShow();
+                }
+                if ($(this).val() == 'QR Data') {
+                    dataShow();
+                }
+                if ($(this).val() == 'Gambar') {
+                    imageShow();
+                }
+                if ($(this).val() == 'Data Table') {
+                    dataTableShow();
+                }
+            });
+
+            initGlobalDropdown($('#txtData'), '@Url.Action(GlobalConst.BindColumnByTableName, GlobalConst.NewsEventTemplate, new { Area = GlobalConst.Configuration })', $('#txtSource'));
+
+            @foreach (var d in Model.MstTemplateSettingDetails)
+            {
+                @:initDetail("@d.VariableName", "@d.VariableType", "@d.VariableData");
+            }
+        });
+
+        function clearVariableData(){
+            $('#txtData').val('').trigger('change');
+            $('#txtText').val('');
+            $('#divImage').val('');
+            $('#txtTable').val('').trigger('change');
+        }
+        function textShow() {
+            $('#txtData').next(".select2-container").hide();
+            $('#txtText').show();
+            $('#divImage').hide();
+            $('#txtTable').next(".select2-container").hide();
+        }
+        function dataShow() {
+            $('#txtData').next(".select2-container").show();
+            $('#txtText').hide();
+            $('#divImage').hide();
+            $('#txtTable').next(".select2-container").hide();
+        }
+        function imageShow() {
+            $('#txtData').next(".select2-container").hide();
+            $('#txtText').hide();
+            $('#divImage').show();
+            $('#txtTable').next(".select2-container").hide();
+        }
+        function dataTableShow() {
+            $('#txtData').next(".select2-container").hide();
+            $('#txtText').hide();
+            $('#divImage').hide();
+            $('#txtTable').next(".select2-container").show();
+        }
+        function allVariableDataHide() {
+            $('#txtData').next(".select2-container").hide();
+            $('#txtText').hide();
+            $('#divImage').hide();
+            $('#txtTable').next(".select2-container").hide();
+        }
+
+        function deleteRow(param) {
+            $(param).closest('tr').remove();
+            return false;
+        }
+
+        function initDetail(parVariable, parType, varData) {
+            var valid = true;
+            $('.variable').each(function(){
+                if ($(this).val() === parVariable) {
+                    swal("Perhatian", "Duplikat Nama Variabel!", "warning");
+                    valid = false;
+                }
+            });
+
+            if(valid){
+                var del = isInput ? '<i class="fa fa-trash" onclick="deleteRow($(this))"></i>' : '';
+                $(".detail").append(`
+                <tr>
+                    <td>${del}</td>
+                    <td><input class="form-control variable" type="text" name="variableName[]" value="${parVariable}" readonly></td>
+                    <td><input class="form-control" type="text" name="variableType[]" value="${parType}" readonly></td>
+                    <td><input class="form-control" type="text" name="variableData[]" value="${varData}" readonly></td>
+                </tr>`);
+            }
+        }
+       
+    </script>
+}

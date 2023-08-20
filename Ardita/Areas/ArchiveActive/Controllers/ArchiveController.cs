@@ -101,6 +101,8 @@ public class ArchiveController : BaseController<TrxArchive>
             return RedirectToIndex();
         }
     }
+    [RequestSizeLimit(2000000000)]
+    [DisableRequestSizeLimit]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public override async Task<IActionResult> Save(TrxArchive model)
@@ -167,6 +169,7 @@ public class ArchiveController : BaseController<TrxArchive>
     public override async Task<IActionResult> Submit(TrxArchive model)
     {
         var listArchive = Request.Form[GlobalConst.listArchive].ToArray();
+        var submitType = Request.Form["submitType"].ToString();
         if (listArchive.Length > 0)
         {
             for (int i = 0; i < listArchive.Length; i++)
@@ -176,7 +179,10 @@ public class ArchiveController : BaseController<TrxArchive>
                 var data = await _archiveService.GetById(archiveId);
                 if (data != null)
                 {
-                    data.StatusId = (int)GlobalConst.STATUS.Submit;
+                    if (submitType.ToLower() == "submit")
+                        data.StatusId = (int)GlobalConst.STATUS.Submit;
+                    if (submitType.ToLower() == "delete")
+                        data.IsActive = false;
                     data.UpdatedBy = AppUsers.CurrentUser(User).UserId;
                     data.UpdatedDate = DateTime.Now;
 
@@ -225,7 +231,7 @@ public class ArchiveController : BaseController<TrxArchive>
                     TrxArchive trxArchive;
                     bool valid = true;
                     int errorCount = 0;
-                    result.Columns.Add("Keterangan");
+                    result.Columns.Add("Error");
                     foreach (DataRow row in result.Rows)
                     {
                         string error = string.Empty;
@@ -340,6 +346,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             trxArchive.CreatedDate = DateTime.Now;
                             trxArchive.StatusId = (int)GlobalConst.STATUS.Draft;
                             trxArchive.ArchiveDescription = row[14].ToString()!;
+                            trxArchive.Description = row[15].ToString()!;
                             trxArchive.IsUsed = false;
 
                             var Code = $"{trxArchive.CreatedDateArchive.Year.ToString()}.{Creators.FirstOrDefault(x => x.CreatorId == trxArchive.CreatorId)!.CreatorCode}";
@@ -365,7 +372,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             errorCount++;
                             valid = true;
                         }
-                        row["Keterangan"] = error;
+                        row["Error"] = error;
                     }
                     ViewBag.result = JsonConvert.SerializeObject(result);
                     ViewBag.errorCount = errorCount;
@@ -396,7 +403,12 @@ public class ArchiveController : BaseController<TrxArchive>
             string fileName = nameof(TrxArchive).ToCleanNameOf();
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
-            var archives = await _archiveService.GetAll(AppUsers.CurrentUser(User).ListArchiveUnitCode);
+            var archives = await _archiveService.GetAll();
+            archives = archives.Where(x => x.IsArchiveActive == true && x.IsActive == true).ToList();
+            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                archives = archives.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+                archives = archives.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
             List<DataTable> listData = new List<DataTable>() {
                 archives.Select(x => new
@@ -416,7 +428,8 @@ public class ArchiveController : BaseController<TrxArchive>
                     x.ActiveRetention,
                     x.InactiveRetention,
                     x.Volume,
-                    x.ArchiveDescription
+                    x.ArchiveDescription,
+                    x.Description
                 }
                 ).ToList().ToDataTable()
             };
@@ -442,13 +455,9 @@ public class ArchiveController : BaseController<TrxArchive>
             var dataGMDDetail = await _gmdService.GetAllDetail();
             var dataSubSubjectClassification = await _classificationSubSubjectService.GetAll();
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            {
                 dataSubSubjectClassification.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
-            }
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            {
                 dataSubSubjectClassification.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
-            }
             var dataSecurityClassification = await _securityClassificationService.GetAll();
             var dataArchiveOwner = await _archiveOwnerService.GetAll();
             var dataArchiveType = await _archiveTypeService.GetAll();

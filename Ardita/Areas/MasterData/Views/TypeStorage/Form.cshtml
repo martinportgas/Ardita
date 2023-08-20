@@ -162,6 +162,11 @@
             $(".detail").append(`<tr><td>${isInput ? '<i class="fa fa-trash" onclick="deleteRow(this)"></i>' : ''}</td><td>${name}<input class="gmdDetail" type="hidden" name="detail[]" value="${gmdDetailId}#${size}"></td><td>${size}</td><td>${unit}</td></tr>`);
         }
 
+        function deleteRow(param) {
+            $(param).closest('tr').remove();
+            return false;
+        }
+
         function initDropdown() {
             $('#txtGmd').on('change', function () {
                 $('#txtGmdDetail').val('').trigger('change');

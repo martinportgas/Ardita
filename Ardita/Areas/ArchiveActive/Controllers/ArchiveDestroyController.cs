@@ -35,6 +35,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IRowService rowService,
             IClassificationService classificationService,
             IClassificationSubjectService classificationSubjectService,
+            ITemplateSettingService templateSettingService,
             IHostingEnvironment hostingEnvironment)
         {
             _archiveExtendService = archiveExtendService;
@@ -57,6 +58,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _rowService = rowService;
             _classificationService = classificationService;
             _classificationSubjectService = classificationSubjectService;
+            _templateSettingService = templateSettingService;
         }
         #endregion
         #region MAIN ACTION
@@ -335,17 +337,15 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            TrxArchiveDestroy data = await _archiveDestroyService.GetById(Id);
+            var settings = await _templateSettingService.GetAll();
+            var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplatePemusnahanAktif).FirstOrDefault();
 
-            var user = await _userService.GetById(data.CreatedBy);
-            var employee = await _employeeService.GetById(user.EmployeeId);
+            var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
 
-            var detail = await _archiveDestroyService.GetDetailByMainId(Id);
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+            var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
 
-            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemusnahan_Arsip.docx");
-            var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
-
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePemusnahanAktif.Replace(" ", "")}.pdf");
         }
 
         public async Task<IActionResult> Destroy(Guid Id)

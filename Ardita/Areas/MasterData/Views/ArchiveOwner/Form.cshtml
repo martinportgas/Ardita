@@ -68,6 +68,14 @@
                                         <label>Archive Owner Name</label>
                                         <input type="text" placeholder="" id="txtOwnerName" class="form-control" asp-for="ArchiveOwnerName">
                                     </div>
+                                    <div class="form-group">
+                                        <label>Tipe Pengirim</label>
+                                        <br />
+                                        <input type="radio" placeholder="" id="txtInternal" value="Internal" asp-for="ArchiveOwnerType" checked>
+                                        <label>Internal</label>
+                                        <input type="radio" placeholder="" id="txtExternal" value="Eksternal" asp-for="ArchiveOwnerType" >
+                                        <label>Eksternal</label>
+                                    </div>
                                 </div>
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveOwner, new {Area = GlobalConst.MasterData})" class="btn btn-sm btn-default float-right m-t-n-xs" id="btn-cancel">@Html.Raw(form.BackText)</a>

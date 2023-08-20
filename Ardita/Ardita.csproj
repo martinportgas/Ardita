@@ -120,9 +120,7 @@
     <Folder Include="Areas\ArchiveActive\Models\" />
     <Folder Include="Areas\Configuration\Data\" />
     <Folder Include="Areas\Configuration\Models\" />
-    <Folder Include="Areas\Configuration\Views\LabelTemplate\" />
     <Folder Include="Areas\Configuration\Views\RentSettings\" />
-    <Folder Include="Areas\Configuration\Views\NewsEventTemplate\" />
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\General\Models\" />
     <Folder Include="Areas\MasterData\Data\" />

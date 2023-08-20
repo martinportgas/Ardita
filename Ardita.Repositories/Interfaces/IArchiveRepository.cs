@@ -9,6 +9,7 @@ public interface IArchiveRepository
     Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null);
     Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
+    Task<string> GetExportByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> GetCountByFilterData(DataTableModel model);
     Task<int> Insert(TrxArchive model, List<FileModel> files, string path = ""); 

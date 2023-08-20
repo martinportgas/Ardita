@@ -22,4 +22,6 @@ public partial class MstTemplateSetting
     public Guid? UpdatedBy { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
+
+    public virtual ICollection<MstTemplateSettingDetail> MstTemplateSettingDetails { get; } = new List<MstTemplateSettingDetail>();
 }

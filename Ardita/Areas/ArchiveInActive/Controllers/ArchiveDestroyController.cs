@@ -426,17 +426,27 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            TrxArchiveDestroy data = await _archiveDestroyService.GetById(Id);
+            //TrxArchiveDestroy data = await _archiveDestroyService.GetById(Id);
 
-            var user = await _userService.GetById(data.CreatedBy);
-            var employee = await _employeeService.GetById(user.EmployeeId);
+            //var user = await _userService.GetById(data.CreatedBy);
+            //var employee = await _employeeService.GetById(user.EmployeeId);
 
-            var detail = await _archiveDestroyService.GetDetailByMainId(Id);
+            //var detail = await _archiveDestroyService.GetDetailByMainId(Id);
 
-            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemusnahan_Arsip.docx");
-            var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
+            //string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Pemusnahan_Arsip.docx");
+            //var file = Label.GenerateBADestroy(FilePath, data, detail, employee);
 
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+            //return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.DocumentCode}.pdf");
+
+            var settings = await _templateSettingService.GetAll();
+            var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplatePemusnahanInAktif).FirstOrDefault();
+
+            var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+            var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePemusnahanInAktif.Replace(" ", "")}.pdf");
         }
         #endregion
         #region HELPER

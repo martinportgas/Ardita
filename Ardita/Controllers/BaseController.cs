@@ -71,6 +71,9 @@ public abstract class BaseController<T> : Controller
     protected ILogChangesService _logChangesService { get; set; } = null;
     protected ILogActivityService _logActivityService { get; set; } = null;
 
+    //Configuration
+    protected ITemplateSettingService _templateSettingService { get; set; } = null;
+
     #endregion
 
     #region Main Action
@@ -168,6 +171,25 @@ public abstract class BaseController<T> : Controller
     #region Binding
     //selectlist
     #region SelectListItem
+    public async Task<List<SelectListItem>> BindViews()
+    {
+        await Task.Delay(0);
+        var data = _templateSettingService.GetListView();
+        List<SelectListItem> result = new();
+        if(data.Count > 0)
+        {
+            foreach (var item in data) 
+            {
+                var row = new SelectListItem
+                {
+                    Value = item,
+                    Text = item
+                };
+                result.Add(row);
+            }
+        }
+        return result;
+    }
     public async Task<List<SelectListItem>> BindCompanies()
     {
         var data = await _companyService.GetAll();
@@ -551,6 +573,42 @@ public abstract class BaseController<T> : Controller
     #endregion
     //json
     #region Json Result
+
+    public async Task<JsonResult> BindColumnByTableName(string id, string param = "")
+    {
+        await Task.Delay(0);
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+        var data = _templateSettingService.GetListColumnByViewName(id).Where(x => x.ToLower().Contains(param.ToLower()));
+        List<object> result = new();
+        if (data.Count() > 0)
+        {
+            foreach (var item in data)
+            {
+                var row = new
+                {
+                    id = item,
+                    text = item
+                };
+                result.Add(row);
+            }
+        }
+        return Json(result);
+    }
+    public async Task<JsonResult> BindArchiveOwnerByType(string type, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _archiveOwnerService.GetAll();
+        var result = data
+                    .Where(x => x.ArchiveOwnerType.ToLower() == type.ToLower())
+                    .Where(x => x.ArchiveOwnerName.ToLower().Contains(param))
+                    .Select(x => new
+                    {
+                        id = x.ArchiveOwnerId.ToString(),
+                        text = x.ArchiveOwnerName
+                    }).OrderBy(x => x.text).ToList();
+        return Json(result);
+    }
     public async Task<JsonResult> BindGmdDetailByGmdId(string Id, string param = "")
     {
 

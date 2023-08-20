@@ -139,6 +139,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 var requestedReturnDate = Request.Form["txtMdlRequestedReturnDate"];
 
                 model.TrxArchiveRentId = Guid.NewGuid();
+                if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+                    model.ArchiveUnitId = AppUsers.CurrentUser(User).ArchiveUnitId;
                 model.Description = Description;
                 model.RequestedDate = Convert.ToDateTime(requestedDate);
                 model.RequestedReturnDate = Convert.ToDateTime(requestedReturnDate);
@@ -216,14 +218,24 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            TrxArchiveRent data = await _archiveRentService.GetById(Id);
+            //TrxArchiveRent data = await _archiveRentService.GetById(Id);
 
-            var result = await _MediaStorageInActiveService.GetDetails(data.TrxArchiveRentDetails.FirstOrDefault().ArchiveId);
+            //var result = await _MediaStorageInActiveService.GetDetails(data.TrxArchiveRentDetails.FirstOrDefault().ArchiveId);
 
-            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Peminjaman_Arsip.docx");
-            var file = Label.GenerateBARent(FilePath, data, result);
+            //string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Peminjaman_Arsip.docx");
+            //var file = Label.GenerateBARent(FilePath, data, result);
 
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.RentCode}.pdf");
+            //return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.RentCode}.pdf");
+
+            var settings = await _templateSettingService.GetAll();
+            var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplatePeminjamanArsip).FirstOrDefault();
+
+            var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+            var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePeminjamanArsip.Replace(" ", "")}.pdf");
         }
         public async Task AllViewBagIndex()
         {

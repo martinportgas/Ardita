@@ -18,7 +18,8 @@
         "12": "Retensi Arsip Aktif",
         "13": "Retensi Arsip Inaktif",
         "14": "Jumlah",
-        "15": "Deskripsi"
+        "15": "Deskripsi",
+        "16": "Keterangan"
       }
     }
   },
@@ -40,7 +41,8 @@
         "11": "Retensi Arsip Aktif",
         "12": "Retensi Arsip Inaktif",
         "13": "Jumlah",
-        "14": "Deskripsi"
+        "14": "Deskripsi",
+        "15": "Keterangan"
       }
     },
     "1": {

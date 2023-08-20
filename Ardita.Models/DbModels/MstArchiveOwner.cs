@@ -11,6 +11,8 @@ public partial class MstArchiveOwner
 
     public string ArchiveOwnerName { get; set; } = null!;
 
+    public string? ArchiveOwnerType { get; set; }
+
     public bool IsActive { get; set; }
 
     public DateTime CreatedDate { get; set; }
