@@ -2,6 +2,7 @@
 @model Ardita.Models.LoginModel;
 @{
     Layout = null;
+    bool isExists = ViewBag.IsExists;
 }
 
 <!DOCTYPE html>
@@ -33,7 +34,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <img src="~/img/Login-Background.svg" alt="Image" class="img-fluid">
+                @if (isExists)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(ViewBag.SiteLogoContent)" alt="Image" class="img-fluid" />
+                }
+                else
+                {
+                    <img src="~/img/Login-Background.svg" alt="Image" class="img-fluid">
+
+                }
             </div>
             <div class="col-md-6 contents login-content">
                 <div class="row justify-content-center">
