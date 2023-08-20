@@ -75,6 +75,8 @@ public partial class BksArditaDevContext : DbContext
 
     public virtual DbSet<MstTemplateSetting> MstTemplateSettings { get; set; }
 
+    public virtual DbSet<MstTemplateSettingDetail> MstTemplateSettingDetails { get; set; }
+
     public virtual DbSet<MstTypeClassification> MstTypeClassifications { get; set; }
 
     public virtual DbSet<MstTypeClassificationLog> MstTypeClassificationLogs { get; set; }
@@ -1224,6 +1226,38 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.UpdatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_date");
+        });
+
+        modelBuilder.Entity<MstTemplateSettingDetail>(entity =>
+        {
+            entity.HasKey(e => e.TemplateSettingDetailId);
+
+            entity.ToTable("MST_TEMPLATE_SETTING_DETAIL");
+
+            entity.Property(e => e.TemplateSettingDetailId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("template_setting_detail_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("created_date");
+            entity.Property(e => e.TemplateSettingId).HasColumnName("template_setting_id");
+            entity.Property(e => e.VariableData)
+                .IsUnicode(false)
+                .HasColumnName("variable_data");
+            entity.Property(e => e.VariableName)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("variable_name");
+            entity.Property(e => e.VariableType)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("variable_type");
+
+            entity.HasOne(d => d.TemplateSetting).WithMany(p => p.MstTemplateSettingDetails)
+                .HasForeignKey(d => d.TemplateSettingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MST_TEMPLATE_SETTING_DETAIL_MST_TEMPLATE_SETTING");
         });
 
         modelBuilder.Entity<MstTypeClassification>(entity =>

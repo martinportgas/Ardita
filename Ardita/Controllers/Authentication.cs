@@ -1,6 +1,7 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models;
 using Ardita.Models.DbModels;
+using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,14 +14,17 @@ namespace Ardita.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogLoginService _logLoginService;
+        private readonly IGeneralSettingsService _generalSettingsService;
 
         public Authentication(
             IUserService userService,
-            ILogLoginService logLoginService
+            ILogLoginService logLoginService,
+            IGeneralSettingsService generalSettingsService
             )
         {
             _userService = userService;
             _logLoginService = logLoginService;
+            _generalSettingsService = generalSettingsService;
         }
         public async Task<IActionResult> Index()
         {
@@ -34,6 +38,25 @@ namespace Ardita.Controllers
         }
         public async Task<IActionResult> Login()
         {
+            //get attribute from general settings start
+            bool isExists = await _generalSettingsService.IsExist();
+            ViewBag.IsExists = false;
+
+            if (isExists)
+            {
+                var data = await _generalSettingsService.GetExistingSettings();
+                ViewBag.SiteLogoContent = Convert.FromBase64String(data.SiteLogoContent);
+                ViewBag.SiteLogoFileName = data.SiteLogoFileName;
+                ViewBag.CompanyLogoContent = Convert.FromBase64String(data.CompanyLogoContent);
+                ViewBag.CompanyLogoFileName = data.CompanyLogoFileName;
+                ViewBag.FavIconContent = Convert.FromBase64String(data.FavIconContent);
+                ViewBag.FavIconFileName = data.FavIconFileName;
+                ViewBag.IsExists = true;
+
+            }
+            //get attribute from general settings end
+
+
             return await Task.Run<ActionResult>(() => {
                 ClaimsPrincipal claims = HttpContext.User;
 
