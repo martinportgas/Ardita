@@ -17,6 +17,8 @@ public partial class VwLabelMediaStorageActive
 
     public string Year { get; set; } = null!;
 
+    public string MediaStorageCode { get; set; } = null!;
+
     public string CustomField1 { get; set; } = null!;
 
     public string CustomField2 { get; set; } = null!;

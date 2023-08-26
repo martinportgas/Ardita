@@ -101,8 +101,6 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
-        var dataExport = await GetExportByFilterModel(model);
-
         int statusReturn = (int)GlobalConst.STATUS.Return;
         var User = AppUsers.CurrentUser(model.SessionUser);
         var result = (bool)model.IsArchiveActive! ? await _context.TrxArchives
@@ -151,8 +149,7 @@ public class ArchiveRepository : IArchiveRepository
                     x.ArchiveOwner.ArchiveOwnerName,
                     MediaStorage = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.TypeStorage.TypeStorageName,
                     LabelCode = x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.Rack.RackName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.Level.LevelName + "-" + x.TrxMediaStorageDetails.FirstOrDefault().MediaStorage.Row.RowName,
-                    StatusUse = x.IsUsed == true ? GlobalConst.Used : GlobalConst.Available,
-                    Export = dataExport
+                    StatusUse = x.IsUsed == true ? GlobalConst.Used : GlobalConst.Available
                 })
                 .ToListAsync()
                 : await _context.TrxArchives
@@ -200,21 +197,16 @@ public class ArchiveRepository : IArchiveRepository
                     x.ArchiveOwner.ArchiveOwnerName,
                     MediaStorage = x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.TypeStorage.TypeStorageName,
                     LabelCode = x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.Rack.RackName + "-" + x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.Level.LevelName + "-" + x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.Row.RowName,
-                    StatusUse = x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? GlobalConst.Rent : GlobalConst.Available,
-                    Export = dataExport
+                    StatusUse = x.TrxMediaStorageInActiveDetails.FirstOrDefault().IsRent == true ? GlobalConst.Rent : GlobalConst.Available
                 })
                 .ToListAsync();
 
         return result;
     }
-    public async Task<string> GetExportByFilterModel(DataTableModel model)
+    public async Task<IEnumerable<ArchiveExportModel>> GetExportByFilterModel(DataTableModel model)
     {
         try
         {
-            string templateName = nameof(TrxArchive).ToCleanNameOf();
-            string fileName = nameof(TrxArchive).ToCleanNameOf();
-            fileName = fileName.ToFileNameDateTimeStringNow(fileName);
-
             var User = AppUsers.CurrentUser(model.SessionUser);
             var archives = (bool)model.IsArchiveActive! ? await _context.TrxArchives
                 .Include(x => x.Gmd)
@@ -234,25 +226,25 @@ public class ArchiveRepository : IArchiveRepository
                 .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
-                .Select(x => new
+                .Select(x => new ArchiveExportModel
                 {
-                    x.ArchiveId,
-                    x.ArchiveCode,
-                    x.Gmd.GmdName,
-                    x.SubSubjectClassification.SubSubjectClassificationName,
-                    x.SecurityClassification.SecurityClassificationName,
-                    x.TypeSender,
-                    x.ArchiveOwner.ArchiveOwnerName,
-                    x.Keyword,
-                    x.DocumentNo,
-                    x.TitleArchive,
-                    x.ArchiveType.ArchiveTypeName,
-                    x.CreatedDateArchive,
-                    x.ActiveRetention,
-                    x.InactiveRetention,
-                    x.Volume,
-                    x.ArchiveDescription,
-                    x.Description
+                    ArchiveId = x.ArchiveId.ToString(),
+                    ArchiveCode = x.ArchiveCode,
+                    GmdName = x.Gmd.GmdName,
+                    SubSubjectClassificationName = x.SubSubjectClassification.SubSubjectClassificationName,
+                    SecurityClassificationName = x.SecurityClassification.SecurityClassificationName,
+                    TypeSender = x.TypeSender,
+                    ArchiveOwnerName = x.ArchiveOwner.ArchiveOwnerName,
+                    Keyword = x.Keyword,
+                    DocumentNo = x.DocumentNo,
+                    TitleArchive = x.TitleArchive,
+                    ArchiveTypeName = x.ArchiveType.ArchiveTypeName,
+                    CreatedDateArchive = x.CreatedDateArchive.ToString(),
+                    ActiveRetention = x.ActiveRetention.ToString(),
+                    InactiveRetention = x.InactiveRetention.ToString(),
+                    Volume = x.Volume.ToString(),
+                    ArchiveDescription = x.ArchiveDescription,
+                    Description = x.Description
                 })
                 .ToListAsync()
                 : await _context.TrxArchives
@@ -272,41 +264,29 @@ public class ArchiveRepository : IArchiveRepository
                 .Where(x => x.CreatedDate.Date <= model.advanceSearch!.EndDate.Date)
                 .Where(model.advanceSearch!.Search)
                 .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
-                .Select(x => new
+                .Select(x => new ArchiveExportModel
                 {
-                    x.ArchiveId,
-                    x.ArchiveCode,
-                    x.Gmd.GmdName,
-                    x.SubSubjectClassification.SubSubjectClassificationName,
-                    x.SecurityClassification.SecurityClassificationName,
-                    x.TypeSender,
-                    x.ArchiveOwner.ArchiveOwnerName,
-                    x.Keyword,
-                    x.DocumentNo,
-                    x.TitleArchive,
-                    x.ArchiveType.ArchiveTypeName,
-                    x.CreatedDateArchive,
-                    x.ActiveRetention,
-                    x.InactiveRetention,
-                    x.Volume,
-                    x.ArchiveDescription,
-                    x.Description
+                    ArchiveId = x.ArchiveId.ToString(),
+                    ArchiveCode = x.ArchiveCode,
+                    GmdName = x.Gmd.GmdName,
+                    SubSubjectClassificationName = x.SubSubjectClassification.SubSubjectClassificationName,
+                    SecurityClassificationName = x.SecurityClassification.SecurityClassificationName,
+                    TypeSender = x.TypeSender,
+                    ArchiveOwnerName = x.ArchiveOwner.ArchiveOwnerName,
+                    Keyword = x.Keyword,
+                    DocumentNo = x.DocumentNo,
+                    TitleArchive = x.TitleArchive,
+                    ArchiveTypeName = x.ArchiveType.ArchiveTypeName,
+                    CreatedDateArchive = x.CreatedDateArchive.ToString(),
+                    ActiveRetention = x.ActiveRetention.ToString(),
+                    InactiveRetention = x.InactiveRetention.ToString(),
+                    Volume = x.Volume.ToString(),
+                    ArchiveDescription = x.ArchiveDescription,
+                    Description = x.Description
                 })
                 .ToListAsync();
 
-            List<DataTable> listData = new List<DataTable>() {
-                archives.ToList().ToDataTable()
-            };
-
-            IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());
-
-            using (var exportData = new MemoryStream())
-            {
-                workbook.Write(exportData);
-                byte[] bytes = exportData.ToArray();
-                //var file = File(bytes, GlobalConst.EXCEL_FORMAT_TYPE, $"{fileName}.xlsx");
-                return String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(bytes));
-            }
+            return archives;
         }
         catch (Exception ex)
         {
@@ -321,11 +301,17 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.Gmd)
             .Include(x => x.GmdDetail)
             .Include(x => x.SubSubjectClassification)
+                .ThenInclude(x => x.SubjectClassification)
+                .ThenInclude(x => x.Classification)
+                .ThenInclude(x => x.TypeClassification)
+            .Include(x => x.SubSubjectClassification)
                 .ThenInclude(c => c.Creator)
                 .ThenInclude(au => au!.ArchiveUnit)
                 .ThenInclude(cmp => cmp.Company)
             .Include(x => x.SecurityClassification)
             .Include(x => x.Creator)
+                .ThenInclude(au => au!.ArchiveUnit)
+                .ThenInclude(cmp => cmp.Company)
             .Include(x => x.TrxFileArchiveDetails)
             .Include(x => x.TrxMediaStorageDetails)
                 .ThenInclude(ms => ms.MediaStorage)

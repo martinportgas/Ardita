@@ -108,12 +108,13 @@ namespace Ardita.Areas.Configuration.Controllers
             int result = 0;
             if (model != null)
             {
-                IFormFile file = Request.Form.Files[0];
+                IFormFile file = Request.Form.Files.Count > 0 ? Request.Form.Files[0] : null;
 
                 var variable = Request.Form["variableName[]"].ToArray();
                 var type = Request.Form["variableType[]"].ToArray();
                 var data = Request.Form["variableData[]"].ToArray();
-                var detail = new Tuple<string[], string[], string[]>(variable, type, data);
+                var other = Request.Form["other[]"].ToArray();
+                var detail = new Tuple<string[], string[], string[], string[]>(variable, type, data, other);
                 if (model.TemplateSettingId != Guid.Empty)
                 {
                     model.UpdatedBy = AppUsers.CurrentUser(User).UserId;

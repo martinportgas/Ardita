@@ -235,7 +235,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
             var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
 
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePeminjamanArsip.Replace(" ", "")}.pdf");
+            TrxArchiveRent dataMain = await _archiveRentService.GetById(Id);
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePeminjamanArsip.Replace(" ", "")}-{dataMain.RentCode}.pdf");
         }
         public async Task AllViewBagIndex()
         {

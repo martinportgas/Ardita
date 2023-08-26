@@ -621,11 +621,11 @@
 
                     $('#listFile').empty();
                     if(result.file.length > 0){
-                        var urlFile = '@Url.Action("BindFileArchive", GlobalConst.Home, new { Areas = GlobalConst.General, Id = -1, IsDownload = true})';
+                        var urlFile = '@Url.Action("BindFileArchive", GlobalConst.MediaStorage, new { Areas = GlobalConst.ArchiveActive, Id = -1, IsDownload = true})';
                         $.each(result.file, function (key, value) {
                             var content = `<div class="col-sm-6">
-                                                <span>${value.filename}</span><br>
-                                                <a href="${urlFile.replace('-1', value.fileArchiveDetailId)}" download="${value.filename}"><i class="fa fa-download"></i>Download</a>
+                                                <span>${value.fileName}</span><br>
+                                                <a href="${urlFile.replace('-1', value.fileArchiveDetailId)}" download="${value.fileName}"><i class="fa fa-download"></i>Download</a>
                                             </div>`
                             $('#listFile').append(content);
                         });

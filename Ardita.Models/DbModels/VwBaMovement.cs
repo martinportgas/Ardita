@@ -15,6 +15,10 @@ public partial class VwBaMovement
 
     public string? DayName { get; set; }
 
+    public string? Date { get; set; }
+
+    public string Title { get; set; } = null!;
+
     public string? MonthName { get; set; }
 
     public int? Year { get; set; }

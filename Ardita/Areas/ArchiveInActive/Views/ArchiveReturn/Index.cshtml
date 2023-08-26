@@ -205,7 +205,10 @@
                             var detail = `<a class="btn btn-sm btn-warning" href="@Url.Action(GlobalConst.Detail, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-eye"></i> </a>`;
                             detail = detail.replace("-1", data);
 
-                            var JoinButton = detail;
+                            var download = row.statusId != @((int)GlobalConst.STATUS.Return) ? '' : `<a class="btn btn-sm btn-info" href="@Url.Action(GlobalConst.DownloadFile, GlobalConst.ArchiveRent, new { Area = GlobalConst.ArchiveInActive, Id = -1 })"><i class="fa fa-download"></i> </a>`;
+                            download = download.replace("-1", data);
+
+                            var JoinButton = '<div style="width:100px"></div>' + detail.concat(" ", download);
                             return JoinButton;
                         }
                     },

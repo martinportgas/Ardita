@@ -183,7 +183,8 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
         var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
 
-        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePenerimaanArsip.Replace(" ", "")}.pdf");
+        TrxArchiveMovement dataMain = await _archiveMovementService.GetById(Id);
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePenerimaanArsip.Replace(" ", "")}-{dataMain.DocumentCode}.pdf");
     }
     public async Task AllViewBagIndex()
     {

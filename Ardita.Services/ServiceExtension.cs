@@ -56,6 +56,7 @@ public static class ServiceExtension
         services.AddScoped<ITemplateSettingService, TemplateSettingService>();
 
         services.AddScoped<IGeneralSettingsService, GeneralSettingsService>();
+        services.AddSingleton<ISessionService, SessionService>();
 
         return services;
     }

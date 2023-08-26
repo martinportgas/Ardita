@@ -175,15 +175,28 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
             return RedirectToIndex();
         }
     }
-    [HttpGet]
-    public async Task<IActionResult> DownloadFile(Guid Id)
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadFile(Guid Id)
+    //{
+    //    TrxMediaStorageInActive data = await _MediaStorageInActiveService.GetById(Id);
+
+    //    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchiveInActive.docx");
+    //    var file = Label.GenerateLabelInActive(FilePath, data, data.TrxMediaStorageInActiveDetails);
+
+    //    return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.MediaStorageInActiveCode}.pdf");
+    //}
+    public async Task<FileResult> DownloadFile(Guid Id)
     {
-        TrxMediaStorageInActive data = await _MediaStorageInActiveService.GetById(Id);
+        var settings = await _templateSettingService.GetAll();
+        var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplateMediaPenyimpananArsipInAktif).FirstOrDefault();
 
-        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchiveInActive.docx");
-        var file = Label.GenerateLabelInActive(FilePath, data, data.TrxMediaStorageInActiveDetails);
+        var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
 
-        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.MediaStorageInActiveCode}.pdf");
+        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+        var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+        TrxMediaStorageInActive dataStorage = await _MediaStorageInActiveService.GetById(Id);
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{dataStorage.MediaStorageInActiveCode}.pdf");
     }
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.MediaStorageInActive, new { Area = GlobalConst.ArchiveInActive });
 }

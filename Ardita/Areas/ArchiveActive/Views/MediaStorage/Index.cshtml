@@ -267,7 +267,7 @@
 
             $('#btnSearch').on('click', function () {
                 var and = ' && ';
-                var no = $('#txtNo').val() == '' ? '1=1' : `DocumentNo.ToLower().Contains(\"${$('#txtNo').val().toLowerCase()}\")`;
+                var no = $('#txtNo').val() == '' ? '1=1' : `TrxMediaStorageDetails.Any(x => x.Archive.DocumentNo.ToLower().Contains(\"${$('#txtNo').val().toLowerCase()}\"))`;
                 var title = $('#txtTitle').val() == '' ? '1=1' : `TrxMediaStorageDetails.Any(x => x.Archive.TitleArchive.ToLower().Contains(\"${$('#txtTitle').val().toLowerCase()}\"))`;
                 var creator = $('#txtCreatorId').val() == '' ? '1=1' : `SubjectClassification.Classification.CreatorId == \"${$('#txtCreatorId').val()}\"`;
                 var year = $('#txtYear').val() == '' ? '1=1' : `ArchiveYear.Contains(\"${$('#txtYear').val()}\")`;

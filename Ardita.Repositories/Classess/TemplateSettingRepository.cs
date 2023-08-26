@@ -136,23 +136,26 @@ namespace Ardita.Repositories.Classess
 
             if (model != null)
             {
-                if (file.Length > 0)
+                if(file != null)
                 {
-                    Byte[] bytes;
-                    using (var stream = new MemoryStream())
+                    if (file.Length > 0)
                     {
-                        file.CopyTo(stream);
-                        bytes = stream.ToArray();
+                        Byte[] bytes;
+                        using (var stream = new MemoryStream())
+                        {
+                            file.CopyTo(stream);
+                            bytes = stream.ToArray();
 
+                        }
+                        string filename = model.TemplateName.Replace(" ", "") + Path.GetExtension(file.FileName);
+                        string path = Path.Combine(_hostingEnvironment.WebRootPath, filename);
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, bytes);
+                        model.Path = filename;
                     }
-                    string filename = model.TemplateName.Replace(" ", "") + Path.GetExtension(file.FileName);
-                    string path = Path.Combine(_hostingEnvironment.WebRootPath, filename);
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
-                    File.WriteAllBytes(path, bytes);
-                    model.Path = filename;
                 }
                 model.TemplateSettingId = Guid.NewGuid();
                 _context.MstTemplateSettings.Add(model);
@@ -218,26 +221,30 @@ namespace Ardita.Repositories.Classess
                 var data = await _context.MstTemplateSettings.AsNoTracking().FirstAsync(x => x.TemplateSettingId == model.TemplateSettingId);
                 if (data != null)
                 {
-                    if (file.Length > 0)
+                    if (file != null)
                     {
-                        Byte[] bytes;
-                        using (var stream = new MemoryStream())
+                        if (file.Length > 0)
                         {
-                            file.CopyTo(stream);
-                            bytes = stream.ToArray();
+                            Byte[] bytes;
+                            using (var stream = new MemoryStream())
+                            {
+                                file.CopyTo(stream);
+                                bytes = stream.ToArray();
 
+                            }
+                            string filename = model.TemplateName.Replace(" ", "") + Path.GetExtension(file.FileName);
+                            string path = Path.Combine(_hostingEnvironment.WebRootPath, filename);
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+                            }
+                            File.WriteAllBytes(path, bytes);
+                            model.Path = filename;
+
+                            _context.MstTemplateSettings.Update(model);
+                            result = await _context.SaveChangesAsync();
                         }
-                        string filename = model.TemplateName.Replace(" ", "") + Path.GetExtension(file.FileName);
-                        string path = Path.Combine(_hostingEnvironment.WebRootPath, filename);
-                        if (File.Exists(path))
-                        {
-                            File.Delete(path);
-                        }
-                        File.WriteAllBytes(path, bytes);
-                        model.Path = filename;
                     }
-                    _context.MstTemplateSettings.Update(model);
-                    result = await _context.SaveChangesAsync();
 
                     var oldDetail = await _context.MstTemplateSettingDetails.Where(x => x.TemplateSettingId == model.TemplateSettingId).ToListAsync();
                     if (oldDetail.Count > 0)

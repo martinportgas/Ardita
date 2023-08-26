@@ -35,7 +35,9 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         IArchiveTypeService archiveTypeService,
         IArchiveCreatorService archiveCreatorService,
         IClassificationService classificationService,
-        IArchiveOutIndicatorService archiveOutIndicatorService)
+        IArchiveOutIndicatorService archiveOutIndicatorService,
+        IFileArchiveDetailService fileArchiveDetailService,
+        ITemplateSettingService templateSettingService)
     {
         _classificationSubSubjectService = classificationSubSubjectService;
         _classificationSubjectService = classificationSubjectService;
@@ -57,6 +59,8 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
         _archiveCreatorService = archiveCreatorService;
         _classificationService = classificationService;
         _archiveOutIndicatorService = archiveOutIndicatorService;
+        _fileArchiveDetailService = fileArchiveDetailService;
+        _templateSettingService = templateSettingService;
     }
     #endregion
 
@@ -262,14 +266,27 @@ public class MediaStorageController : BaseController<TrxMediaStorage>
 
         return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, "QRCode.svg");
     }
-    public async Task<FileResult> BindLabel(string MediaStorageId)
-    {
-        Guid Id = new(MediaStorageId);
-        TrxMediaStorage data = await _mediaStorageService.GetById(Id);
-        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchive.docx");
-        var file = Label.GenerateLabelArchive(FilePath, data);
+    //public async Task<FileResult> BindLabel(string MediaStorageId)
+    //{
+    //    Guid Id = new(MediaStorageId);
+    //    TrxMediaStorage data = await _mediaStorageService.GetById(Id);
+    //    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "LabelArchive.docx");
+    //    var file = Label.GenerateLabelArchive(FilePath, data);
 
-        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.Row.Level!.Rack!.RackName + "-" + data.Row.Level.LevelName + "-" + data.Row.RowName}.pdf");
+    //    return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.Row.Level!.Rack!.RackName + "-" + data.Row.Level.LevelName + "-" + data.Row.RowName}.pdf");
+    //}
+    public async Task<FileResult> BindLabel(Guid MediaStorageId)
+    {
+        var settings = await _templateSettingService.GetAll();
+        var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplateMediaPenyimpananArsipAktif).FirstOrDefault();
+
+        var data = await _templateSettingService.GetDataView(setting.SourceData, MediaStorageId);
+
+        string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+        var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+        TrxMediaStorage dataStorage = await _mediaStorageService.GetById(MediaStorageId);
+        return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{dataStorage.Row.Level!.Rack!.RackName + "-" + dataStorage.Row.Level.LevelName + "-" + dataStorage.Row.RowName}.pdf");
     }
     #endregion
 }

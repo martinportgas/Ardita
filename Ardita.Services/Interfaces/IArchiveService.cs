@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Archive;
 using Microsoft.Extensions.Primitives;
 
 namespace Ardita.Services.Interfaces;
@@ -10,6 +11,7 @@ public interface IArchiveService
     Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null);
     Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode = null);
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
+    Task<IEnumerable<ArchiveExportModel>> GetExportList(DataTablePostModel model);
     Task<int> Insert(TrxArchive model, StringValues modelDetail);
     Task<bool> InsertBulk(List<TrxArchive> trxArchives);
     Task<int> Delete(TrxArchive model);

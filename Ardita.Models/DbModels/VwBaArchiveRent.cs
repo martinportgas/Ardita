@@ -9,6 +9,8 @@ public partial class VwBaArchiveRent
 
     public string? NoBa { get; set; }
 
+    public string? DdMmyyyy { get; set; }
+
     public string? DdMmmmyyyy { get; set; }
 
     public string? Dd { get; set; }

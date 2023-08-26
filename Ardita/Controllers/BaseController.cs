@@ -16,6 +16,7 @@ public abstract class BaseController<T> : Controller
 {
     #region Properties
     protected IHostingEnvironment _hostingEnvironment;
+    protected ISessionService _sessionService;
 
     //User Manage
     protected IEmployeeService _employeeService { get; set; }
@@ -1271,9 +1272,8 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<JsonResult> BindViewDetailArchive(Guid Id)
     {
-        var data = await _archiveService.GetAll();
-        var result = data.Where(x => x.ArchiveId == Id)
-            .Select(x => new {
+        var x = await _archiveService.GetById(Id);
+        var result = new {
                 title = x.TitleArchive,
                 security = x.SecurityClassification.SecurityClassificationName,
                 classification = x.SubSubjectClassification.SubjectClassification.Classification.ClassificationName,
@@ -1284,10 +1284,27 @@ public abstract class BaseController<T> : Controller
                 owner = x.ArchiveOwner.ArchiveOwnerName,
                 creator = x.Creator.CreatorName,
                 file = x.TrxFileArchiveDetails
-            }).FirstOrDefault();
+            };
         return Json(result);
     }
     #endregion
 
     #endregion
+    public async Task<IActionResult> BindFileArchive(Guid Id, bool IsDownload = true)
+    {
+        var data = await _fileArchiveDetailService.GetById(Id);
+        if (data != null)
+        {
+            var path = string.Concat(data.FilePath, data.FileNameEncrypt);
+            if (System.IO.File.Exists(path))
+            {
+                var bytes = System.IO.File.ReadAllBytes(path);
+                if (IsDownload)
+                    return File(bytes, data.FileType, data.FileName);
+                else
+                    return File(bytes, data.FileType);
+            }
+        }
+        return File(new byte[] { }, "application/octet-stream", "FileNotFound.txt");
+    }
 }

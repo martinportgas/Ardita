@@ -1248,6 +1248,10 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
+            entity.Property(e => e.Other)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("other");
             entity.Property(e => e.TemplateSettingId).HasColumnName("template_setting_id");
             entity.Property(e => e.VariableData)
                 .IsUnicode(false)
@@ -3095,6 +3099,9 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.DdMmmmyyyy)
                 .HasMaxLength(4000)
                 .HasColumnName("ddMMMMyyyy");
+            entity.Property(e => e.DdMmyyyy)
+                .HasMaxLength(4000)
+                .HasColumnName("ddMMyyyy");
             entity.Property(e => e.DdString)
                 .HasMaxLength(4000)
                 .HasColumnName("ddString");
@@ -3246,6 +3253,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.CustomField5)
                 .HasMaxLength(1)
                 .IsUnicode(false);
+            entity.Property(e => e.Date).HasMaxLength(4000);
             entity.Property(e => e.DayName).HasMaxLength(4000);
             entity.Property(e => e.DocumentNo)
                 .HasMaxLength(50)
@@ -3260,6 +3268,9 @@ public partial class BksArditaDevContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.ReceivedPositionName)
                 .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Title)
+                .HasMaxLength(200)
                 .IsUnicode(false);
         });
 
@@ -3377,6 +3388,9 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Level)
                 .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.MediaStorageCode)
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Rack)
                 .HasMaxLength(200)

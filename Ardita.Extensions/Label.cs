@@ -81,9 +81,9 @@ public static class Label
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Data.ToString())
                     document = ReplaceText(document, item.VariableName, data.Rows.Count > 0 ? data.Rows[0][item.VariableData].ToString()! : "");
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.QRText.ToString())
-                    document = ReplaceQR(document, item.VariableName, item.VariableData);
+                    document = ReplaceQR(document, item.VariableName, item.VariableData, item.Other);
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.QRData.ToString())
-                    document = ReplaceQR(document, item.VariableName, data.Rows.Count > 0 ? data.Rows[0][item.VariableData].ToString()! : "");
+                    document = ReplaceQR(document, item.VariableName, data.Rows.Count > 0 ? data.Rows[0][item.VariableData].ToString()! : "", item.Other);
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Gambar.ToString())
                     document = ReplaceImage(document, item.VariableName, item.VariableData);
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.DataTable.ToString())
@@ -103,9 +103,13 @@ public static class Label
         document.Replace(text, replaceText, false, true);
         return document;
     }
-    private static Document ReplaceQR(Document document, string text, string replaceText)
+    private static Document ReplaceQR(Document document, string text, string replaceText, string other)
     {
-        var file = QRCodeExtension.Generate(replaceText, 3);
+        var size = 3;
+        if (!string.IsNullOrEmpty(other))
+            int.TryParse(other, out size);
+
+        var file = QRCodeExtension.Generate(replaceText, size);
         int index = 0;
         TextRange range = null;
 

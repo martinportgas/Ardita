@@ -1,5 +1,6 @@
 ﻿using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Archive;
 
 namespace Ardita.Repositories.Interfaces;
 
@@ -9,7 +10,7 @@ public interface IArchiveRepository
     Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null);
     Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
-    Task<string> GetExportByFilterModel(DataTableModel model);
+    Task<IEnumerable<ArchiveExportModel>> GetExportByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> GetCountByFilterData(DataTableModel model);
     Task<int> Insert(TrxArchive model, List<FileModel> files, string path = ""); 

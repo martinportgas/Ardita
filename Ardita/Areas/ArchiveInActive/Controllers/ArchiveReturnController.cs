@@ -222,6 +222,29 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             ViewBag.ListClassification = await BindClasscifications();
             ViewBag.ListSubjectClassification = await BindSubjectClasscifications();
         }
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(Guid Id)
+        {
+            //TrxArchiveRent data = await _archiveRentService.GetById(Id);
+
+            //var result = await _MediaStorageInActiveService.GetDetails(data.TrxArchiveRentDetails.FirstOrDefault().ArchiveId);
+
+            //string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "BA_Peminjaman_Arsip.docx");
+            //var file = Label.GenerateBARent(FilePath, data, result);
+
+            //return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{data.RentCode}.pdf");
+
+            var settings = await _templateSettingService.GetAll();
+            var setting = settings.Where(x => x.TemplateName == GlobalConst.TemplatePengembalianArsip).FirstOrDefault();
+
+            var data = await _templateSettingService.GetDataView(setting.SourceData, Id);
+
+            string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
+            var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
+
+            TrxArchiveRent dataMain = await _archiveRentService.GetById(Id);
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePengembalianArsip.Replace(" ", "")}-{dataMain.RentCode}.pdf");
+        }
         private RedirectToActionResult RedirectToIndex() => RedirectToAction(GlobalConst.Index, GlobalConst.ArchiveReturn, new { Area = GlobalConst.ArchiveInActive });
     }
 }

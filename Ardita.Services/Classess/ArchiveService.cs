@@ -1,6 +1,7 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
+using Ardita.Models.ViewModels.Archive;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
 using Ardita.Services.Interfaces;
@@ -83,6 +84,45 @@ public class ArchiveService : IArchiveService
             };
 
             return responseModel;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+    public async Task<IEnumerable<ArchiveExportModel>> GetExportList(DataTablePostModel model)
+    {
+        try
+        {
+            List<string> listArchiveUnitCode = model.SessionUser != null ? AppUsers.CurrentUser(model.SessionUser).ListArchiveUnitCode : new List<string>();
+            DateTime startDate = GlobalConst.MinDate;
+            DateTime endDate = GlobalConst.MaxDate;
+            bool validStart = DateTime.TryParse(model.columns[0].search.value, out startDate);
+            bool validEnd = DateTime.TryParse(model.columns[1].search.value, out endDate);
+
+            var filterData = new DataTableModel
+            {
+                sortColumn = model.columns[model.order[0].column].name,
+                sortColumnDirection = model.order[0].dir,
+                searchValue = string.IsNullOrEmpty(model.search.value) ? string.Empty : model.search.value,
+                pageSize = model.length,
+                skip = model.start,
+                PositionId = model.PositionId,
+                listArchiveUnitCode = listArchiveUnitCode,
+                whereClause = model.whereClause,
+                advanceSearch = new SearchModel
+                {
+                    StartDate = validStart ? startDate : GlobalConst.MinDate,
+                    EndDate = validEnd ? endDate : GlobalConst.MaxDate,
+                    Search = model.columns[2].search.value == null ? "1=1" : model.columns[2].search.value
+                },
+                IsArchiveActive = model.IsArchiveActive,
+                SessionUser = model.SessionUser
+            };
+
+            var results = await _archiveRepository.GetExportByFilterModel(filterData);
+
+            return results;
         }
         catch (Exception ex)
         {

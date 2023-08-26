@@ -356,7 +356,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, setting.Path);
             var file = Label.GenerateFromTemplate(setting.MstTemplateSettingDetails.ToList(), data, FilePath);
 
-            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePemindahanArsip.Replace(" ", "")}.pdf");
+            TrxArchiveMovement dataMain = await _archiveMovementService.GetById(Id);
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, $"{GlobalConst.TemplatePemindahanArsip.Replace(" ", "")}-{dataMain.DocumentCode}.pdf");
         }
         #endregion
         #region HELPER

@@ -17,6 +17,7 @@ public class ArchiveController : BaseController<TrxArchive>
 {
     #region CTR
     public ArchiveController(
+        ISessionService sessionService,
         IArchiveService archiveService,
         IGmdService gmdService,
         IClassificationSubSubjectService classificationSubSubjectService,
@@ -51,6 +52,7 @@ public class ArchiveController : BaseController<TrxArchive>
         _rowService = rowService;
         _classificationService = classificationService;
         _classificationSubjectService = classificationSubjectService;
+        _sessionService = sessionService;
     }
     #endregion
 
@@ -64,9 +66,11 @@ public class ArchiveController : BaseController<TrxArchive>
     {
         try
         {
-            model.SessionUser = User;
             model.whereClause = GlobalConst.WhereClauseArchiveRegist;
             model.IsArchiveActive = true;
+            _sessionService.Set(nameof(TrxArchive), JsonConvert.SerializeObject(model));
+
+            model.SessionUser = User;
             var result = await _archiveService.GetList(model);
 
             return Json(result);
@@ -403,35 +407,18 @@ public class ArchiveController : BaseController<TrxArchive>
             string fileName = nameof(TrxArchive).ToCleanNameOf();
             fileName = fileName.ToFileNameDateTimeStringNow(fileName);
 
-            var archives = await _archiveService.GetAll();
-            archives = archives.Where(x => x.IsArchiveActive == true && x.IsActive == true).ToList();
-            if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-                archives = archives.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
-            if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-                archives = archives.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            var model = JsonConvert.DeserializeObject<DataTablePostModel>(_sessionService.Get(nameof(TrxArchive)));
+            model.SessionUser = User;
+            var result = await _archiveService.GetExportList(model);
+            //var archives = await _archiveService.GetAll();
+            //archives = archives.Where(x => x.IsArchiveActive == true && x.IsActive == true).ToList();
+            //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            //    archives = archives.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            //    archives = archives.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
             List<DataTable> listData = new List<DataTable>() {
-                archives.Select(x => new
-                {
-                    x.ArchiveId,
-                    x.ArchiveCode,
-                    x.Gmd.GmdName,
-                    x.SubSubjectClassification.SubSubjectClassificationName,
-                    x.SecurityClassification.SecurityClassificationName,
-                    x.TypeSender,
-                    x.ArchiveOwner.ArchiveOwnerName,
-                    x.Keyword,
-                    x.DocumentNo,
-                    x.TitleArchive,
-                    x.ArchiveType.ArchiveTypeName,
-                    x.CreatedDateArchive,
-                    x.ActiveRetention,
-                    x.InactiveRetention,
-                    x.Volume,
-                    x.ArchiveDescription,
-                    x.Description
-                }
-                ).ToList().ToDataTable()
+                result.ToList().ToDataTable()
             };
 
             IWorkbook workbook = Global.GetExcelTemplate(templateName, listData, GlobalConst.Export.ToLower());

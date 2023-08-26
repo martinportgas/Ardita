@@ -71,12 +71,12 @@ namespace Ardita.Services.Classess
             }
         }
 
-        public async Task<int> Insert(MstTemplateSetting model, IFormFile file, Tuple<string[], string[], string[]> data)
+        public async Task<int> Insert(MstTemplateSetting model, IFormFile file, Tuple<string[], string[], string[], string[]> data)
         {
             var detail = await GetDetail(data);
             return await _templateSettingRepository.Insert(model, file, detail);
         }
-        public async Task<IEnumerable<MstTemplateSettingDetail>> GetDetail(Tuple<string[], string[], string[]> data)
+        public async Task<IEnumerable<MstTemplateSettingDetail>> GetDetail(Tuple<string[], string[], string[], string[]> data)
         {
             await Task.Delay(0);
             List<MstTemplateSettingDetail> result = new();
@@ -87,6 +87,7 @@ namespace Ardita.Services.Classess
                 item.VariableName = data.Item1[i];
                 item.VariableType = data.Item2[i];
                 item.VariableData = data.Item3[i];
+                item.Other = data.Item4[i];
                 result.Add(item);
             }
             return result;
@@ -97,7 +98,7 @@ namespace Ardita.Services.Classess
             return await _templateSettingRepository.InsertBulk(MstTemplateSettings);
         }
 
-        public async Task<int> Update(MstTemplateSetting model, IFormFile file, Tuple<string[], string[], string[]> data)
+        public async Task<int> Update(MstTemplateSetting model, IFormFile file, Tuple<string[], string[], string[], string[]> data)
         {
             var detail = await GetDetail(data);
             return await _templateSettingRepository.Update(model, file, detail);
