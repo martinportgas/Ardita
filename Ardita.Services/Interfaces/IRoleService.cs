@@ -12,7 +12,7 @@ namespace Ardita.Services.Interfaces
     public interface IRoleService
     {
         Task<MstRole> GetById(Guid id);
-        Task<IEnumerable<MstRole>> GetAll();
+        Task<IEnumerable<MstRole>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetListRoles(DataTablePostModel model);
         Task<int> Insert(MstRole model);
         Task<int> Delete(MstRole model);

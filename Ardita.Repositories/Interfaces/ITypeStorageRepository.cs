@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces;
 public interface ITypeStorageRepository
 {
     Task<TrxTypeStorage> GetById(Guid id);
-    Task<IEnumerable<TrxTypeStorage>> GetAll();
+    Task<IEnumerable<TrxTypeStorage>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCountByFilterModel(DataTableModel model);

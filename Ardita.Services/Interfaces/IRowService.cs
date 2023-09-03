@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces
     public interface IRowService
     {
         Task<TrxRow> GetById(Guid id);
-        Task<IEnumerable<TrxRow>> GetAll();
+        Task<IEnumerable<TrxRow>> GetAll(string par = " 1=1 ");
 
         /// <summary>
         /// get rows that have never been used by media storage in active

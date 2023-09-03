@@ -32,7 +32,7 @@ public class ArchiveApprovalService : IArchiveApprovalService
         return await _archiveApprovalRepository.DeleteByTransIdandApprovalCode(id, approvalCode);
     }
 
-    public Task<IEnumerable<TrxApproval>> GetAll()
+    public Task<IEnumerable<TrxApproval>> GetAll(string par = " 1=1 ")
     {
         throw new NotImplementedException();
     }

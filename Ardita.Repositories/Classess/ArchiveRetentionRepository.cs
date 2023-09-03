@@ -16,14 +16,16 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
         _context = context;
         _logChangesRepository = logChangesRepository;
     }
-    public async Task<IEnumerable<VwArchiveRetention>> GetAll()
+    public async Task<IEnumerable<VwArchiveRetention>> GetAll(string par = " 1=1 ")
     {
-        var results = await _context.VwArchiveRetentions.ToListAsync();
+        var results = await _context.VwArchiveRetentions
+                .Where(par).ToListAsync();
         return results;
     }
-    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll()
+    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll(string par = " 1=1 ")
     {
-        var results = await _context.VwArchiveRetentionInActives.ToListAsync();
+        var results = await _context.VwArchiveRetentionInActives
+                .Where(par).ToListAsync();
         return results;
     }
     public async Task<int> GetCount()

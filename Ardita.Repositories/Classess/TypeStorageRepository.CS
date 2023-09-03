@@ -23,12 +23,13 @@ public class TypeStorageRepository : ITypeStorageRepository
         _logChangesRepository = logChangesRepository;
     }
     
-    public async Task<IEnumerable<TrxTypeStorage>> GetAll() 
+    public async Task<IEnumerable<TrxTypeStorage>> GetAll(string par = " 1=1 ") 
         => await _context.TrxTypeStorages
         .Include(x => x.ArchiveUnit.Company)
         .Where(x => x.IsActive == true)
         .Where(x => x.ArchiveUnit.IsActive == true)
         .Where(x => x.ArchiveUnit.Company.IsActive == true)
+            .Where(par).AsNoTracking()
         .ToListAsync();
     
     public async Task<TrxTypeStorage> GetById(Guid id) 

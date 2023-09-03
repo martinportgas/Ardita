@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface ILogChangesRepository
     {
         Task<LogChange> GetById(Guid id);
-        Task<IEnumerable<LogChange>> GetAll();
+        Task<IEnumerable<LogChange>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(LogChange model);

@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface ICompanyService
 {
     Task<IEnumerable<MstCompany>> GetById(Guid id);
-    Task<IEnumerable<MstCompany>> GetAll();
+    Task<IEnumerable<MstCompany>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<MstCompany>> GetListCompanies(DataTablePostModel tableModel);
     Task<int> Insert(MstCompany model);
     Task<bool> InsertBulk(List<MstCompany> companies);

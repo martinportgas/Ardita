@@ -26,9 +26,9 @@ namespace Ardita.Services.Classess
             return await _archiveMovementRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<TrxArchiveMovement>> GetAll()
+        public async Task<IEnumerable<TrxArchiveMovement>> GetAll(string par = " 1=1 ")
         {
-            return await _archiveMovementRepository.GetAll();
+            return await _archiveMovementRepository.GetAll(par);
         }
 
         public async Task<TrxArchiveMovement> GetById(Guid id)

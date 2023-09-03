@@ -12,7 +12,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IUserRepository
     {
         Task<MstUser> GetById(Guid id);
-        Task<IEnumerable<MstUser>> GetAll();
+        Task<IEnumerable<MstUser>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(MstUser model);

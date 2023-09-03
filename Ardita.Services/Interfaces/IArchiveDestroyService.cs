@@ -12,7 +12,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<TrxArchiveDestroy> GetById(Guid id);
         Task<IEnumerable<TrxArchiveDestroyDetail>> GetDetailByMainId(Guid id);
-        Task<IEnumerable<TrxArchiveDestroy>> GetAll();
+        Task<IEnumerable<TrxArchiveDestroy>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<TrxArchiveDestroyDetail>> GetDetailAll();
         Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxArchiveDestroy model);

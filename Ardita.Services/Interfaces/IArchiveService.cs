@@ -8,8 +8,10 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveService
 {
     Task<TrxArchive> GetById(Guid id);
-    Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null);
-    Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode = null);
+    Task<IEnumerable<TrxArchive>> GetAll(string param = " 1=1 ");
+    Task<int> GetCount(string par = " 1=1 ");
+    Task<IEnumerable<TrxArchive>> GetByParams(string param = "1=1");
+    Task<IEnumerable<TrxArchive>> GetAllInActive(string param = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<IEnumerable<ArchiveExportModel>> GetExportList(DataTablePostModel model);
     Task<int> Insert(TrxArchive model, StringValues modelDetail);

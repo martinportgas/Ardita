@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface ISecurityClassificationService
 {
     Task<IEnumerable<MstSecurityClassification>> GetById(Guid id);
-    Task<IEnumerable<MstSecurityClassification>> GetAll();
+    Task<IEnumerable<MstSecurityClassification>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstSecurityClassification model);
     Task<bool> InsertBulk(List<MstSecurityClassification> mstSecurityClassifications);

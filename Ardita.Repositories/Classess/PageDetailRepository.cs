@@ -2,6 +2,7 @@
 using Ardita.Models.DbModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace Ardita.Repositories.Classess
 {
@@ -61,9 +62,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstPageDetail>> GetAll()
+        public async Task<IEnumerable<MstPageDetail>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.MstPageDetails.ToListAsync();
+            var results = await _context.MstPageDetails
+                .Where(par).ToListAsync();
             return results;
         }
 

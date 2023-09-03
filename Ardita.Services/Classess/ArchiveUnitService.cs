@@ -14,7 +14,7 @@ public class ArchiveUnitService : IArchiveUnitService
 
     public async Task<int> Delete(TrxArchiveUnit model) => await _archiveUnitRepository.Delete(model);
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() => await _archiveUnitRepository.GetAll();
+    public async Task<IEnumerable<TrxArchiveUnit>> GetAll(string par = " 1=1 ") => await _archiveUnitRepository.GetAll(par);
 
     public async Task<TrxArchiveUnit> GetById(Guid id) => await _archiveUnitRepository.GetById(id);
 

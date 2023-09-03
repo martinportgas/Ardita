@@ -20,14 +20,14 @@ public class ArchiveRetentionService : IArchiveRetentionService
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<VwArchiveRetention>> GetAll()
+    public async Task<IEnumerable<VwArchiveRetention>> GetAll(string par = " 1=1 ")
     {
-        var results = await _archiveRetentionRepository.GetAll();
+        var results = await _archiveRetentionRepository.GetAll(par);
         return results;
     }
-    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll()
+    public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll(string par = " 1=1 ")
     {
-        var results = await _archiveRetentionRepository.GetInActiveAll();
+        var results = await _archiveRetentionRepository.GetInActiveAll(par);
         return results;
     }
 

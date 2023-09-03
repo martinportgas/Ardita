@@ -12,7 +12,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IClassificationSubSubjectRepository
     {
         Task<TrxSubSubjectClassification> GetById(Guid id);
-        Task<IEnumerable<TrxSubSubjectClassification>> GetAll();
+        Task<IEnumerable<TrxSubSubjectClassification>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<TrxSubSubjectClassification>> GetByArchiveUnit(List<string> listArchiveUnitCode);
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);

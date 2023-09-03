@@ -7,8 +7,10 @@ namespace Ardita.Repositories.Interfaces;
 public interface IArchiveRepository
 {
     Task<TrxArchive> GetById(Guid id);
-    Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null);
-    Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode);
+    Task<IEnumerable<TrxArchive>> GetAll(string par = " 1=1 ");
+    Task<int> GetCount(string par = " 1=1 ");
+    Task<IEnumerable<TrxArchive>> GetByParams(string param);
+    Task<IEnumerable<TrxArchive>> GetAllInActive(string par = " 1=1 ");
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<IEnumerable<ArchiveExportModel>> GetExportByFilterModel(DataTableModel model);
     Task<int> GetCount();

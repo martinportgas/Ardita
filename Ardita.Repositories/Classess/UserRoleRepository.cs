@@ -30,9 +30,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<IdxUserRole>> GetAll()
+        public async Task<IEnumerable<IdxUserRole>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.IdxUserRoles.Include(x => x.Role).Include(x => x.User.Employee.Position).ToListAsync();
+            var results = await _context.IdxUserRoles.Include(x => x.Role).Include(x => x.User.Employee.Position)
+            .Where(par).AsNoTracking().ToListAsync();
             return results;
         }
 

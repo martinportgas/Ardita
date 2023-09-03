@@ -36,9 +36,9 @@ namespace Ardita.Services.Classess
             return _userRoleRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<IdxUserRole>> GetAll()
+        public async Task<IEnumerable<IdxUserRole>> GetAll(string par = " 1=1 ")
         {
-            return await _userRoleRepository.GetAll();
+            return await _userRoleRepository.GetAll(par);
         }
 
         public async Task<IdxUserRole> GetById(Guid id)

@@ -158,8 +158,12 @@ public class MediaStorageInActiveService : IMediaStorageInActiveService
         return await _mediaStorageInActiveRepository.Update(model, detail);
     }
 
-    public async Task<IEnumerable<TrxMediaStorageInActive>> GetAll()
+    public async Task<IEnumerable<TrxMediaStorageInActive>> GetAll(string par = " 1=1 ")
     {
-        return await _mediaStorageInActiveRepository.GetAll();
+        return await _mediaStorageInActiveRepository.GetAll(par);
+    }
+    public async Task<int> GetCount(string par = " 1=1 ")
+    {
+        return await _mediaStorageInActiveRepository.GetCount(par);
     }
 }

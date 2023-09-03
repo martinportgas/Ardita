@@ -24,9 +24,9 @@ namespace Ardita.Services.Classess
             return await _subMenuRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstSubmenu>> GetAll()
+        public async Task<IEnumerable<MstSubmenu>> GetAll(string par = " 1=1 ")
         {
-            return await _subMenuRepository.GetAll();
+            return await _subMenuRepository.GetAll(par);
         }
 
         public async Task<MstSubmenu> GetById(Guid id)

@@ -24,7 +24,7 @@ public class ArchiveApprovalRepository : IArchiveApprovalRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<TrxApproval>> GetAll()
+    public Task<IEnumerable<TrxApproval>> GetAll(string par = " 1=1 ")
     {
         throw new NotImplementedException();
     }

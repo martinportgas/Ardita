@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,15 +56,16 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
-        public async Task<IEnumerable<MstPage>> GetAll()
+        public async Task<IEnumerable<MstPage>> GetAll(string par = " 1=1 ")
         {
             var result = await _context.MstPages
                    .Include(x => x.Submenu)
                     .Include(x => x.MstPageDetails)
                     .Include(x => x.IdxRolePages).ThenInclude(x => x.Role)
-                    .AsNoTracking()
                     .Where(x => x.IsActive == true)
                     .Where(x => x.Submenu.IsActive == true)
+                    .Where(par)
+                    .AsNoTracking()
                     .ToListAsync();
             return result;
         }

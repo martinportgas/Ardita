@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IPageRepository
     {
         Task<MstPage> GetById(Guid id);
-        Task<IEnumerable<MstPage>> GetAll();
+        Task<IEnumerable<MstPage>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<MstPage>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> GetCountBySubMenuId(Guid? SubMenuId);

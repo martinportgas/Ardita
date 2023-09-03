@@ -34,12 +34,17 @@ public class ArchiveService : IArchiveService
 
     public async Task<int> Delete(TrxArchive model) => await _archiveRepository.Delete(model);
 
-    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null) => await _archiveRepository.GetAll(listArchiveUnitCode);
-    public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode = null) => await _archiveRepository.GetAllInActive(listArchiveUnitCode);
+    public async Task<IEnumerable<TrxArchive>> GetAll(string par = " 1=1 ") => await _archiveRepository.GetAll(par);
+    public async Task<int> GetCount(string par = " 1=1 ") => await _archiveRepository.GetCount(par);
+    public async Task<IEnumerable<TrxArchive>> GetAllInActive(string par = " 1=1 ") => await _archiveRepository.GetAllInActive(par);
 
     public async Task<TrxArchive> GetById(Guid id)
     {
         return await _archiveRepository.GetById(id);
+    }
+    public async Task<IEnumerable<TrxArchive>> GetByParams(string param = "1=1")
+    {
+        return await _archiveRepository.GetByParams(param);
     }
 
     public async Task<DataTableResponseModel<object>> GetList(DataTablePostModel model)

@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<IEnumerable<MstPageDetail>> GetById(Guid id);
         Task<IEnumerable<MstPageDetail>> GetByMainId(Guid id);
-        Task<IEnumerable<MstPageDetail>> GetAll();
+        Task<IEnumerable<MstPageDetail>> GetAll(string par = " 1=1 ");
         Task<int> Insert(MstPageDetail model);
         Task<int> Delete(MstPageDetail model);
         Task<int> DeleteByMainId(Guid id);

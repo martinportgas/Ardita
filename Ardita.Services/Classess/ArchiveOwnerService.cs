@@ -21,9 +21,9 @@ namespace Ardita.Services.Classess
             return await _archiveOwnerRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstArchiveOwner>> GetAll()
+        public async Task<IEnumerable<MstArchiveOwner>> GetAll(string par = " 1=1 ")
         {
-            return await _archiveOwnerRepository.GetAll();
+            return await _archiveOwnerRepository.GetAll(par);
         }
 
         public async Task<IEnumerable<MstArchiveOwner>> GetById(Guid id)

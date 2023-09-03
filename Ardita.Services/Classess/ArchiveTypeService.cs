@@ -20,9 +20,9 @@ namespace Ardita.Services.Classess
             return await _archiveTypeRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstArchiveType>> GetAll()
+        public async Task<IEnumerable<MstArchiveType>> GetAll(string par = " 1=1 ")
         {
-            return await _archiveTypeRepository.GetAll();
+            return await _archiveTypeRepository.GetAll(par);
         }
 
         public async Task<IEnumerable<MstArchiveType>> GetById(Guid id)

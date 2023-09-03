@@ -17,9 +17,9 @@ public class RowService : IRowService
         return await _rowRepository.Delete(model);
     }
 
-    public async Task<IEnumerable<TrxRow>> GetAll()
+    public async Task<IEnumerable<TrxRow>> GetAll(string par = " 1=1 ")
     {
-        return await _rowRepository.GetAll();
+        return await _rowRepository.GetAll(par);
     }
 
     public async Task<TrxRow> GetById(Guid id)

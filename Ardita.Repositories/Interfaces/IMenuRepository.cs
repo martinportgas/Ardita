@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IMenuRepository
     {
         Task<MstMenu> GetById(Guid id);
-        Task<IEnumerable<MstMenu>> GetAll();
+        Task<IEnumerable<MstMenu>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<MstMenu>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(MstMenu model);

@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IArchiveMovementRepository
     {
         Task<TrxArchiveMovement> GetById(Guid id);
-        Task<IEnumerable<TrxArchiveMovement>> GetAll();
+        Task<IEnumerable<TrxArchiveMovement>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCountByFilterModel(DataTableModel model);
         Task<int> GetCount();

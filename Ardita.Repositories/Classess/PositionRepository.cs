@@ -51,9 +51,9 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstPosition>> GetAll()
+        public async Task<IEnumerable<MstPosition>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.MstPositions.AsNoTracking().Where(x=>x.IsActive == true).ToListAsync();
+            var results = await _context.MstPositions.Where(x => x.IsActive == true).Where(par).AsNoTracking().ToListAsync();
             return results;
         }
 

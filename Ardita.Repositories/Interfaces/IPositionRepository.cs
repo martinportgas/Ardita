@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IPositionRepository
     {
         Task<MstPosition> GetById(Guid id);
-        Task<IEnumerable<MstPosition>> GetAll();
+        Task<IEnumerable<MstPosition>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(MstPosition model);

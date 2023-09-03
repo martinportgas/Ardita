@@ -29,9 +29,9 @@ namespace Ardita.Services.Classess
             return await _archiveExtendDetailRepository.DeleteByMainId(Id);
         }
 
-        public async Task<IEnumerable<TrxArchiveExtend>> GetAll()
+        public async Task<IEnumerable<TrxArchiveExtend>> GetAll(string par = " 1=1 ")
         {
-            return await _archiveExtendRepository.GetAll();
+            return await _archiveExtendRepository.GetAll(par);
         }
         public async Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailAll()
         {

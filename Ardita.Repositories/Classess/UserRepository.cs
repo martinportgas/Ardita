@@ -56,16 +56,17 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstUser>> GetAll()
+        public async Task<IEnumerable<MstUser>> GetAll(string par = " 1=1 ")
         {
             var result = await _context.MstUsers
                 .Include(x => x.Employee.Position)
                 .Include(x => x.IdxUserRoles)
                 .ThenInclude(x => x.Role)
-                .AsNoTracking()
                 .Where(x => x.IsActive == true)
                 .Where(x => x.Employee.IsActive == true)
                 .Where(x => x.Employee.Position.IsActive == true)
+            .Where(par)
+            .AsNoTracking()
                 .ToListAsync();
             return result;
         }

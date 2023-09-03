@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IArchiveDestroyRepository
     {
         Task<TrxArchiveDestroy> GetById(Guid id);
-        Task<IEnumerable<TrxArchiveDestroy>> GetAll();
+        Task<IEnumerable<TrxArchiveDestroy>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCountByFilterModel(DataTableModel model);
         Task<int> GetCount();

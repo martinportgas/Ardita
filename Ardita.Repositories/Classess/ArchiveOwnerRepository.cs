@@ -46,7 +46,7 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstArchiveOwner>> GetAll() => await _context.MstArchiveOwners.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+        public async Task<IEnumerable<MstArchiveOwner>> GetAll(string par = " 1=1 ") => await _context.MstArchiveOwners.Where(x => x.IsActive == true).Where(par).AsNoTracking().ToListAsync();
 
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
         {

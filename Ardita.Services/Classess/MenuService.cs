@@ -29,9 +29,9 @@ namespace Ardita.Services.Classess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<MstMenu>> GetAll()
+        public Task<IEnumerable<MstMenu>> GetAll(string par = " 1=1 ")
         {
-            return _menuRepository.GetAll();
+            return _menuRepository.GetAll(par);
         }
 
         public Task<MstMenu> GetById(Guid id)

@@ -12,7 +12,7 @@ namespace Ardita.Services.Interfaces
     public interface IEmployeeService
     {
         Task<MstEmployee> GetById(Guid id);
-        Task<IEnumerable<MstEmployee>> GetAll();
+        Task<IEnumerable<MstEmployee>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetListEmployee(DataTablePostModel model);
         Task<IEnumerable<MstEmployee>> GetListApproval(Guid ArchiveUnitId);
         Task<int> Insert(MstEmployee model);

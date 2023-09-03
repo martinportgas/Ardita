@@ -82,17 +82,21 @@ namespace Ardita
                     {
                         activity.PageName = GlobalConst.Home;
                     }
-                    else
+
+                    var submenu = subMenus.FirstOrDefault(x => x.Path == controllerName.ToString());
+                    if (controllerName.ToString() != GlobalConst.Home && submenu != null)
                     {
-                        activity.PageId = subMenus.FirstOrDefault(x => x.Path == controllerName.ToString()).SubmenuId;
-                        activity.PageName = subMenus.FirstOrDefault(x => x.Path == controllerName.ToString()).Name;
+                        activity.PageId = submenu.SubmenuId;
+                        activity.PageName = submenu.Name;
                     }
 
-
-                    using (var dbContext = new BksArditaDevContext())
+                    if(submenu != null || controllerName.ToString() == GlobalConst.Home)
                     {
-                        dbContext.Add(activity);
-                        dbContext.SaveChanges();
+                        using (var dbContext = new BksArditaDevContext())
+                        {
+                            dbContext.Add(activity);
+                            dbContext.SaveChanges();
+                        }
                     }
 
                 }

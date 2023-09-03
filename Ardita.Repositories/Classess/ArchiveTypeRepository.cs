@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +51,8 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstArchiveType>> GetAll() => await _context.MstArchiveTypes.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+        public async Task<IEnumerable<MstArchiveType>> GetAll(string par = " 1=1 ") => await _context.MstArchiveTypes.Where(x => x.IsActive == true)
+                .Where(par).AsNoTracking().ToListAsync();
 
         public async Task<IEnumerable<MstArchiveType>> GetByFilterModel(DataTableModel model)
         {

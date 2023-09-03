@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface ILogActivityService
     {
         Task<LogActivity> GetById(Guid id);
-        Task<IEnumerable<LogActivity>> GetAll();
+        Task<IEnumerable<LogActivity>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetByFilterModel(DataTablePostModel model);
         Task<int> Insert(LogActivity model);
     }

@@ -293,8 +293,7 @@ public class ArchiveController : BaseController<TrxArchive>
                             valid = false;
                             error += "_Tipe Arsip Tidak Valid";
                         }
-                        DateTime dateArchive = DateTime.Now;
-                        if (!DateTime.TryParse(row[10].ToString(), out dateArchive))
+                        if (!DateTime.TryParse(row[10].ToString(), out DateTime dateArchive))
                         {
                             valid = false;
                             error += "_Tanggal Arsip Tidak Valid";
@@ -305,6 +304,11 @@ public class ArchiveController : BaseController<TrxArchive>
                             {
                                 valid = false;
                                 error += "_Tanggal Arsip Tidak Valid";
+                            }
+                            if (dateArchive.Date > GlobalConst.MaxDate.Date)
+                            {
+                                valid = false;
+                                error += "_Maksimal Tanggal Arsip Tidak Boleh Lebih Dari Hari Ini ";
                             }
                         }
                         int activeRetention = 0;

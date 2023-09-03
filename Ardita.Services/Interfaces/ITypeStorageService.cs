@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface ITypeStorageService
 {
     Task<TrxTypeStorage> GetById(Guid id);
-    Task<IEnumerable<TrxTypeStorage>> GetAll();
+    Task<IEnumerable<TrxTypeStorage>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId);
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxTypeStorage model, string[] detail);

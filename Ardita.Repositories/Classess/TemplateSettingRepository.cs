@@ -49,9 +49,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstTemplateSetting>> GetAll()
+        public async Task<IEnumerable<MstTemplateSetting>> GetAll(string par = " 1=1 ")
         {
-            return await _context.MstTemplateSettings.Include(x => x.MstTemplateSettingDetails).ToListAsync();
+            return await _context.MstTemplateSettings.Include(x => x.MstTemplateSettingDetails)
+            .Where(par).AsNoTracking().ToListAsync();
         }
         public List<string> GetListView()
         {

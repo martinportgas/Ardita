@@ -26,9 +26,9 @@ namespace Ardita.Services.Classess
             return await _roleRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstRole>> GetAll()
+        public async Task<IEnumerable<MstRole>> GetAll(string par = " 1=1 ")
         {
-            return await _roleRepository.GetAll();
+            return await _roleRepository.GetAll(par);
         }
 
         public async Task<MstRole> GetById(Guid id)

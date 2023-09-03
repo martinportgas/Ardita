@@ -37,9 +37,9 @@ namespace Ardita.Services.Classess
             return await _rolePageRepository.DeleteByRoleId(roleId);
         }
 
-        public async Task<IEnumerable<IdxRolePage>> GetAll()
+        public async Task<IEnumerable<IdxRolePage>> GetAll(string par = " 1=1 ")
         {
-            var results = await _rolePageRepository.GetAll();
+            var results = await _rolePageRepository.GetAll(par);
             return results;
         }
 

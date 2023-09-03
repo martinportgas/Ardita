@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,14 +56,15 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxRoom>> GetAll()
+        public async Task<IEnumerable<TrxRoom>> GetAll(string par = " 1=1 ")
         {
             var results = await _context.TrxRooms
                .Include(x => x.Floor!.ArchiveUnit)
-                .AsNoTracking()
                 .Where(x=>x.IsActive == true)
                 .Where(x=>x.Floor!.IsActive == true)
                 .Where(x=>x.Floor!.ArchiveUnit!.IsActive == true)
+                .Where(par)
+                .AsNoTracking()
                 .ToListAsync();
             return results;
         }

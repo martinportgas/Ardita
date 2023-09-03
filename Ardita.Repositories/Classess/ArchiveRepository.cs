@@ -57,9 +57,58 @@ public class ArchiveRepository : IArchiveRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetAll(List<string> listArchiveUnitCode = null)
+    public async Task<IEnumerable<TrxArchive>> GetAll(string par = " 1=1 ")
     {
-        listArchiveUnitCode = listArchiveUnitCode == null ? new List<string> { } : listArchiveUnitCode;
+        return await _context.TrxArchives
+            .Include(x => x.TrxFileArchiveDetails)
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator.ArchiveUnit.Company)
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.TypeStorage)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.TypeStorage)
+            .Where(par)
+            .Where(x => x.IsActive == true)
+            .Where(x => x.Gmd.IsActive == true)
+            .Where(x => x.SubSubjectClassification.IsActive == true)
+            .Where(x => x.SecurityClassification.IsActive == true)
+            .Where(x => x.Creator.IsActive == true)
+            .Where(x => x.ArchiveOwner.IsActive == true)
+            .Where(x => x.ArchiveType.IsActive == true)
+            .AsNoTracking()
+            .OrderByDescending(x => x.CreatedDate).ToListAsync();
+    }
+    public async Task<int> GetCount(string par = " 1=1 ")
+    {
+        return await _context.TrxArchives
+            .Include(x => x.TrxFileArchiveDetails)
+            .Include(x => x.Gmd)
+            .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator.ArchiveUnit.Company)
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.TypeStorage)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
+            .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.TypeStorage)
+            .Where(par)
+            .Where(x => x.IsActive == true)
+            .Where(x => x.Gmd.IsActive == true)
+            .Where(x => x.SubSubjectClassification.IsActive == true)
+            .Where(x => x.SecurityClassification.IsActive == true)
+            .Where(x => x.Creator.IsActive == true)
+            .Where(x => x.ArchiveOwner.IsActive == true)
+            .Where(x => x.ArchiveType.IsActive == true)
+            .AsNoTracking()
+            .OrderByDescending(x => x.CreatedDate).CountAsync();
+    }
+    public async Task<IEnumerable<TrxArchive>> GetByParams(string param)
+    {
         return await _context.TrxArchives
             .Include(x => x.TrxFileArchiveDetails)
             .Include(x => x.Gmd)
@@ -73,7 +122,6 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.Row.Level.Rack.Room.Floor)
             .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive.TypeStorage)
             .AsNoTracking()
-            .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
             .Where(x => x.IsActive == true)
             .Where(x => x.Gmd.IsActive == true)
             .Where(x => x.SubSubjectClassification.IsActive == true)
@@ -81,9 +129,10 @@ public class ArchiveRepository : IArchiveRepository
             .Where(x => x.Creator.IsActive == true)
             .Where(x => x.ArchiveOwner.IsActive == true)
             .Where(x => x.ArchiveType.IsActive == true)
+            .Where(param)
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
-    public async Task<IEnumerable<TrxArchive>> GetAllInActive(List<string> listArchiveUnitCode)
+    public async Task<IEnumerable<TrxArchive>> GetAllInActive(string par = " 1=1 ")
     {
         return await _context.TrxArchives
             .Include(x => x.Gmd)
@@ -93,9 +142,9 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.ArchiveOwner)
             .Include(x => x.ArchiveType)
             .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+            .Where(par)
+            .Where(x => x.IsArchiveActive == false && x.IsActive == true)
             .AsNoTracking()
-            .Where($"{(listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", listArchiveUnitCode)
-            .Where(x => x.IsActive == true)
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
     }
 
@@ -359,6 +408,7 @@ public class ArchiveRepository : IArchiveRepository
                 .Include(x => x.ArchiveType)
                 .Include(x => x.TrxMediaStorageDetails).ThenInclude(x => x.MediaStorage.Row.Level.Rack)
                 .Where(x => x.IsActive == true && x.IsArchiveActive == true)
+                .Where(x => x.SubSubjectClassification != null)
                 .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
                 .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
                 .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)

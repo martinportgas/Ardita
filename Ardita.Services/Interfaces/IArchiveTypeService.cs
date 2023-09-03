@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveTypeService
 {
     Task<IEnumerable<MstArchiveType>> GetById(Guid id);
-    Task<IEnumerable<MstArchiveType>> GetAll();
+    Task<IEnumerable<MstArchiveType>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<MstArchiveType>> GetList(DataTablePostModel model);
     Task<int> Insert(MstArchiveType model);
     Task<bool> InsertBulk(List<MstArchiveType> MstArchiveTypes);

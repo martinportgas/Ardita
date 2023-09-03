@@ -12,7 +12,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<TrxArchiveExtend> GetById(Guid id);
         Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailByMainId(Guid id);
-        Task<IEnumerable<TrxArchiveExtend>> GetAll();
+        Task<IEnumerable<TrxArchiveExtend>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<TrxArchiveExtendDetail>> GetDetailAll();
         Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxArchiveExtend model);

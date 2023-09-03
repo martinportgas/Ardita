@@ -47,14 +47,15 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxSubSubjectClassification>> GetAll()
+        public async Task<IEnumerable<TrxSubSubjectClassification>> GetAll(string par = " 1=1 ")
         {
             var results = await _context.TrxSubSubjectClassifications
                 .Include(x => x.Creator.ArchiveUnit)
                 .Include(x => x.SubjectClassification)
-                .AsNoTracking()
                 .Where(x => x.IsActive == true)
                 .Where(x => x.Creator!.IsActive == true)
+                .Where(par)
+                .AsNoTracking()
                 .ToListAsync();
             return results;
         }

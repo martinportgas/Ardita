@@ -27,9 +27,10 @@ namespace Ardita.Repositories.Classess
             _context = context;
         }
 
-        public async Task<IEnumerable<LogChange>> GetAll()
+        public async Task<IEnumerable<LogChange>> GetAll(string par = " 1=1 ")
         {
-            return await _context.LogChanges.AsNoTracking().ToListAsync();
+            return await _context.LogChanges
+                .Where(par).AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)

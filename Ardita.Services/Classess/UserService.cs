@@ -72,9 +72,9 @@ namespace Ardita.Services.Classess
             return await _userArchiveUnitRepository.GetByUserId(id);
         }
 
-        public async Task<IEnumerable<MstUser>> GetAll()
+        public async Task<IEnumerable<MstUser>> GetAll(string par = " 1=1 ")
         {
-            return await _userRepository.GetAll();
+            return await _userRepository.GetAll(par);
         }
 
         public async Task<MstUser> GetById(Guid id)

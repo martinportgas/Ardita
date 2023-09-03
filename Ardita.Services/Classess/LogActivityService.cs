@@ -19,9 +19,9 @@ namespace Ardita.Services.Classess
             _logActivityRepository = logActivityRepository;
         }
 
-        public async Task<IEnumerable<LogActivity>> GetAll()
+        public async Task<IEnumerable<LogActivity>> GetAll(string par = " 1=1 ")
         {
-            return await _logActivityRepository.GetAll();
+            return await _logActivityRepository.GetAll(par);
         }
 
         public async Task<DataTableResponseModel<object>> GetByFilterModel(DataTablePostModel model)

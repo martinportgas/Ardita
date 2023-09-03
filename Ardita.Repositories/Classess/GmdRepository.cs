@@ -46,7 +46,7 @@ public class GmdRepository : IGmdRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstGmd>> GetAll() => await _context.MstGmds.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+    public async Task<IEnumerable<MstGmd>> GetAll(string par = " 1=1 ") => await _context.MstGmds.Where(x => x.IsActive == true).Where(par).AsNoTracking().ToListAsync();
 
     public async Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id) => await _context.MstGmdDetails.Where(x => x.GmdId == Id).AsNoTracking().ToListAsync();
     

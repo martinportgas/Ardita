@@ -8,7 +8,7 @@ namespace Ardita.Services.Interfaces;
 public interface ITemplateSettingService
 {
     Task<MstTemplateSetting> GetById(Guid id);
-    Task<IEnumerable<MstTemplateSetting>> GetAll();
+    Task<IEnumerable<MstTemplateSetting>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstTemplateSetting model, IFormFile file, Tuple<string[], string[], string[], string[]> data);
     Task<bool> InsertBulk(List<MstTemplateSetting> MstTemplateSettings);

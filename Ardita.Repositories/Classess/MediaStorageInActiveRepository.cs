@@ -62,7 +62,7 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
             .FirstOrDefaultAsync(x => x.MediaStorageInActiveId == id);
         return data!;
     }
-    public async Task<IEnumerable<TrxMediaStorageInActive>> GetAll()
+    public async Task<IEnumerable<TrxMediaStorageInActive>> GetAll(string par = " 1=1 ")
     {
         var data = await _context.TrxMediaStorageInActives
             .Include(g => g.GmdDetail)
@@ -76,8 +76,28 @@ public class MediaStorageInActiveRepository : IMediaStorageInActiveRepository
             .Include(t => t.TypeStorage)
                 .ThenInclude(a => a.ArchiveUnit)
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor.ArchiveUnit)
+                .Where(par)
             .AsNoTracking()
             .ToListAsync();
+        return data!;
+    }
+    public async Task<int> GetCount(string par = " 1=1 ")
+    {
+        var data = await _context.TrxMediaStorageInActives
+            .Include(g => g.GmdDetail)
+            .Include(d => d.TrxMediaStorageInActiveDetails)
+                .ThenInclude(a => a.Archive)
+                .ThenInclude(c => c.Creator)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(x => x.SubTypeStorage)
+            .Include(s => s.SubSubjectClassification.Creator)
+            .Include(t => t.TypeStorage.TrxTypeStorageDetails)
+            .Include(t => t.TypeStorage)
+                .ThenInclude(a => a.ArchiveUnit)
+            .Include(r => r.Row!.Level!.Rack!.Room!.Floor.ArchiveUnit)
+                .Where(par)
+            .AsNoTracking()
+            .CountAsync();
         return data!;
     }
     public async Task<int> GetCountByFilterModel(DataTableModel model)

@@ -7,7 +7,7 @@ public interface IArchiveApprovalService
 {
     Task<IEnumerable<TrxApproval>> GetById(Guid id);
     Task<IEnumerable<TrxApproval>> GetByTransIdandApprovalCode(Guid id, string approvalCode);
-    Task<IEnumerable<TrxApproval>> GetAll();
+    Task<IEnumerable<TrxApproval>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxApproval model);
     Task<int> Delete(TrxApproval model);

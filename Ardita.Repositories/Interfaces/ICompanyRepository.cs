@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces
     public interface ICompanyRepository
     {
         Task<IEnumerable<MstCompany>> GetById(Guid id);
-        Task<IEnumerable<MstCompany>> GetAll();
+        Task<IEnumerable<MstCompany>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<MstCompany>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(MstCompany model);

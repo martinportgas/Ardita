@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,13 +39,15 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<IdxUserArchiveUnit>> GetAll()
+        public async Task<IEnumerable<IdxUserArchiveUnit>> GetAll(string par = " 1=1 ")
         {
             return await _context.IdxUserArchiveUnits
                 .Include(u => u.User)
                 .Include(a=> a.ArchiveUnit)
                 .Where(x => x.User.IsActive == true)
                 .Where(x => x.ArchiveUnit.IsActive == true)
+            .Where(par)
+            .AsNoTracking()
                 .ToListAsync();
         }
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +27,13 @@ namespace Ardita.Repositories.Classess
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<MstMenu>> GetAll()
+        public async Task<IEnumerable<MstMenu>> GetAll(string par = " 1=1 ")
         {
             var result = await _context.MstMenus
                 .Include(x => x.MstSubmenus)
-                .AsNoTracking()
                 .Where(x => x.IsActive == true)
+                .Where(par)
+                .AsNoTracking()
                 .ToListAsync();
             return result;
         }

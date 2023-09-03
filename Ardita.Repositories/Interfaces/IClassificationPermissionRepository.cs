@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<TrxPermissionClassification> GetById(Guid id);
         Task<IEnumerable<TrxPermissionClassification>> GetByMainId(Guid id);
-        Task<IEnumerable<TrxPermissionClassification>> GetAll();
+        Task<IEnumerable<TrxPermissionClassification>> GetAll(string par = " 1=1 ");
         Task<int> Insert(TrxPermissionClassification model);
         Task<bool> InsertBulk(List<TrxPermissionClassification> models);
         Task<int> Delete(TrxPermissionClassification model);

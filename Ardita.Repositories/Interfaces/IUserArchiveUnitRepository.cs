@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<IEnumerable<IdxUserArchiveUnit>> GetById(Guid id);
         Task<IEnumerable<IdxUserArchiveUnit>> GetByUserId(Guid id);
-        Task<IEnumerable<IdxUserArchiveUnit>> GetAll();
+        Task<IEnumerable<IdxUserArchiveUnit>> GetAll(string par = " 1=1 ");
         Task<int> Insert(IdxUserArchiveUnit model);
         Task<bool> InsertBulk(List<IdxUserArchiveUnit> models);
         Task<int> Delete(IdxUserArchiveUnit model);

@@ -20,7 +20,8 @@ public class MediaStorageService : IMediaStorageService
 
     public async Task<int> Delete(TrxMediaStorage model) => await _mediaStorageRepository.Delete(model);
 
-    public async Task<IEnumerable<TrxMediaStorage>> GetAll() => await _mediaStorageRepository.GetAll();
+    public async Task<IEnumerable<TrxMediaStorage>> GetAll(string par = " 1=1 ") => await _mediaStorageRepository.GetAll(par);
+    public async Task<int> GetCount(string par = " 1=1 ") => await _mediaStorageRepository.GetCount(par);
 
     public async Task<TrxMediaStorage> GetById(Guid id)
     {

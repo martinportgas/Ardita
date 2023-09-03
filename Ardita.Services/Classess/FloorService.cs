@@ -18,9 +18,9 @@ namespace Ardita.Services.Classess
             return await _floorRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<TrxFloor>> GetAll()
+        public async Task<IEnumerable<TrxFloor>> GetAll(string par = " 1=1 ")
         {
-            return await _floorRepository.GetAll();
+            return await _floorRepository.GetAll(par);
         }
 
         public async Task<TrxFloor> GetById(Guid id)

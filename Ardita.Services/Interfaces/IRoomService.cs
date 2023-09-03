@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface IRoomService
     {
         Task<TrxRoom> GetById(Guid id);
-        Task<IEnumerable<TrxRoom>> GetAll();
+        Task<IEnumerable<TrxRoom>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<TrxRoom>> GetListClassification(DataTablePostModel model);
         Task<int> Insert(TrxRoom model);
         Task<bool> InsertBulk(List<TrxRoom> rooms);

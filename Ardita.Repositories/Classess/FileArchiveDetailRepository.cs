@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,9 +19,10 @@ namespace Ardita.Repositories.Classess
             _context = context;
             _logChangesRepository = logChangesRepository;
         }
-        public async Task<IEnumerable<TrxFileArchiveDetail>> GetAll()
+        public async Task<IEnumerable<TrxFileArchiveDetail>> GetAll(string par = " 1=1 ")
         {
-            return await _context.TrxFileArchiveDetails.Include(x => x.Archive.Creator.ArchiveUnit).AsNoTracking().ToListAsync();
+            return await _context.TrxFileArchiveDetails.Include(x => x.Archive.Creator.ArchiveUnit)
+                .Where(par).AsNoTracking().ToListAsync();
         }
         public Task<TrxFileArchiveDetail> GetById(Guid id)
         {

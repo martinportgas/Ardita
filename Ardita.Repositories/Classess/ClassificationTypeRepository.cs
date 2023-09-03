@@ -45,10 +45,11 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstTypeClassification>> GetAll()
+        public async Task<IEnumerable<MstTypeClassification>> GetAll(string par = " 1=1 ")
         {
             var results = await _context.MstTypeClassifications
                 .Where(x => x.IsActive == true)
+                .Where(par)
                 .AsNoTracking()
                 .ToListAsync();
             return results;

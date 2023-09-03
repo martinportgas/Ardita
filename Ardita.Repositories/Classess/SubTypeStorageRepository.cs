@@ -98,13 +98,14 @@ public class SubTypeStorageRepository : ISubTypeStorageRepository
         }
         return result;
     }
-    public async Task<IEnumerable<MstSubTypeStorage>> GetAll()
+    public async Task<IEnumerable<MstSubTypeStorage>> GetAll(string par = " 1=1 ")
     {
         return await _context.MstSubTypeStorages
             .Include(x => x.IdxSubTypeStorages)
             .ThenInclude(x => x.TypeStorage)
-            .AsNoTracking()
             .Where(x => x.IsActive == true)
+            .Where(par)
+            .AsNoTracking()
             .ToListAsync();
     }
 

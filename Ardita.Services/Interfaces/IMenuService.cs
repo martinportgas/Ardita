@@ -14,7 +14,7 @@ namespace Ardita.Services.Interfaces
     public interface IMenuService
     {
         Task<MstMenu> GetById(Guid id);
-        Task<IEnumerable<MstMenu>> GetAll();
+        Task<IEnumerable<MstMenu>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<MstMenu>> GetListMenu(DataTablePostModel model);
         Task<int> Insert(MstMenu model);
         Task<int> Delete(MstMenu model);

@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveUnitService
 {
     Task<TrxArchiveUnit> GetById(Guid id);
-    Task<IEnumerable<TrxArchiveUnit>> GetAll();
+    Task<IEnumerable<TrxArchiveUnit>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxArchiveUnit model);
     Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits);

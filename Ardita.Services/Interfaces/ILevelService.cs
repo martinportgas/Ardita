@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface ILevelService
     {
         Task<TrxLevel> GetById(Guid id);
-        Task<IEnumerable<TrxLevel>> GetAll();
+        Task<IEnumerable<TrxLevel>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxLevel model);
         Task<bool> InsertBulk(List<TrxLevel> levels);

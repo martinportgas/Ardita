@@ -20,9 +20,9 @@ namespace Ardita.Services.Classess
             return await _positionRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstPosition>> GetAll()
+        public async Task<IEnumerable<MstPosition>> GetAll(string par = " 1=1 ")
         {
-            return await _positionRepository.GetAll();
+            return await _positionRepository.GetAll(par);
         }
 
         public async Task<MstPosition> GetById(Guid id)

@@ -24,9 +24,9 @@ public class SubTypeStorageService : ISubTypeStorageService
     {
         return await _subTypeStorageRepository.DeleteGMDSubTypeStorage(id);
     }
-    public async Task<IEnumerable<MstSubTypeStorage>> GetAll()
+    public async Task<IEnumerable<MstSubTypeStorage>> GetAll(string par = " 1=1 ")
     {
-        return await _subTypeStorageRepository.GetAll();
+        return await _subTypeStorageRepository.GetAll(par);
     }
     public async Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageId(Guid ID) => await _subTypeStorageRepository.GetAllByTypeStorageId(ID);
     public async Task<IEnumerable<MstSubTypeStorage>> GetAllByTypeStorageandGMDDetailId(Guid ID, Guid GMDDetailID) => await _subTypeStorageRepository.GetAllByTypeStorageAndGMDDetailId(ID, GMDDetailID);

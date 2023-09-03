@@ -23,9 +23,9 @@ namespace Ardita.Services.Classess
             return await _rackRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<TrxRack>> GetAll()
+        public async Task<IEnumerable<TrxRack>> GetAll(string par = " 1=1 ")
         {
-            return await _rackRepository.GetAll();
+            return await _rackRepository.GetAll(par);
         }
 
         public async Task<TrxRack> GetById(Guid id)

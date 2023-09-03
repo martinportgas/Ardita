@@ -10,7 +10,7 @@ namespace Ardita.Services.Interfaces
         Task<IdxUserRole> GetByUserAndRoleId(Guid id, Guid role, Guid archiveUnit, Guid creator);
         Task<IEnumerable<IdxUserRole>> GetIdxUserRoleByUserId(Guid id);
         Task<int> GetCountIsPrimaryByUserId(Guid id);
-        Task<IEnumerable<IdxUserRole>> GetAll();
+        Task<IEnumerable<IdxUserRole>> GetAll(string par = " 1=1 ");
         Task<UserRoleListViewModel> GetListUserRoles(Guid Id);
         Task<int> Insert(IdxUserRole model);
         Task<int> Delete(IdxUserRole model);

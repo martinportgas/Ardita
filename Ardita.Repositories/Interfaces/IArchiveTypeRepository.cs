@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces;
 public interface IArchiveTypeRepository
 {
     Task<IEnumerable<MstArchiveType>> GetById(Guid id);
-    Task<IEnumerable<MstArchiveType>> GetAll();
+    Task<IEnumerable<MstArchiveType>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<MstArchiveType>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> Insert(MstArchiveType model);

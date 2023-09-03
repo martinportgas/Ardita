@@ -44,7 +44,8 @@ public class SecurityClassificationRepository : ISecurityClassificationRepositor
         return result;
     }
 
-    public async Task<IEnumerable<MstSecurityClassification>> GetAll() => await _context.MstSecurityClassifications.Where(x => x.IsActive == true).ToListAsync();
+    public async Task<IEnumerable<MstSecurityClassification>> GetAll(string par = " 1=1 ") => await _context.MstSecurityClassifications.Where(x => x.IsActive == true)
+                .Where(par).AsNoTracking().ToListAsync();
     
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)

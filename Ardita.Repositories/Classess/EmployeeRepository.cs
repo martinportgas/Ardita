@@ -54,13 +54,14 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstEmployee>> GetAll()
+        public async Task<IEnumerable<MstEmployee>> GetAll(string par = " 1=1 ")
         {
             var result = await _context.MstEmployees
                 .Include(x => x.Position)
                 .AsNoTracking()
                 .Where(x => x.IsActive == true)
                 .Where(x => x.Position.IsActive == true)
+                .Where(par)
                 .AsNoTracking()
                 .ToListAsync();
             return result;

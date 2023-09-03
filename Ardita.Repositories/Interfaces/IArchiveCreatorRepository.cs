@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces;
 public interface IArchiveCreatorRepository
 {
     Task<IEnumerable<MstCreator>> GetById(Guid id);
-    Task<IEnumerable<MstCreator>> GetAll();
+    Task<IEnumerable<MstCreator>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> GetCount();

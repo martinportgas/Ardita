@@ -3,6 +3,7 @@ using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 
 namespace Ardita.Repositories.Classess;
@@ -46,9 +47,10 @@ public class CompanyRepository : ICompanyRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstCompany>> GetAll()
+    public async Task<IEnumerable<MstCompany>> GetAll(string par = " 1=1 ")
     {
-        var results = await _context.MstCompanies.Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+        var results = await _context.MstCompanies.Where(x => x.IsActive == true)
+                .Where(par).AsNoTracking().ToListAsync();
         return results;
     }
 

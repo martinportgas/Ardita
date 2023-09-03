@@ -265,7 +265,7 @@ namespace Ardita.Repositories.Classess
               .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
               .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
               .Where(x => x.IsActive == true && x.IsArchiveActive == true)
-              .Where(x => x.StatusId == statusSubmit)
+              //.Where(x => x.StatusId == statusSubmit)
               .Where(x => x.SubSubjectClassification != null)
               .Where(x => (param.companyId == Guid.Empty ? true : x.Creator.ArchiveUnit.CompanyId == param.companyId))
               .Where(x => (param.archiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == param.archiveUnitId))
@@ -281,7 +281,7 @@ namespace Ardita.Repositories.Classess
               .Where(x => (param.subjectClassificationId == Guid.Empty ? true : x.SubSubjectClassification.SubjectClassificationId == param.subjectClassificationId))
               .Where(x => (param.status == null ? true : x.IsUsed == param.status))
               .Where(x => (param.startDate == null ? true : x.CreatedDateArchive >= param.startDate))
-              .Where(x => (param.endDate == null ? x.CreatedDateArchive <= DateTime.Now : x.CreatedDateArchive <= param.endDate))
+              .Where(x => (param.endDate == null ? true : x.CreatedDateArchive <= param.endDate))
               .Select(x => new ArchiveActive
               {
                   DocumentNo = x.DocumentNo,

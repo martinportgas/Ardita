@@ -24,9 +24,9 @@ namespace Ardita.Services.Classess
             return await _templateSettingRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstTemplateSetting>> GetAll()
+        public async Task<IEnumerable<MstTemplateSetting>> GetAll(string par = " 1=1 ")
         {
-            return await _templateSettingRepository.GetAll();
+            return await _templateSettingRepository.GetAll(par);
         }
 
         public async Task<MstTemplateSetting> GetById(Guid id)

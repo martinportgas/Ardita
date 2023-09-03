@@ -16,7 +16,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<MstUser> GetById(Guid id);
         Task<IEnumerable<IdxUserArchiveUnit>> GetIdxUserArchiveUnitByUserId(Guid id);
-        Task<IEnumerable<MstUser>> GetAll();
+        Task<IEnumerable<MstUser>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel tableModel);
         Task<List<Claim>> GetLogin(string username, string password);
         Task<List<UserMenuListViewModel>> GetUserMenu(Guid id);

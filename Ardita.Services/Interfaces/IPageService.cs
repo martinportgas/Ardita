@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
     {
         Task<MstPage> GetById(Guid id);
         Task<IEnumerable<MstPageDetail>> GetDetailByMainId(Guid id);
-        Task<IEnumerable<MstPage>> GetAll();
+        Task<IEnumerable<MstPage>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<MstPage>> GetListPage(DataTablePostModel model);
         Task<int> Insert(MstPage model);
         Task<int> InsertDetail(MstPageDetail model);

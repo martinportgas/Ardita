@@ -14,7 +14,7 @@ public class ArchiveCreatorService : IArchiveCreatorService
 
     public async Task<int> Delete(MstCreator model) => await _archiveCreatorRepository.Delete(model);
 
-    public async Task<IEnumerable<MstCreator>> GetAll() => await _archiveCreatorRepository.GetAll();
+    public async Task<IEnumerable<MstCreator>> GetAll(string par = " 1=1 ") => await _archiveCreatorRepository.GetAll(par);
 
     public async Task<IEnumerable<MstCreator>> GetById(Guid id) => await _archiveCreatorRepository.GetById(id);
 

@@ -58,16 +58,18 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxLevel>> GetAll()
+        public async Task<IEnumerable<TrxLevel>> GetAll(string par = " 1=1 ")
         {
             var results = await _context
-                .TrxLevels.AsNoTracking()
+                .TrxLevels
                 .Include(x => x.Rack!.Room!.Floor!.ArchiveUnit)
                 .Where(x => x.IsActive == true)
                 .Where(x => x.Rack!.IsActive == true)
                 .Where(x => x.Rack!.Room!.IsActive == true)
                 .Where(x => x.Rack!.Room!.Floor!.IsActive == true)
                 .Where(x => x.Rack!.Room!.Floor!.ArchiveUnit!.IsActive == true)
+                .Where(par)
+                .AsNoTracking()
                 .ToListAsync();
             return results;
         }

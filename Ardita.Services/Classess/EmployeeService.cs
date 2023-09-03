@@ -40,9 +40,9 @@ namespace Ardita.Services.Classess
             return await _employeeRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<MstEmployee>> GetAll()
+        public async Task<IEnumerable<MstEmployee>> GetAll(string par = " 1=1 ")
         {
-            return await _employeeRepository.GetAll();
+            return await _employeeRepository.GetAll(par);
         }
 
         public async Task<MstEmployee> GetById(Guid id)

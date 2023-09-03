@@ -49,12 +49,13 @@ public class ArchiveCreatorRepository : IArchiveCreatorRepository
         return result;
     }
 
-    public async Task<IEnumerable<MstCreator>> GetAll() 
+    public async Task<IEnumerable<MstCreator>> GetAll(string par = " 1=1 ") 
         => await _context.MstCreators
         .Include(x => x.TrxArchives)
         .Include(x=> x.ArchiveUnit)
         .ThenInclude(x=> x.Company)
         .Where(x => x.IsActive == true)
+        .Where(par)
         .ToListAsync();
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)

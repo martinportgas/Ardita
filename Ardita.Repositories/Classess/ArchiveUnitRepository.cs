@@ -47,11 +47,12 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxArchiveUnit>> GetAll() 
+    public async Task<IEnumerable<TrxArchiveUnit>> GetAll(string par = " 1=1 ") 
         => await _context.TrxArchiveUnits
         .Include(x=> x.Company)
         .Where(x => x.IsActive == true)
         .Where(x => x.Company.IsActive == true)
+        .Where(par)
         .AsNoTracking()
         .ToListAsync();
 

@@ -10,7 +10,7 @@ public interface ISubTypeStorageService
     Task<IEnumerable<IdxSubTypeStorage>> GetAllBySubTypeStorageId(Guid ID);
     Task<IEnumerable<MstSubTypeStorageDetail>> GetAllDetailBySubTypeStorageId(Guid ID);
     Task<IEnumerable<MstSubTypeStorage>> GetById(Guid id);
-    Task<IEnumerable<MstSubTypeStorage>> GetAll();
+    Task<IEnumerable<MstSubTypeStorage>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstSubTypeStorage model);
     Task<int> InsertIDXSubTypeStorage(IdxSubTypeStorage model);

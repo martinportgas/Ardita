@@ -53,7 +53,7 @@ public class RowRepository : IRowRepository
         return result;
     }
 
-    public async Task<IEnumerable<TrxRow>> GetAll()
+    public async Task<IEnumerable<TrxRow>> GetAll(string par = " 1=1 ")
     {
         var results = await _context.TrxRows
             .Include(x => x.TrxMediaStorages)
@@ -64,6 +64,7 @@ public class RowRepository : IRowRepository
             .Where(x => x.Level!.Rack!.Room!.IsActive == true)
             .Where(x => x.Level!.Rack!.Room!.Floor!.IsActive == true)
             .Where(x => x.Level!.Rack!.Room!.Floor!.ArchiveUnit!.IsActive == true)
+            .Where(par)
             .AsNoTracking()
             .ToListAsync();
         return results;

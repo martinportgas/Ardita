@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,9 +53,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxPermissionClassification>> GetAll()
+        public async Task<IEnumerable<TrxPermissionClassification>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.TrxPermissionClassifications.AsNoTracking().ToListAsync();
+            var results = await _context.TrxPermissionClassifications
+                .Where(par).AsNoTracking().ToListAsync();
             return results;
         }
 

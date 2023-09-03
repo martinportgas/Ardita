@@ -76,9 +76,10 @@ namespace Ardita.Repositories.Classess
             }
             return result;
         }
-        public async Task<IEnumerable<TrxArchiveExtend>> GetAll()
+        public async Task<IEnumerable<TrxArchiveExtend>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.TrxArchiveExtends.Where(x => x.IsActive == true).ToListAsync();
+            var results = await _context.TrxArchiveExtends.Where(x => x.IsActive == true)
+                .Where(par).ToListAsync();
             return results;
         }
         public async Task<int> GetCount()

@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface IRackService
     {
         Task<TrxRack> GetById(Guid id);
-        Task<IEnumerable<TrxRack>> GetAll();
+        Task<IEnumerable<TrxRack>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
         Task<int> Insert(TrxRack model);
         Task<bool> InsertBulk(List<TrxRack> racks);

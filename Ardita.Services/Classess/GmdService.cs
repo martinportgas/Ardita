@@ -17,7 +17,7 @@ public class GmdService : IGmdService
 
     public async Task<int> Delete(MstGmd model) => await _GmdRepository.Delete(model);
 
-    public async Task<IEnumerable<MstGmd>> GetAll() => await _GmdRepository.GetAll();
+    public async Task<IEnumerable<MstGmd>> GetAll(string par = " 1=1 ") => await _GmdRepository.GetAll(par);
 
     public async Task<IEnumerable<MstGmd>> GetById(Guid id) => await _GmdRepository.GetById(id);
 

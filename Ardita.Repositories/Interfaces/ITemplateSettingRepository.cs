@@ -8,7 +8,7 @@ namespace Ardita.Repositories.Interfaces;
 public interface ITemplateSettingRepository
 {
     Task<MstTemplateSetting> GetById(Guid id);
-    Task<IEnumerable<MstTemplateSetting>> GetAll();
+    Task<IEnumerable<MstTemplateSetting>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCountByFilterModel(DataTableModel model);
     Task<int> Insert(MstTemplateSetting model, IFormFile file, IEnumerable<MstTemplateSettingDetail> detail);

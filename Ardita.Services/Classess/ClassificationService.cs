@@ -27,9 +27,9 @@ namespace Ardita.Services.Classess
             return await _classificationRepository.Delete(model);
         }
 
-        public async Task<IEnumerable<TrxClassification>> GetAll()
+        public async Task<IEnumerable<TrxClassification>> GetAll(string par = " 1=1 ")
         {
-            return await _classificationRepository.GetAll();
+            return await _classificationRepository.GetAll(par);
         }
 
         public async Task<TrxClassification> GetById(Guid id)

@@ -211,9 +211,10 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindRacks()
     {
-        var data = await _rackService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Room.Floor.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _rackService.GetAll(par);
 
         return data.Select(x => new SelectListItem
         {
@@ -223,9 +224,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindRooms()
     {
-        var data = await _roomService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Floor.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _roomService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -235,9 +239,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindFloors()
     {
-        var data = await _floorService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _floorService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -247,9 +254,10 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchiveUnits()
     {
-        var data = await _archiveUnitService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _archiveUnitService.GetAll(par);
         return data.Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
@@ -258,11 +266,14 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindAllArchiveUnits()
     {
-        var data = await _archiveUnitService.GetAll();
+        string par = $" CompanyId == \"{AppUsers.CurrentUser(User).CompanyId}\" ";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _archiveUnitService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         data = data.OrderBy(x => x.ArchiveUnitName);
-        return data.Where(x => x.CompanyId == AppUsers.CurrentUser(User).CompanyId).Select(x => new SelectListItem
+        return data.Select(x => new SelectListItem
         {
             Value = x.ArchiveUnitId.ToString(),
             Text = x.ArchiveUnitCode + " - " + x.ArchiveUnitName
@@ -270,9 +281,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindLevels()
     {
-        var data = await _levelService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Rack.Room.Floor.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _levelService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -302,11 +316,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindSubjectClasscifications()
     {
-        var data = await _classificationSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Classification.Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && Classification.CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -326,11 +345,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindSubSubjectClasscifications()
     {
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -340,11 +364,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindMySubSubjectClasscifications()
     {
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -354,11 +383,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindAllSubjectClasscifications()
     {
-        var data = await _classificationSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Classification.Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && Classification.CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -368,11 +402,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindAllSubSubjectClasscifications()
     {
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -392,11 +431,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchiveCreators()
     {
-        var data = await _archiveCreatorService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _archiveCreatorService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -416,11 +460,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindClasscifications()
     {
-        var data = await _classificationService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -430,11 +479,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindClasscificationSubjects()
     {
-        var data = await _classificationSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Classification.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Classification.Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.Classification.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && Classification.CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubjectService.GetAll(par);
 
         return data.Select(x => new SelectListItem
         {
@@ -454,11 +504,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchives()
     {
-        var data = await _archiveService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _archiveService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data.Select(x => new SelectListItem
         {
@@ -468,11 +523,16 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindArchivesInActive()
     {
-        var data = await _archiveService.GetAllInActive();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _archiveService.GetAllInActive();
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
 
         return data
             .Select(x => new SelectListItem
@@ -484,9 +544,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindTypeStorage()
     {
-        var data = await _typeStorageService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _typeStorageService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.TypeStorageId.ToString(),
@@ -495,9 +558,12 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindRows()
     {
-        var data = await _rowService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Level.Rack.Room.Floor.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _rowService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
@@ -507,9 +573,12 @@ public abstract class BaseController<T> : Controller
     public async Task<List<SelectListItem>> BindRowsWithDetails()
     {
         string spr = " - ";
-        var data = await _rowService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Level.Rack.Room.Floor.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        var data = await _rowService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Level.Rack.Room.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         return data.Select(x => new SelectListItem
         {
             Value = x.RowId.ToString(),
@@ -518,8 +587,8 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
     {
-        var data = await _typeStorageService.GetAll();
-        var result = data.Where(x => x.ArchiveUnit.CompanyId == Id).ToList();
+        string par = " ArchiveUnit.CompanyId == \"{Id}\" ";
+        var result = await _typeStorageService.GetAll(par);
         return result.Select(x => new SelectListItem
         {
             Value = x.TypeStorageId.ToString(),

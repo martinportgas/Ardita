@@ -13,7 +13,7 @@ namespace Ardita.Services.Interfaces
     public interface IPositionService
     {
         Task<MstPosition> GetById(Guid id);
-        Task<IEnumerable<MstPosition>> GetAll();
+        Task<IEnumerable<MstPosition>> GetAll(string par = " 1=1 ");
         Task<DataTableResponseModel<object>> GetListPositions(DataTablePostModel model);
         Task<int> Insert(MstPosition model);
         Task<int> Delete(MstPosition model);

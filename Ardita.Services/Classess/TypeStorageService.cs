@@ -15,7 +15,7 @@ public class TypeStorageService : ITypeStorageService
 
     public async Task<int> Delete(TrxTypeStorage model) => await _TypeStorageRepository.Delete(model);
 
-    public async Task<IEnumerable<TrxTypeStorage>> GetAll() => await _TypeStorageRepository.GetAll();
+    public async Task<IEnumerable<TrxTypeStorage>> GetAll(string par = " 1=1 ") => await _TypeStorageRepository.GetAll(par);
     public async Task<IEnumerable<TrxTypeStorageDetail>> GetAllByTypeStorageId(Guid TypeStorageId) => await _TypeStorageRepository.GetAllByTypeStorageId(TypeStorageId);
     public async Task<TrxTypeStorage> GetById(Guid id)
     => await _TypeStorageRepository.GetById(id);

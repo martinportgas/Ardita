@@ -12,7 +12,7 @@ namespace Ardita.Repositories.Interfaces
     {
         Task<IEnumerable<TrxArchiveExtendDetail>> GetById(Guid id);
         Task<IEnumerable<TrxArchiveExtendDetail>> GetByMainId(Guid id);
-        Task<IEnumerable<TrxArchiveExtendDetail>> GetAll();
+        Task<IEnumerable<TrxArchiveExtendDetail>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<TrxArchiveExtendDetail>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount();
         Task<int> Insert(TrxArchiveExtendDetail model);

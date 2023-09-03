@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces
     public interface ISecurityClassificationRepository
     {
         Task<IEnumerable<MstSecurityClassification>> GetById(Guid id);
-        Task<IEnumerable<MstSecurityClassification>> GetAll();
+        Task<IEnumerable<MstSecurityClassification>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCountByFilterModel(DataTableModel model);
         Task<int> GetCount();

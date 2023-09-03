@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveCreatorService
 {
     Task<IEnumerable<MstCreator>> GetById(Guid id);
-    Task<IEnumerable<MstCreator>> GetAll();
+    Task<IEnumerable<MstCreator>> GetAll(string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(MstCreator model);
     Task<bool> InsertBulk(List<MstCreator> mstCreators);

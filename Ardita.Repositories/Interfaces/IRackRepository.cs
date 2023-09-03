@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IRackRepository
     {
         Task<TrxRack> GetById(Guid id);
-        Task<IEnumerable<TrxRack>> GetAll();
+        Task<IEnumerable<TrxRack>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(TrxRack model);

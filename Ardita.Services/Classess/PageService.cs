@@ -42,9 +42,9 @@ namespace Ardita.Services.Classess
             return await _pageDetailRepository.DeleteByMainId(id);
         }
 
-        public async Task<IEnumerable<MstPage>> GetAll()
+        public async Task<IEnumerable<MstPage>> GetAll(string par = " 1=1 ")
         {
-            return await _pageRepository.GetAll();
+            return await _pageRepository.GetAll(par);
         }
 
         public async Task<MstPage> GetById(Guid id)

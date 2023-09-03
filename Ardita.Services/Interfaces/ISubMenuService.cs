@@ -11,7 +11,7 @@ namespace Ardita.Services.Interfaces
     public interface ISubMenuService
     {
         Task<MstSubmenu> GetById(Guid id);
-        Task<IEnumerable<MstSubmenu>> GetAll();
+        Task<IEnumerable<MstSubmenu>> GetAll(string par = " 1=1 ");
         Task<int> Insert(MstSubmenu model);
         Task<int> Delete(MstSubmenu model);
         Task<int> Update(MstSubmenu model);

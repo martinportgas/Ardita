@@ -21,9 +21,9 @@ public class CompanyService : ICompanyService
         return await _companyRepository.Delete(model);
     }
 
-    public async Task<IEnumerable<MstCompany>> GetAll()
+    public async Task<IEnumerable<MstCompany>> GetAll(string par = " 1=1 ")
     {
-        return await _companyRepository.GetAll();
+        return await _companyRepository.GetAll(par);
     }
 
     public async Task<IEnumerable<MstCompany>> GetById(Guid id)

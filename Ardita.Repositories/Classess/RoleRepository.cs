@@ -51,9 +51,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<MstRole>> GetAll()
+        public async Task<IEnumerable<MstRole>> GetAll(string par = " 1=1 ")
         {
-            var result = await _context.MstRoles.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
+            var result = await _context.MstRoles.Where(x => x.IsActive == true)
+                .Where(par).AsNoTracking().ToListAsync();
             return result;
         }
 

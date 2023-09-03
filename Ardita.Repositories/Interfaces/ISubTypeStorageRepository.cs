@@ -10,7 +10,7 @@ public interface ISubTypeStorageRepository
     Task<IEnumerable<IdxSubTypeStorage>> GetAllBySubTypeStorageId(Guid ID);
     Task<IEnumerable<MstSubTypeStorageDetail>> GetAllDetailBySubTypeStorageId(Guid ID);
     Task<IEnumerable<MstSubTypeStorage>> GetById(Guid id);
-    Task<IEnumerable<MstSubTypeStorage>> GetAll();
+    Task<IEnumerable<MstSubTypeStorage>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
     Task<int> GetCount();
     Task<int> GetCountByFilterModel(DataTableModel model);

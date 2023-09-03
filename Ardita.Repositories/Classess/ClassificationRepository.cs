@@ -53,9 +53,10 @@ namespace Ardita.Repositories.Classess
             return result;
         }
 
-        public async Task<IEnumerable<TrxClassification>> GetAll()
+        public async Task<IEnumerable<TrxClassification>> GetAll(string par = " 1=1 ")
         {
-            var results = await _context.TrxClassifications.Include(x => x.Creator.ArchiveUnit).Where(x => x.IsActive == true).AsNoTracking().ToListAsync();
+            var results = await _context.TrxClassifications.Include(x => x.Creator.ArchiveUnit).Where(x => x.IsActive == true)
+                .Where(par).AsNoTracking().ToListAsync();
             return results;
         }
         public async Task<int> GetCount(DataTableModel model)

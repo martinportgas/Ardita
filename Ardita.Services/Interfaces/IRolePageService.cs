@@ -6,7 +6,7 @@ namespace Ardita.Services.Interfaces
     public interface IRolePageService
     {
         Task<IEnumerable<IdxRolePage>> GetById(Guid id);
-        Task<IEnumerable<IdxRolePage>> GetAll();
+        Task<IEnumerable<IdxRolePage>> GetAll(string par = " 1=1 ");
         Task<RolePageListViewModel> GetListRolePages(Guid id);
         Task<IEnumerable<RolePageTreeViewModel>> GetTreeRolePages(Guid id);
         Task<int> Insert(IdxRolePage model);

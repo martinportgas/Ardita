@@ -6,7 +6,7 @@ namespace Ardita.Repositories.Interfaces;
 public interface IRowRepository
 {
     Task<TrxRow> GetById(Guid id);
-    Task<IEnumerable<TrxRow>> GetAll();
+    Task<IEnumerable<TrxRow>> GetAll(string par = " 1=1 ");
     Task<IEnumerable<TrxRow>> GetRowNotAvailable();
     Task<IEnumerable<TrxRow>> GetRowAvailable(IEnumerable<TrxRow> listRowNotAvailable);
     Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);

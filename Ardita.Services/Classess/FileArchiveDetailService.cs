@@ -21,9 +21,9 @@ namespace Ardita.Services.Classess
         {
             return _fileArchiveDetailRepository.GetById(id);
         }
-        public async Task<IEnumerable<TrxFileArchiveDetail>> GetAll()
+        public async Task<IEnumerable<TrxFileArchiveDetail>> GetAll(string par = " 1=1 ")
         {
-            return await _fileArchiveDetailRepository.GetAll();
+            return await _fileArchiveDetailRepository.GetAll(par);
         }
     }
 }

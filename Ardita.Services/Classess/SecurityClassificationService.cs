@@ -14,7 +14,7 @@ public class SecurityClassificationService : ISecurityClassificationService
 
     public async Task<int> Delete(MstSecurityClassification model) => await _SecurityClassificationRepository.Delete(model);
 
-    public async Task<IEnumerable<MstSecurityClassification>> GetAll() => await _SecurityClassificationRepository.GetAll();
+    public async Task<IEnumerable<MstSecurityClassification>> GetAll(string par = " 1=1 ") => await _SecurityClassificationRepository.GetAll(par);
 
     public async Task<IEnumerable<MstSecurityClassification>> GetById(Guid id)
     => await _SecurityClassificationRepository.GetById(id);

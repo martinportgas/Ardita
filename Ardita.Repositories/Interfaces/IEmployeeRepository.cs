@@ -11,7 +11,7 @@ namespace Ardita.Repositories.Interfaces
     public interface IEmployeeRepository
     {
         Task<MstEmployee> GetById(Guid id);
-        Task<IEnumerable<MstEmployee>> GetAll();
+        Task<IEnumerable<MstEmployee>> GetAll(string par = " 1=1 ");
         Task<IEnumerable<object>> GetByFilterModel(DataTableModel model);
         Task<int> GetCount(DataTableModel model);
         Task<int> Insert(MstEmployee model);
