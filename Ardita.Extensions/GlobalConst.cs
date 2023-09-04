@@ -420,7 +420,7 @@ public static class GlobalConst
     ";
 
     public const string WhereClauseArchiveRegist = @"archiveCode + documentNo + titleArchive + gmd.gmdName + securityClassification.securityClassificationName 
-    + creator.creatorName + subSubjectClassification.subSubjectClassificationName";
+    + creator.creatorName + subSubjectClassification.subSubjectClassificationName + createdDateArchive.ToString()";
 
 }
 

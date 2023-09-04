@@ -164,7 +164,7 @@ public class ArchiveRepository : IArchiveRepository
                 .Where(x => x.IsActive == true && x.IsArchiveActive == true)
                 .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.Creator.ArchiveUnitId == User.ArchiveUnitId))
                 .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
-                .Where($"({model.whereClause}).Contains(@0) ", model.searchValue)
+                .Where($"({model.whereClause}).ToLower().Contains(@0) ", model.searchValue.ToLower())
                 .Where($"{(model.PositionId != null ? $"SubSubjectClassification.TrxPermissionClassifications.Any(PositionId.Equals(@0))" : "1=1")} ", model.PositionId)
                 //.Where($"{(model.listArchiveUnitCode.Count > 0 ? "@0.Contains(Creator.ArchiveUnit.ArchiveUnitCode)" : "1=1")} ", model.listArchiveUnitCode)
                 .Where(x => x.CreatedDate.Date >= model.advanceSearch!.StartDate.Date)
