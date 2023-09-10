@@ -210,6 +210,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         {
             await Task.Delay(0);
             ViewBag.errorCount = TempData["errorCount"] == null ? -1 : TempData["errorCount"];
+            ViewBag.errorInfo = TempData["errorInfo"] == null ? "" : TempData["errorInfo"];
             return View();
         }
         [HttpPost]
@@ -222,7 +223,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 if (file.Length > 0)
                 {
                     var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
-                    var archiveAll = await _archiveService.GetAll();
+                    //var archiveAll = await _archiveService.GetAll();
                     var Gmds = await _gmdService.GetAllDetail();
                     var SubSubjecClassifications = await _classificationSubSubjectService.GetAll();
                     var SecurityClassifications = await _securityClassificationService.GetAll();
@@ -236,6 +237,9 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                         TrxArchive trxArchive;
                         bool valid = true;
                         int errorCount = 0;
+                        if (result.Columns["Keterangan"] == null)
+                            result.Columns.Add("Keterangan");
+
                         result.Columns.Add("Error");
                         foreach (DataRow row in result.Rows)
                         {
@@ -354,14 +358,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                                 trxArchive.IsUsed = false;
 
                                 var Code = $"{trxArchive.CreatedDateArchive.Year.ToString()}.{Creators.FirstOrDefault(x => x.CreatorId == trxArchive.CreatorId)!.CreatorCode}";
-                                var lastCount = archiveAll.Where(x => x.ArchiveCode.Contains(Code)).Count();
+                                var lastCount = await _archiveService.GetCountByLikeCode(Code);
                                 var lastListCount = 0;
                                 if (trxArchives.Count > 0)
                                     lastListCount = trxArchives.Where(x => x.ArchiveCode.Contains(Code)).Count();
                                 var fixCount = (lastCount + lastListCount) + 1;
                                 var initCode = $"{SecurityClassifications.FirstOrDefault(x => x.SecurityClassificationId == trxArchive.SecurityClassificationId)!.SecurityClassificationCode}.{Code}.";
                                 var fixCode = initCode + fixCount.ToString("D5");
-                                while (archiveAll.Where(x => x.ArchiveCode == fixCode).Count() > 0)
+                                while (_archiveService.GetCountByLikeCode(fixCode).GetAwaiter().GetResult() > 0)
                                 {
                                     fixCount++;
                                     fixCode = initCode + fixCount.ToString("D5");
@@ -387,12 +391,14 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
                 }
                 else
                 {
+                    TempData["errorInfo"] = "File Kosong";
                     TempData["errorCount"] = 100000001;
                     return RedirectToAction(GlobalConst.UploadForm);
                 }
             }
             catch (Exception ex)
             {
+                TempData["errorInfo"] = $"{ex.Message.ToString()}, Detail : {ex.InnerException.ToString()}";
                 TempData["errorCount"] = 100000001;
                 return RedirectToAction(GlobalConst.UploadForm);
             }

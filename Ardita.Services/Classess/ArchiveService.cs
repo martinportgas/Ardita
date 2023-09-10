@@ -42,6 +42,14 @@ public class ArchiveService : IArchiveService
     {
         return await _archiveRepository.GetById(id);
     }
+    public async Task<TrxArchive> GetByCode(string code)
+    {
+        return await _archiveRepository.GetByCode(code);
+    }
+    public async Task<int> GetCountByLikeCode(string code)
+    {
+        return await _archiveRepository.GetCountByLikeCode(code);
+    }
     public async Task<IEnumerable<TrxArchive>> GetByParams(string param = "1=1")
     {
         return await _archiveRepository.GetByParams(param);

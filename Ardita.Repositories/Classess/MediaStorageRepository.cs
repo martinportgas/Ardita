@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.Formula.Functions;
 
 namespace Ardita.Repositories.Classess;
 
@@ -134,10 +135,17 @@ public class MediaStorageRepository : IMediaStorageRepository
 
         return result;
     }
-
     public async Task<TrxMediaStorage> GetById(Guid id) 
     {
-        return await _context.TrxMediaStorages
+
+        var total = await _context.TrxMediaStorageDetails
+            .Include(d => d.Archive)
+            .Where(x => x.MediaStorageId == id)
+            .Where(x => x.IsActive == true)
+            .Where(x => x.Archive.IsActive == true)
+            .SumAsync(x => x.Archive.Volume);
+
+        var data = await _context.TrxMediaStorages
             .Include(g => g.GmdDetail)
             .Include(d => d.TrxMediaStorageDetails.Where(w => w.IsActive))
                 .ThenInclude(a => a.Archive)
@@ -147,6 +155,13 @@ public class MediaStorageRepository : IMediaStorageRepository
             .Include(r => r.Row!.Level!.Rack!.Room!.Floor).AsNoTracking()
             .Where(x => x.MediaStorageId == id)
             .FirstAsync();
+
+        data.DifferenceVolume = data.TotalVolume - total; 
+
+        _context.Entry(data).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return data;
     }
     
     public async Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id)

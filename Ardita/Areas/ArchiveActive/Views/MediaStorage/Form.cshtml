@@ -658,6 +658,8 @@
                         return item.trxMediaStorageDetails.length > 0;
                     });
 
+                    console.log(dataChecked);
+
                     if(dataChecked.length > 0){
                         $('#checkAll').prop('required', false);
                     }
@@ -668,6 +670,10 @@
                     //});
                 }else{
                     if('@form.CurrentAction' == 'IsUsed'){
+                        $('#checkAll').prop('required', false);
+                    }
+
+                    if('@form.CurrentAction' == 'Remove') {
                         $('#checkAll').prop('required', false);
                     }
 

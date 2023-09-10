@@ -389,6 +389,61 @@ public class ArchiveRepository : IArchiveRepository
 
         return result;
     }
+    public async Task<TrxArchive> GetByCode(string code)
+    {
+        var result = await _context.TrxArchives.AsNoTracking()
+            .Include(x => x.ArchiveOwner)
+            .Include(x => x.ArchiveType)
+            .Include(x => x.Gmd)
+            .Include(x => x.GmdDetail)
+            .Include(x => x.SubSubjectClassification)
+                .ThenInclude(x => x.SubjectClassification)
+                .ThenInclude(x => x.Classification)
+                .ThenInclude(x => x.TypeClassification)
+            .Include(x => x.SubSubjectClassification)
+                .ThenInclude(c => c.Creator)
+                .ThenInclude(au => au!.ArchiveUnit)
+                .ThenInclude(cmp => cmp.Company)
+            .Include(x => x.SecurityClassification)
+            .Include(x => x.Creator)
+                .ThenInclude(au => au!.ArchiveUnit)
+                .ThenInclude(cmp => cmp.Company)
+            .Include(x => x.TrxFileArchiveDetails)
+            .Include(x => x.TrxMediaStorageDetails)
+                .ThenInclude(ms => ms.MediaStorage)
+                .ThenInclude(r => r.Row)
+                .ThenInclude(l => l.Level)
+                .ThenInclude(r => r!.Rack)
+                .ThenInclude(room => room!.Room)
+                .ThenInclude(f => f!.Floor)
+                .ThenInclude(aut => aut!.ArchiveUnit)
+            .Include(x => x.TrxMediaStorageDetails)
+                .ThenInclude(ms => ms.MediaStorage)
+                .ThenInclude(ts => ts.TypeStorage)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
+                .ThenInclude(r => r.Row)
+                .ThenInclude(l => l.Level)
+                .ThenInclude(r => r!.Rack)
+                .ThenInclude(room => room!.Room)
+                .ThenInclude(f => f!.Floor)
+                .ThenInclude(aut => aut!.ArchiveUnit)
+            .Include(x => x.TrxMediaStorageInActiveDetails)
+                .ThenInclude(ms => ms.MediaStorageInActive)
+                .ThenInclude(ts => ts.TypeStorage)
+            .Where(x => x.ArchiveCode == code)
+            .FirstOrDefaultAsync();
+
+        return result;
+    }
+    public async Task<int> GetCountByLikeCode(string code)
+    {
+        var result = await _context.TrxArchives.AsNoTracking()
+            .Where(x => x.ArchiveCode.ToLower().Contains(code.ToLower()))
+            .CountAsync();
+
+        return result;
+    }
 
     public async Task<int> GetCount() => await _context.TrxArchives.CountAsync(x => x.IsActive == true);
 
@@ -774,6 +829,7 @@ public class ArchiveRepository : IArchiveRepository
             .Where(x => (x.TrxMediaStorageDetails.FirstOrDefault() == null ? x.IsActive == true : true) && x.StatusId == submit && !listNotAvailableArchive.Contains(x) && x.SubSubjectClassification.SubjectClassificationId == subjectId)
             .Where(x => (string.IsNullOrEmpty(monthYear) ? true : x.CreatedDateArchive.Year.ToString() == monthYear))
             .Where(x => x.GmdDetailId == gmdDetailId)
+            .Where(x => x.IsActive == true)
             .OrderByDescending(x => x.TrxMediaStorageDetails.FirstOrDefault().MediaStorageId)
             .Select(x => new
             {
@@ -803,6 +859,7 @@ public class ArchiveRepository : IArchiveRepository
             .Include(x => x.Creator)
             .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
             .Where(x => x.SubSubjectClassificationId == subSubjectId && x.TrxMediaStorageInActiveDetails.FirstOrDefault().MediaStorageInActive.StatusId == submit)
+            .Where(x => x.IsActive == true)
             //.Where($"{"TrxMediaStorageInActiveDetails.MediaStorageInActive.StatusId == @0"}", submit)
             .ToListAsync();
         return data;

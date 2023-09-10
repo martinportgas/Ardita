@@ -8,6 +8,8 @@ namespace Ardita.Services.Interfaces;
 public interface IArchiveService
 {
     Task<TrxArchive> GetById(Guid id);
+    Task<TrxArchive> GetByCode(string code);
+    Task<int> GetCountByLikeCode(string code);
     Task<IEnumerable<TrxArchive>> GetAll(string param = " 1=1 ");
     Task<int> GetCount(string par = " 1=1 ");
     Task<IEnumerable<TrxArchive>> GetByParams(string param = "1=1");

@@ -69,7 +69,7 @@
                         @if(errorCount > 0)
                         {
                             <div class="col-sm-12">
-                                <span><strong>Pesan Error : @(errorCount > 100000000 ? "File" : $"{errorCount} Baris") Tidak Valid</strong></span>
+                                <span><strong>Pesan Error : @ViewBag.errorInfo</strong></span>
                             </div>
                         }
                     </div>

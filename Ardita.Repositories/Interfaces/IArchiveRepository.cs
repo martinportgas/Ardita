@@ -7,6 +7,8 @@ namespace Ardita.Repositories.Interfaces;
 public interface IArchiveRepository
 {
     Task<TrxArchive> GetById(Guid id);
+    Task<TrxArchive> GetByCode(string code);
+    Task<int> GetCountByLikeCode(string code);
     Task<IEnumerable<TrxArchive>> GetAll(string par = " 1=1 ");
     Task<int> GetCount(string par = " 1=1 ");
     Task<IEnumerable<TrxArchive>> GetByParams(string param);
