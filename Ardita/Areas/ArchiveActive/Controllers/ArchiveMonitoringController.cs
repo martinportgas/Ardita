@@ -73,14 +73,15 @@ namespace Ardita.Areas.ArchiveActive.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadFile(Guid Id)
         {
-            var model = await _fileArchiveDetailService.GetById(Id);
-            string path = model.FilePath;
-
-            if (System.IO.File.Exists(path))
+            var data = await _fileArchiveDetailService.GetById(Id);
+            if (data != null)
             {
-                return File(System.IO.File.OpenRead(path), "application/octet-stream", Path.GetFileName(path));
+                var path = string.Concat(data.FilePath, data.FileNameEncrypt);
+                var bytes = System.IO.File.ReadAllBytes(path);
+
+                return File(bytes, data.FileType, data.FileName);
             }
-            return NotFound();
+            return File(new byte[] { }, "application/octet-stream", "NotFound.txt");
         }
         public async Task AllViewBagIndex()
         {

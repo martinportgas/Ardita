@@ -68,6 +68,37 @@ namespace Ardita.Repositories.Classess
                 .ToListAsync();
             return results;
         }
+        //public async Task<IEnumerable<object>> GetRoomGroupByArchiveCount(string par = " 1=1 ")
+        //{
+        //    return await _context.TrxRooms
+        //        .Include(x => x.Floor!.ArchiveUnit)
+        //        .Where(x => x.IsActive == true)
+        //        .Where(x => x.Floor!.IsActive == true)
+        //        .Where(x => x.Floor!.ArchiveUnit!.IsActive == true)
+        //        .Include(x => x.TrxRacks).ThenInclude(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages).ThenInclude(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive.SubSubjectClassification)
+        //        .Include(x => x.TrxRacks).ThenInclude(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages).ThenInclude(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive.SecurityClassification)
+        //        .Include(x => x.TrxRacks).ThenInclude(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages).ThenInclude(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive.Creator)
+        //        .Include(x => x.TrxRacks).ThenInclude(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages).ThenInclude(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive.ArchiveOwner)
+        //        .Include(x => x.TrxRacks).ThenInclude(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages).ThenInclude(x => x.TrxMediaStorageDetails).ThenInclude(x => x.Archive.ArchiveType)
+        //        .Where(x => x.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.SubSubjectClassification.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.SecurityClassification.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.Creator.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.ArchiveOwner.IsActive == true)
+        //        .Where(x => x.MstCreators.FirstOrDefault() == null ? true : x.MstCreators.FirstOrDefault()!.TrxArchives.FirstOrDefault()!.ArchiveType.IsActive == true)
+        //        .Where(par)
+        //        .AsNoTracking()
+        //        .Select(x => new
+        //        {
+        //            name = x.ArchiveUnitName,
+        //            totalArchive = x.MstCreators.FirstOrDefault()!.TrxArchives.Where(x => x.TrxFileArchiveDetails.FirstOrDefault() == null).Count(),
+        //            totalArchiveDigital = x.MstCreators.FirstOrDefault()!.TrxArchives.Where(x => x.TrxFileArchiveDetails.FirstOrDefault() != null).Count(),
+        //            total = x.MstCreators.FirstOrDefault()!.TrxArchives.Count()
+        //        })
+        //        .OrderByDescending(x => x.total)
+        //        .ToListAsync();
+        //}
 
         public async Task<IEnumerable<TrxRoom>> GetByFilterModel(DataTableModel model)
         {

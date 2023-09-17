@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Models;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
@@ -15,6 +16,7 @@ public class ArchiveUnitService : IArchiveUnitService
     public async Task<int> Delete(TrxArchiveUnit model) => await _archiveUnitRepository.Delete(model);
 
     public async Task<IEnumerable<TrxArchiveUnit>> GetAll(string par = " 1=1 ") => await _archiveUnitRepository.GetAll(par);
+    public async Task<IEnumerable<object>> GetArchiveUnitGroupByArchiveCount(GlobalSearchModel search, string par = " 1=1 ") => await _archiveUnitRepository.GetArchiveUnitGroupByArchiveCount(search, par);
 
     public async Task<TrxArchiveUnit> GetById(Guid id) => await _archiveUnitRepository.GetById(id);
 

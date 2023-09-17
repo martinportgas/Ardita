@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Models;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 
 namespace Ardita.Services.Interfaces;
@@ -7,6 +8,7 @@ public interface IArchiveUnitService
 {
     Task<TrxArchiveUnit> GetById(Guid id);
     Task<IEnumerable<TrxArchiveUnit>> GetAll(string par = " 1=1 ");
+    Task<IEnumerable<object>> GetArchiveUnitGroupByArchiveCount(GlobalSearchModel search, string par = " 1=1 ");
     Task<DataTableResponseModel<object>> GetList(DataTablePostModel model);
     Task<int> Insert(TrxArchiveUnit model);
     Task<bool> InsertBulk(List<TrxArchiveUnit> trxArchiveUnits);

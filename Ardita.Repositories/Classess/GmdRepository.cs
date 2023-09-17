@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
 using Ardita.Extensions;
+using Ardita.Report;
+using Ardita.Models;
 
 namespace Ardita.Repositories.Classess;
 
@@ -47,6 +49,43 @@ public class GmdRepository : IGmdRepository
     }
 
     public async Task<IEnumerable<MstGmd>> GetAll(string par = " 1=1 ") => await _context.MstGmds.Where(x => x.IsActive == true).Where(par).AsNoTracking().ToListAsync();
+    public async Task<IEnumerable<object>> GetGMDGroupByArchiveCount(GlobalSearchModel search, string par = " 1=1 ")
+    {
+        try
+        {
+            return await _context.MstGmds
+                        .AsNoTracking()
+                        .Where(x => x.IsActive == true)
+                        .Select(y => new
+                        {
+                            name = y.GmdName,
+                            totalArchive = (_context.TrxArchives
+                            .Include(x => x.SubSubjectClassification)
+                            .Include(x => x.SecurityClassification)
+                            .Include(x => x.Creator)
+                            .Include(x => x.ArchiveOwner)
+                            .Include(x => x.ArchiveType)
+                            .Where(x => x.IsActive == true)
+                            .Where(x => x.SubSubjectClassification.IsActive == true)
+                            .Where(x => x.SecurityClassification.IsActive == true)
+                            .Where(x => x.Creator.IsActive == true)
+                            .Where(x => x.ArchiveOwner.IsActive == true)
+                            .Where(x => x.ArchiveType.IsActive == true)
+                            .Where(x => x.GmdId == y.GmdId)
+                            .Where(x => search.StatusId == null ? true : x.StatusId == search.StatusId)
+                            .Where(x => search.IsArchiveActive == null ? true : x.IsArchiveActive == search.IsArchiveActive)
+                            .Where(x => search.ArchiveUnitId == null ? true : x.Creator.ArchiveUnitId == search.ArchiveUnitId)
+                            .Where(x => search.CreatorId == null ? true : x.CreatorId == search.CreatorId)
+                            .Count())
+                        })
+                        .OrderByDescending(x => x.totalArchive)
+                        .ToListAsync();
+        }
+        catch(Exception ex)
+        {
+            throw;
+        }
+    }
 
     public async Task<IEnumerable<MstGmdDetail>> GetDetailByGmdId(Guid Id) => await _context.MstGmdDetails.Where(x => x.GmdId == Id).AsNoTracking().ToListAsync();
     

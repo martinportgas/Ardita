@@ -6,6 +6,7 @@ using Ardita.Services.Interfaces;
 using Ardita.Extensions;
 using Ardita.Services.Classess;
 using Ardita.Report;
+using Ardita.Models;
 
 namespace Ardita.Areas.General.Controllers
 {
@@ -201,69 +202,90 @@ namespace Ardita.Areas.General.Controllers
         [HttpGet]
         public async Task<JsonResult> BindTotalArhive()
         {
-            var dataArchive = await _archiveService.GetAll();
-            var data = await _archiveUnitService.GetAll();
-            var results = data
-                .Select(x => new {
-                    name = x.ArchiveUnitName,
-                    totalArchive = dataArchive.Where(y => y.Creator.ArchiveUnitId == x.ArchiveUnitId && y.TrxFileArchiveDetails.FirstOrDefault() == null).Count(),
-                    totalArchiveDigital = dataArchive.Where(y => y.Creator.ArchiveUnitId == x.ArchiveUnitId && y.TrxFileArchiveDetails.FirstOrDefault() != null).Count(),
-                }).ToList();
-            var result = results.Select(x => new
-            {
-                x.name,
-                x.totalArchive,
-                x.totalArchiveDigital,
-                total = x.totalArchive + x.totalArchiveDigital
-            }).OrderByDescending(x => x.total);
-            return Json(result);
+            //var dataArchive = await _archiveService.GetAll();
+            //var data = await _archiveUnitService.GetAll();
+            //var results = data
+            //    .Select(x => new {
+            //        name = x.ArchiveUnitName,
+            //        totalArchive = dataArchive.Where(y => y.Creator.ArchiveUnitId == x.ArchiveUnitId && y.TrxFileArchiveDetails.FirstOrDefault() == null).Count(),
+            //        totalArchiveDigital = dataArchive.Where(y => y.Creator.ArchiveUnitId == x.ArchiveUnitId && y.TrxFileArchiveDetails.FirstOrDefault() != null).Count(),
+            //    }).ToList();
+            //var result = results.Select(x => new
+            //{
+            //    x.name,
+            //    x.totalArchive,
+            //    x.totalArchiveDigital,
+            //    total = x.totalArchive + x.totalArchiveDigital
+            //}).OrderByDescending(x => x.total);
+            var search = new GlobalSearchModel();
+            search.StatusId = statusSubmit;
+            var data = await _archiveUnitService.GetArchiveUnitGroupByArchiveCount(search);
+            return Json(data.ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalGMD()
         {
-            var dataArchive = await _archiveService.GetAll();
-            var data = await _gmdService.GetAll();
-            var result = data
-                .Select(x => new {
-                    name = x.GmdName,
-                    totalArchive = dataArchive.Where(y => y.GmdId == x.GmdId).Count(),
-                }).OrderByDescending(x => x.totalArchive).ToList();
-            return Json(result);
+            //var dataArchive = await _archiveService.GetAll();
+            //var data = await _gmdService.GetAll();
+            var search = new GlobalSearchModel();
+            search.StatusId = statusSubmit;
+            var data = await _gmdService.GetGMDGroupByArchiveCount(search);
+            //var result = data
+            //    .Select(x => new {
+            //        name = x.nam,
+            //        totalArchive = dataArchive.Where(y => y.GmdId == x.GmdId).Count(),
+            //    }).OrderByDescending(x => x.totalArchive).ToList();
+            return Json(data.ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalGMDActive()
         {
-            string param = $" StatusId == \"{statusSubmit}\" && IsArchiveActive == true ";
+            var search = new GlobalSearchModel();
+            search.StatusId = statusSubmit;
+            search.IsArchiveActive = true;
+            //string param = $" StatusId == \"{statusSubmit}\" && IsArchiveActive == true ";
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-                param += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+                search.ArchiveUnitId = AppUsers.CurrentUser(User).ArchiveUnitId;
+                //param += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-                param += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
-            var dataArchives = await _archiveService.GetAll(param);
+                search.CreatorId = AppUsers.CurrentUser(User).CreatorId;
+            //param += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
 
-            var data = await _gmdService.GetAll();
-            var result = data
-                .Select(x => new {
-                    name = x.GmdName,
-                    totalArchive = dataArchives.Where(y => y.GmdId == x.GmdId).Count(),
-                }).OrderByDescending(x => x.totalArchive).ToList();
-            return Json(result);
+            var data = await _gmdService.GetGMDGroupByArchiveCount(search);
+
+            //var dataArchives = await _archiveService.GetAll(param);
+                
+            //var data = await _gmdService.GetAll();
+            //var result = data
+            //    .Select(x => new {
+            //        name = x.GmdName,
+            //        totalArchive = dataArchives.Where(y => y.GmdId == x.GmdId).Count(),
+            //    }).OrderByDescending(x => x.totalArchive).ToList();
+            return Json(data.ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalGMDInActive()
         {
-            string param = $" StatusId == \"{statusSubmit}\" && IsArchiveActive == false ";
+            var search = new GlobalSearchModel();
+            search.StatusId = statusSubmit;
+            search.IsArchiveActive = false;
+            //string param = $" StatusId == \"{statusSubmit}\" && IsArchiveActive == true ";
             if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-                param += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+                search.ArchiveUnitId = AppUsers.CurrentUser(User).ArchiveUnitId;
+            //param += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
             if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-                param += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
-            var dataArchives = await _archiveService.GetAll(param);
-            var data = await _gmdService.GetAll();
-            var result = data
-                .Select(x => new {
-                    name = x.GmdName,
-                    totalArchive = dataArchives.Where(y => y.GmdId == x.GmdId).Count(),
-                }).OrderByDescending(x => x.totalArchive).ToList();
-            return Json(result);
+                search.CreatorId = AppUsers.CurrentUser(User).CreatorId;
+            //param += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+
+            var data = await _gmdService.GetGMDGroupByArchiveCount(search);
+            //var dataArchives = await _archiveService.GetAll(param);
+            //var data = await _gmdService.GetAll();
+            //var result = data
+            //    .Select(x => new {
+            //        name = x.GmdName,
+            //        totalArchive = dataArchives.Where(y => y.GmdId == x.GmdId).Count(),
+            //    }).OrderByDescending(x => x.totalArchive).ToList();
+            return Json(data.ToList());
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalStorageUse()

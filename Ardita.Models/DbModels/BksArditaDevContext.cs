@@ -182,7 +182,7 @@ public partial class BksArditaDevContext : DbContext
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json")
             .Build();
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"), sqlServerOptions => sqlServerOptions.CommandTimeout(300));
         //optionsBuilder.UseSqlServer("server=115.124.75.185;database=BKS.ARDITA.DEV;uid=ardita;password=Ardita@2023;TrustServerCertificate=True;Integrated Security=False");
     }
 

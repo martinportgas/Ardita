@@ -59,7 +59,9 @@ public class ArchiveRepository : IArchiveRepository
 
     public async Task<IEnumerable<TrxArchive>> GetAll(string par = " 1=1 ")
     {
-        return await _context.TrxArchives
+        try
+        {
+            return await _context.TrxArchives
             .Include(x => x.TrxFileArchiveDetails)
             .Include(x => x.Gmd)
             .Include(x => x.SubSubjectClassification.SubjectClassification.Classification)
@@ -81,6 +83,11 @@ public class ArchiveRepository : IArchiveRepository
             .Where(x => x.ArchiveType.IsActive == true)
             .AsNoTracking()
             .OrderByDescending(x => x.CreatedDate).ToListAsync();
+        }
+        catch(Exception ex)
+        {
+            throw;
+        }
     }
     public async Task<int> GetCount(string par = " 1=1 ")
     {

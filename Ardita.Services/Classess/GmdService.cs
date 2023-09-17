@@ -1,4 +1,5 @@
-﻿using Ardita.Models.DbModels;
+﻿using Ardita.Models;
+using Ardita.Models.DbModels;
 using Ardita.Models.ViewModels;
 using Ardita.Repositories.Classess;
 using Ardita.Repositories.Interfaces;
@@ -18,6 +19,7 @@ public class GmdService : IGmdService
     public async Task<int> Delete(MstGmd model) => await _GmdRepository.Delete(model);
 
     public async Task<IEnumerable<MstGmd>> GetAll(string par = " 1=1 ") => await _GmdRepository.GetAll(par);
+    public async Task<IEnumerable<object>> GetGMDGroupByArchiveCount(GlobalSearchModel search, string par = " 1=1 ") => await _GmdRepository.GetGMDGroupByArchiveCount(search, par);
 
     public async Task<IEnumerable<MstGmd>> GetById(Guid id) => await _GmdRepository.GetById(id);
 

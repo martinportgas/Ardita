@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq.Dynamic.Core;
 using Ardita.Extensions;
+using Ardita.Models;
 
 namespace Ardita.Repositories.Classess;
 
@@ -55,6 +56,79 @@ public class ArchiveUnitRepository : IArchiveUnitRepository
         .Where(par)
         .AsNoTracking()
         .ToListAsync();
+    public async Task<IEnumerable<object>> GetArchiveUnitGroupByArchiveCount(GlobalSearchModel search, string par = " 1=1 ")
+    {
+        return await _context.TrxArchiveUnits
+            .Include(x => x.Company)
+            .Where(x => x.IsActive == true)
+            .Where(x => x.Company.IsActive == true)
+            .Where(par)
+            .AsNoTracking()
+            .Select(y => new
+            {
+                name = y.ArchiveUnitName,
+                totalArchive = (_context.TrxArchives
+                            .Include(x => x.SubSubjectClassification)
+                            .Include(x => x.SecurityClassification)
+                            .Include(x => x.Creator)
+                            .Include(x => x.ArchiveOwner)
+                            .Include(x => x.ArchiveType)
+                            .Include(x => x.TrxFileArchiveDetails)
+                            .Where(x => x.TrxFileArchiveDetails.FirstOrDefault() == null)
+                            .Where(x => x.IsActive == true)
+                            .Where(x => x.SubSubjectClassification.IsActive == true)
+                            .Where(x => x.SecurityClassification.IsActive == true)
+                            .Where(x => x.Creator.IsActive == true)
+                            .Where(x => x.ArchiveOwner.IsActive == true)
+                            .Where(x => x.ArchiveType.IsActive == true)
+                            .Where(x => x.Creator.ArchiveUnitId == y.ArchiveUnitId)
+                            .Where(x => search.StatusId == null ? true : x.StatusId == search.StatusId)
+                            .Where(x => search.IsArchiveActive == null ? true : x.IsArchiveActive == search.IsArchiveActive)
+                            .Where(x => search.ArchiveUnitId == null ? true : x.Creator.ArchiveUnitId == search.ArchiveUnitId)
+                            .Where(x => search.CreatorId == null ? true : x.CreatorId == search.CreatorId)
+                            .Count()),
+                totalArchiveDigital = (_context.TrxArchives
+                            .Include(x => x.SubSubjectClassification)
+                            .Include(x => x.SecurityClassification)
+                            .Include(x => x.Creator)
+                            .Include(x => x.ArchiveOwner)
+                            .Include(x => x.ArchiveType)
+                            .Include(x => x.TrxFileArchiveDetails)
+                            .Where(x => x.TrxFileArchiveDetails.FirstOrDefault() != null)
+                            .Where(x => x.IsActive == true)
+                            .Where(x => x.SubSubjectClassification.IsActive == true)
+                            .Where(x => x.SecurityClassification.IsActive == true)
+                            .Where(x => x.Creator.IsActive == true)
+                            .Where(x => x.ArchiveOwner.IsActive == true)
+                            .Where(x => x.ArchiveType.IsActive == true)
+                            .Where(x => x.Creator.ArchiveUnitId == y.ArchiveUnitId)
+                            .Where(x => search.StatusId == null ? true : x.StatusId == search.StatusId)
+                            .Where(x => search.IsArchiveActive == null ? true : x.IsArchiveActive == search.IsArchiveActive)
+                            .Where(x => search.ArchiveUnitId == null ? true : x.Creator.ArchiveUnitId == search.ArchiveUnitId)
+                            .Where(x => search.CreatorId == null ? true : x.CreatorId == search.CreatorId)
+                            .Count()),
+                total = (_context.TrxArchives
+                            .Include(x => x.SubSubjectClassification)
+                            .Include(x => x.SecurityClassification)
+                            .Include(x => x.Creator)
+                            .Include(x => x.ArchiveOwner)
+                            .Include(x => x.ArchiveType)
+                            .Where(x => x.IsActive == true)
+                            .Where(x => x.SubSubjectClassification.IsActive == true)
+                            .Where(x => x.SecurityClassification.IsActive == true)
+                            .Where(x => x.Creator.IsActive == true)
+                            .Where(x => x.ArchiveOwner.IsActive == true)
+                            .Where(x => x.ArchiveType.IsActive == true)
+                            .Where(x => x.Creator.ArchiveUnitId == y.ArchiveUnitId)
+                            .Where(x => search.StatusId == null ? true : x.StatusId == search.StatusId)
+                            .Where(x => search.IsArchiveActive == null ? true : x.IsArchiveActive == search.IsArchiveActive)
+                            .Where(x => search.ArchiveUnitId == null ? true : x.Creator.ArchiveUnitId == search.ArchiveUnitId)
+                            .Where(x => search.CreatorId == null ? true : x.CreatorId == search.CreatorId)
+                            .Count())
+            })
+            .OrderByDescending(x => x.total)
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<object>> GetByFilterModel(DataTableModel model)
     {
