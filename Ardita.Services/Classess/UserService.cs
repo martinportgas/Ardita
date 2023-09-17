@@ -79,8 +79,10 @@ namespace Ardita.Services.Classess
 
         public async Task<MstUser> GetById(Guid id)
         {
+            AESCryptography aes = new AESCryptography();
             var result = await _userRepository.GetById(id);
-            result.Password = Global.Decode(result.Password);
+            //result.Password = Global.Decode(result.Password);
+            result.Password = aes.DecryptAES(result.Password);
             return result;
         }
         public async Task<DataTableResponseModel<object>> GetListUsers(DataTablePostModel model)

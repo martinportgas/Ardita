@@ -41,14 +41,19 @@ namespace Ardita.Areas.UserManage.Controllers
             }
         }
 
-        public async Task<JsonResult> CheckUsername(string id)
+        public async Task<JsonResult> CheckUsername(string id, string name)
         {
             try
             {
-                var result = await _userService.GetAll();
                 bool duplicate = false;
 
-                if (result.Where(x => x.Username == id).Count() > 0) 
+                var userId = new Guid(id);
+                if(userId != Guid.Empty)
+                    return Json(duplicate);
+
+                var result = await _userService.GetAll();
+
+                if (result.Where(x => x.Username == name).Count() > 0) 
                 {
                     duplicate = true;
                 }
@@ -102,7 +107,9 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             if (model != null)
             {
-                model.Password = Global.Encode(model.Password);
+                AESCryptography aes = new AESCryptography();
+                //model.Password = Global.Encode(model.Password);
+                model.Password = aes.EncryptAES(model.Password);
                 //string[] archiveUnitIds = Request.Form["archiveUnitIds[]"].ToArray();
                 string[] archiveUnitIds = new string[] { };
 
@@ -287,6 +294,7 @@ namespace Ardita.Areas.UserManage.Controllers
         {
             try
             {
+                AESCryptography aes = new AESCryptography();
                 IFormFile file = Request.Form.Files[0];
                 var result = Extensions.Global.ImportExcel(file, GlobalConst.Upload, string.Empty);
                 var employees = await _employeeService.GetAll();
@@ -299,7 +307,8 @@ namespace Ardita.Areas.UserManage.Controllers
                     user = new();
                     user.UserId = Guid.NewGuid();
                     user.Username = row[1].ToString();
-                    user.Password = Global.Encode(GlobalConst.Password);
+                    //user.Password = Global.Encode(GlobalConst.Password);
+                    user.Password = aes.EncryptAES(GlobalConst.Password);
                     user.EmployeeId = employees.Where(x => x.Nik.Contains(row[2].ToString())).FirstOrDefault().EmployeeId;
 
                     user.IsActive = true;

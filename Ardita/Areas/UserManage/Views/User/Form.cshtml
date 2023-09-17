@@ -60,12 +60,12 @@
                                     <div class="col-sm-6 b-r">
                                         <div class="form-group">
                                             <label>Employee</label>
+                                            <input type="hidden" asp-for="UserId" id="txtUserId" />
                                             <select asp-for="EmployeeId" id="txtEmployeeId" asp-items="ViewBag.listEmployees" class="select2_demo_1 form-control"></select>
                                         </div>
                                         <div class="form-group">
                                             <label>Username</label>
                                             <input type="text" placeholder="" id="txtUserName" class="form-control" asp-for="Username" autocomplete="off">
-                                            <input type="hidden" asp-for="UserId" />
                                         </div>
                                         <div class="form-group">
                                             <label>Password</label>
@@ -246,11 +246,12 @@
 
                             var url = '@Url.Action("CheckUsername", form.CurrentController, new { Area = form.CurrentArea })';
                             var userName = $('#txtUserName').val();
+                            var userId = $('#txtUserId').val();
 
                             $.ajax({
                                 url: url,
                                 type: "@GlobalConst.GET",
-                                data: { id: userName },
+                                data: { id: userId, name: userName },
                                 dataType: "@GlobalConst.JSON",
                                 contentType: "@GlobalConst.APPLICATIONJSON",
                                 success: function (data) {

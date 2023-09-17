@@ -74,8 +74,10 @@ namespace Ardita.Controllers
         }
         public async Task<IActionResult> ValidateLogin(LoginModel model)
         {
+            AESCryptography aes = new AESCryptography();
             var username = model.Username;
-            var password = Extensions.Global.Encode(model.Password);
+            //var password = Extensions.Global.Encode(model.Password);
+            var password = aes.EncryptAES(model.Password);
             var claims = await _userService.GetLogin(username, password);
 
             //Validate
@@ -129,8 +131,11 @@ namespace Ardita.Controllers
 
             if (model is not null)
             {
-                model.PasswordLast = Global.Encode(model.PasswordLast);
-                model.Password = Global.Encode(Request.Form["txtPasswordNew"].ToString());
+                AESCryptography aes = new AESCryptography();
+                //model.PasswordLast = Global.Encode(model.PasswordLast);
+                //model.Password = Global.Encode(Request.Form["txtPasswordNew"].ToString());
+                model.PasswordLast = aes.EncryptAES(model.PasswordLast);
+                model.Password = aes.EncryptAES(Request.Form["txtPasswordNew"].ToString());
                 await _userService.ChangePassword(model);
             }
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -142,7 +147,9 @@ namespace Ardita.Controllers
 
             if (Id != Guid.Empty && !string.IsNullOrEmpty(Password))
             {
-                var data = await _userService.FindPasswordByUsername(Id, Global.Encode(Password));
+                AESCryptography aes = new AESCryptography();
+                //var data = await _userService.FindPasswordByUsername(Id, Global.Encode(Password));
+                var data = await _userService.FindPasswordByUsername(Id, aes.EncryptAES(Password));
                 if (data)
                     return Json(true);
                 else
