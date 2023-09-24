@@ -1,5 +1,7 @@
-﻿using Ardita.Models.ViewModels;
+﻿using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Ardita.Extensions
@@ -41,6 +43,7 @@ namespace Ardita.Extensions
             session.CreatorId = creatorId;
             session.CreatorName = claims.FindFirst(GlobalConst.CreatorName)!.Value;
             session.ListArchiveUnitCode = new List<string>();
+            //session.GeneralSetting = JsonConvert.DeserializeObject<GeneralSetting>(claims.FindFirst(GlobalConst.GeneralSettings)!.Value);
 
             if (claims.FindFirst(GlobalConst.ArchiveUnitCode) != null)
             {

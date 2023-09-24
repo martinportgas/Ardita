@@ -29,6 +29,7 @@ namespace Ardita.Areas.General.Controllers
         private IArchiveRentService _archiveRentService;
         private IMediaStorageService _mediaStorageService;
         private IMediaStorageInActiveService _mediaStorageInActiveService;
+        private IGeneralSettingsService _generalSettingsService;
         private int statusSubmit = (int)GlobalConst.STATUS.Submit;
         public HomeController(
             IArchiveUnitService archiveUnitService, 
@@ -44,7 +45,8 @@ namespace Ardita.Areas.General.Controllers
             IArchiveRentService archiveRentService,
             IMediaStorageService mediaStorageService,
             IMediaStorageInActiveService mediaStorageInActiveService,
-            IRackService rackService)
+            IRackService rackService,
+            IGeneralSettingsService generalSettingsService)
         {
             _archiveUnitService = archiveUnitService;
             _roomService = roomService;
@@ -61,6 +63,7 @@ namespace Ardita.Areas.General.Controllers
             _mediaStorageService = mediaStorageService;
             _mediaStorageInActiveService = mediaStorageInActiveService;
             _rackService = rackService;
+            _generalSettingsService = generalSettingsService;
         }
         public async Task<IActionResult> SearchAll(string keyword)
         {
@@ -93,6 +96,7 @@ namespace Ardita.Areas.General.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            var xx = Request.Cookies["MyCookie"];
             if(AppUsers.CurrentUser(User).RoleCode == GlobalConst.ROLE.ADM.ToString())
             {
                 return await InitFormAdmin();
@@ -521,6 +525,12 @@ namespace Ardita.Areas.General.Controllers
                 }
             }
             return File(new byte[] { }, "application/octet-stream", "FileNotFound.txt");
+        }
+
+        public async Task<FileResult> BindLogoCompany()
+        {
+            var data = await _generalSettingsService.GetExistingSettings();
+            return File(Convert.FromBase64String(data.CompanyLogoContent), "application/octet-stream", data.CompanyLogoFileName);
         }
     }
 }

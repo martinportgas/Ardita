@@ -3,6 +3,7 @@ using Ardita.Extensions;
 using Ardita.Models.ReportModels;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Areas.Report.Controllers
 {
@@ -23,7 +24,8 @@ namespace Ardita.Areas.Report.Controllers
             IArchiveCreatorService archiveCreatorService,
             IArchiveOwnerService archiveOwnerService,
             IClassificationService classificationService,
-            IClassificationSubjectService classificationSubjectService)
+            IClassificationSubjectService classificationSubjectService,
+            IHostingEnvironment hostingEnvironment)
         {
             _reportService = reportService;
             _companyService = companyService;
@@ -38,6 +40,7 @@ namespace Ardita.Areas.Report.Controllers
             _archiveOwnerService = archiveOwnerService;
             _classificationService = classificationService;
             _classificationSubjectService = classificationSubjectService;
+            _hostingEnvironment = hostingEnvironment;
         }
         public override async Task<ActionResult> Index()
         {
@@ -51,8 +54,12 @@ namespace Ardita.Areas.Report.Controllers
         {
             var reportName = "RptReportTransferMedia";
             var returnString = await _reportService.GenerateReportTransferMediaArchiveInActive(reportName, param, AppUsers.CurrentUser(User));
-            ViewBag.Data = String.Format("data:application/pdf;base64,{0}", Convert.ToBase64String(returnString.Item1));
-            ViewBag.DataExcel = String.Format("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{0}", Convert.ToBase64String(returnString.Item2));
+            var filePdf = $"{reportName}.pdf";
+            var fileExcel = $"{reportName}.xlsx";
+            System.IO.File.WriteAllBytes(Path.Combine(_hostingEnvironment.WebRootPath, GlobalConst.Report, filePdf), returnString.Item1);
+            System.IO.File.WriteAllBytes(Path.Combine(_hostingEnvironment.WebRootPath, GlobalConst.Report, fileExcel), returnString.Item2);
+            ViewBag.FilePdf = filePdf;
+            ViewBag.FileExcel = fileExcel;
 
             await AllViewBag();
             return View(GlobalConst.Index);

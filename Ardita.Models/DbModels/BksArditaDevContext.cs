@@ -2976,7 +2976,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.SubjectClassificationId).HasColumnName("subject_classification_id");
             entity.Property(e => e.TitleArchive)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("title_archive");
         });
@@ -3029,7 +3029,7 @@ public partial class BksArditaDevContext : DbContext
             entity.Property(e => e.SubSubjectClassificationId).HasColumnName("sub_subject_classification_id");
             entity.Property(e => e.SubjectClassificationId).HasColumnName("subject_classification_id");
             entity.Property(e => e.TitleArchive)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("title_archive");
         });

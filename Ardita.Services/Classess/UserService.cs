@@ -14,6 +14,10 @@ using Ardita.Models.ViewModels.Users;
 using Ardita.Models.ViewModels;
 using Ardita.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Web.Mvc;
+using System.Web.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace Ardita.Services.Classess
 {
@@ -32,6 +36,7 @@ namespace Ardita.Services.Classess
         private readonly IUserArchiveUnitRepository _userArchiveUnitRepository;
         private readonly IArchiveUnitRepository _archiveUnitRepository;
         private readonly IArchiveCreatorRepository _archiveCreatorRepository;
+        private readonly IGeneralSettingsService _generalSettingsService;
 
         public UserService(IUserRepository userRepository,
             IRoleRepository roleRepository,
@@ -45,7 +50,8 @@ namespace Ardita.Services.Classess
             ICompanyRepository companyRepository,
             IUserArchiveUnitRepository userArchiveUnitRepository,
             IArchiveUnitRepository archiveUnitRepository,
-            IArchiveCreatorRepository archiveCreatorRepository
+            IArchiveCreatorRepository archiveCreatorRepository,
+            IGeneralSettingsService generalSettingsService
             )
         {
             _userRepository = userRepository;
@@ -61,6 +67,7 @@ namespace Ardita.Services.Classess
             _userArchiveUnitRepository = userArchiveUnitRepository;
             _archiveUnitRepository = archiveUnitRepository;
             _archiveCreatorRepository = archiveCreatorRepository;
+            _generalSettingsService = generalSettingsService;
         }
         public async Task<int> Delete(MstUser model)
         {
@@ -166,6 +173,9 @@ namespace Ardita.Services.Classess
             {
                 var arrArchiveUnit = userArchiveUnit.Where(x => x.UserId == result.UserId).Select(x => x.ArchiveUnit.ArchiveUnitCode).ToArray();
 
+                //bool isExists = await _generalSettingsService.IsExist();
+                bool isExists = true;
+
                 claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.Role, result.RoleCode),
@@ -186,7 +196,8 @@ namespace Ardita.Services.Classess
                     new Claim(GlobalConst.ArchiveUnitName, result.ArchiveUnitName),
                     new Claim(GlobalConst.CreatorId, result.CreatorId),
                     new Claim(GlobalConst.CreatorName, result.CreatorName),
-                    new Claim(GlobalConst.ArchiveUnitCode, arrArchiveUnit.Length > 0  ? string.Join(",", arrArchiveUnit) : string.Empty)
+                    new Claim(GlobalConst.ArchiveUnitCode, arrArchiveUnit.Length > 0  ? string.Join(",", arrArchiveUnit) : string.Empty),
+                    new Claim(GlobalConst.GeneralSettings, isExists ? "1" : "0")
                 };
             }
        

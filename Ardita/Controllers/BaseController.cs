@@ -7,6 +7,7 @@ using Ardita.Models.ViewModels.SubSubjectClasscification;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using NPOI.HPSF;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -587,7 +588,7 @@ public abstract class BaseController<T> : Controller
     }
     public async Task<List<SelectListItem>> BindTypeStorageByCompanyId(Guid Id)
     {
-        string par = " ArchiveUnit.CompanyId == \"{Id}\" ";
+        string par = $" ArchiveUnit.CompanyId == \"{Id}\" ";
         var result = await _typeStorageService.GetAll(par);
         return result.Select(x => new SelectListItem
         {
@@ -1065,18 +1066,28 @@ public abstract class BaseController<T> : Controller
     public async Task<JsonResult> BindSubSubjectClassificationByArchiveUnitId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
+        if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower())).ToList();
         return Json(result);
     }
     public async Task<JsonResult> BindSubSubjectClassificationBySubjectId(Guid Id, Guid SubjectId, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.Creator!.ArchiveUnitId == Id && x.SubjectClassificationId == SubjectId && x.SubSubjectClassificationName!.ToLower().Contains(param.ToLower()))
             .Select(x => new { id = x.SubSubjectClassificationId, text = x.SubSubjectClassificationName }).ToList();
         return Json(result);
@@ -1095,11 +1106,16 @@ public abstract class BaseController<T> : Controller
     public async Task<JsonResult> BindSubSubjectClassificationByClassificationId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        var data = await _classificationSubSubjectService.GetAll();
+        string par = "1=1";
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
-            data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+            par += $" && Creator.ArchiveUnitId == \"{AppUsers.CurrentUser(User).ArchiveUnitId}\" ";
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
-            data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
+            par += $" && CreatorId == \"{AppUsers.CurrentUser(User).CreatorId}\" ";
+        var data = await _classificationSubSubjectService.GetAll(par);
+        //if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+        //    data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        //if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
+        //    data = data.Where(x => x.CreatorId == AppUsers.CurrentUser(User).CreatorId).ToList();
         var result = data.Where(x => x.SubjectClassificationId == Id).ToList();
         return Json(result);
     }
@@ -1375,5 +1391,24 @@ public abstract class BaseController<T> : Controller
             }
         }
         return File(new byte[] { }, "application/octet-stream", "FileNotFound.txt");
+    }
+    public async Task<FileResult> BindLogoCompany()
+    {
+        BksArditaDevContext context = new BksArditaDevContext();
+        var data = await context.MstGeneralSettings
+            .Include(x => x.IdxGeneralSettingsFormatFiles)
+            .Where(x => x.IsActive == true)
+            .AsNoTracking()
+            .OrderBy(x => x.GeneralSettingsId)
+            .LastOrDefaultAsync();
+
+        if (data != null)
+            return File(Convert.FromBase64String(data.CompanyLogoContent), "application/octet-stream", data.CompanyLogoFileName);
+        else
+        {
+            var bytes = System.IO.File.ReadAllBytes("~/img/bks.png");
+            return File(bytes, "application/octet-stream", "bks.png");
+        }
+
     }
 }

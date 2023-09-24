@@ -1,11 +1,14 @@
 ﻿using Ardita.Extensions;
 using Ardita.Models;
 using Ardita.Models.DbModels;
+using Ardita.Models.ViewModels;
 using Ardita.Services.Classess;
 using Ardita.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Ardita.Controllers
@@ -40,19 +43,12 @@ namespace Ardita.Controllers
         {
             //get attribute from general settings start
             bool isExists = await _generalSettingsService.IsExist();
-            ViewBag.IsExists = false;
+            ViewBag.IsExists = isExists;
 
             if (isExists)
             {
                 var data = await _generalSettingsService.GetExistingSettings();
                 ViewBag.SiteLogoContent = Convert.FromBase64String(data.SiteLogoContent);
-                ViewBag.SiteLogoFileName = data.SiteLogoFileName;
-                ViewBag.CompanyLogoContent = Convert.FromBase64String(data.CompanyLogoContent);
-                ViewBag.CompanyLogoFileName = data.CompanyLogoFileName;
-                ViewBag.FavIconContent = Convert.FromBase64String(data.FavIconContent);
-                ViewBag.FavIconFileName = data.FavIconFileName;
-                ViewBag.IsExists = true;
-
             }
             //get attribute from general settings end
 
