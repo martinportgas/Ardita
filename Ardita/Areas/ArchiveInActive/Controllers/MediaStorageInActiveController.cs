@@ -136,7 +136,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
     protected async Task BindAllDropdown()
     {
         ViewBag.listSubSubject = await BindSubSubjectClasscifications();
-        ViewBag.listArchive = await BindArchives();
+        //ViewBag.listArchive = await BindArchives();
         ViewBag.listArchiveUnit = await BindArchiveUnits();
         ViewBag.listTypeStorage = await BindTypeStorage();
         ViewBag.listFloor = await BindFloors();

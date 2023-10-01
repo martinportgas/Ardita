@@ -181,9 +181,12 @@
                                 <div>
                                     <a href="@Url.Action(GlobalConst.Index, GlobalConst.ArchiveReceived, new {Area = GlobalConst.ArchiveInActive})" class="btn btn-sm btn-default float-right m-t-n-xs">@Html.Raw(form.BackText)</a>
 
-                                    <input type="hidden" name="@GlobalConst.Approval" id="valueSubmit">
-                                    <button onclick="onApprove(this, event);" class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" id="btnReject" type="button" value="@GlobalConst.Reject">@Html.Raw(form.RejectText)</button>
-                                    <button onclick="onApprove(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="button" id="btnApprove" value="@GlobalConst.Approve">@Html.Raw(form.ApprovalText)</button>
+                                    @if (form.CurrentAction == GlobalConst.AcceptArchiveForm)
+                                    {
+                                        <input type="hidden" name="@GlobalConst.Approval" id="valueSubmit">
+                                        <button onclick="onApprove(this, event);" class="btn btn-sm btn-danger float-right m-t-n-xs mr-1" id="btnReject" type="button" value="@GlobalConst.Reject">@Html.Raw(form.RejectText)</button>
+                                        <button onclick="onApprove(this, event);" class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1" type="button" id="btnApprove" value="@GlobalConst.Approve">@Html.Raw(form.ApprovalText)</button>
+                                    }
                                 </div>
                             </form>
                         </div>

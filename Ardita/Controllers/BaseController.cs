@@ -757,17 +757,23 @@ public abstract class BaseController<T> : Controller
         return Json(result);
 
     }
-    public async Task<JsonResult> BindRoomByFloorId(string Id, string param = "")
+    public async Task<JsonResult> BindRoomByFloorId(Guid Id, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        List<TrxRoom> list = new();
-        Guid id = new(Id);
 
         var data = await _roomService.GetAll();
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
             data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
-        list = data.Where(x => x.FloorId == id && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).ToList();
-        return Json(list);
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.FloorId == Id).ToList();
+        var result = data.Where(x => x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).OrderBy(x => x.RoomName).Select(
+            x => new
+            {
+                id = x.RoomId.ToString(),
+                text = x.RoomName
+            }
+            ).ToList();
+        return Json(result);
 
     }
     public async Task<JsonResult> BindRoomActiveByFloorId(string Id, string param = "")
@@ -792,6 +798,24 @@ public abstract class BaseController<T> : Controller
         if (Id != Guid.Empty)
             data = data.Where(x => x.FloorId == Id).ToList();
         var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitPengolah && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).OrderBy(x => x.RoomName).Select(
+            x => new
+            {
+                id = x.RoomId.ToString(),
+                text = x.RoomName
+            }
+            ).ToList();
+        return Json(result);
+    }
+    public async Task<JsonResult> BindParamRoomInActiveByFloorId(Guid Id, string param = "")
+    {
+        param = string.IsNullOrEmpty(param) ? string.Empty : param;
+
+        var data = await _roomService.GetAll();
+        if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
+            data = data.Where(x => x.Floor.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
+        if (Id != Guid.Empty)
+            data = data.Where(x => x.FloorId == Id).ToList();
+        var result = data.Where(x => x.ArchiveRoomType == GlobalConst.UnitKearsipan && x.RoomName!.ToLower().Contains(param.ToLower())).OrderBy(x => x.RoomName).OrderBy(x => x.RoomName).Select(
             x => new
             {
                 id = x.RoomId.ToString(),

@@ -268,6 +268,7 @@ public static class GlobalConst
     public const string BindGMDDetailByTypeStorageId = "BindGMDDetailByTypeStorageId";
     public const string BindRoomActiveByArchiveUnitId = "BindRoomActiveByArchiveUnitId";
     public const string BindParamRoomActiveByFloorId = "BindParamRoomActiveByFloorId";
+    public const string BindParamRoomInActiveByFloorId = "BindParamRoomInActiveByFloorId";
     public const string BindParamFloorsByArchiveUnitId = "BindParamFloorsByArchiveUnitId";
     public const string BindParamRackByRoomId = "BindParamRackByRoomId";
     public const string BindParamLevelByRackId = "BindParamLevelByRackId";

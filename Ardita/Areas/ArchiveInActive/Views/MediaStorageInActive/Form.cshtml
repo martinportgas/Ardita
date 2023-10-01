@@ -406,11 +406,11 @@
                         if (!isFull(data.volume, totalDetail)) {
                             if(isInput)
                             {
-                               $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' style='color:#ed5565;font-size:15px'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
+                                $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' onclick="$(this).closest('tr').remove()" style='color:#ed5565;font-size:15px'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
                             }
                             else
                             {
-                                $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' style='color:#ed5565;font-size:15px;display:none'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
+                                $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' onclick="$(this).closest('tr').remove()" style='color:#ed5565;font-size:15px;display:none'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
                             }
                         }
                     },

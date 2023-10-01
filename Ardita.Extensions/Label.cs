@@ -87,7 +87,7 @@ public static class Label
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.Gambar.ToString())
                     document = ReplaceImage(document, item.VariableName, item.VariableData);
                 if (item.VariableType.Replace(" ", "") == GlobalConst.VariableType.DataTable.ToString())
-                    document = ReplaceDataTable(document, item.VariableName, item.VariableData, data.Rows.Count > 0 ? data.Rows[0]["MainID"].ToString()! : "");
+                    document = ReplaceDataTable(document, item.VariableName, item.VariableData, data.Rows.Count > 0 ? data.Rows[0]["ID"].ToString()! : "");
             }
         }
         using (MemoryStream memoryStream = new())
@@ -220,7 +220,7 @@ public static class Label
             {
                 TableRow DataRow = table.Rows[r + 1];
                 DataRow.Height = 20;
-                for (int c = 0; c < data.Columns.Count + 1; c++)
+                for (int c = 0; c < data.Columns.Count; c++)
                 {
                     if (c == 0)
                     {

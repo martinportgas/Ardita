@@ -691,11 +691,11 @@ public class ArchiveRepository : IArchiveRepository
                 model.IsActive = data.IsActive;
                 model.CreatedBy = data.CreatedBy;
                 model.CreatedDate = data.CreatedDate;
-                model.IsArchiveActive = data.IsArchiveActive;
+                model.IsArchiveActive = model.IsArchiveActive ?? data.IsArchiveActive;
                 model.IsUsed = data.IsUsed;
                 model.IsUsedBy = data.IsUsedBy;
-                model.InactiveBy = data.InactiveBy;
-                model.InactiveDate = data.InactiveDate;
+                model.InactiveBy = model.InactiveBy ?? data.InactiveBy;
+                model.InactiveDate = model.InactiveDate ?? data.InactiveDate;
 
                 var TrxSubSubjectClassifications = _context.TrxSubSubjectClassifications.FirstOrDefault(r => r.SubSubjectClassificationId == model.SubSubjectClassificationId);
                 var MstSecurityClassifications = _context.MstSecurityClassifications.FirstOrDefault(r => r.SecurityClassificationId == model.SecurityClassificationId);

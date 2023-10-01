@@ -168,7 +168,7 @@
 
             initGlobalDropdown($('#txtFloorId'), '@Url.Action(GlobalConst.BindParamFloorsByArchiveUnitId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtArchiveUnitId'));
 
-            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindParamRoomActiveByFloorId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtFloorId'));
+            initGlobalDropdown($('#txtRoomId'), '@Url.Action(GlobalConst.BindParamRoomInActiveByFloorId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtFloorId'));
 
             initGlobalDropdown($('#txtRackId'), '@Url.Action(GlobalConst.BindParamRackByRoomId, GlobalConst.Archive, new { Area = GlobalConst.ArchiveActive })', $('#txtRoomId'));
 

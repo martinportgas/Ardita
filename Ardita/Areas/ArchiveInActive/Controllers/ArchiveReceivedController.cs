@@ -31,7 +31,8 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         ILevelService levelService,
         IRowService rowService,
         IArchiveCreatorService archiveCreatorService,
-            IClassificationSubSubjectService classificationSubSubjectService
+            IClassificationSubSubjectService classificationSubSubjectService,
+            ITemplateSettingService templateSettingService
         )
     {
         ArchiveReceivedService = archiveReceivedService;
@@ -53,6 +54,7 @@ public class ArchiveReceivedController : BaseController<TrxArchiveMovement>
         _rackService = rackService;
         _roomService = roomService;
         _floorService = floorService;
+        _templateSettingService = templateSettingService;
     }
     public override async Task<ActionResult> Index()
     {
