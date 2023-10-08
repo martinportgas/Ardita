@@ -28,7 +28,8 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
         IRackService rackService,
         ILevelService levelService,
         IRowService rowService,
-        IArchiveCreatorService archiveCreatorService
+        IArchiveCreatorService archiveCreatorService,
+        ITemplateSettingService templateSettingService
             )
         {
             _archiveRentService = archiveRentService;
@@ -47,7 +48,7 @@ namespace Ardita.Areas.ArchiveInActive.Controllers
             _rackService = rackService;
             _roomService = roomService;
             _floorService = floorService;
-
+            _templateSettingService = templateSettingService;
         }
         public override async Task<ActionResult> Index()
         {

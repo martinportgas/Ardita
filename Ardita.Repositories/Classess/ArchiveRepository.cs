@@ -877,18 +877,23 @@ public class ArchiveRepository : IArchiveRepository
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId)
+    public async Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId, Guid formId)
     {
-        var result = from archive in _context.TrxArchives
-                     join mvmntDtl in _context.TrxArchiveMovementDetails on archive.ArchiveId equals mvmntDtl.ArchiveId
-                     join mvmnt in _context.TrxArchiveMovements on mvmntDtl.ArchiveMovementId equals mvmnt.ArchiveMovementId
-                     join media in _context.TrxMediaStorageInActiveDetails on archive.ArchiveId equals media.ArchiveId into tmp
-                     from submedia in tmp.DefaultIfEmpty()
-                     join mediaHeader in _context.TrxMediaStorageInActives on submedia.MediaStorageInActiveId equals mediaHeader.MediaStorageInActiveId into tmp2
-                     from submediaHeader in tmp2.DefaultIfEmpty()
-                     where submedia == null && (submediaHeader.IsActive != true)
-                     where archive.SubSubjectClassificationId == subSubjectId
-                     select archive;
+        //var resultx = from archive in _context.TrxArchives
+        //             join media in _context.TrxMediaStorageInActiveDetails on archive.ArchiveId equals media.ArchiveId into tmp
+        //             from submedia in tmp.DefaultIfEmpty()
+        //             join mediaHeader in _context.TrxMediaStorageInActives on submedia.MediaStorageInActiveId equals mediaHeader.MediaStorageInActiveId into tmp2
+        //             from submediaHeader in tmp2.DefaultIfEmpty()
+        //             where (submedia == null || submedia.MediaStorageInActiveId == formId ) && submediaHeader.IsActive == true && archive.IsArchiveActive == false
+        //             where archive.SubSubjectClassificationId == subSubjectId
+        //             select archive;
+        var result = await _context.TrxArchives
+                    .Include(x => x.Creator.ArchiveUnit)
+                    .Include(x => x.TrxMediaStorageInActiveDetails).ThenInclude(x => x.MediaStorageInActive)
+                    .Where(x => x.IsActive == true && x.IsArchiveActive == false)
+                    .Where(x => (x.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault()!.MediaStorageInActiveId == formId))
+                    .Where(x => (x.TrxMediaStorageInActiveDetails.FirstOrDefault() == null ? true : x.TrxMediaStorageInActiveDetails.FirstOrDefault()!.MediaStorageInActive.IsActive == true))
+                    .ToListAsync();
 
         await Task.Delay(0);
 

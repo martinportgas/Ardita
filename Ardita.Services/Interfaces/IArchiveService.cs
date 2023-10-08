@@ -22,6 +22,6 @@ public interface IArchiveService
     Task<int> Update(TrxArchive model, StringValues files, string[] filesDeleted);
     Task<int> Submit(TrxArchive model);
     Task<IEnumerable<object>> GetAvailableArchiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "", Guid gmdDetailId = new Guid());
-    Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId);
+    Task<IEnumerable<TrxArchive>> GetArchiveActiveBySubjectId(Guid subSubjectId, Guid formId);
     Task<IEnumerable<TrxArchive>> GetAvailableArchiveInActiveBySubSubjectId(Guid subSubjectId, Guid mediaStorageId = new Guid(), string year = "");
 }

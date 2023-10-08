@@ -1302,10 +1302,10 @@ public abstract class BaseController<T> : Controller
         return Json(result);
     }
 
-    public async Task<JsonResult> BindArchiveActiveBySubjectId(Guid Id, string param = "")
+    public async Task<JsonResult> BindArchiveActiveBySubjectId(Guid Id, Guid formId, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        var data = await _archiveService.GetArchiveActiveBySubjectId(Id, formId);
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
             data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)
@@ -1313,10 +1313,10 @@ public abstract class BaseController<T> : Controller
         var result = data.Where(x => x.TitleArchive!.ToLower().Contains(param.ToLower())).OrderBy(x => x.TitleArchive).ToList();
         return Json(result);
     }
-    public async Task<JsonResult> BindArchiveActiveBySubjectandGmdDetailId(Guid Id, Guid gmdDetailId, string param = "")
+    public async Task<JsonResult> BindArchiveActiveBySubjectandGmdDetailId(Guid Id, Guid gmdDetailId, Guid formId, string param = "")
     {
         param = string.IsNullOrEmpty(param) ? string.Empty : param;
-        var data = await _archiveService.GetArchiveActiveBySubjectId(Id);
+        var data = await _archiveService.GetArchiveActiveBySubjectId(Id, formId);
         if (AppUsers.CurrentUser(User).ArchiveUnitId != Guid.Empty)
             data = data.Where(x => x.Creator.ArchiveUnitId == AppUsers.CurrentUser(User).ArchiveUnitId).ToList();
         if (AppUsers.CurrentUser(User).CreatorId != Guid.Empty)

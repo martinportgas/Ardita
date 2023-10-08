@@ -76,7 +76,7 @@
                                             <input type="hidden" asp-for="CreatedDate" />
                                             <input type="hidden" asp-for="UpdatedBy" />
                                             <input type="hidden" asp-for="UpdatedDate" />
-                                            <input type="hidden" asp-for="MediaStorageInActiveId" value="@Model.MediaStorageInActiveId">
+                                            <input type="hidden" asp-for="MediaStorageInActiveId" value="@Model.MediaStorageInActiveId" id="txtMediaStorageInActiveId">
                                         </div>
                                         <div class="form-group">
                                             <label>Archive Unit</label>
@@ -233,6 +233,7 @@
                                     </div>
                                 </div>
                                 <div>
+                                    <input type="hidden" id="hfSubmit" name="@GlobalConst.Submit" value="@GlobalConst.Save" />
                                     <a href="@Url.Action(GlobalConst.Index, form.CurrentController, new { Area = form.CurrentArea })"
                                        class="btn btn-sm btn-default float-right m-t-n-xs">
                                         @Html.Raw(form.BackText)
@@ -241,7 +242,7 @@
                                             {
                                                 <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
                                                         onclick="onSubmit(this, event);"
-                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Save">
+                                                        type="submit" id="btn-submit" value="@GlobalConst.Save">
                                                     @Html.Raw(form.SaveText)
                                                 </button>
                                                 @if(form.CurrentAction != GlobalConst.Remove)
@@ -249,7 +250,7 @@
                                                     <button
                                                         class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
                                                         onclick="onSubmit(this, event);"
-                                                        type="submit" id="btn-submit" name="@GlobalConst.Submit" value="@GlobalConst.Submit">
+                                                        type="submit" id="btn-submit" value="@GlobalConst.Submit">
                                                         @Html.Raw(form.SubmitText)
                                                     </button>
                                                 }
@@ -583,6 +584,7 @@
                             var query = {
                                 id: $('#txtSubSubjectClassificationId').val(),
                                 gmdDetailId: $('#txtGMDDetail').val(),
+                                formId: $('#txtMediaStorageInActiveId').val(),
                                 param: params.term
                             }
                             return query;
@@ -911,6 +913,7 @@
                 function (isConfirm) {
                     if (isConfirm) {
                         if (validate() == true) {
+                            $('#hfSubmit').val(ctl.value);
                             $('.confirm').prop('disabled', true);
                             $('.cancel').prop('disabled', true);
                             $('.cancel').hide();

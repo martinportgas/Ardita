@@ -28,7 +28,8 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         IGmdService gmdService,
         ISubTypeStorageService subTypeStorageService,
         IClassificationService classificationService,
-        IHostingEnvironment hostingEnvironment
+        IHostingEnvironment hostingEnvironment,
+        ITemplateSettingService templateSettingService
         )
     {
         _archiveCreatorService = archiveCreatorService;
@@ -47,6 +48,7 @@ public class MediaStorageInActiveController : BaseController<TrxMediaStorageInAc
         _subTypeStorageService = subTypeStorageService;
         _classificationService = classificationService;
         _hostingEnvironment = hostingEnvironment;
+        _templateSettingService = templateSettingService;
     }
     public override async Task<ActionResult> Index()
     {
