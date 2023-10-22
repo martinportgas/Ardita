@@ -173,8 +173,7 @@ namespace Ardita.Services.Classess
             {
                 var arrArchiveUnit = userArchiveUnit.Where(x => x.UserId == result.UserId).Select(x => x.ArchiveUnit.ArchiveUnitCode).ToArray();
 
-                //bool isExists = await _generalSettingsService.IsExist();
-                bool isExists = true;
+                bool isExists = await _generalSettingsService.IsExist();
 
                 claims = new List<Claim>()
                 {

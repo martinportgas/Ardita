@@ -26,7 +26,7 @@ namespace Ardita.Models.ViewModels
         public string ArchiveUnitName { get; set; }
         public Guid CreatorId { get; set; }
         public string CreatorName { get; set; }
-        public GeneralSetting GeneralSetting { get; set; }
+        public bool isGenenalSettingExist { get; set; }
         public List<string> ListArchiveUnitCode { get; set; }
 
     }

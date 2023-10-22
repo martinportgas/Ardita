@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Ardita.Controllers
 {
@@ -18,16 +19,19 @@ namespace Ardita.Controllers
         private readonly IUserService _userService;
         private readonly ILogLoginService _logLoginService;
         private readonly IGeneralSettingsService _generalSettingsService;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public Authentication(
             IUserService userService,
             ILogLoginService logLoginService,
+            IHostingEnvironment hostingEnvironment,
             IGeneralSettingsService generalSettingsService
             )
         {
             _userService = userService;
             _logLoginService = logLoginService;
             _generalSettingsService = generalSettingsService;
+            _hostingEnvironment = hostingEnvironment;
         }
         public async Task<IActionResult> Index()
         {
@@ -48,7 +52,24 @@ namespace Ardita.Controllers
             if (isExists)
             {
                 var data = await _generalSettingsService.GetExistingSettings();
-                ViewBag.SiteLogoContent = Convert.FromBase64String(data.SiteLogoContent);
+                if(!string.IsNullOrEmpty(data.SiteLogoContent))
+                {
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_logo.svg");
+                    var dataByte = Convert.FromBase64String(data.SiteLogoContent);
+                    await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
+                }
+                if(!string.IsNullOrEmpty(data.CompanyLogoContent))
+                {
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_company.png");
+                    var dataByte = Convert.FromBase64String(data.CompanyLogoContent);
+                    await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
+                }
+                if(!string.IsNullOrEmpty(data.FavIconContent))
+                {
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_favicon.ico");
+                    var dataByte = Convert.FromBase64String(data.FavIconContent);
+                    await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
+                }
             }
             //get attribute from general settings end
 

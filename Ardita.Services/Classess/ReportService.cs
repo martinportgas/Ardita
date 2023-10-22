@@ -30,14 +30,22 @@ namespace Ardita.Services.Classess
         }
         private async Task<ReportParameter[]> GetReportParameter(ReportGlobalParams param, List<string> listParameter)
         {
-            ReportParameter[] par = new ReportParameter[listParameter.Count];
+            ReportParameter[] par = new ReportParameter[listParameter.Count + 1];
             if(listParameter.Count > 0 )
             {
-                foreach( var item in listParameter )
+                foreach ( var item in listParameter )
                 {
                     var data = await _reportRepository.GetGlobalParamsDescription(param, item);
                     par[listParameter.IndexOf(item)] = new ReportParameter(item, data);
                 }
+                var image = Path.Combine(this.Environment.WebRootPath, "img", "setting_company.png");
+                if (!File.Exists(image))
+                    image = Path.Combine(this.Environment.WebRootPath, "img", "bks.png");
+
+                Uri fileUri = new Uri(new Uri("file://"), "img/bks.png");
+
+                par[listParameter.Count] = new ReportParameter("logo", fileUri.AbsoluteUri);
+
             }
             return par;
         }
@@ -62,6 +70,7 @@ namespace Ardita.Services.Classess
             string rdlcFilePath = $"{this.Environment.WebRootPath}\\{GlobalConst.Report}\\{(isActive ? GlobalConst.ArchiveActive : GlobalConst.ArchiveInActive)}\\{reportName}.rdlc";
 
             LocalReport report = new LocalReport();
+            report.EnableExternalImages = true;
             report.ReportPath = rdlcFilePath;
             report.DataSources.Add(new ReportDataSource(dataSource, data));
 

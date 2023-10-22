@@ -6,10 +6,24 @@
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
-                    <img alt="image" src="~/img/bks.png" width="100%" />
+                    @if (AppUsers.CurrentUser(User).isGenenalSettingExist)
+                    {
+                        <img alt="image" src="~/img/setting_company.png" width="100%" />
+                    }
+                    else
+                    {
+                        <img alt="image" src="~/img/bks.png" width="100%" />
+                    }
                 </div>
                 <div class="logo-element">
-                    <img alt="image" src="~/img/bks.png" width="100%" />
+                    @if (AppUsers.CurrentUser(User).isGenenalSettingExist)
+                    {
+                        <img alt="image" src="~/img/setting_company.png" width="100%" />
+                    }
+                    else
+                    {
+                        <img alt="image" src="~/img/bks.png" width="100%" />
+                    }
                 </div>
             </li>
             <li class="@Html.IsSelected(area: GlobalConst.General, controller: GlobalConst.Home)">

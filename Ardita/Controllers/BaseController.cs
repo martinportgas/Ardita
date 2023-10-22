@@ -1416,6 +1416,7 @@ public abstract class BaseController<T> : Controller
         }
         return File(new byte[] { }, "application/octet-stream", "FileNotFound.txt");
     }
+    [HttpGet]
     public async Task<FileResult> BindLogoCompany()
     {
         BksArditaDevContext context = new BksArditaDevContext();
@@ -1432,6 +1433,44 @@ public abstract class BaseController<T> : Controller
         {
             var bytes = System.IO.File.ReadAllBytes("~/img/bks.png");
             return File(bytes, "application/octet-stream", "bks.png");
+        }
+
+    }
+    [HttpGet]
+    public async Task<string> BindTitleApplication()
+    {
+        BksArditaDevContext context = new BksArditaDevContext();
+        var data = await context.MstGeneralSettings
+            .Include(x => x.IdxGeneralSettingsFormatFiles)
+            .Where(x => x.IsActive == true)
+            .AsNoTracking()
+            .OrderBy(x => x.GeneralSettingsId)
+            .LastOrDefaultAsync();
+
+        if (data != null)
+            return data.AplicationTitle;
+        else
+        {
+            return "Ardita";
+        }
+
+    }
+    [HttpGet]
+    public async Task<string> BindFooter()
+    {
+        BksArditaDevContext context = new BksArditaDevContext();
+        var data = await context.MstGeneralSettings
+            .Include(x => x.IdxGeneralSettingsFormatFiles)
+            .Where(x => x.IsActive == true)
+            .AsNoTracking()
+            .OrderBy(x => x.GeneralSettingsId)
+            .LastOrDefaultAsync();
+
+        if (data != null)
+            return data.Footer;
+        else
+        {
+            return "Ardita";
         }
 
     }

@@ -7,6 +7,7 @@ using Ardita.Extensions;
 using Ardita.Services.Classess;
 using Ardita.Report;
 using Ardita.Models;
+using Ardita.Models.DbModels;
 
 namespace Ardita.Areas.General.Controllers
 {
@@ -531,6 +532,33 @@ namespace Ardita.Areas.General.Controllers
         {
             var data = await _generalSettingsService.GetExistingSettings();
             return File(Convert.FromBase64String(data.CompanyLogoContent), "application/octet-stream", data.CompanyLogoFileName);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> BindTitleApplication()
+        {
+            var data = await _generalSettingsService.GetExistingSettings();
+
+            if (data != null)
+                return Json(new { data = data.AplicationTitle });
+            else
+            {
+                return Json(new { data = "Arsip Digital Tata Graha" });
+            }
+
+        }
+        [HttpGet]
+        public async Task<JsonResult> BindFooter()
+        {
+            var data = await _generalSettingsService.GetExistingSettings();
+
+            if (data != null)
+                return Json(new { data = data.Footer });
+            else
+            {
+                return Json(new { data = "<strong>Copyright</strong> Ardita MANIS &copy; 2023" });
+            }
+
         }
     }
 }

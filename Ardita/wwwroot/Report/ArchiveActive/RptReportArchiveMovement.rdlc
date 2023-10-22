@@ -2995,8 +2995,8 @@
               </Style>
             </Textbox>
             <Image Name="logoBKS">
-              <Source>Embedded</Source>
-              <Value>bks</Value>
+              <Source>External</Source>
+              <Value>=Parameters!logo.Value</Value>
               <Sizing>FitProportional</Sizing>
               <Top>0.18639in</Top>
               <Left>0.2593in</Left>
@@ -3128,6 +3128,12 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
+    <ReportParameter Name="logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -3208,6 +3214,11 @@
           <ColumnIndex>2</ColumnIndex>
           <RowIndex>3</RowIndex>
           <ParameterName>movementPeriode</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>logo</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

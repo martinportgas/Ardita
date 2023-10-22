@@ -54,7 +54,7 @@
                                                 }
                                                 <div class="input-group">
                                                     <div class="custom-file">
-                                                        <input id="site-logo" type="file" class="custom-file-input" asp-for="SiteLogoContent">
+                                                        <input id="site-logo" type="file" class="custom-file-input" asp-for="SiteLogoContent" accept=".svg">
                                                         <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                                         <input type="hidden" placeholder="" id="txtGeneralSettingsId" class="form-control" asp-for="@Model.GeneralSettingsId">
                                                     </div>
@@ -68,7 +68,7 @@
                                                 }
                                                 <div class="input-group">
                                                     <div class="custom-file">
-                                                        <input id="company-logo" type="file" class="custom-file-input" asp-for="CompanyLogoContent">
+                                                        <input id="company-logo" type="file" class="custom-file-input" accept=".png" asp-for="CompanyLogoContent">
                                                         <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
                                                     </div>
                                                 </div>
@@ -81,7 +81,7 @@
                                                 }
                                                 <div class="input-group">
                                                     <div class="custom-file">
-                                                        <input id="favicon" type="file" class="custom-file-input" asp-for="FavIconContent">
+                                                        <input id="favicon" type="file" class="custom-file-input" accept=".ico" asp-for="FavIconContent">
                                                         <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
                                                     </div>
                                                 </div>
@@ -90,7 +90,7 @@
                                                 <label>Judul Aplikasi</label>
                                                 <input type="text" placeholder="" id="txtAplicationTitle" class="form-control" asp-for="AplicationTitle">
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="display:none">
                                                 <label>Zona Waktu</label>
                                                 <select asp-for="TimeAndZone" (form.isInput ? GlobalConst.Required : GlobalConst.Disabled)
                                                         id="txtTimeAndZone" class="select2_demo_1 form-control"

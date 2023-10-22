@@ -24,6 +24,18 @@ $(document).ready(function () {
     $('ol.breadcrumb').children(':first-child').next().next().html(subMenuActive);
     $('.page-heading').children().children('h2').html(subMenuActive);
     $('.ibox-title').children('h5').html(subMenuActive);
+    var footer = $('#footer');
+    if (footer != undefined) {
+        ajaxcallreturn(window.location.origin + "/general/home/BindFooter", 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+            footer.html(result.data);
+        });
+    }
+    var title = $('#titleapp');
+    if (title != undefined) {
+        ajaxcallreturn(window.location.origin + "/general/home/BindTitleApplication", 'GET', '', '', 'application/json; charset=UTF-8').then(function (result) {
+            title.html(result.data);
+        });
+    }
 });
 
 function geocodeAddress(data, bounds, map) {
