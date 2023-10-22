@@ -124,54 +124,56 @@ namespace Ardita.Services.Classess
 
         public async Task<List<Claim>> GetLogin(string username, string password)
         {       
-            var user = await _userRepository.GetAll();
-            var role = await _roleRepository.GetAll();
-            var userRole = await _userRoleRepository.GetAll();
-            var employee = await _employeeRepository.GetAll();
-            var position = await _positionRepository.GetAll();
-            var company = await _companyRepository.GetAll();
-            var archiveUnit = await _archiveUnitRepository.GetAll();
-            var creator = await _archiveCreatorRepository.GetAll();
-            var userArchiveUnit = await _userArchiveUnitRepository.GetAll();
+            //var user = await _userRepository.GetAll();
+            //var role = await _roleRepository.GetAll();
+            //var userRole = await _userRoleRepository.GetAll();
+            //var employee = await _employeeRepository.GetAll();
+            //var position = await _positionRepository.GetAll();
+            //var company = await _companyRepository.GetAll();
+            //var archiveUnit = await _archiveUnitRepository.GetAll();
+            //var creator = await _archiveCreatorRepository.GetAll();
+            //var userArchiveUnit = await _userArchiveUnitRepository.GetAll();
 
-            var result = (from usr in user
-                          join ur in userRole on usr.UserId equals ur.UserId
-                          join r in role on ur.RoleId equals r.RoleId
-                          join au in archiveUnit on ur.ArchiveUnitId equals au.ArchiveUnitId into aus
-                          from aust in aus.DefaultIfEmpty()
-                          join cr in creator on ur.CreatorId equals cr.CreatorId into crs
-                          from crst in crs.DefaultIfEmpty()
-                          join e in employee on usr.EmployeeId equals e.EmployeeId
-                          join p in position on e.PositionId equals p.PositionId
-                          join c in company on e.CompanyId equals c.CompanyId
-                          where usr.Username == username && usr.Password == password
-                          && usr.IsActive == true && r.IsActive == true && e.IsActive == true && ur.IsPrimary == true
-                          select new
-                          {
-                              Username = usr.Username,
-                              UserId = usr.UserId,
-                              RoleId = r.RoleId,
-                              RoleCode = r.Code,
-                              RoleName = r.Name,
-                              EmployeeNIK = e.Nik,
-                              EmployeeName = e.Name,
-                              EmployeeMail = e.Email,
-                              EmployeePhone = e.Phone,
-                              PositionId = p.PositionId,
-                              CompanyId = e.CompanyId,
-                              CompanyName = c.CompanyName,
-                              EmployeeId = e.EmployeeId,
-                              ArchiveUnitId = aust?.ArchiveUnitId.ToString() ?? string.Empty,
-                              ArchiveUnitName = aust?.ArchiveUnitName ?? string.Empty,
-                              CreatorId = crst?.CreatorId.ToString() ?? string.Empty,
-                              CreatorName = crst?.CreatorName ?? string.Empty,
-                          }
-                ).ToList().FirstOrDefault();
+            //var result = (from usr in user
+            //              join ur in userRole on usr.UserId equals ur.UserId
+            //              join r in role on ur.RoleId equals r.RoleId
+            //              join au in archiveUnit on ur.ArchiveUnitId equals au.ArchiveUnitId into aus
+            //              from aust in aus.DefaultIfEmpty()
+            //              join cr in creator on ur.CreatorId equals cr.CreatorId into crs
+            //              from crst in crs.DefaultIfEmpty()
+            //              join e in employee on usr.EmployeeId equals e.EmployeeId
+            //              join p in position on e.PositionId equals p.PositionId
+            //              join c in company on e.CompanyId equals c.CompanyId
+            //              where usr.Username == username && usr.Password == password
+            //              && usr.IsActive == true && r.IsActive == true && e.IsActive == true && ur.IsPrimary == true
+            //              select new
+            //              {
+            //                  Username = usr.Username,
+            //                  UserId = usr.UserId,
+            //                  RoleId = r.RoleId,
+            //                  RoleCode = r.Code,
+            //                  RoleName = r.Name,
+            //                  EmployeeNIK = e.Nik,
+            //                  EmployeeName = e.Name,
+            //                  EmployeeMail = e.Email,
+            //                  EmployeePhone = e.Phone,
+            //                  PositionId = p.PositionId,
+            //                  CompanyId = e.CompanyId,
+            //                  CompanyName = c.CompanyName,
+            //                  EmployeeId = e.EmployeeId,
+            //                  ArchiveUnitId = aust?.ArchiveUnitId.ToString() ?? string.Empty,
+            //                  ArchiveUnitName = aust?.ArchiveUnitName ?? string.Empty,
+            //                  CreatorId = crst?.CreatorId.ToString() ?? string.Empty,
+            //                  CreatorName = crst?.CreatorName ?? string.Empty,
+            //              }
+            //    ).ToList().FirstOrDefault();
+
+            var result = await _userRepository.GetLogin(username,password);
 
             List<Claim> claims = null;
             if (result != null)
             {
-                var arrArchiveUnit = userArchiveUnit.Where(x => x.UserId == result.UserId).Select(x => x.ArchiveUnit.ArchiveUnitCode).ToArray();
+                //var arrArchiveUnit = userArchiveUnit.Where(x => x.UserId == result.UserId).Select(x => x.ArchiveUnit.ArchiveUnitCode).ToArray();
 
                 bool isExists = await _generalSettingsService.IsExist();
 
@@ -195,7 +197,7 @@ namespace Ardita.Services.Classess
                     new Claim(GlobalConst.ArchiveUnitName, result.ArchiveUnitName),
                     new Claim(GlobalConst.CreatorId, result.CreatorId),
                     new Claim(GlobalConst.CreatorName, result.CreatorName),
-                    new Claim(GlobalConst.ArchiveUnitCode, arrArchiveUnit.Length > 0  ? string.Join(",", arrArchiveUnit) : string.Empty),
+                    new Claim(GlobalConst.ArchiveUnitCode, string.Empty),
                     new Claim(GlobalConst.GeneralSettings, isExists ? "1" : "0")
                 };
             }

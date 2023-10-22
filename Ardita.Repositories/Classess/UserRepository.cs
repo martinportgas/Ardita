@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Ardita.Extensions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using NPOI.SS.Formula.Functions;
+using Ardita.Models.ViewModels.Users;
 
 namespace Ardita.Repositories.Classess
 {
@@ -68,6 +69,48 @@ namespace Ardita.Repositories.Classess
             .Where(par)
             .AsNoTracking()
                 .ToListAsync();
+            return result;
+        }
+
+        public async Task<GetLoginModel> GetLogin(string username, string password)
+        {
+            var result = await _context.MstUsers
+                .Include(x => x.IdxUserRoles).ThenInclude(x => x.Role)
+                .Include(x => x.IdxUserRoles).ThenInclude(x => x.ArchiveUnit)
+                .Include(x => x.IdxUserRoles).ThenInclude(x => x.Creator)
+                .Include(x => x.Employee).ThenInclude(x => x.Position)
+                .Include(x => x.Employee).ThenInclude(x => x.Company)
+                .Where(x => x.IdxUserRoles.FirstOrDefault() != null)
+                .Where(x => x.IdxUserRoles.Any(x => x.Role != null))
+                .Where(x => x.Employee != null)
+                .Where(x => x.Employee.Position != null)
+                .Where(x => x.Employee.Company != null)
+                .Where(x => x.Username == username && x.Password == password && x.IsActive == true)
+                .Where(x => x.IdxUserRoles.Any(x => x.IsPrimary == true))
+                .Where(x => x.Employee.IsActive == true)
+                .Where(x => x.IdxUserRoles.Any(x => x.Role.IsActive == true))
+                .Select(x => new GetLoginModel
+                {
+                    Username = x.Username,
+                    UserId = x.UserId,
+                    RoleId = x.IdxUserRoles.FirstOrDefault()!.RoleId,
+                    RoleCode = x.IdxUserRoles.FirstOrDefault()!.Role.Code,
+                    RoleName = x.IdxUserRoles.FirstOrDefault()!.Role.Name,
+                    EmployeeNIK = x.Employee.Nik,
+                    EmployeeName = x.Employee.Name,
+                    EmployeeMail = x.Employee.Email,
+                    EmployeePhone = x.Employee.Phone,
+                    PositionId = x.Employee.PositionId,
+                    CompanyId = x.Employee.CompanyId,
+                    CompanyName = x.Employee.Company!.CompanyName,
+                    EmployeeId = x.Employee.EmployeeId,
+                    ArchiveUnitId = x.IdxUserRoles.FirstOrDefault()!.ArchiveUnitId.ToString() ?? string.Empty,
+                    ArchiveUnitName = x.IdxUserRoles.FirstOrDefault()!.ArchiveUnit!.ArchiveUnitName ?? string.Empty,
+                    CreatorId = x.IdxUserRoles.FirstOrDefault()!.CreatorId.ToString() ?? string.Empty,
+                    CreatorName = x.IdxUserRoles.FirstOrDefault()!.Creator!.CreatorName ?? string.Empty,
+                })
+                .FirstOrDefaultAsync();
+
             return result;
         }
 

@@ -46,12 +46,14 @@ namespace Ardita.Controllers
         public async Task<IActionResult> Login()
         {
             //get attribute from general settings start
-            bool isExists = await _generalSettingsService.IsExist();
+            //bool isExists = await _generalSettingsService.IsExist();
+            var data = await _generalSettingsService.GetExistingSettings();
+            bool isExists = false;
             ViewBag.IsExists = isExists;
 
             if (isExists)
             {
-                var data = await _generalSettingsService.GetExistingSettings();
+                //var data = await _generalSettingsService.GetExistingSettings();
                 if(!string.IsNullOrEmpty(data.SiteLogoContent))
                 {
                     string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_logo.svg");
