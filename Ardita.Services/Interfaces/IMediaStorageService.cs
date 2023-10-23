@@ -5,6 +5,7 @@ namespace Ardita.Services.Interfaces;
 
 public interface IMediaStorageService
 {
+    Task<int> GetCountByRackLits(bool isActive);
     Task<TrxMediaStorage> GetById(Guid id);
     Task<TrxMediaStorageDetail> GetDetailByArchiveId(Guid id);
     Task<IEnumerable<TrxMediaStorage>> GetAll(string par = " 1=1 ");

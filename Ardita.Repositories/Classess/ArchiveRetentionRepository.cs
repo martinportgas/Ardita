@@ -19,18 +19,21 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
     public async Task<IEnumerable<VwArchiveRetention>> GetAll(string par = " 1=1 ")
     {
         var results = await _context.VwArchiveRetentions
-                .Where(par).ToListAsync();
+                .Where(par)
+            .Where(x => x.Status != null).ToListAsync();
         return results;
     }
     public async Task<IEnumerable<VwArchiveRetentionInActive>> GetInActiveAll(string par = " 1=1 ")
     {
         var results = await _context.VwArchiveRetentionInActives
-                .Where(par).ToListAsync();
+                .Where(par)
+            .Where(x => x.Status != null).ToListAsync();
         return results;
     }
     public async Task<int> GetCount()
     {
-        var results = await _context.VwArchiveRetentions.CountAsync();
+        var results = await _context.VwArchiveRetentions
+            .Where(x => x.Status != null).CountAsync();
         return results;
     }
 
@@ -43,6 +46,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
             .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
             .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
             .Where(model.advanceSearch!.Search)
+            .Where(x => x.Status != null)
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
             .Select(x => new
@@ -60,6 +64,7 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
             .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
             .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
             .Where(model.advanceSearch!.Search)
+            .Where(x => x.Status != null)
             .OrderBy($"{model.sortColumn} {model.sortColumnDirection}")
             .Skip(model.skip).Take(model.pageSize)
             .Select(x => new
@@ -83,11 +88,13 @@ public class ArchiveRetentionRepository : IArchiveRetentionRepository
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
             .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
             .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
+            .Where(x => x.Status != null)
             .Where(model.advanceSearch!.Search)
             .CountAsync() : await _context.VwArchiveRetentionInActives
             .Where(x => (x.TitleArchive + x.ArchiveNumber + x.ArchiveType + x.CreatorName + x.Status + x.RetentionDateArchive.ToString()).Contains(model.searchValue))
             .Where(x => (User.ArchiveUnitId == Guid.Empty ? true : x.ArchiveUnitId == User.ArchiveUnitId))
             .Where(x => (User.CreatorId == Guid.Empty ? true : x.CreatorId == User.CreatorId))
+            .Where(x => x.Status != null)
             .Where(model.advanceSearch!.Search)
             .CountAsync();
 

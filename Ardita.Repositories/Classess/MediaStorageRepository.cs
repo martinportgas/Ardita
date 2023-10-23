@@ -48,6 +48,13 @@ public class MediaStorageRepository : IMediaStorageRepository
         return result;
     }
 
+    public async Task<int> GetCountByRackList(bool isActive) => 
+        await _context.TrxRacks
+            .Include(x => x.TrxLevels).ThenInclude(x => x.TrxRows).ThenInclude(x => x.TrxMediaStorages)
+            .Where(x => x.TrxLevels.Any(y => y.TrxRows.Any(z => z.TrxMediaStorages.Any())))
+        .Where(x => isActive ? x.Room.ArchiveRoomType == GlobalConst.UnitPengolah : x.Room.ArchiveRoomType == GlobalConst.UnitKearsipan)
+            .AsNoTracking()
+            .CountAsync();
     public async Task<IEnumerable<TrxMediaStorage>> GetAll(string par = " 1=1 ") => 
         await _context.TrxMediaStorages
             .Include(g => g.GmdDetail)

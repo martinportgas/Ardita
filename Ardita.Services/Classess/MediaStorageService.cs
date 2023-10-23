@@ -22,6 +22,7 @@ public class MediaStorageService : IMediaStorageService
 
     public async Task<IEnumerable<TrxMediaStorage>> GetAll(string par = " 1=1 ") => await _mediaStorageRepository.GetAll(par);
     public async Task<int> GetCount(string par = " 1=1 ") => await _mediaStorageRepository.GetCount(par);
+    public async Task<int> GetCountByRackLits(bool isActive) => await _mediaStorageRepository.GetCountByRackList(isActive);
 
     public async Task<TrxMediaStorage> GetById(Guid id)
     {

@@ -295,30 +295,28 @@ namespace Ardita.Areas.General.Controllers
         [HttpGet]
         public async Task<JsonResult> BindTotalStorageUse()
         {
-            var dataStorage = await _mediaStorageService.GetCount();
-            var dataRow = await _rowService.GetAll();
-            int use = dataStorage == null ? 0 : dataStorage;
-            int total = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitPengolah).Count();
+            var dataRacks = await _rackService.GetAll();
+            var dataRack = dataRacks.Where(x => x.Room!.ArchiveRoomType == GlobalConst.UnitPengolah).ToList();
+            int use = await _mediaStorageService.GetCountByRackLits(true);
 
             var result = new
             {
                 totalUse = use,
-                totalAvailable =  total - use,
+                totalAvailable =  dataRack.Count() - use,
             };
             return Json(result);
         }
         [HttpGet]
         public async Task<JsonResult> BindTotalStorageUseInActive()
         {
-            var dataStorage = await _mediaStorageInActiveService.GetCount();
-            var dataRow = await _rowService.GetAll();
-            int use = dataStorage == null ? 0 : dataStorage;
-            int total = dataRow.Where(x => x.Level.Rack.Room.ArchiveRoomType == GlobalConst.UnitKearsipan).Count();
+            var dataRacks = await _rackService.GetAll();
+            var dataRack = dataRacks.Where(x => x.Room!.ArchiveRoomType == GlobalConst.UnitKearsipan).ToList();
+            int use = await _mediaStorageService.GetCountByRackLits(false);
 
             var result = new
             {
                 totalUse = use,
-                totalAvailable = total - use,
+                totalAvailable = dataRack.Count() - use,
             };
             return Json(result);
         }
