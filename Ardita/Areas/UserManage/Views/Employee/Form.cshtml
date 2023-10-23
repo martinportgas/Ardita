@@ -108,7 +108,7 @@
                                         <div class="form-group">
                                             <label>Perusahaan</label>
                                             <select asp-for="CompanyId" asp-items="ViewBag.listCompany"
-                                                    id="txtPCompanyId" class="select2_demo_1 form-control"
+                                                    id="txtCompanyId" class="select2_demo_1 form-control"
                                                     data-placeholder="-- Pilih Perusahaan --">
                                                 <option value=""></option>
                                             </select>
@@ -138,12 +138,15 @@
         $(document).ready(function () {
             initForms("@form.CurrentAction");
 
-            $("#txtEmployeePosition").select2({
-                theme: 'bootstrap4',
-            });
-            $("#txtEmployeeGender").select2({
-                theme: 'bootstrap4',
-            });
+            // $("#txtPositionId").select2({
+            //     theme: 'bootstrap4',
+            // });
+            // $("#txtCompanyId").select2({
+            //     theme: 'bootstrap4',
+            // });
+            // $("#txtEmployeeGender").select2({
+            //     theme: 'bootstrap4',
+            // });
             var mem = $('#employeeDateOfBirth .input-group.date').datepicker({
                 todayBtn: "linked",
                 keyboardNavigation: false,
@@ -158,18 +161,24 @@
             if ($('#txtEmployeeNIK').val() == "") {
                 swal("Please enter Employee NIK !");
                 return false;
-            } else if ($('#txtEmployeeName').val() == "") {
+            }
+            if ($('#txtEmployeeName').val() == "") {
                 swal("Please enter Employee Name !");
                 return false;
-            } else if ($('#txtEmployeeGender').val() == "") {
+            } 
+            if ($('#txtEmployeeGender').val() == "") {
                 swal("Please enter Employee Gender!");
                 return false;
-            } else if ($('#txtEmployeePosition').val() == "") {
+            }
+            if ($('#txtPositionId').val() == "") {
                 swal("Please enter Employee Position !");
                 return false;
-            } else {
-                return true;
             }
+            if ($('#txtCompanyId').val() == "") {
+                swal("Please enter Employee Company !");
+                return false;
+            }
+            return true;
         }
 
         function onSubmit(ctl, event) {

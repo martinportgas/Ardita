@@ -28,7 +28,8 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             IClassificationSubSubjectService classificationSubSubjectService,
             IGmdService gmdService,
             IUserService userService,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment,
+            ITemplateSettingService templateSettingService)
         {
             _archiveExtendService = archiveExtendService;
             _employeeService = employeeService;
@@ -44,6 +45,7 @@ namespace Ardita.Areas.ArchiveActive.Controllers
             _gmdService = gmdService;
             _userService = userService;
             _hostingEnvironment = hostingEnvironment;
+            _templateSettingService = templateSettingService;
         }
         #endregion
         #region MAIN ACTION

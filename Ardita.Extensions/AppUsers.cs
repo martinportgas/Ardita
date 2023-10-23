@@ -43,7 +43,7 @@ namespace Ardita.Extensions
             session.CreatorId = creatorId;
             session.CreatorName = claims.FindFirst(GlobalConst.CreatorName)!.Value;
             session.ListArchiveUnitCode = new List<string>();
-            session.isGenenalSettingExist = claims.FindFirst(GlobalConst.GeneralSettings)!.Value == "1";
+            //session.isGenenalSettingExist = claims.FindFirst(GlobalConst.GeneralSettings)!.Value == "1";
 
             if (claims.FindFirst(GlobalConst.ArchiveUnitCode) != null)
             {
