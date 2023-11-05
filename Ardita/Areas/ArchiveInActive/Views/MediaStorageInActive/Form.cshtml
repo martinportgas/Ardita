@@ -239,22 +239,24 @@
                                         @Html.Raw(form.BackText)
                                     </a>
                                     @if (form.isSubmitForm)
-                                            {
-                                                <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
-                                                        onclick="onSubmit(this, event);"
-                                                        type="submit" id="btn-submit" value="@GlobalConst.Save">
-                                                    @Html.Raw(form.SaveText)
-                                                </button>
-                                                @if(form.CurrentAction != GlobalConst.Remove)
-                                                {
-                                                    <button
-                                                        class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
-                                                        onclick="onSubmit(this, event);"
-                                                        type="submit" id="btn-submit" value="@GlobalConst.Submit">
-                                                        @Html.Raw(form.SubmitText)
-                                                    </button>
-                                                }
-                                            }
+                                    {
+                                        @if (Model.StatusId != (int)GlobalConst.STATUS.Submit)
+                                        {
+                                            <button class="btn btn-sm @form.ButtonSubmitClass float-right m-t-n-xs mr-1"
+                                                    onclick="onSubmit(this, event);"
+                                                    type="submit" id="btn-submit" value="@GlobalConst.Save">
+                                                @Html.Raw(form.SaveText)
+                                            </button>
+                                        }
+                                        @if (form.CurrentAction != GlobalConst.Remove)
+                                        {
+                                            <button class="btn btn-sm btn-success float-right m-t-n-xs mr-1"
+                                                    onclick="onSubmit(this, event);"
+                                                    type="submit" id="btn-submit" value="@GlobalConst.Submit">
+                                                @Html.Raw(form.SubmitText)
+                                            </button>
+                                        }
+                                    }
                                 </div>
                             </form>
                         </div>
@@ -299,21 +301,22 @@
                 initSubTypeStorage();
             });
 
-            if ("@form.CurrentAction" != "@GlobalConst.Add") 
+            if ("@form.CurrentAction" != "@GlobalConst.Add") {
+        @{
+            var sort = 0;
+        }
+        @foreach (var d in Model.TrxMediaStorageInActiveDetails)
+        {
+            @if (sort != d.Sort)
             {
-                @{var sort = 0;}
-                @foreach (var d in Model.TrxMediaStorageInActiveDetails)
                 {
-                    @if(sort != d.Sort)
-                    {
-                        {
-                            sort = d.Sort;
-                        }
-                        @:initSubTypeStorage("@d.SubTypeStorageId");
-                    }
-                    @:initArchive(@d.Sort, "@d.Sort", "@d.ArchiveId");
+                    sort = d.Sort;
                 }
+                @:initSubTypeStorage("@d.SubTypeStorageId");
             }
+            @:initArchive(@d.Sort, "@d.Sort", "@d.ArchiveId");
+        }
+                    }
         });
 
         function getGMDDetail(e) {
@@ -337,7 +340,7 @@
 
             var totalVolumeSts = 0;
 
-            $(".volume_" + totalDetail).each(function() {
+            $(".volume_" + totalDetail).each(function () {
                 var volume = $(this).html();
                 totalVolumeSts = parseInt(totalVolumeSts) + parseInt(volume);
             });
@@ -352,8 +355,7 @@
             return false;
         }
 
-        function addArchive(totalDetail, sort) 
-        {
+        function addArchive(totalDetail, sort) {
             initArchive(totalDetail, sort);
         }
 
@@ -371,11 +373,9 @@
 
             totalDetail += 1;
 
-            if(isInput)
-            {
+            if (isInput) {
                 $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr><tr><td>Satuan</td><td>:</td><td><span id="sts-unit-${totalDetail}"></span></td></tr></table></div><div class="col-sm-12"><select id="txtArchiveId_${totalDetail}" class="select2_demo_1 form-control" data-placeholder="-- Select Archive --"><option value=""></option></select></div><div class="col-sm-4"><button class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
-            }else
-            {
+            } else {
                 $(".detail").append(`<div class="detail-${totalDetail} card mb-2"><div class="card-body"><div class="col-sm-4"><input type="hidden" name="listSts[]" value="${stsId}#${sort}" class="sts"><table class="table"><tr><td>Urutan</td><td>:</td><td><span><strong>${totalDetail}</strong></span></td></tr><tr><td>Kode Sub Media Penyimpanan</td><td>:</td><td><span id="sts-code-${totalDetail}"></span></td></tr><tr><td>Nama Sub Media Penyimpanan</td><td>:</td><td><span id="sts-name-${totalDetail}"></span></td></tr><tr><td>Jumlah</td><td>:</td><td><span id="sts-volume-${totalDetail}"></span></td></tr><tr><td>Satuan</td><td>:</td><td><span id="sts-unit-${totalDetail}"></span></td></tr></table></div><div class="col-sm-4"><button style="display:none" class="btn btn-sm btn-primary m-t-n-xs mr-1 mt-1 mb-2 btnInsertArchive" type="button" value="${sort}" onclick="addArchive(${totalDetail}, $(this).val())">Tambah Arsip</button></div><table class="table table-condensed table-hover" style="width:100%"><thead><tr><th style="width:10%">Action</th><th>Kode Arsip</th><th>Judul Arsip</th><th>Pemilik</th><th>Jumlah</th></tr></thead><tbody id="detail-${totalDetail}"></tbody></table><button class="btn btn-sm btn-danger m-t-n-xs mr-1 mt-1" type="button" style="display:none" onclick="deleteDetail(${totalDetail})">Hapus</button></div></div>`);
             }
 
@@ -405,12 +405,10 @@
                     contentType: "@GlobalConst.APPLICATIONJSON",
                     success: function (data) {
                         if (!isFull(data.volume, totalDetail)) {
-                            if(isInput)
-                            {
+                            if (isInput) {
                                 $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' onclick="$(this).closest('tr').remove()" style='color:#ed5565;font-size:15px'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
                             }
-                            else
-                            {
+                            else {
                                 $("#detail-" + totalDetail).append(`<tr><td><i class='fa fa-trash' onclick="$(this).closest('tr').remove()" style='color:#ed5565;font-size:15px;display:none'></i></td><td style="display: none;" class="archive-id">${data.archiveId}</td><td>${data.archiveCode}</td><td>${data.titleArchive}</td><td>${data.archiveCreator}</td><td class="volume_${totalDetail}">${data.volume}</td><input type="hidden" name="listArchive[]" value="${data.archiveId}#${sort}" class="archive"/></tr>`);
                             }
                         }
@@ -435,26 +433,26 @@
             $("#txtDifferenceVolume").val(currentVolume);
             $(".detail-" + totalDetail).remove();
 
-            $(".sts").each(function() {
+            $(".sts").each(function () {
                 var value = $(this).val().split("#");
                 var stsId = value[0];
                 var existingSort = value[1];
-                $(".archive").each(function() {
+                $(".archive").each(function () {
                     var valueArchive = $(this).val().split("#");
                     var arcId = value[0];
                     var existingSortArc = value[1];
-                    if(existingSortArc == existingSort){
+                    if (existingSortArc == existingSort) {
                         $(this).val(arcId + "#" + count);
                     }
                 });
-                $(".btnInsertArchive").each(function() {
+                $(".btnInsertArchive").each(function () {
                     var valueBtnArchive = $(this).val();
-                    if(valueBtnArchive == existingSort){
+                    if (valueBtnArchive == existingSort) {
                         $(this).val(count);
                     }
                 });
                 $(this).val(stsId + "#" + count);
-                count ++;
+                count++;
             })
         }
 
@@ -501,7 +499,7 @@
 
                     //if ('@form.CurrentAction' != "Add") {
                     //    console.log(currentVolume);
-                        
+
                     //}
                     $("#txtDifferenceVolume").val(currentVolume);
                 },

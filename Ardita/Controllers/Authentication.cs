@@ -48,7 +48,7 @@ namespace Ardita.Controllers
             //get attribute from general settings start
             //bool isExists = await _generalSettingsService.IsExist();
             var data = await _generalSettingsService.GetExistingSettings();
-            bool isExists = false;
+            bool isExists = data != null;
             ViewBag.IsExists = isExists;
 
             if (isExists)
@@ -56,19 +56,22 @@ namespace Ardita.Controllers
                 //var data = await _generalSettingsService.GetExistingSettings();
                 if(!string.IsNullOrEmpty(data.SiteLogoContent))
                 {
-                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_logo.svg");
+                    string ext = Path.GetExtension(data.SiteLogoFileName);
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_logo" + ext);
                     var dataByte = Convert.FromBase64String(data.SiteLogoContent);
                     await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
                 }
                 if(!string.IsNullOrEmpty(data.CompanyLogoContent))
                 {
-                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_company.png");
+                    string ext = Path.GetExtension(data.CompanyLogoFileName);
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_company" + ext);
                     var dataByte = Convert.FromBase64String(data.CompanyLogoContent);
                     await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
                 }
                 if(!string.IsNullOrEmpty(data.FavIconContent))
                 {
-                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_favicon.ico");
+                    string ext = Path.GetExtension(data.FavIconFileName);
+                    string FilePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", "setting_favicon" + ext);
                     var dataByte = Convert.FromBase64String(data.FavIconContent);
                     await System.IO.File.WriteAllBytesAsync(FilePath, dataByte, default);
                 }
