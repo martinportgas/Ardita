@@ -2326,8 +2326,8 @@
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
             <Image Name="logoBKS">
-              <Source>External</Source>
-              <Value>=Parameters!logo.Value</Value>
+              <Source>Embedded</Source>
+              <Value>bks</Value>
               <MIMEType>image/png</MIMEType>
               <Sizing>FitProportional</Sizing>
               <Left>0.11333in</Left>
